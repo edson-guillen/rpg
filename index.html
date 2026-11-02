@@ -118,8 +118,9 @@ svg.ic{width:22px;height:22px;flex:none;fill:none;stroke:currentColor;stroke-wid
 .tabs{position:fixed;left:0;right:0;bottom:0;z-index:40;display:grid;grid-template-columns:repeat(4,1fr);
   height:calc(var(--nav-h) + var(--safe-b));padding-bottom:var(--safe-b);
   background:rgba(14,19,28,.96);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-top:1px solid var(--line)}
+.tabs{grid-template-columns:repeat(5,1fr)}
 .tab{border:0;background:none;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;color:var(--faint);
-  font-family:var(--f-display);font-size:11px;letter-spacing:.1em;text-transform:uppercase;position:relative}
+  font-family:var(--f-display);font-size:10px;letter-spacing:.05em;text-transform:uppercase;position:relative;padding:0}
 .tab svg.ic{width:24px;height:24px}
 .tab[aria-selected="true"]{color:var(--gold-l)}
 .tab[aria-selected="true"]::before{content:"";position:absolute;top:0;left:28%;right:28%;height:2px;background:var(--gold);box-shadow:0 0 10px var(--gold)}
@@ -133,7 +134,7 @@ main{margin-top:8px}
 
 @media (min-width:900px){
   .tabs{position:sticky;top:0;bottom:auto;height:56px;padding:0;margin:4px 0 0;border:1px solid var(--line);border-radius:14px;
-    grid-template-columns:repeat(4,auto);justify-content:start;gap:4px;padding-inline:6px;background:rgba(20,27,39,.92)}
+    grid-template-columns:repeat(5,auto);justify-content:start;gap:4px;padding-inline:6px;background:rgba(20,27,39,.92)}
   .tab{flex-direction:row;gap:8px;font-size:13px;padding:0 18px}
   .tab[aria-selected="true"]::before{top:auto;bottom:-1px;left:14px;right:14px}
   .tab .badge{position:static}
@@ -411,6 +412,103 @@ details.passive ul{padding-left:18px}
 .toast .msg{flex:1}
 .toast button{border:0;background:rgba(217,180,108,.16);color:var(--gold-l);border-radius:10px;min-height:38px;padding:4px 12px;font-weight:600;white-space:nowrap}
 @media (min-width:900px){ .toast{bottom:24px} }
+/* ============================================================
+   FICHA: atributos, cálculos, ataques, perícias
+   ============================================================ */
+.tag.atk{color:var(--frost);border-color:rgba(159,220,255,.45)}
+.tag.save{color:var(--gold-l);border-color:rgba(217,180,108,.5)}
+.tag.dmg{color:#ffc2b6;border-color:rgba(255,157,138,.45)}
+.tag.block{color:var(--danger);border-color:rgba(240,124,108,.55);background:rgba(240,124,108,.08)}
+.abils{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+@media (min-width:760px){ .abils{grid-template-columns:repeat(6,1fr)} }
+.abil{display:flex;flex-direction:column;border:1px solid var(--line);border-radius:14px;background:rgba(0,0,0,.18);overflow:hidden}
+.abil.prof{border-color:var(--line2);box-shadow:inset 0 0 18px rgba(217,180,108,.06)}
+.ab-main{border:0;background:none;display:flex;flex-direction:column;align-items:center;padding:10px 4px 8px;color:var(--text)}
+.ab-k{font-family:var(--f-display);font-size:12px;letter-spacing:.18em;color:var(--gold)}
+.ab-m{font-size:30px;font-weight:700;line-height:1.1}
+.ab-s{font-size:13px;color:var(--muted);border:1px solid var(--line);border-radius:999px;padding:0 10px;margin-top:3px}
+.ab-save{border:0;border-top:1px solid var(--line);background:rgba(255,255,255,.03);min-height:40px;display:flex;align-items:center;justify-content:center;gap:6px;font-size:14px;color:var(--muted)}
+.ab-save b{color:var(--text);font-size:17px}
+.abil.prof .ab-save b{color:var(--gold-l)}
+.ab-note{font-size:12px;color:var(--frost);text-align:center;padding:4px 6px 6px;line-height:1.2;background:rgba(255,255,255,.03)}
+.ab-main:hover,.ab-save:hover{background:rgba(255,255,255,.07)}
+.pdot{width:8px;height:8px;border-radius:50%;background:var(--gold);box-shadow:0 0 6px var(--gold);display:inline-block;flex:none}
+.pdot.off{background:transparent;border:1px solid var(--faint);box-shadow:none}
+.calc-row{display:grid;grid-template-columns:1fr auto;gap:0 12px;padding:9px 0;border-top:1px dashed rgba(217,180,108,.14)}
+.calc-row:first-child{border-top:0;padding-top:0}
+.calc-row b{font-size:17px;font-weight:600}
+.calc-row .cv{font-size:22px;font-weight:700;color:var(--gold-l);grid-row:span 2;align-self:center;text-align:right}
+.calc-row span{font-size:14px;color:var(--muted);line-height:1.3}
+.calc-row.boost .cv{color:var(--frost)}
+.atk-list{display:grid;gap:8px}
+@media (min-width:760px){ .atk-list{grid-template-columns:1fr 1fr} }
+.atk-row{display:grid;grid-template-columns:1fr auto auto;gap:6px 8px;align-items:center;padding:10px 10px 10px 12px;border:1px solid var(--line);border-radius:14px;background:rgba(0,0,0,.18)}
+.atk-t b{display:block;font-size:17px;line-height:1.2}
+.atk-t span{display:block;font-size:13.5px;color:var(--muted);line-height:1.25}
+.atk-c{grid-column:1/-1;font-size:13.5px;color:var(--muted);border-top:1px dashed rgba(217,180,108,.12);padding-top:5px}
+.rb{display:inline-flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;min-width:64px;min-height:48px;padding:4px 10px;border-radius:12px;
+  border:1px solid var(--line2);background:var(--panel2);color:var(--text);line-height:1.1;transition:transform .1s, background .2s}
+.rb small{font-size:10px;letter-spacing:.12em;color:var(--muted);font-family:var(--f-display)}
+.rb b{font-size:17px;font-weight:700;white-space:nowrap}
+.rb svg.ic{width:16px;height:16px;color:var(--muted)}
+.rb.atk{border-color:rgba(159,220,255,.5)} .rb.atk b{color:var(--frost)}
+.rb.dmg{border-color:rgba(255,157,138,.45)} .rb.dmg b{color:#ffc2b6}
+.rb:hover{background:var(--raise)} .rb:active{transform:scale(.95)}
+.skills{display:grid;grid-template-columns:1fr;gap:2px}
+@media (min-width:480px){ .skills{grid-template-columns:1fr 1fr;column-gap:14px} }
+.skill{display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:40px;padding:4px 8px;border:0;border-radius:10px;background:none;text-align:left;font-size:16.5px;color:var(--text)}
+.skill:hover{background:rgba(255,255,255,.05)}
+.skill .sk-n{display:flex;align-items:center;gap:8px}
+.skill small{color:var(--faint);font-size:12px}
+.skill.prof b{color:var(--gold-l)}
+.sub-h{font-family:var(--f-display);font-size:11.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin:14px 0 4px}
+
+/* economia do turno */
+.turn{display:grid;gap:10px}
+.tr{display:grid;grid-template-columns:96px 1fr;gap:10px;align-items:start}
+.tk{font-family:var(--f-display);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;text-align:center;padding:4px;border-radius:8px;border:1px solid var(--c);color:var(--c)}
+.tk.a{--c:var(--frost)} .tk.b{--c:var(--gold)} .tk.m{--c:var(--ok)} .tk.r{--c:var(--arcane)}
+.tr p{font-size:15.5px;color:var(--muted);line-height:1.4} .tr p b{color:var(--text)}
+.rules{margin:14px 0 0;padding:12px 0 0 18px;border-top:1px dashed rgba(217,180,108,.14);display:grid;gap:6px;font-size:15px;color:var(--muted)} .rules b{color:var(--text)}
+
+/* rolagens no modal */
+.rolls-box{margin:0 0 14px;padding:10px 12px;border-radius:14px;border:1px solid var(--line);background:rgba(0,0,0,.22)}
+.rolls-box h4{font-family:var(--f-display);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);margin-bottom:4px}
+.rr{display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:center;padding:8px 0;border-top:1px dashed rgba(217,180,108,.12)}
+.rr:first-of-type{border-top:0}
+.rk{min-width:48px;text-align:center;font-family:var(--f-display);font-size:10.5px;letter-spacing:.06em;padding:3px 6px;border-radius:7px;border:1px solid var(--c);color:var(--c);white-space:nowrap}
+.rk.atk{--c:var(--frost)} .rk.save{--c:var(--gold)} .rk.dmg{--c:#ff9d8a} .rk.note{--c:var(--faint)}
+.rt b{display:block;font-size:16.5px;font-weight:600;line-height:1.25}
+.rt span{display:block;font-size:14.5px;color:var(--muted);line-height:1.3}
+.rbs{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+.rr .rb{min-width:56px;min-height:44px;flex-direction:row;gap:5px}
+.rr .rb small{letter-spacing:0;font-family:var(--f-body);font-size:12px}
+.rr{grid-template-columns:auto minmax(0,1fr) auto}
+@media (max-width:420px){ .rbs{flex-direction:column;align-items:stretch} }
+@media (max-width:520px){ .inv-group .group-h .aside{display:none} }
+.mat-line{display:flex;align-items:center;gap:8px;font-size:15px;color:var(--muted);margin:8px 0 0}
+.mat-line svg.ic{width:18px;height:18px;color:var(--gold)}
+
+/* pop-up de rolagem */
+.rollpop{position:fixed;left:0;right:0;top:12px;margin-inline:auto;width:min(420px,calc(100vw - 32px));z-index:130;padding:12px 16px 14px;border-radius:18px;text-align:center;cursor:pointer;
+  background:linear-gradient(180deg,#26344a,#1a2333);border:1px solid var(--line2);box-shadow:0 18px 50px rgba(0,0,0,.6);opacity:0;transform:translateY(-16px);pointer-events:none;transition:opacity .2s, transform .2s}
+.rollpop.show{opacity:1;transform:none;pointer-events:auto}
+.rp-l{font-family:var(--f-display);font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--gold)}
+.rp-t{font-size:46px;font-weight:700;line-height:1.08;color:var(--text);text-shadow:0 0 24px rgba(159,220,255,.35)}
+.rp-b{font-size:15.5px;color:var(--muted)}
+.rp-x{margin-top:6px;font-size:15px;color:var(--frost)}
+.rollpop.crit{border-color:var(--gold);box-shadow:0 0 0 1px var(--gold),0 18px 50px rgba(0,0,0,.6),0 0 40px rgba(217,180,108,.35)}
+.rollpop.crit .rp-t,.rollpop.crit .rp-x{color:var(--gold-l)}
+.rollpop.fail{border-color:rgba(240,124,108,.6)}
+.rollpop.fail .rp-t,.rollpop.fail .rp-x{color:var(--danger)}
+
+/* inventário por categoria */
+.inv-group{margin-top:18px}
+.inv-group:first-child{margin-top:0}
+.item .counter .v small{display:block;font-size:12px;color:var(--muted);font-weight:500;line-height:1.1}
+.item .tags{display:flex;flex-wrap:wrap;gap:4px;margin-top:5px}
+.item .chev{color:var(--faint);padding-right:6px}
+.field select{min-height:46px;border-radius:12px;border:1px solid var(--line);background:var(--bg2);padding:8px 12px;font-size:17px;width:100%;color:var(--text)}
 footer.foot{margin-top:28px;text-align:center;color:var(--faint);font-size:14px}
 @media (prefers-reduced-motion:reduce){ *,*::before,*::after{animation:none!important;transition:none!important} html{scroll-behavior:auto} }
 </style>
@@ -480,6 +578,7 @@ footer.foot{margin-top:28px;text-align:center;color:var(--faint);font-size:14px}
   </header>
 
   <nav class="tabs" role="tablist" aria-label="Seções da ficha">
+    <button class="tab" role="tab" data-action="tab" data-tab="ficha" id="t-ficha" aria-controls="tab-ficha"><svg class="ic"><use href="#i-scroll"/></svg>Ficha</button>
     <button class="tab" role="tab" data-action="tab" data-tab="magia" id="t-magia" aria-controls="tab-magia"><svg class="ic"><use href="#i-gem"/></svg>Magia<span class="badge num" id="badge-slots" hidden></span></button>
     <button class="tab" role="tab" data-action="tab" data-tab="grimorio" id="t-grimorio" aria-controls="tab-grimorio"><svg class="ic"><use href="#i-book"/></svg>Grimório</button>
     <button class="tab" role="tab" data-action="tab" data-tab="recursos" id="t-recursos" aria-controls="tab-recursos"><svg class="ic"><use href="#i-flame"/></svg>Recursos</button>
@@ -489,6 +588,28 @@ footer.foot{margin-top:28px;text-align:center;color:var(--faint);font-size:14px}
   <div class="effects" id="effects" aria-live="polite"></div>
 
   <main>
+    <!-- ======================= FICHA ======================= -->
+    <section class="panel-tab" id="tab-ficha" role="tabpanel" aria-labelledby="t-ficha">
+      <div class="grid two">
+        <div class="panel span2">
+          <div class="panel-h"><h2>Atributos e Salvaguardas</h2><span class="rule"></span><span class="aside">toque para rolar</span></div>
+          <div class="abils" id="abil"></div>
+        </div>
+        <div class="panel span2">
+          <div class="panel-h"><h2>Ataques e Armas</h2><span class="rule"></span><span class="aside" id="atk-hint"></span></div>
+          <div class="atk-list" id="attacks"></div>
+        </div>
+        <div class="panel">
+          <div class="panel-h"><h2>Somas e Cálculos</h2><span class="rule"></span></div>
+          <div id="calc"></div>
+        </div>
+        <div class="panel">
+          <div class="panel-h"><h2>Perícias</h2><span class="rule"></span><span class="aside"><i class="pdot"></i> proficiente</span></div>
+          <div class="skills" id="skills"></div>
+        </div>
+      </div>
+    </section>
+
     <!-- ======================= MAGIA ======================= -->
     <section class="panel-tab" id="tab-magia" role="tabpanel" aria-labelledby="t-magia">
       <div class="grid two">
@@ -505,7 +626,7 @@ footer.foot{margin-top:28px;text-align:center;color:var(--faint);font-size:14px}
           <div class="fom" id="fom"></div>
         </div>
         <div class="panel">
-          <div class="panel-h"><h2>Lembretes</h2><span class="rule"></span></div>
+          <div class="panel-h"><h2>Economia do Turno</h2><span class="rule"></span></div>
           <div class="note" id="reminders"></div>
         </div>
       </div>
@@ -543,8 +664,8 @@ footer.foot{margin-top:28px;text-align:center;color:var(--faint);font-size:14px}
     <!-- ======================= MOCHILA ======================= -->
     <section class="panel-tab" id="tab-mochila" role="tabpanel" aria-labelledby="t-mochila">
       <div class="panel">
-        <div class="panel-h"><h2>Consumíveis &amp; Itens</h2><span class="rule"></span><span class="aside">toque no nome para editar</span></div>
-        <div class="items" id="items"></div>
+        <div class="panel-h"><h2>Inventário</h2><span class="rule"></span><span class="aside">Carga máx. 120 kg · toque no nome para editar</span></div>
+        <div id="items"></div>
         <div class="add-row"><button class="btn block" data-action="item-new"><svg class="ic"><use href="#i-plus"/></svg>Adicionar item</button></div>
       </div>
     </section>
@@ -557,17 +678,45 @@ footer.foot{margin-top:28px;text-align:center;color:var(--faint);font-size:14px}
   <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="m-title" id="sheet"></div>
 </div>
 <div class="toast" id="toast" role="status" aria-live="polite"><span class="msg"></span><button data-action="undo"><svg class="ic" style="width:18px;height:18px;vertical-align:-3px"><use href="#i-undo"/></svg> Desfazer</button></div>
+<div class="rollpop" id="roll" role="status" aria-live="polite" data-action="roll-hide" title="Toque para fechar"></div>
 <input type="file" id="file" accept="application/json,.json" hidden>
 
 <script>
 /* =====================================================================
    DADOS DO PERSONAGEM — edite aqui para adaptar a outra ficha.
    Textos das magias: resumos parafraseados das regras de D&D 2024.
+   "{CD}" nos textos é trocado pela CD atual (14, ou 15 com Feitiçaria Inata).
    ===================================================================== */
 const CHAR = {
   storageKey: 'soren-frostgaard-nv4',
   stats: { ac: 16, shieldBonus: 5, hpMax: 30, dc: 14, atk: 6, init: 2, speed: '10,5 m', pb: 2, cha: 4, conSave: 4 },
   hitDie: 6, conMod: 2,
+  carry: '120 kg',
+  abilities: [
+    { k: 'FOR', n: 'Força', s: 8 },
+    { k: 'DES', n: 'Destreza', s: 15 },
+    { k: 'CON', n: 'Constituição', s: 15, prof: true, note: 'Vantagem em Concentração' },
+    { k: 'INT', n: 'Inteligência', s: 8 },
+    { k: 'SAB', n: 'Sabedoria', s: 10 },
+    { k: 'CAR', n: 'Carisma', s: 18, prof: true, note: '+1 do Conjurador Bélico' }
+  ],
+  skills: [
+    ['Acrobacia', 'DES'], ['Adestrar Animais', 'SAB'], ['Arcanismo', 'INT'], ['Atletismo', 'FOR'], ['Atuação', 'CAR'],
+    ['Enganação', 'CAR', 'Classe'], ['Furtividade', 'DES', 'Andarilho'], ['História', 'INT'], ['Intimidação', 'CAR'],
+    ['Intuição', 'SAB', 'Andarilho'], ['Investigação', 'INT'], ['Medicina', 'SAB'], ['Natureza', 'INT'], ['Percepção', 'SAB'],
+    ['Persuasão', 'CAR', 'Classe'], ['Prestidigitação', 'DES'], ['Religião', 'INT'], ['Sobrevivência', 'SAB']
+  ],
+  tools: [['Ferramentas de Ladrão', 'DES', 'Andarilho']],
+  // Ataques com arma: atk = bônus de acerto; spell = conta como ataque de magia de Feiticeiro (Vantagem com Feitiçaria Inata)
+  attacks: [
+    { id: 'ts-spear1', name: 'Golpe Certeiro + Lança', sub: '1 mão · CAR no acerto e no dano', atk: 6, calc: 'CAR 4 + BP 2', dmg: '1d6+4', type: 'Perfurante ou Radiante', spell: true },
+    { id: 'ts-spear2', name: 'Golpe Certeiro + Lança', sub: '2 mãos (Versátil)', atk: 6, calc: 'CAR 4 + BP 2', dmg: '1d8+4', type: 'Perfurante ou Radiante', spell: true },
+    { id: 'ts-dagger', name: 'Golpe Certeiro + Adaga', sub: 'pode ser arremessada (6/18 m)', atk: 6, calc: 'CAR 4 + BP 2', dmg: '1d4+4', type: 'Perfurante ou Radiante', spell: true },
+    { id: 'dagger', name: 'Adaga', sub: 'Acuidade · Leve · Arremesso 6/18 m', atk: 4, calc: 'DES 2 + BP 2', dmg: '1d4+2', type: 'Perfurante' },
+    { id: 'spear1', name: 'Lança', sub: '1 mão · Arremesso 6/18 m', atk: 1, calc: 'FOR −1 + BP 2', dmg: '1d6-1', type: 'Perfurante' },
+    { id: 'spear2', name: 'Lança', sub: '2 mãos (Versátil)', atk: 1, calc: 'FOR −1 + BP 2', dmg: '1d8-1', type: 'Perfurante' },
+    { id: 'natural', name: 'Armas Naturais', sub: 'só com Alterar-se ativo', atk: 6, calc: 'CAR 4 + BP 2', dmg: '1d6+4', type: 'Cortante, Perfurante ou Contundente' }
+  ],
   slots: { 1: 4, 2: 3 },                // espaços por círculo
   createSlotCost: { 1: 2, 2: 3 },       // Fonte de Magia: PF para criar espaço
   resources: [
@@ -584,100 +733,147 @@ const CHAR = {
   ],
   metamagic: [
     { id: 'quick', name: 'Magia Acelerada', en: 'Quickened Spell', cost: 2, icon: 'i-bolt',
-      desc: 'Uma magia de <b>1 Ação</b> passa a ser conjurada como <b>Ação Bônus</b>. Não funciona se você já conjurou uma magia de 1º círculo ou maior neste turno (nem permite outra depois) — mas sua Ação ainda pode lançar um truque.' },
+      desc: 'Uma magia de <b>1 Ação</b> passa a ser conjurada como <b>Ação Bônus</b>. Não funciona se você já conjurou uma magia de 1º círculo ou maior neste turno (nem permite outra depois) — sua Ação fica para um <b>truque</b>.' },
     { id: 'subtle', name: 'Magia Sutil', en: 'Subtle Spell', cost: 1, icon: 'i-hush',
       desc: 'Conjura sem componentes <b>Verbais, Somáticos ou Materiais</b> (exceto materiais consumidos ou com custo em PO). Ninguém percebe a conjuração.' }
   ],
   passives: [
     { t: 'Conjurador Bélico (War Caster)', items: ['<b>Vantagem</b> nas salvaguardas de CON para manter Concentração (+4).', '<b>Magia Reativa:</b> quando uma criatura provoca seu ataque de oportunidade, use a Reação para conjurar nela uma magia de 1 Ação que tenha só ela como alvo.', 'Executa componentes somáticos com as mãos ocupadas.'] },
-    { t: 'Resiliência Dracônica', items: ['+4 PV máximos (já incluídos nos 30).', 'Sem armadura, CA = 10 + DES + CAR = <b>16</b>.'] },
-    { t: 'Golias — Gigante das Nuvens', items: ['Constituição Poderosa: Vantagem em testes para encerrar a condição Agarrado; conta como um tamanho maior para carga.', 'Forma Grande (a partir do nível 5 de personagem).'] },
-    { t: 'Andarilho (Wayfarer)', items: ['Perícias: Intuição (+2) e Furtividade (+4).', 'Ferramentas de Ladrão (+4).'] }
+    { t: 'Resiliência Dracônica', items: ['+4 PV máximos (já incluídos nos 30).', 'Sem armadura, CA = 10 + DES 2 + CAR 4 = <b>16</b>.'] },
+    { t: 'Golias — Gigante das Nuvens', items: ['<b>Constituição Poderosa:</b> Vantagem em testes para encerrar a condição Agarrado e conta como um tamanho maior para carga — <b>120 kg</b>, todo o equipamento sem penalidade.', 'Forma Grande (a partir do nível 5 de personagem).'] },
+    { t: 'Andarilho (Wayfarer)', items: ['Perícias: Intuição (+2) e Furtividade (+4).', 'Ferramentas de Ladrão (+4).', 'Talento de origem: Sortudo.'] }
   ],
+  /* Inventário. cat: comp | arma | cons | equip.  qty: null = item sem contagem.
+     key liga o item às magias (componentes) — não altere a key. */
   items: [
-    { name: 'Poção de Cura', note: 'Cura 2d4 + 2 PV · beber é Ação Bônus', qty: 2 },
-    { name: 'Tochas', note: 'Luz plena 6 m · queima por 1 hora', qty: 10 },
-    { name: 'Rações (dias)', note: 'Pacote de Explorador', qty: 10 },
-    { name: 'Frascos de Óleo', note: 'Encharca o alvo: +5 de Fogo se ele pegar fogo', qty: 2 },
-    { name: 'Adagas', note: 'Arremesso 6/18 m · 1d4 Perfurante', qty: 2 },
-    { name: 'Diamante (50 PO)', note: 'Componente do Orbe Cromático — não é consumido ❓', qty: 1 },
-    { name: 'Peças de Ouro (PO)', note: 'Toque no nome para ajustar valores grandes', qty: 0 }
+    { key: 'web',     cat: 'comp', name: 'Teia de Aranha',  qty: 49,  unit: 'usos', note: 'Componente de Teia' },
+    { key: 'pepper',  cat: 'comp', name: 'Pimenta Seca',    qty: 19,  unit: 'usos', note: 'Componente de Sopro de Dragão · ~0,1 kg' },
+    { key: 'honey',   cat: 'comp', name: 'Mel (1 cantil)',  qty: 100, unit: 'usos', note: 'Componente de Sugestão · ~0,5 kg · estimativa de 100+ usos' },
+    { key: 'fleece',  cat: 'comp', name: 'Lã',              qty: 10,  unit: 'cm',   note: 'Componente de Força Espectral (e Ilusão Menor) · peso desprezível' },
+    { key: 'diamond', cat: 'comp', name: 'Diamante (50 PO)', qty: 0,  unit: 'un.',  note: 'Exigido pelo Orbe Cromático — não é consumido' },
+    { key: 'focus',   cat: 'arma', name: 'Cetro com Cristal Lapidado', qty: null, note: 'Foco Arcano · substitui componentes materiais sem custo' },
+    { key: 'spear',   cat: 'arma', name: 'Lança',  qty: 1, unit: 'un.', note: '1d6 (1d8 com 2 mãos) Perfurante · Arremesso 6/18 m' },
+    { key: 'dagger',  cat: 'arma', name: 'Adagas', qty: 4, unit: 'un.', note: '1d4 Perfurante · Acuidade, Leve, Arremesso 6/18 m' },
+    { key: 'gold',    cat: 'cons', name: 'Peças de Ouro', qty: 53, unit: 'PO', note: 'Toque no nome para ajustar valores grandes' },
+    { cat: 'cons', name: 'Tochas',          qty: 10, unit: 'un.', note: 'Kit de Masmorra · luz plena 6 m por 1 hora' },
+    { cat: 'cons', name: 'Rações',          qty: 10, unit: 'dias', note: 'Kit de Masmorra' },
+    { cat: 'cons', name: 'Frascos de Óleo', qty: 2,  unit: 'un.', note: 'Kit de Masmorra · alvo encharcado sofre +5 de Fogo se pegar fogo' },
+    { cat: 'cons', name: 'Estrepes',        qty: 1,  unit: 'bolsa', note: 'Kit de Masmorra · cobrem 1,5 m²' },
+    { cat: 'equip', name: 'Ferramentas de Ladrão', qty: null, note: 'Proficiente · +4 (DES 2 + BP 2) · Andarilho' },
+    { cat: 'equip', name: 'Kit de Masmorra', qty: null, note: 'Mochila, Pé de Cabra, Corda, Pederneira, Cantil (+ tochas, rações, óleo e estrepes)' },
+    { cat: 'equip', name: 'Kit de Tarot', qty: null, note: 'Conjunto de jogo (Andarilho)' },
+    { cat: 'equip', name: 'Capa da Ondulação', qty: null, note: 'Item mágico comum · Ação Bônus: a capa ondula dramaticamente' },
+    { cat: 'equip', name: 'Medalha da Casa Frostgaard', qty: null, note: 'Herança do norte' },
+    { cat: 'equip', name: 'Roupas de Viagem', qty: null, note: '' },
+    { cat: 'equip', name: 'Algibeiras', qty: 2, unit: 'un.', note: '' },
+    { cat: 'equip', name: 'Saco de Dormir', qty: null, note: '' }
   ]
 };
 
+const ITEM_CATS = [
+  { id: 'comp',  t: 'Componentes de Conjuração', hint: 'descontados ao conjurar' },
+  { id: 'arma',  t: 'Armas e Foco Arcano' },
+  { id: 'cons',  t: 'Consumíveis e Moedas' },
+  { id: 'equip', t: 'Equipamento e Itens Pessoais' }
+];
+
 const SCHOOL_ICON = { 'Abjuração':'i-shield','Adivinhação':'i-target','Encantamento':'i-charm','Evocação':'i-spark','Ilusão':'i-eye','Invocação':'i-hand','Transmutação':'i-swap' };
 
+/* Rolagens (r):
+   { t:'atk' }                         ataque mágico (+6, Vantagem com Feitiçaria Inata)
+   { t:'atk', bonus:6, spell:false }   ataque que não é de magia
+   { t:'save', a:'DES' }               o alvo faz salvaguarda contra a sua CD
+   { t:'dc', txt:'…' }                 teste contra a sua CD
+   { t:'dmg', d:'2d6', type, label, up:'1d6' (por círculo acima), half, crit, explode, max, orb }
+   { t:'note', txt:'…' }
+   mat: componente ligado ao inventário (key). required = precisa ter, não consome. */
 const SPELLS = [
   /* ------------------------------ TRUQUES ------------------------------ */
   { id:'mind-sliver', name:'Talho Mental', en:'Mind Sliver', level:0, school:'Encantamento', isNew:true,
     time:'1 Ação', range:'18 m (60 pés)', comp:'V', dur:'1 rodada',
-    sum:'1d6 Psíquico (salv. INT) e o alvo subtrai 1d4 da próxima salvaguarda.',
-    desc:['Você tenta fragmentar por um instante a mente de uma criatura que possa ver dentro do alcance. O alvo deve ser bem-sucedido numa <b>salvaguarda de Inteligência</b> (CD 14) ou sofre <b>1d6 de dano Psíquico</b> e <b>subtrai 1d4</b> da próxima salvaguarda que fizer antes do fim do seu próximo turno.'],
-    upgrade:'O dano aumenta em 1d6 nos níveis 5 (2d6), 11 (3d6) e 17 (4d6).',
+    sum:'1d6 Psíquico (salv. INT) e o alvo subtrai 1d4 da próxima salvaguarda.', dmgChip:'1d6',
+    r:[{ t:'save', a:'INT' }, { t:'dmg', d:'1d6', type:'Psíquico', label:'Se o alvo falhar' }, { t:'note', txt:'O alvo subtrai <b>1d4</b> da próxima salvaguarda antes do fim do seu próximo turno.' }],
+    desc:['Você tenta fragmentar por um instante a mente de uma criatura que possa ver dentro do alcance. O alvo deve ser bem-sucedido numa <b>salvaguarda de Inteligência</b> (CD {CD}) ou sofre <b>1d6 de dano Psíquico</b> e <b>subtrai 1d4</b> da próxima salvaguarda que fizer antes do fim do seu próximo turno.'],
+    upgrade:'O dano aumenta em 1d6 nos níveis 5 (2d6), 11 (3d6) e 17 (4d6). No nível 4, o Carisma não soma ao dano.',
     tactic:'Abre o combo principal: aplique o −1d4 com a Ação e, gastando 2 PF em <b>Magia Acelerada</b>, conjure <i>Teia</i>, <i>Sugestão</i> ou <i>Força Espectral</i> na Ação Bônus contra o alvo enfraquecido.' },
   { id:'sorcerous-burst', name:'Explosão Elemental', en:'Sorcerous Burst', level:0, school:'Evocação',
     time:'1 Ação', range:'36 m (120 pés)', comp:'V, S', dur:'Instantânea',
-    sum:'Ataque à distância (+6): 1d8 do elemento escolhido; 8s explodem.',
+    sum:'Ataque à distância (+6): 1d8 do elemento escolhido; 8s explodem.', dmgChip:'1d8',
+    r:[{ t:'atk' }, { t:'dmg', d:'1d8', type:'Frio (ou outro elemento)', label:'Se acertar · 8 explode (até +4d8)', crit:true, explode:8, max:4 }],
     desc:['Você dispara energia mágica contra uma criatura ou objeto dentro do alcance. Faça um <b>ataque mágico à distância (+6)</b>. Se acertar, o alvo sofre <b>1d8</b> de dano de um tipo à sua escolha: Ácido, Elétrico, Frio, Fogo, Psíquico, Trovejante ou Veneno.',
           'Sempre que rolar <b>8</b> num d8 desta magia, role mais um d8 e some ao dano. Esses dados extras podem ocorrer no máximo <b>4 vezes</b> (seu modificador de Carisma) por conjuração.'],
-    upgrade:'O dano aumenta em 1d8 nos níveis 5 (2d8), 11 (3d8) e 17 (4d8).',
+    upgrade:'O dano aumenta em 1d8 nos níveis 5 (2d8), 11 (3d8) e 17 (4d8). No nível 4, o Carisma não soma ao dano.',
     tactic:'Sua artilharia de longo alcance. Escolha <b>Frio</b> para manter a temática gélida.' },
   { id:'true-strike', name:'Golpe Certeiro', en:'True Strike', level:0, school:'Adivinhação',
-    time:'1 Ação', range:'Pessoal', comp:'S, M (uma arma com a qual tenha proficiência, de valor 1 PC ou mais)', dur:'Instantânea',
-    sum:'Ataque com arma usando Carisma (+6); dano pode virar Radiante.',
+    time:'1 Ação', range:'Pessoal', comp:'S, M (arma com proficiência de 1 PC ou mais — sua Lança ou Adaga)', dur:'Instantânea',
+    sum:'Ataque com arma usando Carisma (+6); Lança 1d6+4 / 1d8+4, Adaga 1d4+4.', dmgChip:'1d6+4',
+    r:[{ t:'atk', label:'Ataque com a arma (Carisma)' },
+       { t:'dmg', d:'1d6+4', type:'Perfurante ou Radiante', label:'Lança · 1 mão', crit:true },
+       { t:'dmg', d:'1d8+4', type:'Perfurante ou Radiante', label:'Lança · 2 mãos', crit:true },
+       { t:'dmg', d:'1d4+4', type:'Perfurante ou Radiante', label:'Adaga', crit:true }],
     desc:['Guiado por um lampejo de intuição mágica, você faz um ataque com a arma usada na conjuração. O ataque usa seu <b>Carisma</b> nas jogadas de ataque e de dano (<b>+6</b> para acertar, <b>+4</b> no dano) em vez de Força ou Destreza.',
           'Se o ataque causar dano, ele pode ser <b>Radiante</b> ou do tipo normal da arma, à sua escolha.'],
     upgrade:'O ataque causa dano Radiante extra nos níveis 5 (1d6), 11 (2d6) e 17 (3d6).',
-    tactic:'Útil quando inimigos resistem a frio/psíquico ou quando você precisa de um golpe corpo a corpo com o cetro.' },
+    warn:'O foco arcano <b>não</b> substitui a arma: você precisa empunhar a Lança ou uma Adaga.',
+    tactic:'Seu melhor dano corpo a corpo: Lança com 2 mãos = <b>1d8 + 4</b> (média 8,5). Útil contra quem resiste a frio/psíquico.' },
   { id:'minor-illusion', name:'Ilusão Menor', en:'Minor Illusion', level:0, school:'Ilusão',
-    time:'1 Ação', range:'9 m (30 pés)', comp:'S, M (um pouco de lã)', dur:'1 minuto',
+    time:'1 Ação', range:'9 m (30 pés)', comp:'S, M (um pouco de lã — o foco arcano substitui)', dur:'1 minuto',
     sum:'Cria um som ou a imagem de um objeto (cubo de 1,5 m).',
+    r:[{ t:'dc', txt:'Quem usar Estudar faz teste de INT (Investigação)' }],
     desc:['Você cria um <b>som</b> ou a <b>imagem de um objeto</b> dentro do alcance, que dura até o fim da magia.'],
     list:['<b>Som:</b> de um sussurro a um grito; pode ser contínuo ou intermitente — sua voz, a de outra pessoa, um rugido, passos, tambores…',
           '<b>Imagem:</b> um objeto que caiba num cubo de 1,5 m. A imagem não emite som, luz, cheiro nem outro efeito sensorial.'],
-    desc2:['Interação física revela a ilusão, pois as coisas a atravessam. Uma criatura que use a ação <b>Estudar</b> pode perceber a farsa com um teste de <b>Inteligência (Investigação) contra CD 14</b>; para ela, a ilusão fica translúcida.'],
+    desc2:['Interação física revela a ilusão, pois as coisas a atravessam. Uma criatura que use a ação <b>Estudar</b> pode perceber a farsa com um teste de <b>Inteligência (Investigação) contra CD {CD}</b>; para ela, a ilusão fica translúcida.'],
     tactic:'Uma caixa ilusória num corredor dá cobertura visual para fugir ou se esconder. Combine com Furtividade (+4).' },
   { id:'mage-hand', name:'Mãos Mágicas', en:'Mage Hand', level:0, school:'Invocação',
     time:'1 Ação', range:'9 m (30 pés)', comp:'V, S', dur:'1 minuto',
     sum:'Mão espectral manipula objetos leves (até 5 kg) a distância.',
+    r:[{ t:'note', txt:'Sem rolagens. Carrega até <b>5 kg</b>; não ataca nem ativa itens mágicos.' }],
     desc:['Uma mão espectral flutuante surge num ponto à sua escolha dentro do alcance. Ela some se ficar a mais de 9 m de você ou se você conjurar a magia de novo.',
           'Ao conjurar, você pode usar a mão para manipular um objeto, abrir uma porta ou recipiente destrancado, guardar ou pegar um item de um recipiente aberto, ou esvaziar um frasco.',
           'Nos turnos seguintes, com uma ação <b>Usar Magia</b>, você controla a mão de novo e pode movê-la até 9 m.',
           'A mão não pode atacar, ativar itens mágicos nem carregar mais de <b>5 kg</b>.'],
-    tactic:'Combine com Ferramentas de Ladrão para acionar alavancas, testar armadilhas ou pegar chaves sem se expor.' },
+    tactic:'Combine com as Ferramentas de Ladrão (+4) para acionar alavancas, testar armadilhas ou pegar chaves sem se expor.' },
 
   /* ------------------------------ 1º CÍRCULO ------------------------------ */
   { id:'ice-knife', name:'Faca de Gelo', en:'Ice Knife', level:1, school:'Invocação', isNew:true,
-    time:'1 Ação', range:'18 m (60 pés)', comp:'S, M (uma gota d\'água ou um pedaço de gelo)', dur:'Instantânea',
-    sum:'Ataque (+6): 1d10 Perfurante; explosão de 2d6 Frio (salv. DES) em 1,5 m.',
+    time:'1 Ação', range:'18 m (60 pés)', comp:'S, M (uma gota d\'água ou um pedaço de gelo — o foco arcano substitui)', dur:'Instantânea',
+    sum:'Ataque (+6): 1d10 Perfurante; explosão de 2d6 Frio (salv. DES) em 1,5 m.', dmgChip:'1d10 + 2d6',
+    r:[{ t:'atk' }, { t:'dmg', d:'1d10', type:'Perfurante', label:'No alvo, se acertar', crit:true },
+       { t:'save', a:'DES', txt:'Alvo e todos a até 1,5 m dele · sucesso = 0 de dano' },
+       { t:'dmg', d:'2d6', type:'Frio', label:'Explosão, em quem falhar', up:'1d6' }],
     desc:['Você cria um estilhaço de gelo e o arremessa contra uma criatura dentro do alcance. Faça um <b>ataque mágico à distância (+6)</b>. Se acertar, o alvo sofre <b>1d10 de dano Perfurante</b>.',
-          'Acertando ou errando, o estilhaço <b>explode</b>: o alvo e cada criatura a até 1,5 m dele devem ser bem-sucedidos numa <b>salvaguarda de Destreza</b> (CD 14) ou sofrem <b>2d6 de dano de Frio</b>.'],
+          'Acertando ou errando, o estilhaço <b>explode</b>: o alvo e cada criatura a até 1,5 m dele devem ser bem-sucedidos numa <b>salvaguarda de Destreza</b> (CD {CD}) ou sofrem <b>2d6 de dano de Frio</b>. Quem passa não sofre dano.'],
     higher:'O dano de Frio aumenta em 1d6 por nível de espaço acima do 1º (3d6 com espaço de 2º).',
-    tactic:'Não usa concentração — dano gélido enquanto <i>Teia</i> mantém os inimigos presos (e Contidos têm Desvantagem em salvaguardas de DES).' },
+    tactic:'Não usa concentração — dano gélido enquanto <i>Teia</i> mantém os inimigos presos (Contidos têm Desvantagem em salvaguardas de DES).' },
   { id:'shield', name:'Escudo Arcano', en:'Shield', level:1, school:'Abjuração', reaction:true, effect:'shield',
     time:'1 Reação, quando for atingido por um ataque ou alvo de Mísseis Mágicos', range:'Pessoal', comp:'V, S', dur:'1 rodada',
-    sum:'Reação: +5 na CA (vai a 21) até o início do seu próximo turno.',
+    sum:'Reação: +5 na CA (vai a 21) até o início do seu próximo turno.', dmgChip:'CA 21',
+    r:[{ t:'note', txt:'CA <b>16 → 21</b> até o início do seu próximo turno, inclusive contra o ataque que acionou a magia.' }],
     desc:['Uma barreira invisível de força mágica surge para protegê-lo. Até o início do seu próximo turno, você recebe <b>+5 na CA</b> — inclusive contra o ataque que desencadeou a magia — e não sofre dano de <i>Mísseis Mágicos</i>.'],
-    tactic:'Sua CA vai de <b>16 para 21</b>. Use quando o ataque acertar por 5 ou menos. Acumula com <i>Reflexos</i>.' },
+    tactic:'Use quando o ataque acertar por 5 ou menos. Acumula com <i>Reflexos</i>.' },
   { id:'disguise-self', name:'Disfarçar-se', en:'Disguise Self', level:1, school:'Ilusão',
     time:'1 Ação', range:'Pessoal', comp:'V, S', dur:'1 hora',
     sum:'Muda sua aparência, roupas e equipamento por 1 hora.',
+    r:[{ t:'dc', txt:'Quem usar Estudar faz teste de INT (Investigação)' }],
     desc:['Você faz com que você — incluindo roupas, armadura, armas e pertences — pareça diferente até a magia acabar. Pode parecer até <b>30 cm</b> mais alto ou mais baixo e mais magro ou mais pesado, mas mantém a mesma disposição básica de membros.',
           'As mudanças não resistem a inspeção física: um chapéu ilusório não é tocável e quem tocar seu rosto sente as feições reais.',
-          'Para perceber o disfarce, uma criatura pode usar a ação <b>Estudar</b> e passar num teste de <b>Inteligência (Investigação) contra CD 14</b>.'],
+          'Para perceber o disfarce, uma criatura pode usar a ação <b>Estudar</b> e passar num teste de <b>Inteligência (Investigação) contra CD {CD}</b>.'],
     tactic:'Com <b>Magia Sutil</b> (1 PF), ninguém nota a conjuração. Lembre-se: como Golias, você continua alto — só ±30 cm.' },
   { id:'chromatic-orb', name:'Orbe Cromático', en:'Chromatic Orb', level:1, school:'Evocação', draconic:true,
-    time:'1 Ação', range:'27 m (90 pés)', comp:'V, S, M (um diamante de 50+ PO)', dur:'Instantânea',
-    sum:'Ataque (+6): 3d8 do elemento escolhido; dados iguais fazem o orbe saltar.',
+    mat:{ key:'diamond', required:true },
+    time:'1 Ação', range:'27 m (90 pés)', comp:'V, S, M (um diamante de 50+ PO — não é consumido)', dur:'Instantânea',
+    sum:'Ataque (+6): 3d8 do elemento escolhido; dados iguais fazem o orbe saltar.', dmgChip:'3d8',
+    r:[{ t:'atk' }, { t:'dmg', d:'3d8', type:'Elemental à escolha', label:'Se acertar · dados iguais = salto', up:'1d8', crit:true, orb:true }],
     desc:['Você arremessa uma esfera de energia contra uma criatura dentro do alcance. Escolha Ácido, Elétrico, Frio, Fogo, Trovejante ou Veneno e faça um <b>ataque mágico à distância (+6)</b>. Se acertar, o alvo sofre <b>3d8</b> de dano do tipo escolhido.',
           'Se você rolar o <b>mesmo número em dois ou mais d8</b>, o orbe salta para outro alvo à sua escolha a até 9 m do primeiro: faça um novo ataque e uma nova rolagem de dano.'],
     higher:'+1d8 de dano por nível de espaço acima do 1º. O orbe pode saltar um número de vezes igual ao nível do espaço gasto, e cada criatura só pode ser alvo uma vez por conjuração.',
-    warn:'Exige um <b>diamante de 50 PO</b> (não consumido). O foco arcano não o substitui, e Magia Sutil não dispensa componentes com custo.',
-    tactic:'Seu maior dano de 1º círculo. Varie o elemento conforme as resistências do inimigo.' },
+    tactic:'Seu maior dano de 1º círculo (média 13,5). Varie o elemento conforme as resistências do inimigo.' },
   { id:'command', name:'Comando', en:'Command', level:1, school:'Encantamento', draconic:true,
     time:'1 Ação', range:'18 m (60 pés)', comp:'V', dur:'Instantânea',
     sum:'Ordem de uma palavra (salv. SAB): Aproxime, Largue, Fuja, Rasteje ou Pare.',
-    desc:['Você profere uma ordem de uma palavra a uma criatura que possa ver dentro do alcance. O alvo deve ser bem-sucedido numa <b>salvaguarda de Sabedoria</b> (CD 14) ou segue a ordem no próximo turno dele:'],
+    r:[{ t:'save', a:'SAB', txt:'Se falhar, cumpre a ordem no próximo turno dele' }],
+    desc:['Você profere uma ordem de uma palavra a uma criatura que possa ver dentro do alcance. O alvo deve ser bem-sucedido numa <b>salvaguarda de Sabedoria</b> (CD {CD}) ou segue a ordem no próximo turno dele:'],
     list:['<b>Aproxime-se:</b> move-se até você pelo caminho mais curto e encerra o turno se chegar a 1,5 m.',
           '<b>Largue:</b> solta o que estiver segurando e encerra o turno.',
           '<b>Fuja:</b> gasta o turno se afastando de você pelo meio mais rápido.',
@@ -689,48 +885,60 @@ const SPELLS = [
   /* ------------------------------ 2º CÍRCULO ------------------------------ */
   { id:'mirror-image', name:'Reflexos', en:'Mirror Image', level:2, school:'Ilusão', isNew:true, effect:'mirror',
     time:'1 Ação', range:'Pessoal', comp:'V, S', dur:'1 minuto',
-    sum:'3 duplicatas ilusórias desviam ataques. Sem concentração.',
+    sum:'3 duplicatas ilusórias desviam ataques. Sem concentração.', dmgChip:'3 duplicatas',
+    r:[{ t:'note', txt:'Ao ser <b>atingido</b>, role 1d6 por duplicata restante: qualquer <b>3+</b> faz uma duplicata ser atingida no seu lugar. Use o botão <b>Rolar</b> na barra de efeitos.' }],
     desc:['Três duplicatas ilusórias suas surgem no seu espaço. Até o fim da magia, elas se movem com você e imitam suas ações, trocando de posição para que seja impossível saber qual é a real.',
           'Sempre que uma criatura o <b>atingir</b> com uma jogada de ataque, role <b>um d6 para cada duplicata restante</b>. Se qualquer d6 resultar em <b>3 ou mais</b>, uma duplicata é atingida no seu lugar e destruída. As duplicatas ignoram qualquer outro dano ou efeito; a magia termina quando as três forem destruídas.',
           'Criaturas Cegas, ou com Visão às Cegas ou Visão Verdadeira, não são enganadas.'],
-    tactic:'Conjure no turno 1. Camada defensiva: CA 16 → Reflexos → <i>Escudo Arcano</i> (21). As duplicatas aparecem na barra de efeitos para você riscar.' },
+    tactic:'Conjure no turno 1. Camada defensiva: CA 16 → Reflexos → <i>Escudo Arcano</i> (21).' },
   { id:'web', name:'Teia', en:'Web', level:2, school:'Invocação', conc:true,
+    mat:{ key:'web', n:1 },
     time:'1 Ação', range:'18 m (60 pés)', comp:'V, S, M (um pedaço de teia de aranha)', dur:'Concentração, até 1 hora',
-    sum:'Cubo de 6 m de teias: terreno difícil e Contido (salv. DES).',
+    sum:'Cubo de 6 m de teias: terreno difícil e Contido (salv. DES).', dmgChip:'Contido',
+    r:[{ t:'save', a:'DES', txt:'Ao entrar ou começar o turno nas teias · falha = Contido' },
+       { t:'dc', txt:'Contido usa uma ação: FOR (Atletismo) para se soltar' },
+       { t:'dmg', d:'2d4', type:'Fogo', label:'Teia em chamas, por cubo de 1,5 m' }],
     desc:['Você conjura uma massa de teias pegajosas num ponto dentro do alcance, preenchendo um <b>Cubo de 6 m</b>. As teias são <b>Terreno Difícil</b> e a área fica <b>Levemente Obscurecida</b>.',
           'Se não estiverem ancoradas entre duas massas sólidas (paredes, árvores) ou estendidas sobre chão, parede ou teto, as teias desabam e a magia termina no início do seu próximo turno. Sobre uma superfície plana, têm 1,5 m de profundidade.',
-          'Na primeira vez que uma criatura entra nas teias num turno, ou começa o turno nelas, deve passar numa <b>salvaguarda de Destreza</b> (CD 14) ou fica <b>Contida</b> enquanto estiver nelas ou até se libertar.',
-          'Uma criatura Contida pode usar uma ação para fazer um teste de <b>Força (Atletismo) contra CD 14</b>; se passar, se solta.',
+          'Na primeira vez que uma criatura entra nas teias num turno, ou começa o turno nelas, deve passar numa <b>salvaguarda de Destreza</b> (CD {CD}) ou fica <b>Contida</b> enquanto estiver nelas ou até se libertar.',
+          'Uma criatura Contida pode usar uma ação para fazer um teste de <b>Força (Atletismo) contra CD {CD}</b>; se passar, se solta.',
           'As teias são inflamáveis: cada cubo de 1,5 m exposto ao fogo queima em 1 rodada, causando <b>2d4 de Fogo</b> a quem começar o turno nele.'],
     tactic:'Seu principal controle de grupo. Ataques contra criaturas Contidas têm <b>Vantagem</b>, e elas têm Desvantagem em salvaguardas de DES — combine com <i>Faca de Gelo</i>.' },
   { id:'suggestion', name:'Sugestão', en:'Suggestion', level:2, school:'Encantamento', conc:true,
+    mat:{ key:'honey', n:1 },
     time:'1 Ação', range:'9 m (30 pés)', comp:'V, M (uma gota de mel)', dur:'Concentração, até 8 horas',
-    sum:'Alvo Enfeitiçado segue uma sugestão razoável (salv. SAB).',
+    sum:'Alvo Enfeitiçado segue uma sugestão razoável (salv. SAB).', dmgChip:'Enfeitiçado',
+    r:[{ t:'save', a:'SAB', txt:'Falha = Enfeitiçado até cumprir ou sofrer dano seu/dos aliados' }],
     desc:['Você sugere um curso de ação — descrito em <b>até 25 palavras</b> — a uma criatura que possa ver dentro do alcance e que possa ouvi-lo e compreendê-lo. A sugestão deve soar realizável e não pode envolver nada obviamente danoso ao alvo ou a seus aliados.',
-          'O alvo deve passar numa <b>salvaguarda de Sabedoria</b> (CD 14) ou fica <b>Enfeitiçado</b> pela duração, ou até que você ou seus aliados lhe causem dano. Enfeitiçado, segue a sugestão da melhor forma possível.',
+          'O alvo deve passar numa <b>salvaguarda de Sabedoria</b> (CD {CD}) ou fica <b>Enfeitiçado</b> pela duração, ou até que você ou seus aliados lhe causem dano. Enfeitiçado, segue a sugestão da melhor forma possível.',
           'Se a atividade puder ser concluída antes do fim da duração, a magia termina para o alvo quando ele a concluir.'],
     tactic:'Ex.: "Leve-nos até o capitão pela passagem dos fundos e não alerte ninguém." Com <b>Magia Sutil</b>, conjure no meio de um interrogatório sem ser notado.' },
   { id:'phantasmal-force', name:'Força Espectral', en:'Phantasmal Force', level:2, school:'Ilusão', conc:true,
+    mat:{ key:'fleece', n:1 },
     time:'1 Ação', range:'18 m (60 pés)', comp:'V, S, M (um pouco de lã)', dur:'Concentração, até 1 minuto',
-    sum:'Ilusão só o alvo percebe (salv. INT); até 2d8 Psíquico por turno.',
-    desc:['Você tenta implantar uma ilusão na mente de uma criatura que possa ver dentro do alcance. O alvo faz uma <b>salvaguarda de Inteligência</b> (CD 14). Se falhar, você cria um objeto, criatura ou fenômeno fantasmagórico que caiba num <b>Cubo de 3 m</b> e que <b>só o alvo percebe</b>, com som, temperatura e outros estímulos.',
-          'O alvo pode usar a ação <b>Estudar</b> e fazer um teste de <b>Inteligência (Investigação) contra CD 14</b>; se passar, percebe a ilusão e a magia termina.',
+    sum:'Ilusão só o alvo percebe (salv. INT); até 2d8 Psíquico por turno.', dmgChip:'2d8/turno',
+    r:[{ t:'save', a:'INT' }, { t:'dmg', d:'2d8', type:'Psíquico', label:'Em cada um dos seus turnos' }, { t:'dc', txt:'O alvo pode usar Estudar: INT (Investigação) para desfazer' }],
+    desc:['Você tenta implantar uma ilusão na mente de uma criatura que possa ver dentro do alcance. O alvo faz uma <b>salvaguarda de Inteligência</b> (CD {CD}). Se falhar, você cria um objeto, criatura ou fenômeno fantasmagórico que caiba num <b>Cubo de 3 m</b> e que <b>só o alvo percebe</b>, com som, temperatura e outros estímulos.',
+          'O alvo pode usar a ação <b>Estudar</b> e fazer um teste de <b>Inteligência (Investigação) contra CD {CD}</b>; se passar, percebe a ilusão e a magia termina.',
           'Enquanto afetado, o alvo trata o fantasma como real e racionaliza qualquer resultado ilógico.',
           'Se o fantasma for uma criatura ou perigo, em cada um dos seus turnos ele pode causar <b>2d8 de dano Psíquico</b> ao alvo se ele estiver na área do fantasma ou a até 1,5 m dele. O alvo percebe o dano como de um tipo coerente com a ilusão.'],
     tactic:'Combine com <i>Talho Mental</i> (−1d4 na salvaguarda de INT). Uma jaula ou um abismo ilusório pode prender o alvo na percepção dele.' },
   { id:'alter-self', name:'Alterar-se', en:'Alter Self', level:2, school:'Transmutação', conc:true, draconic:true,
     time:'1 Ação', range:'Pessoal', comp:'V, S', dur:'Concentração, até 1 hora',
-    sum:'Adaptação aquática, mudar aparência ou armas naturais (1d6 + 4).',
+    sum:'Adaptação aquática, mudar aparência ou armas naturais (1d6 + 4).', dmgChip:'1d6+4',
+    r:[{ t:'atk', spell:false, label:'Arma natural (Carisma)' }, { t:'dmg', d:'1d6+4', type:'Cortante, Perfurante ou Contundente', label:'Arma natural', crit:true }],
     desc:['Você altera sua forma física. Escolha uma opção; durante a duração, pode usar uma ação <b>Usar Magia</b> para trocá-la por outra.'],
     list:['<b>Adaptação Aquática:</b> guelras e membranas entre os dedos; respira debaixo d\'água e ganha Deslocamento de Natação igual ao seu (10,5 m).',
           '<b>Mudar Aparência:</b> altura, peso, feições, voz, cabelo e cores — pode parecer de outra espécie (suas estatísticas não mudam). Não altera tamanho nem forma básica. Toque físico não revela o disfarce.',
           '<b>Armas Naturais:</b> garras (Cortante), presas ou chifres (Perfurante) ou cascos (Contundente). Seu Ataque Desarmado com elas causa <b>1d6 + 4</b> e usa Carisma (<b>+6</b> para acertar).'],
     tactic:'Disfarce "tátil" real, superior a <i>Disfarçar-se</i> para infiltração longa — mas exige concentração.' },
   { id:'dragons-breath', name:'Sopro de Dragão', en:'Dragon\'s Breath', level:2, school:'Transmutação', conc:true, draconic:true,
+    mat:{ key:'pepper', n:1 },
     time:'1 Ação Bônus', range:'Toque', comp:'V, S, M (uma pimenta picante)', dur:'Concentração, até 1 minuto',
-    sum:'Alvo exala cone de 4,5 m: 3d6 do elemento (salv. DES, metade).',
+    sum:'Alvo exala cone de 4,5 m: 3d6 do elemento (salv. DES, metade).', dmgChip:'3d6',
+    r:[{ t:'save', a:'DES', txt:'Cone de 4,5 m · sucesso = metade do dano' }, { t:'dmg', d:'3d6', type:'Frio (ou outro elemento)', label:'Por sopro (ação Usar Magia)', half:true }],
     desc:['Você toca uma criatura voluntária (pode ser você) e escolhe Ácido, Elétrico, Frio, Fogo ou Veneno. Até a magia acabar, o alvo pode usar uma ação <b>Usar Magia</b> para exalar um <b>Cone de 4,5 m</b>.',
-          'Cada criatura na área faz uma <b>salvaguarda de Destreza</b> (CD 14), sofrendo <b>3d6</b> de dano do tipo escolhido se falhar, ou metade se passar.'],
+          'Cada criatura na área faz uma <b>salvaguarda de Destreza</b> (CD {CD}), sofrendo <b>3d6</b> de dano do tipo escolhido se falhar, ou metade se passar.'],
     higher:'O dano aumenta em 1d6 por nível de espaço acima do 2º.',
     tactic:'Por ser Ação Bônus, dá para tocar um aliado e ainda usar sua Ação num truque. Escolha <b>Frio</b> como herdeiro dos dragões brancos.' }
 ];
@@ -744,10 +952,11 @@ const LEVELS = Object.keys(CHAR.slots).map(Number);
 const ORD = n => n + 'º';
 const RES = Object.fromEntries(CHAR.resources.map(r => [r.id, r]));
 const SPELL = Object.fromEntries(SPELLS.map(s => [s.id, s]));
+const TABS = ['ficha', 'magia', 'grimorio', 'recursos', 'mochila'];
 
 function defaultState() {
   return {
-    v: 1,
+    v: 2,
     used:  Object.fromEntries(LEVELS.map(l => [l, 0])),
     extra: Object.fromEntries(LEVELS.map(l => [l, 0])),
     res:   Object.fromEntries(CHAR.resources.map(r => [r.id, r.max])),
@@ -772,12 +981,17 @@ function sanitize(raw) {
   d.temp = int(raw.temp, 0, 999, 0);
   d.conc = SPELL[raw.conc]?.conc ? raw.conc : null;
   d.fx.innate = !!raw.fx?.innate; d.fx.shield = !!raw.fx?.shield; d.fx.mirror = int(raw.fx?.mirror, 0, 3, 0);
-  if (Array.isArray(raw.items)) {
+  // v1 tinha um inventário genérico: a partir da v2 usa-se o inventário exato da ficha.
+  if ((raw.v || 1) >= 2 && Array.isArray(raw.items)) {
+    const cats = ITEM_CATS.map(c => c.id);
     d.items = raw.items.filter(it => it && typeof it.name === 'string').map((it, i) => ({
-      id: String(it.id || 'it' + Date.now() + i), name: it.name.slice(0, 80), note: String(it.note || '').slice(0, 160), qty: int(it.qty, 0, 999999, 0)
+      id: String(it.id || 'it' + Date.now() + i), name: it.name.slice(0, 80), note: String(it.note || '').slice(0, 160),
+      qty: it.qty === null || it.qty === undefined || it.qty === '' ? null : int(it.qty, 0, 999999, 0),
+      cat: cats.includes(it.cat) ? it.cat : 'cons', unit: String(it.unit || '').slice(0, 12),
+      ...(it.key ? { key: String(it.key) } : {})
     }));
   }
-  if (['magia', 'grimorio', 'recursos', 'mochila'].includes(raw.ui?.tab)) d.ui.tab = raw.ui.tab;
+  if (TABS.includes(raw.ui?.tab)) d.ui.tab = raw.ui.tab;
   if (typeof raw.ui?.filter === 'string') d.ui.filter = raw.ui.filter;
   return d;
 }
@@ -829,6 +1043,70 @@ const dc = () => CHAR.stats.dc + (state.fx.innate ? 1 : 0);
 const ac = () => CHAR.stats.ac + (state.fx.shield ? CHAR.stats.shieldBonus : 0);
 const norm = s => [...String(s)].map(ch => ch.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase()).join('');
 const strip = s => String(s).replace(/<[^>]+>/g, '');
+const fmt = s => String(s ?? '').replace(/\{CD\}/g, dc());
+const modOf = score => Math.floor((score - 10) / 2);
+const abil = k => CHAR.abilities.find(a => a.k === k);
+const decimal = n => String(Math.round(n * 10) / 10).replace('.', ',');
+const SAVE_NAME = { FOR: 'Força', DES: 'Destreza', CON: 'Constituição', INT: 'Inteligência', SAB: 'Sabedoria', CAR: 'Carisma' };
+const matItem = key => state.items.find(i => i.key === key);
+const matQty = key => matItem(key)?.qty ?? 0;
+const blocked = s => !!(s.mat?.required && matQty(s.mat.key) < 1);
+
+/* =====================================================================
+   DADOS (rolagens)
+   ===================================================================== */
+function parseDice(expr) {
+  const m = /^(\d+)d(\d+)([+-]\d+)?$/.exec(String(expr).replace(/\s/g, '').replace('−', '-'));
+  return m ? { n: +m[1], f: +m[2], mod: +(m[3] || 0) } : { n: 0, f: 0, mod: 0 };
+}
+const avgOf = expr => { const p = parseDice(expr); return p.n * (p.f + 1) / 2 + p.mod; };
+const showDice = expr => String(expr).replace(/([+-])(\d+)$/, (m, sg, n) => ` ${sg === '-' ? '−' : '+'} ${n}`);
+function addDice(expr, extra, times) {
+  const p = parseDice(expr), e = parseDice(extra);
+  return `${p.n + e.n * times}d${p.f}${p.mod ? (p.mod > 0 ? '+' : '') + p.mod : ''}`;
+}
+function rollDice(expr, o = {}) {
+  const p = parseDice(expr), count = o.crit ? p.n * 2 : p.n, dice = [], extra = [];
+  for (let i = 0; i < count; i++) dice.push(d(p.f));
+  if (o.explode) {
+    let k = dice.filter(x => x === o.explode).length;
+    while (k > 0 && extra.length < (o.max || 0)) { const r = d(p.f); extra.push(r); k--; if (r === o.explode) k++; }
+  }
+  return { dice, extra, mod: p.mod, total: Math.max(0, dice.concat(extra).reduce((a, b) => a + b, 0) + p.mod) };
+}
+let critSrc = null, rollTimer;
+function showRoll(label, total, detail, extra = '', cls = '') {
+  const el = $('#roll');
+  el.className = 'rollpop show ' + cls;
+  el.innerHTML = `<div class="rp-l">${label}</div><div class="rp-t num">${total}</div><div class="rp-b">${detail}</div>${extra ? `<div class="rp-x">${extra}</div>` : ''}`;
+  clearTimeout(rollTimer); rollTimer = setTimeout(() => el.classList.remove('show'), 8000);
+}
+function doRoll(ds) {
+  if (ds.kind === 'd20') {
+    const bonus = +ds.bonus, adv = ds.adv === 'spell' && state.fx.innate, isAtk = ds.atk === '1';
+    const a = d(20), b = adv ? d(20) : 0, k = adv ? Math.max(a, b) : a;
+    let extra = '', cls = '';
+    if (isAtk) critSrc = k === 20 ? ds.src : null;
+    if (k === 20) { cls = 'crit'; extra = isAtk ? '20 natural — CRÍTICO! A próxima rolagem de dano desta arma/magia dobra os dados.' : '20 natural!'; }
+    else if (k === 1) { cls = 'fail'; extra = isAtk ? '1 natural — erro automático.' : '1 natural.'; }
+    showRoll(esc(ds.label), k + bonus, `🎲 ${adv ? `${a} e ${b} → <b>${k}</b> (Vantagem)` : a} ${sign(bonus)}`, extra, cls);
+  } else {
+    const crit = ds.crit === '1' && !!critSrc && critSrc === ds.src;
+    const r = rollDice(ds.expr, { crit, explode: +ds.explode || 0, max: +ds.max || 0 });
+    if (crit) critSrc = null;
+    const detail = `🎲 ${crit ? 'crítico · ' : ''}[${r.dice.join(', ')}]${r.extra.length ? ` + explosão [${r.extra.join(', ')}]` : ''}${r.mod ? ` ${sign(r.mod)}` : ''}`;
+    const extras = [];
+    if (ds.half === '1') extras.push(`Quem passar na salvaguarda sofre <b>${Math.floor(r.total / 2)}</b>.`);
+    if (ds.orb === '1' && new Set(r.dice).size < r.dice.length) extras.push('Dados iguais: o orbe <b>salta</b> para outro alvo a até 9 m!');
+    showRoll(esc(ds.label) + (ds.type ? ` · ${esc(ds.type)}` : ''), r.total, detail, extras.join(' '), crit ? 'crit' : '');
+  }
+}
+/** Botão que rola dados. o = {kind:'d20'|'dmg', bonus, expr, label, src, atk, adv, crit, explode, max, half, orb, type} */
+function rollBtn(o, inner, cls = 'rb') {
+  const data = Object.entries(o).filter(([, v]) => v !== undefined && v !== null && v !== false)
+    .map(([k, v]) => `data-${k}="${esc(v === true ? '1' : v)}"`).join(' ');
+  return `<button class="${cls}" data-action="roll" ${data}>${inner}</button>`;
+}
 
 let toastTimer;
 function toast(msg, undoable = true) {
@@ -874,7 +1152,7 @@ function renderEffects() {
   if (f.mirror) {
     const pips = [0, 1, 2].map(i => `<button class="${i < f.mirror ? '' : 'off'}" data-action="mirror-hit" data-i="${i}" aria-label="Duplicata ${i + 1}${i < f.mirror ? ' — tocar quando for destruída' : ' destruída'}"><i></i></button>`).join('');
     out.push(`<span class="fx" style="--c:var(--silver)">${icon('i-mirror')}<span><b>Reflexos</b></span><span class="mini">${pips}</span>
-      <button class="x" data-action="fx-end" data-fx="mirror" aria-label="Encerrar Reflexos">${icon('i-x')}</button></span>`);
+      <button class="act" data-action="mirror-roll" title="Fui atingido: rolar 1d6 por duplicata">Rolar</button><button class="x" data-action="fx-end" data-fx="mirror" aria-label="Encerrar Reflexos">${icon('i-x')}</button></span>`);
   }
   $('#effects').innerHTML = out.join('');
 }
@@ -915,12 +1193,58 @@ function renderFom() {
 }
 
 function renderReminders() {
-  $('#reminders').innerHTML = `<ul style="margin:0;padding-left:18px;display:grid;gap:6px">
-    <li><b>CD ${dc()}</b> · ataque mágico <b>${sign(CHAR.stats.atk)}</b>${state.fx.innate ? ' <b>com Vantagem</b>' : ''} <small>(Feitiçaria Inata: CD 15 e Vantagem)</small></li>
-    <li><b>Um espaço de magia por turno</b> (regra 2024). Com <i>Magia Acelerada</i>, sua Ação ainda pode lançar um truque.</li>
-    <li><b>Concentração:</b> CON ${sign(CHAR.stats.conSave)} com <b>Vantagem</b> (Conjurador Bélico). CD = 10 ou metade do dano, o que for maior.</li>
-    <li><b>Defesa em camadas:</b> CA 16 → <i>Reflexos</i> → <i>Escudo Arcano</i> (CA 21).</li>
-    <li><b>Mobilidade:</b> <i>Salto das Nuvens</i> (Ação Bônus, 9 m) não provoca ataques de oportunidade.</li></ul>`;
+  const sp = state.res.sp, s1 = totalAvail(1);
+  $('#reminders').innerHTML = `<div class="turn">
+    <div class="tr"><span class="tk a">Ação</span><p>Magia ou truque: ataque <b>${sign(CHAR.stats.atk)}</b>${state.fx.innate ? ' <b>com Vantagem</b>' : ''} ou <b>CD ${dc()}</b>. <i>Talho Mental</i> 1d6 (−1d4) · <i>Explosão Elemental</i> 1d8 · <i>Faca de Gelo</i> 1d10 + 2d6 · <i>Golpe Certeiro</i> 1d8 + 4.</p></div>
+    <div class="tr"><span class="tk b">Ação Bônus</span><p><i>Salto das Nuvens</i> (<b>${state.res.jaunt}/2</b>) · <i>Feitiçaria Inata</i> (<b>${state.res.innate}/2</b>) · <i>Magia Acelerada</i> (2 PF — você tem <b>${sp}</b>) · <i>Sopro de Dragão</i>.</p></div>
+    <div class="tr"><span class="tk m">Movimento</span><p><b>10,5 m</b>. O Salto das Nuvens teleporta 9 m sem provocar ataques de oportunidade.</p></div>
+    <div class="tr"><span class="tk r">Reação</span><p><i>Escudo Arcano</i> → <b>CA 21</b> (${s1} espaço${s1 === 1 ? '' : 's'} de 1º) · <b>Magia Reativa</b> quando alguém provoca seu ataque de oportunidade.</p></div>
+  </div>
+  <ul class="rules">
+    <li><b>Um espaço de magia por turno</b> (2024): magia acelerada na Ação Bônus deixa a Ação só para truques (ex.: <i>Teia</i> acelerada + <i>Talho Mental</i>).</li>
+    <li><b>Concentração:</b> salvaguarda de CON <b>+4 com Vantagem</b> contra CD 10 ou metade do dano sofrido (o maior).</li>
+    <li>Truques e magias <b>não somam Carisma ao dano</b> no nível 4 — só <i>Golpe Certeiro</i> e as armas naturais de <i>Alterar-se</i>.</li></ul>`;
+}
+
+/* =====================================================================
+   ABA FICHA
+   ===================================================================== */
+function renderFicha() {
+  const s = CHAR.stats, pb = s.pb;
+  $('#abil').innerHTML = CHAR.abilities.map(a => {
+    const m = modOf(a.s), sv = m + (a.prof ? pb : 0);
+    return `<div class="abil ${a.prof ? 'prof' : ''}">
+      ${rollBtn({ kind: 'd20', bonus: m, label: `Teste de ${a.n}` }, `<span class="ab-k">${a.k}</span><span class="ab-m num">${sign(m)}</span><span class="ab-s num">${a.s}</span>`, 'ab-main')}
+      ${rollBtn({ kind: 'd20', bonus: sv, label: `Salvaguarda de ${a.n}` }, `<span>Salv.</span><b class="num">${sign(sv)}</b>${a.prof ? '<i class="pdot" title="Proficiente"></i>' : ''}`, 'ab-save')}
+      ${a.note ? `<span class="ab-note">${a.note}</span>` : ''}</div>`;
+  }).join('');
+
+  $('#atk-hint').textContent = state.fx.innate ? 'Golpe Certeiro com Vantagem' : 'toque para rolar';
+  $('#attacks').innerHTML = CHAR.attacks.map(w => `<div class="atk-row">
+      <div class="atk-t"><b>${w.name}</b><span>${w.sub}</span></div>
+      ${rollBtn({ kind: 'd20', bonus: w.atk, atk: 1, src: w.id, adv: w.spell ? 'spell' : null, label: `${w.name} · ataque` }, `<small>ATQ</small><b class="num">${sign(w.atk)}</b>`, 'rb atk')}
+      ${rollBtn({ kind: 'dmg', expr: w.dmg, crit: 1, src: w.id, type: w.type, label: `${w.name} · dano` }, `<small>DANO</small><b class="num">${showDice(w.dmg)}</b>`, 'rb dmg')}
+      <div class="atk-c">Acerto: ${w.calc} · ${w.type} · média ${decimal(avgOf(w.dmg))}</div></div>`).join('');
+
+  const rows = [
+    ['Classe de Armadura', ac(), `10 + DES 2 + CAR 4 (Resiliência Dracônica)${state.fx.shield ? ' + 5 Escudo Arcano' : ' · 21 com Escudo Arcano'}`, state.fx.shield],
+    ['Pontos de Vida', s.hpMax, '8 (nv 1: 6 + CON 2) + 18 (3 × [4 + CON 2]) + 4 (Resiliência Dracônica)'],
+    ['CD de Magia', dc(), `8 + BP 2 + CAR 4${state.fx.innate ? ' + 1 Feitiçaria Inata' : ' · 15 com Feitiçaria Inata'}`, state.fx.innate],
+    ['Ataque Mágico', sign(s.atk), `BP 2 + CAR 4${state.fx.innate ? ' · com Vantagem' : ' · Vantagem com Feitiçaria Inata'}`, state.fx.innate],
+    ['Iniciativa', sign(s.init), 'DES 2'],
+    ['Percepção Passiva', 10 + modOf(abil('SAB').s), '10 + SAB 0'],
+    ['Deslocamento', s.speed, '35 pés · Salto das Nuvens: 9 m'],
+    ['Bônus de Proficiência', sign(pb), 'Nível de personagem 4'],
+    ['Carga Máxima', CHAR.carry, 'FOR 8 · Constituição Poderosa (conta como Grande)']
+  ];
+  $('#calc').innerHTML = rows.map(([n, v, f, boost]) => `<div class="calc-row ${boost ? 'boost' : ''}"><b>${n}</b><span class="cv num">${v}</span><span>${f}</span></div>`).join('');
+
+  const line = ([n, k, src]) => {
+    const v = modOf(abil(k).s) + (src ? pb : 0);
+    return rollBtn({ kind: 'd20', bonus: v, label: `${n} (${k})` },
+      `<span class="sk-n"><i class="pdot ${src ? '' : 'off'}"></i>${n} <small>${k}${src ? ' · ' + src : ''}</small></span><b class="num">${sign(v)}</b>`, `skill ${src ? 'prof' : ''}`);
+  };
+  $('#skills').innerHTML = CHAR.skills.map(line).join('') + `<p class="sub-h" style="grid-column:1/-1">Ferramentas</p>` + CHAR.tools.map(line).join('');
 }
 
 /* =====================================================================
@@ -956,7 +1280,11 @@ function renderFilters() {
 }
 
 function spellCard(s, q) {
-  const tags = [];
+  const tags = [], rr = s.r || [], atk = rr.find(x => x.t === 'atk');
+  if (atk) tags.push(`<span class="tag atk">ATQ ${sign(atk.bonus ?? CHAR.stats.atk)}</span>`);
+  rr.filter(x => x.t === 'save').forEach(x => tags.push(`<span class="tag save">CD ${dc()} · ${x.a}</span>`));
+  if (s.dmgChip) tags.push(`<span class="tag dmg">${esc(s.dmgChip)}</span>`);
+  if (blocked(s)) tags.push('<span class="tag block">Bloqueada</span>');
   if (s.time !== '1 Ação') tags.push(`<span class="tag ${s.reaction ? 'react' : ''}">${s.reaction ? 'Reação' : esc(s.time)}</span>`);
   tags.push(`<span class="tag">${esc(s.range.replace(/ \(.*\)/, ''))}</span>`);
   if (s.conc) tags.push('<span class="tag conc">Concentração</span>');
@@ -1036,17 +1364,33 @@ function renderPassives() {
 /* =====================================================================
    ABA MOCHILA
    ===================================================================== */
+function itemRow(it) {
+  const hasQ = it.qty !== null && it.qty !== undefined, id = esc(it.id);
+  const tags = [];
+  const out = it.key === 'diamond' && !it.qty;
+  if (it.key && !out) SPELLS.filter(sp => sp.mat?.key === it.key).forEach(sp => tags.push(`<span class="tag ${lvClass(sp.level)}" style="color:var(--c);border-color:color-mix(in srgb,var(--c) 45%,transparent)">${sp.name}</span>`));
+  if (out) tags.push('<span class="tag block">Orbe Cromático bloqueada</span>');
+  else if (it.cat === 'comp' && hasQ && it.qty > 0 && it.qty <= 3) tags.push('<span class="tag conc">Acabando</span>');
+  else if (it.cat === 'comp' && hasQ && !it.qty) tags.push('<span class="tag block">Esgotado — use o foco</span>');
+  return `<div class="item ${hasQ && !it.qty ? 'zero' : ''}">
+    <button class="it" data-action="item-edit" data-id="${id}"><b>${esc(it.name)}</b>${it.note ? `<span>${esc(it.note)}</span>` : ''}${tags.length ? `<span class="tags">${tags.join('')}</span>` : ''}</button>
+    ${hasQ ? `<div class="counter"><button class="step" data-action="item-step" data-id="${id}" data-d="-1" ${it.qty ? '' : 'disabled'} aria-label="Gastar ${esc(it.name)}">−</button>
+      <div class="v num">${it.qty}${it.unit ? `<small>${esc(it.unit)}</small>` : ''}</div>
+      <button class="step" data-action="item-step" data-id="${id}" data-d="1" aria-label="Adicionar ${esc(it.name)}">+</button></div>`
+    : `<span class="chev">${icon('i-chev')}</span>`}</div>`;
+}
 function renderItems() {
-  $('#items').innerHTML = state.items.length ? state.items.map(it => `<div class="item ${it.qty ? '' : 'zero'}">
-      <button class="it" data-action="item-edit" data-id="${esc(it.id)}"><b>${esc(it.name)}</b>${it.note ? `<span>${esc(it.note)}</span>` : ''}</button>
-      <div class="counter"><button class="step" data-action="item-step" data-id="${esc(it.id)}" data-d="-1" ${it.qty ? '' : 'disabled'} aria-label="Gastar ${esc(it.name)}">−</button>
-        <div class="v num">${it.qty}</div>
-        <button class="step" data-action="item-step" data-id="${esc(it.id)}" data-d="1" aria-label="Adicionar ${esc(it.name)}">+</button></div></div>`).join('')
-    : '<p class="empty">Mochila vazia. Adicione poções, tochas, flechas…</p>';
+  const html = ITEM_CATS.map(c => {
+    const list = state.items.filter(i => (i.cat || 'cons') === c.id);
+    if (!list.length) return '';
+    return `<section class="inv-group lvG"><div class="group-h"><h3>${c.t}</h3><span class="rule"></span>${c.hint ? `<span class="aside note">${c.hint}</span>` : ''}</div>
+      <div class="items">${list.map(itemRow).join('')}</div></section>`;
+  }).join('');
+  $('#items').innerHTML = html || '<p class="empty">Inventário vazio.</p>';
 }
 
 function render() {
-  renderStats(); renderEffects(); renderSlots(); renderFom(); renderReminders();
+  renderStats(); renderEffects(); renderFicha(); renderSlots(); renderFom(); renderReminders();
   renderFilters(); renderGrim(); renderHp(); renderRes(); renderMeta(); renderItems();
   popKey = null;
   if (modalRefresh) modalRefresh();
@@ -1079,52 +1423,95 @@ let castMeta = new Set();
 const META = Object.fromEntries(CHAR.metamagic.map(m => [m.id, m]));
 const metaCost = () => [...castMeta].reduce((a, id) => a + META[id].cost, 0);
 
+let castMat = true;
+function rollsSection(s) {
+  if (!s.r || !s.r.length) return '';
+  const rows = s.r.map(x => {
+    if (x.t === 'atk') {
+      const bonus = x.bonus ?? CHAR.stats.atk, spell = x.spell !== false, adv = spell && state.fx.innate;
+      return `<div class="rr"><span class="rk atk">ATQ</span><div class="rt"><b>${x.label || 'Ataque mágico'} ${sign(bonus)}</b>
+        <span>d20 + ${bonus} (BP 2 + CAR 4)${adv ? ' · <b>Vantagem</b> (Feitiçaria Inata)' : ''}</span></div>
+        ${rollBtn({ kind: 'd20', bonus, atk: 1, src: s.id, adv: spell ? 'spell' : null, label: `${s.name} · ataque` }, `${icon('i-d20')}<b class="num">${sign(bonus)}</b>`)}</div>`;
+    }
+    if (x.t === 'save') return `<div class="rr"><span class="rk save">CD ${dc()}</span><div class="rt"><b>Salvaguarda de ${SAVE_NAME[x.a]}</b><span>${x.txt || 'O alvo rola contra a sua CD'}</span></div></div>`;
+    if (x.t === 'dc') return `<div class="rr"><span class="rk save">CD ${dc()}</span><div class="rt"><b>${x.txt}</b></div></div>`;
+    if (x.t === 'note') return `<div class="rr"><span class="rk note">NOTA</span><div class="rt"><span>${x.txt}</span></div></div>`;
+    const variants = [[x.d, s.level]];
+    if (x.up) LEVELS.filter(l => l > s.level).forEach(l => variants.push([addDice(x.d, x.up, l - s.level), l]));
+    const btns = variants.map(([e, l]) => rollBtn({ kind: 'dmg', expr: e, src: s.id, crit: x.crit, explode: x.explode, max: x.max, half: x.half, orb: x.orb, type: x.type,
+      label: s.name + (l > s.level ? ` (${ORD(l)} círc.)` : '') }, `${icon('i-die')}<b class="num">${showDice(e)}</b>${l > s.level ? `<small>${ORD(l)}</small>` : ''}`)).join('');
+    return `<div class="rr"><span class="rk dmg">DANO</span><div class="rt"><b>${showDice(x.d)} ${x.type}</b>
+      <span>${x.label ? x.label + ' · ' : ''}média ${decimal(avgOf(x.d))}${x.half ? ' · metade se passar' : ''}${x.up ? ` · +${x.up} por círculo acima` : ''}</span></div><div class="rbs">${btns}</div></div>`;
+  }).join('');
+  return `<div class="rolls-box"><h4>Números e rolagens</h4>${rows}</div>`;
+}
+
 function castSection(s) {
-  const spent = metaCost();
+  const spent = metaCost(), blk = blocked(s);
   const metas = CHAR.metamagic.map(m => {
     const on = castMeta.has(m.id), okType = m.id !== 'quick' || s.time === '1 Ação';
     const can = okType && (on || state.res.sp - spent >= m.cost);
     return `<button class="mt" data-action="meta-toggle" data-id="${m.id}" aria-pressed="${on}" ${can ? '' : 'disabled'}>${icon(m.icon)}${m.name} · ${m.cost} PF</button>`;
   }).join('');
+  let matBtn = '', matNote = '';
+  if (s.mat) {
+    const it = matItem(s.mat.key), q = it?.qty ?? 0, name = it ? it.name : s.mat.key, n = s.mat.n || 1;
+    if (s.mat.required) {
+      matNote = blk
+        ? box('Bloqueada', `Requer <b>${esc(name)}</b> e você tem <b>0</b>. Quando conseguir um, ajuste a quantidade na Mochila.`, 'warn')
+        : `<p class="mat-line">${icon('i-gem')}${esc(name)}: <b>${q}</b> no inventário — necessário, não é consumido.</p>`;
+    } else {
+      const can = q >= n, on = castMat && can;
+      matBtn = `<button class="mt" data-action="mat-toggle" aria-pressed="${on}" ${can ? '' : 'disabled'}>${icon('i-bag')}Gastar ${n}${it?.unit === 'cm' ? ' cm de' : ' ×'} ${esc(name)} · resta ${q}</button>`;
+      matNote = `<p class="mat-line">${icon('i-gem')}${can ? 'Pelas regras de 2024 o foco arcano (cetro) substitui este componente — desmarque para não descontar.' : `Sem ${esc(name)} no inventário: conjure usando o foco arcano (cetro).`}</p>`;
+    }
+  }
   const btns = s.level === 0
     ? `<button class="btn frost" data-action="cast" data-id="${s.id}" data-lv="0">${icon('i-spark')}Conjurar truque${spent ? ` (−${spent} PF)` : ''}</button>`
     : LEVELS.filter(l => l >= s.level).map(l => {
         const n = totalAvail(l);
-        return `<button class="btn ${l === s.level ? 'frost' : ''}" data-action="cast" data-id="${s.id}" data-lv="${l}" ${n ? '' : 'disabled'}>
+        return `<button class="btn ${l === s.level ? 'frost' : ''}" data-action="cast" data-id="${s.id}" data-lv="${l}" ${n && !blk ? '' : 'disabled'}>
           Conjurar no ${ORD(l)}${l > s.level ? ' (ampliada)' : ''} <small style="opacity:.75;font-weight:400">· ${n ? n + (n > 1 ? ' restam' : ' resta') : 'sem espaços'}</small></button>`;
       }).join('');
   const notes = [];
   if (s.level === 0) notes.push('Truques são à vontade — não gastam espaços.');
   if (s.conc && state.conc && state.conc !== s.id) notes.push(`⚠ Conjurar encerra a concentração em <b>${esc(SPELL[state.conc].name)}</b>.`);
-  if (s.level && !LEVELS.some(l => l >= s.level && totalAvail(l))) notes.push('Sem espaços disponíveis. Use a <b>Fonte de Magia</b> para criar um ou faça um Descanso Longo.');
-  return `<div class="cast"><h4>Conjurar</h4><div class="meta-toggles" role="group" aria-label="Metamagia">${metas}</div>
-    <div class="cast-row">${btns}</div>${notes.map(n => `<p class="note" style="margin-top:8px">${n}</p>`).join('')}</div>`;
+  if (s.level && !blk && !LEVELS.some(l => l >= s.level && totalAvail(l))) notes.push('Sem espaços disponíveis. Use a <b>Fonte de Magia</b> para criar um ou faça um Descanso Longo.');
+  return `<div class="cast"><h4>Conjurar</h4><div class="meta-toggles" role="group" aria-label="Metamagia e componentes">${metas}${matBtn}</div>
+    <div class="cast-row">${btns}</div>${matNote}${notes.map(n => `<p class="note" style="margin-top:8px">${n}</p>`).join('')}</div>`;
 }
 
 function spellModal(id) {
-  const s = SPELL[id]; castMeta = new Set();
+  const s = SPELL[id]; castMeta = new Set(); castMat = true;
   openModal(() => {
     const tags = [`<span class="tag">${esc(s.school)}</span>`];
     if (s.conc) tags.push('<span class="tag conc">Concentração</span>');
     if (s.reaction) tags.push('<span class="tag react">Reação</span>');
     if (s.draconic) tags.push('<span class="tag drac">Dracônica · sempre preparada</span>');
     if (s.isNew) tags.push('<span class="tag new">Nova no nível 4</span>');
+    if (blocked(s)) tags.push('<span class="tag block">Bloqueada — falta componente</span>');
     if (state.conc === s.id) tags.push('<span class="tag conc">● Concentrando agora</span>');
     const prop = (k, v) => `<div class="prop"><dt>${k}</dt><dd>${esc(v)}</dd></div>`;
+    const P = t => `<p>${fmt(t)}</p>`;
     return `<div class="${lvClass(s.level)}">${mHead(s.level ? `${ORD(s.level)} Círculo · ${s.school}` : `Truque · ${s.school}`, esc(s.name), esc(s.en))}
       <div class="m-tags">${tags.join('')}</div>
       <dl class="props">${prop('Tempo de Conjuração', s.time)}${prop('Alcance', s.range)}${prop('Componentes', s.comp)}${prop('Duração', s.dur)}</dl>
-      <div class="m-body">${s.desc.map(p => `<p>${p}</p>`).join('')}${s.list ? `<ul>${s.list.map(li => `<li>${li}</li>`).join('')}</ul>` : ''}${(s.desc2 || []).map(p => `<p>${p}</p>`).join('')}</div>
-      ${s.upgrade ? box('Aprimoramento de Truque', s.upgrade) : ''}${s.higher ? box('Em círculos superiores', s.higher) : ''}
-      ${s.warn ? box('Atenção', s.warn, 'warn') : ''}${s.tactic ? box('Tática de Søren', s.tactic, 'tactic') : ''}
+      ${rollsSection(s)}
+      <div class="m-body">${s.desc.map(P).join('')}${s.list ? `<ul>${s.list.map(li => `<li>${fmt(li)}</li>`).join('')}</ul>` : ''}${(s.desc2 || []).map(P).join('')}</div>
+      ${s.upgrade ? box('Aprimoramento de Truque', fmt(s.upgrade)) : ''}${s.higher ? box('Em círculos superiores', fmt(s.higher)) : ''}
+      ${s.warn ? box('Atenção', fmt(s.warn), 'warn') : ''}${s.tactic ? box('Tática de Søren', fmt(s.tactic), 'tactic') : ''}
       ${castSection(s)}</div>`;
   });
 }
 
 function doCast(id, lv) {
   const s = SPELL[id], cost = metaCost(), prev = state.conc;
+  if (blocked(s)) { toast(`${s.name} bloqueada: falta ${matItem(s.mat.key)?.name || 'componente'}`, false); return; }
+  const it = s.mat && !s.mat.required ? matItem(s.mat.key) : null, n = s.mat?.n || 1;
+  const useMat = !!(it && castMat && (it.qty ?? 0) >= n);
   const metaTxt = [...castMeta].map(m => META[m].name).join(' + ');
   let label = `${s.name} conjurada${lv ? ` (${ORD(lv)})` : ''}${metaTxt ? ` · ${metaTxt} (−${cost} PF)` : ''}`;
+  if (useMat) label += ` · −${n}${it.unit === 'cm' ? ' cm' : ''} ${it.name} (resta ${it.qty - n})`;
   if (s.conc && prev && prev !== id) label += ` · fim da concentração em ${SPELL[prev].name}`;
   const ok = commit(label, st => {
     if (st.res.sp < cost) return false;
@@ -1134,6 +1521,7 @@ function doCast(id, lv) {
       else return false;
     }
     st.res.sp -= cost;
+    if (useMat) { const x = st.items.find(i => i.key === s.mat.key); if (x && x.qty >= n) x.qty -= n; }
     if (s.conc) st.conc = s.id;
     if (s.effect === 'shield') st.fx.shield = true;
     if (s.effect === 'mirror') st.fx.mirror = 3;
@@ -1220,11 +1608,17 @@ let editingItem = null;
 function itemModal(id) {
   const it = id ? state.items.find(x => x.id === id) : null;
   editingItem = it ? it.id : null;
-  openModal(() => `${mHead(it ? 'Mochila · editar' : 'Mochila · novo item', it ? esc(it.name) : 'Adicionar item')}
+  const linked = it?.key ? SPELLS.filter(sp => sp.mat?.key === it.key).map(sp => sp.name) : [];
+  openModal(() => `${mHead(it ? 'Inventário · editar' : 'Inventário · novo item', it ? esc(it.name) : 'Adicionar item')}
     <form id="item-form" style="margin-top:14px" autocomplete="off">
       <div class="field"><label for="f-name">Nome</label><input id="f-name" required maxlength="80" value="${it ? esc(it.name) : ''}" placeholder="Ex.: Flechas" ${it ? '' : 'autofocus'}></div>
       <div class="field"><label for="f-note">Observação (opcional)</label><input id="f-note" maxlength="160" value="${it ? esc(it.note) : ''}" placeholder="Ex.: 1d8 perfurante"></div>
-      <div class="field"><label for="f-qty">Quantidade</label><input id="f-qty" type="number" inputmode="numeric" min="0" max="999999" value="${it ? it.qty : 1}"></div>
+      <div class="field-row">
+        <div class="field"><label for="f-qty">Quantidade <small>(vazio = sem contagem)</small></label><input id="f-qty" type="number" inputmode="numeric" min="0" max="999999" value="${it ? (it.qty ?? '') : 1}"></div>
+        <div class="field"><label for="f-unit">Unidade</label><input id="f-unit" maxlength="12" value="${it ? esc(it.unit || '') : ''}" placeholder="usos, un., PO…"></div>
+      </div>
+      <div class="field"><label for="f-cat">Categoria</label><select id="f-cat">${ITEM_CATS.map(c => `<option value="${c.id}" ${(it?.cat || 'cons') === c.id ? 'selected' : ''}>${c.t}</option>`).join('')}</select></div>
+      ${linked.length ? `<p class="note">Ligado a: <b>${linked.join(', ')}</b> — descontado ao conjurar.</p>` : ''}
       <div class="m-actions">${it ? `<button type="button" class="btn danger" data-action="item-del">${icon('i-trash')}Excluir</button>` : ''}
         <button type="submit" class="btn gold">Salvar</button></div>
     </form>`);
@@ -1269,6 +1663,17 @@ function handle(a, el) {
     case 'reset': toggleMenu(false); resetModal(); break;
     case 'reset-go': commit('Ficha restaurada', st => { const ui = st.ui; Object.assign(st, defaultState(), { ui }); }); closeModal(); break;
     case 'undo': undo(); break;
+    case 'roll': doRoll(ds); break;
+    case 'roll-hide': el.classList.remove('show'); break;
+    case 'mat-toggle': castMat = !castMat; modalRefresh?.(); break;
+    case 'mirror-roll': {
+      const m = state.fx.mirror; if (!m) break;
+      const rolls = Array.from({ length: m }, () => d(6)), hit = rolls.some(x => x >= 3);
+      showRoll('Reflexos · você foi atingido', hit ? 'Desviado!' : 'Acertou', `🎲 ${rolls.join(', ')} (precisa de 3+ em algum)`,
+        hit ? `Uma duplicata é destruída${m - 1 ? ` — restam ${m - 1}` : ' — Reflexos termina'}.` : 'Nenhuma duplicata intercepta: o ataque atinge Søren.', hit ? '' : 'fail');
+      if (hit) commit(null, st => { st.fx.mirror = m - 1; });
+      break;
+    }
     case 'close': closeModal(); break;
     case 'tab': setTab(ds.tab); break;
     case 'goto-hp': setTab('recursos'); setTimeout(() => { $('#hp-panel').scrollIntoView({ block: 'center' }); $('#hp-amt').focus({ preventScroll: true }); }, 30); break;
@@ -1342,7 +1747,7 @@ function handle(a, el) {
     case 'cast': doCast(ds.id, +ds.lv); break;
 
     /* mochila */
-    case 'item-step': { const it = state.items.find(x => x.id === ds.id); if (!it) break;
+    case 'item-step': { const it = state.items.find(x => x.id === ds.id); if (!it || it.qty == null) break;
       const v = Math.max(0, it.qty + +ds.d);
       commit(`${it.name}: ${v}`, st => { const x = st.items.find(y => y.id === ds.id); if (!x || x.qty === v) return false; x.qty = v; }); break; }
     case 'item-edit': itemModal(ds.id); break;
@@ -1381,12 +1786,13 @@ document.addEventListener('input', e => {
 document.addEventListener('submit', e => {
   if (e.target.id !== 'item-form') return;
   e.preventDefault();
-  const name = $('#f-name').value.trim(), note = $('#f-note').value.trim(), qty = Math.max(0, Math.round(+$('#f-qty').value || 0));
+  const name = $('#f-name').value.trim(), note = $('#f-note').value.trim(), rawQ = $('#f-qty').value.trim();
+  const qty = rawQ === '' ? null : Math.max(0, Math.round(+rawQ || 0)), unit = $('#f-unit').value.trim(), cat = $('#f-cat').value;
   if (!name) { $('#f-name').focus(); return; }
-  commit(editingItem ? `${name} atualizado` : `${name} adicionado à mochila`, st => {
+  commit(editingItem ? `${name} atualizado` : `${name} adicionado ao inventário`, st => {
     const it = editingItem && st.items.find(x => x.id === editingItem);
-    if (it) Object.assign(it, { name, note, qty });
-    else st.items.push({ id: 'it' + Date.now().toString(36), name, note, qty });
+    if (it) Object.assign(it, { name, note, qty, unit, cat });
+    else st.items.push({ id: 'it' + Date.now().toString(36), name, note, qty, unit, cat });
   });
   closeModal();
 });

@@ -566,8 +566,105 @@ footer.foot a{color:var(--frost)}
 footer.foot{margin-top:28px;text-align:center;color:var(--faint);font-size:14px}
 @media (prefers-reduced-motion:reduce){ *,*::before,*::after{animation:none!important;transition:none!important} html{scroll-behavior:auto} }
 </style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<style id="fx-css">
+/* ============================================================
+   CAMADA VISUAL "gelo & ouro" (animações via GSAP)
+   As regras com .gx só valem quando o GSAP carregou e o
+   usuário não pediu movimento reduzido.
+   ============================================================ */
+body{background:#06090f}
+.aurora{position:fixed;inset:0;z-index:-2;pointer-events:none;overflow:hidden}
+.aurora i{position:absolute;width:75vmax;height:75vmax;border-radius:50%;will-change:transform}
+.aurora i:nth-child(1){left:30%;top:-38vmax;background:radial-gradient(closest-side,rgba(63,143,203,.34),transparent)}
+.aurora i:nth-child(2){left:-34vmax;top:12%;background:radial-gradient(closest-side,rgba(127,88,219,.24),transparent)}
+.aurora i:nth-child(3){left:22%;top:58%;background:radial-gradient(closest-side,rgba(217,180,108,.12),transparent)}
+#snow{position:fixed;inset:0;width:100%;height:100%;z-index:-1;pointer-events:none}
+body::after{content:"";position:fixed;inset:0;z-index:300;pointer-events:none;opacity:.05;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+
+/* ---------- herói ---------- */
+.hero{padding-top:26px}
+.hero h1{background:linear-gradient(172deg,#fff4dc 8%,#e6c582 52%,#a6dbff 118%);-webkit-background-clip:text;background-clip:text;color:transparent;
+  text-shadow:none;filter:drop-shadow(0 2px 16px rgba(217,180,108,.2));letter-spacing:.05em}
+.sigil{background:radial-gradient(circle at 50% 35%,rgba(159,220,255,.3),rgba(8,12,20,.96) 70%);border-color:rgba(217,180,108,.5);
+  box-shadow:0 0 0 6px rgba(217,180,108,.05),0 0 44px rgba(159,220,255,.22)}
+.sigil svg{animation:sigil-spin 80s linear infinite}
+@keyframes sigil-spin{to{transform:rotate(360deg)}}
+.stat{background:linear-gradient(180deg,rgba(40,53,75,.6),rgba(15,21,32,.78));border-color:rgba(255,255,255,.08);border-radius:15px;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.08),0 14px 28px -18px rgba(0,0,0,.9)}
+.stat .lbl{letter-spacing:.2em}
+.stat .val{font-size:28px}
+.icon-btn{background:rgba(20,28,41,.7);border-color:rgba(255,255,255,.09)}
+
+/* ---------- painéis ---------- */
+.panel{background:linear-gradient(180deg,rgba(29,39,56,.8),rgba(14,20,30,.88));border-color:rgba(255,255,255,.075);border-radius:20px;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.06),0 26px 50px -26px rgba(0,0,0,.9)}
+.panel::before{inset:0 16% auto;height:1px;border:0;border-radius:0;background:linear-gradient(90deg,transparent,rgba(217,180,108,.6),transparent)}
+.panel-h h2{font-size:13.5px;letter-spacing:.22em}
+.spell{border-color:rgba(255,255,255,.075);border-radius:16px;background:linear-gradient(180deg,rgba(33,44,63,.74),rgba(15,21,31,.86));transition:border-color .25s, transform .25s, box-shadow .25s}
+.spell::before{top:14px;bottom:14px;width:2px;border-radius:2px}
+.spell .rune{border-radius:12px;background:radial-gradient(circle at 50% 30%,color-mix(in srgb,var(--c) 24%,transparent),transparent 72%)}
+.item,.atk-row,.abil,.meta-item{border-color:rgba(255,255,255,.075)}
+.item,.atk-row{position:relative}
+
+/* brilho que segue o cursor (só em dispositivos com mouse) */
+@media (hover:hover){
+  .spell::after,.panel::after,.atk-row::after,.item::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;opacity:0;transition:opacity .35s;
+    background:radial-gradient(280px circle at var(--mx,50%) var(--my,50%),color-mix(in srgb,var(--c,#d9b46c) 13%,transparent),transparent 65%)}
+  .spell:hover::after,.panel:hover::after,.atk-row:hover::after,.item:hover::after{opacity:1}
+  .spell:hover{transform:translateY(-2px)}
+}
+
+/* ---------- gemas com reflexo ---------- */
+.gem i{position:relative;overflow:hidden}
+.gem:not(.spent) i::before{content:"";position:absolute;inset:-50%;background:linear-gradient(120deg,transparent 42%,rgba(255,255,255,.8) 50%,transparent 58%);
+  transform:translateX(-70%);animation:glint 6s ease-in-out infinite}
+@keyframes glint{0%,72%{transform:translateX(-70%)}88%,100%{transform:translateX(70%)}}
+
+/* ---------- botões ---------- */
+.btn.gold{position:relative;overflow:hidden}
+.btn.gold::after{content:"";position:absolute;inset:0;background:linear-gradient(110deg,transparent 30%,rgba(255,255,255,.5) 50%,transparent 70%);transform:translateX(-120%);transition:transform .8s ease}
+.btn.gold:hover::after{transform:translateX(120%)}
+
+/* ---------- navegação com indicador deslizante ---------- */
+.tabs{background:rgba(9,13,21,.74);backdrop-filter:blur(18px) saturate(140%);-webkit-backdrop-filter:blur(18px) saturate(140%);border-color:rgba(255,255,255,.08)}
+.tab-ind{display:none;position:absolute;left:0;top:7px;width:60px;height:calc(var(--nav-h) - 14px);border-radius:16px;pointer-events:none;z-index:0;
+  background:linear-gradient(180deg,rgba(217,180,108,.18),rgba(217,180,108,.05));border:1px solid rgba(217,180,108,.3);box-shadow:0 0 26px rgba(217,180,108,.14)}
+.tab{z-index:1}
+.gx .tab-ind{display:block}
+.gx .tab[aria-selected="true"]::before{display:none}
+@media (min-width:900px){ .tab-ind{top:6px;height:42px;border-radius:11px} }
+
+/* ---------- efeitos, modal, rolagem ---------- */
+.effects{background:linear-gradient(180deg,rgba(6,9,15,.94) 70%,rgba(6,9,15,0))}
+.effects .fx[style*="ffd28a"]{animation:breathe 2.8s ease-in-out infinite}
+@keyframes breathe{50%{box-shadow:0 0 24px rgba(255,210,138,.45)}}
+.modal{background:rgba(3,5,9,.55);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+.sheet{background:linear-gradient(180deg,rgba(31,41,60,.97),rgba(13,18,28,.985));border-color:rgba(255,255,255,.1);
+  box-shadow:0 -30px 80px rgba(0,0,0,.6),inset 0 1px 0 rgba(255,255,255,.08)}
+.rollpop{background:linear-gradient(180deg,rgba(40,54,78,.94),rgba(18,25,38,.96));backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-radius:22px}
+.rp-t{display:inline-block;font-size:54px}
+.gx .rollpop{transition:opacity .2s}
+.gx .modal,.gx .sheet,.gx .panel-tab{animation:none}
+.gx .gem.pop i{animation:none}
+.gx .slot-meta .count,.gx #fom-sp b,.gx #meta-sp b{display:inline-block}
+
+/* ---------- partículas e sobreposições ---------- */
+.fx-burst{position:fixed;z-index:160;pointer-events:none;width:16px;height:16px;margin:-8px 0 0 -8px;border-radius:50%;border:2px solid var(--c);box-shadow:0 0 22px var(--c),inset 0 0 12px var(--c)}
+.fx-spark{position:fixed;z-index:160;pointer-events:none;width:7px;height:7px;margin:-3.5px 0 0 -3.5px;background:var(--c);border-radius:1px;box-shadow:0 0 10px var(--c);transform:rotate(45deg)}
+.fx-float{position:fixed;z-index:160;pointer-events:none;font-weight:700;font-size:24px;text-shadow:0 2px 12px rgba(0,0,0,.7)}
+.fx-flash{position:fixed;inset:0;z-index:155;pointer-events:none;background:radial-gradient(circle at var(--x) var(--y),color-mix(in srgb,var(--c) 32%,transparent),transparent 60%)}
+.dawn{position:fixed;inset:0;z-index:150;display:grid;place-items:center;align-content:center;gap:20px;pointer-events:none;
+  background:radial-gradient(130% 75% at 50% 112%,rgba(255,200,125,.6),rgba(214,120,96,.28) 36%,rgba(16,22,40,.94) 72%),#090e19}
+.dawn-sun{width:220px;height:220px;margin:-50px;border-radius:50%;background:radial-gradient(circle closest-side,#fff8e4 0%,#ffe0a0 24%,rgba(255,196,115,.55) 42%,rgba(255,170,90,.18) 66%,rgba(255,170,90,0) 100%)}
+.dawn p{font-family:var(--f-display);letter-spacing:.26em;text-transform:uppercase;color:#fcebc8;font-size:15px;text-align:center}
+.dawn small{display:block;margin-top:6px;font-family:var(--f-body);letter-spacing:.04em;text-transform:none;color:rgba(252,235,200,.75);font-size:16px}
+</style>
 </head>
 <body>
+<div class="aurora" aria-hidden="true"><i></i><i></i><i></i></div>
+<canvas id="snow" aria-hidden="true"></canvas>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
   <symbol id="i-gem" viewBox="0 0 24 24"><path d="M6 3h12l4 6-10 12L2 9z"/><path d="M2 9h20M12 21 8 9l4-6 4 6z"/></symbol>
   <symbol id="i-book" viewBox="0 0 24 24"><path d="M4 4.5A2.5 2.5 0 0 1 6.5 2H20v17H6.5A2.5 2.5 0 0 0 4 21.5z"/><path d="M4 19.5v-15M8 7h8M8 11h6"/></symbol>
@@ -718,7 +815,7 @@ footer.foot{margin-top:28px;text-align:center;color:var(--faint);font-size:14px}
     </section>
   </main>
 
-  <footer class="foot">Progresso salvo automaticamente neste navegador. · <a href="beta/">Experimentar a versão beta animada</a></footer>
+  <footer class="foot">Progresso salvo automaticamente neste navegador.</footer>
 </div>
 
 <div class="modal" id="modal" hidden>
@@ -1916,6 +2013,270 @@ window.addEventListener('storage', e => { if (e.key === CHAR.storageKey) { const
 render();
 renderPassives();
 setTab(state.ui.tab);
+</script>
+<script>
+/* =====================================================================
+   ANIMAÇÕES com GSAP.
+   Camada opcional: envolve funções do app (render, setTab, openModal…)
+   sem alterar a lógica. Sem GSAP ou com "movimento reduzido", nada muda.
+   ===================================================================== */
+(() => {
+  const G = window.gsap;
+  if (!G || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  document.documentElement.classList.add('gx');
+
+  const qa = (sel, el = document) => [...el.querySelectorAll(sel)];
+  const cssVar = (el, v, def = '#9fdcff') => (el && getComputedStyle(el).getPropertyValue(v).trim()) || def;
+  const center = el => { const r = el.getBoundingClientRect(); return [r.left + r.width / 2, r.top + r.height / 2]; };
+  const rand = (a, b) => a + Math.random() * (b - a);
+
+  /* ---------------- partículas ---------------- */
+  function spawn(cls, x, y, color) {
+    const e = document.createElement('i');
+    e.className = cls; e.style.left = x + 'px'; e.style.top = y + 'px'; e.style.setProperty('--c', color);
+    document.body.appendChild(e); return e;
+  }
+  function sparks(x, y, color, n = 9, dist = 40) {
+    for (let i = 0; i < n; i++) {
+      const s = spawn('fx-spark', x, y, color), a = rand(0, Math.PI * 2), d = rand(dist * .55, dist);
+      G.to(s, { x: Math.cos(a) * d, y: Math.sin(a) * d + 12, rotation: rand(-200, 200), scale: rand(.3, 1), autoAlpha: 0,
+        duration: rand(.5, .85), ease: 'power2.out', onComplete: () => s.remove() });
+    }
+  }
+  function ring(x, y, color, size = 5, dur = .7) {
+    const r = spawn('fx-burst', x, y, color);
+    G.fromTo(r, { scale: .2, autoAlpha: 1 }, { scale: size, autoAlpha: 0, duration: dur, ease: 'power2.out', onComplete: () => r.remove() });
+  }
+  function floatText(el, txt, color) {
+    const [x, y] = center(el), f = spawn('fx-float', x, y, color);
+    f.textContent = txt; f.style.color = color;
+    G.timeline({ onComplete: () => f.remove() })
+      .fromTo(f, { xPercent: -50, yPercent: -50, y: 0, autoAlpha: 0, scale: .6 }, { y: -40, autoAlpha: 1, scale: 1, duration: .5, ease: 'back.out(2)' })
+      .to(f, { y: -66, autoAlpha: 0, duration: .55, ease: 'power1.in' }, '+=.45');
+  }
+  function shatter(el, color) {
+    if (!el) return;
+    const [x, y] = center(el), g = el.querySelector('i');
+    sparks(x, y, color, 9, 42);
+    if (g) G.fromTo(g, { scale: 1.4, filter: 'brightness(2.2)' }, { scale: 1, filter: 'brightness(1)', duration: .55, ease: 'power3.out', clearProps: 'transform,filter' });
+  }
+  function glowIn(el, color, delay = 0) {
+    if (!el) return;
+    const g = el.querySelector('i');
+    if (g) G.fromTo(g, { scale: 0 }, { scale: 1, duration: .65, ease: 'back.out(3)', delay, clearProps: 'transform' });
+    G.delayedCall(delay + .15, () => { if (el.isConnected) { const [x, y] = center(el); ring(x, y, color, 3.4, .6); } });
+  }
+  function tweenNum(el, from, to) {
+    if (!el || from === to || from == null || to == null) return;
+    const node = [...el.childNodes].find(n => n.nodeType === 3 && /\d/.test(n.nodeValue));
+    if (!node) return;
+    const tpl = node.nodeValue, o = { v: from };
+    node.nodeValue = tpl.replace(/\d+/, from);
+    G.to(o, { v: to, duration: .6, ease: 'power3.out', onUpdate: () => { node.nodeValue = tpl.replace(/\d+/, Math.round(o.v)); } });
+    G.fromTo(el, { scale: 1.2 }, { scale: 1, duration: .55, ease: 'back.out(3)', clearProps: 'transform' });
+  }
+  function flashStat(st, rgb) {
+    G.fromTo(st, { boxShadow: `0 0 0 2px rgba(${rgb},.85), 0 0 34px rgba(${rgb},.5)` },
+      { boxShadow: `0 0 0 0px rgba(${rgb},0), 0 0 0px rgba(${rgb},0)`, duration: 1.1, ease: 'power2.out', clearProps: 'boxShadow' });
+  }
+
+  /* ---------------- diferenças entre renders ---------------- */
+  const snap = () => ({ used: { ...state.used }, extra: { ...state.extra }, res: { ...state.res }, hp: state.hp, fx: { ...state.fx },
+    conc: state.conc, items: Object.fromEntries(state.items.map(i => [i.id, i.qty])), log0: JSON.stringify((state.spLog || [])[0] || null) });
+  let prev = snap(), inRender = false;
+
+  function diff(a, b) {
+    for (const l of LEVELS) {
+      const row = $(`.slot-row.${lvClass(l)}`); if (!row) continue;
+      const max = CHAR.slots[l], oa = max - a.used[l], na = max - b.used[l], color = cssVar(row, '--c');
+      const gems = qa('.gem:not(.extra)', row), ex = qa('.gem.extra', row);
+      for (let i = na; i < oa; i++) shatter(gems[i], color);
+      for (let i = oa; i < na; i++) glowIn(gems[i], color, (i - oa) * .07);
+      for (let i = a.extra[l]; i < b.extra[l]; i++) glowIn(ex[i], '#d9b46c');
+      tweenNum($('.count', row), oa + a.extra[l], na + b.extra[l]);
+    }
+    for (const r of CHAR.resources) {
+      const o = a.res[r.id], n = b.res[r.id]; if (o === n) continue;
+      const boxes = new Set(qa(`.gem[data-action="res-gem"][data-id="${r.id}"]`).map(g => g.closest('.res, .sp-meter')).filter(Boolean));
+      boxes.forEach(box => {
+        const gems = qa(`.gem[data-id="${r.id}"]`, box), color = cssVar(box, '--c', '#d9b46c');
+        for (let i = n; i < o; i++) shatter(gems[i], color);
+        for (let i = o; i < n; i++) glowIn(gems[i], color, (i - o) * .07);
+        tweenNum($('.res-val', box), o, n);
+      });
+    }
+    if (a.res.sp !== b.res.sp) tweenNum($('#fom-sp b'), a.res.sp, b.res.sp);
+    if (a.log0 !== b.log0) {
+      const li = $('.sp-log li');
+      if (li) G.fromTo(li, { x: -14, autoAlpha: 0, backgroundColor: 'rgba(217,180,108,.25)' }, { x: 0, autoAlpha: 1, backgroundColor: 'rgba(0,0,0,.2)', duration: .7, ease: 'power3.out', clearProps: 'all' });
+    }
+    if (a.hp !== b.hp) {
+      const st = $('.stat.hp'), dmg = b.hp < a.hp;
+      tweenNum($('.val', st), a.hp, b.hp); tweenNum($('#hp-panel .hp-num'), a.hp, b.hp);
+      floatText(st, (dmg ? '−' : '+') + Math.abs(b.hp - a.hp), dmg ? '#f07c6c' : '#88d8a6');
+      flashStat(st, dmg ? '240,124,108' : '136,216,166');
+      if (dmg) G.fromTo(st, { x: -7 }, { x: 0, duration: .6, ease: 'elastic.out(1,.3)', clearProps: 'transform' });
+    }
+    const stats = qa('.stat');
+    if (!a.fx.shield && b.fx.shield) { const [x, y] = center(stats[0]); ring(x, y, '#c7adff', 7); flashStat(stats[0], '199,173,255'); }
+    if (!a.fx.innate && b.fx.innate) stats.slice(2).forEach((st, i) => G.delayedCall(i * .1, () => { const [x, y] = center(st); ring(x, y, '#9fdcff', 6); flashStat(st, '159,220,255'); }));
+    if (b.fx.mirror < a.fx.mirror) { const pips = qa('#effects .mini button'); for (let i = b.fx.mirror; i < a.fx.mirror; i++) shatter(pips[i], '#d5dbe3'); }
+    for (const it of state.items) {
+      const o = a.items[it.id]; if (o == null || it.qty == null || o === it.qty) continue;
+      tweenNum($(`[data-action="item-step"][data-id="${CSS.escape(it.id)}"]`)?.closest('.item')?.querySelector('.v'), o, it.qty);
+    }
+    const keys = s => [s.conc && 'conc', s.fx.innate && 'innate', s.fx.shield && 'shield', s.fx.mirror && 'mirror'].filter(Boolean);
+    const had = keys(a);
+    keys(b).filter(k => !had.includes(k)).forEach(k => {
+      const chip = (k === 'conc' ? $('#effects [data-action="conc-end"]') : $(`#effects [data-fx="${k}"]`))?.closest('.fx');
+      if (chip) G.fromTo(chip, { scale: .5, autoAlpha: 0 }, { scale: 1, autoAlpha: 1, duration: .6, ease: 'back.out(2.4)', clearProps: 'transform' });
+    });
+  }
+
+  const _render = render;
+  render = function () {
+    inRender = true;
+    try { _render(); } finally { inRender = false; }
+    const now = snap();
+    try { diff(prev, now); } catch (e) { /* animação nunca quebra o app */ }
+    prev = now;
+  };
+
+  /* ---------------- abas ---------------- */
+  const nav = $('.tabs'), ind = document.createElement('span');
+  ind.className = 'tab-ind'; ind.setAttribute('aria-hidden', 'true'); nav.prepend(ind);
+  function moveInd(dur = .6) {
+    const t = $('.tab[aria-selected="true"]'); if (!t) return;
+    G.to(ind, { x: t.offsetLeft + 6, width: t.offsetWidth - 12, duration: dur, ease: 'expo.out' });
+  }
+  function animatePanel() {
+    const p = $('.panel-tab.on'); if (!p) return;
+    const items = qa(':scope > .grid > *, :scope > .toolbar, :scope > #grim > .spell-group, :scope > .panel', p);
+    G.fromTo(items, { y: 22, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: .6, ease: 'power3.out', stagger: .06, clearProps: 'transform,opacity,visibility' });
+  }
+  const _setTab = setTab;
+  setTab = function (t) {
+    const changed = state.ui.tab !== t;
+    _setTab(t); moveInd();
+    if (changed) animatePanel();
+  };
+  const _renderGrim = renderGrim;
+  renderGrim = function () {
+    _renderGrim();
+    if (inRender || state.ui.tab !== 'grimorio' || document.activeElement === $('#q')) return;
+    G.fromTo(qa('#grim .spell'), { y: 10, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: .4, ease: 'power2.out', stagger: { amount: .25 }, clearProps: 'transform,opacity,visibility' });
+  };
+
+  /* ---------------- modal ---------------- */
+  const _open = openModal, _close = closeModal;
+  let closing = null;
+  const mobileSheet = () => innerWidth < 700;
+  openModal = function (build) {
+    if (closing) { closing.kill(); closing = null; _close(); }
+    G.set(['#sheet', '#modal'], { clearProps: 'all' });
+    _open(build);
+    const sh = $('#sheet');
+    G.fromTo('#modal', { autoAlpha: 0 }, { autoAlpha: 1, duration: .25, ease: 'power1.out' });
+    G.fromTo(sh, mobileSheet() ? { yPercent: 40, autoAlpha: .4 } : { y: 26, scale: .965, autoAlpha: 0 },
+      { yPercent: 0, y: 0, scale: 1, autoAlpha: 1, duration: .6, ease: 'expo.out', clearProps: 'transform' });
+    G.fromTo(qa('.m-head, .m-tags, .props, .rolls-box, .m-body > *, .box, .cast, .restore-list li, form .field, .m-actions', sh),
+      { y: 14, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: .45, ease: 'power2.out', stagger: .035, delay: .08, clearProps: 'transform,opacity,visibility' });
+  };
+  closeModal = function () {
+    if ($('#modal').hidden || closing) return;
+    const sh = $('#sheet');
+    closing = G.timeline({ onComplete: () => { closing = null; _close(); G.set(['#sheet', '#modal'], { clearProps: 'all' }); } })
+      .to(sh, mobileSheet() ? { yPercent: 30, autoAlpha: 0, duration: .26, ease: 'power2.in' } : { y: 16, scale: .98, autoAlpha: 0, duration: .22, ease: 'power2.in' })
+      .to('#modal', { autoAlpha: 0, duration: .2 }, '<.06');
+  };
+
+  /* ---------------- conjurar: explosão de energia ---------------- */
+  document.addEventListener('click', e => {
+    const b = e.target.closest('[data-action="cast"]');
+    if (!b || b.disabled) return;
+    const [x, y] = center(b), c = cssVar(b.closest('.lv0, .lv1, .lv2'), '--c');
+    ring(x, y, c, 10, .8); sparks(x, y, c, 16, 90);
+    const f = document.createElement('div');
+    f.className = 'fx-flash'; f.style.setProperty('--x', x + 'px'); f.style.setProperty('--y', y + 'px'); f.style.setProperty('--c', c);
+    document.body.appendChild(f);
+    G.fromTo(f, { autoAlpha: 1 }, { autoAlpha: 0, duration: .9, ease: 'power2.out', onComplete: () => f.remove() });
+  }, true);
+
+  /* ---------------- descanso longo: amanhecer ---------------- */
+  const _longRest = longRest;
+  longRest = function () {
+    const ov = document.createElement('div');
+    ov.className = 'dawn';
+    ov.innerHTML = '<div class="dawn-sun"></div><p>O amanhecer chega<small>espaços, recursos e vida restaurados</small></p>';
+    document.body.appendChild(ov);
+    G.timeline({ onComplete: () => ov.remove() })
+      .fromTo(ov, { autoAlpha: 0 }, { autoAlpha: 1, duration: .4, ease: 'power1.out' })
+      .fromTo('.dawn-sun', { y: 90, scale: .55 }, { y: 0, scale: 1, duration: 1, ease: 'power2.out' }, '<')
+      .fromTo('.dawn p', { autoAlpha: 0, y: 12 }, { autoAlpha: 1, y: 0, duration: .5, ease: 'power2.out' }, '-=.55')
+      .add(() => _longRest())
+      .to(ov, { autoAlpha: 0, duration: .55, ease: 'power1.inOut' }, '+=.5');
+  };
+
+  /* ---------------- rolagem de dados ---------------- */
+  const _showRoll = showRoll;
+  let scramble = null;
+  showRoll = function (label, total, detail, extra = '', cls = '') {
+    _showRoll(label, total, detail, extra, cls);
+    const el = $('#roll'), t = $('.rp-t', el), n = Number(total);
+    scramble?.kill(); G.killTweensOf([el, t]);
+    G.fromTo(el, { y: -26, scale: .9 }, { y: 0, scale: 1, duration: .55, ease: 'back.out(1.8)' });
+    if (Number.isFinite(n)) {
+      const hi = Math.max(20, n + 5);
+      scramble = G.to({}, { duration: .42, onUpdate: () => { t.textContent = 1 + Math.floor(Math.random() * hi); }, onComplete: () => { t.textContent = n; } });
+      G.fromTo(t, { scale: .55, rotation: -12 }, { scale: 1, rotation: 0, duration: .8, ease: 'elastic.out(1,.45)', delay: .38 });
+    }
+    if (cls.includes('crit')) G.delayedCall(.42, () => { const [x, y] = center(t); ring(x, y, '#d9b46c', 11, .9); sparks(x, y, '#f1d9a6', 20, 110); });
+    if (cls.includes('fail')) G.fromTo(el, { x: -12 }, { x: 0, duration: .7, ease: 'elastic.out(1,.25)', delay: .42 });
+  };
+
+  /* ---------------- ambiente: aurora, neve, brilho do cursor ---------------- */
+  qa('.aurora i').forEach((b, i) => G.to(b, {
+    x: () => rand(-.16, .16) * innerWidth, y: () => rand(-.1, .1) * innerHeight, scale: () => rand(.85, 1.2),
+    duration: () => rand(14, 22), ease: 'sine.inOut', repeat: -1, yoyo: true, repeatRefresh: true, delay: -i * 4
+  }));
+
+  const cv = $('#snow'), ctx = cv.getContext('2d'), dpr = Math.min(2, devicePixelRatio || 1);
+  let W = 0, H = 0;
+  const resize = () => { W = cv.width = innerWidth * dpr; H = cv.height = innerHeight * dpr; };
+  resize();
+  const flakes = Array.from({ length: innerWidth < 700 ? 26 : 48 }, () => ({
+    x: Math.random() * W, y: Math.random() * H, r: rand(.6, 2.2) * dpr, v: rand(.15, .55) * dpr, p: rand(0, 6.28), a: rand(.12, .5)
+  }));
+  G.ticker.add(() => {
+    ctx.clearRect(0, 0, W, H); ctx.fillStyle = '#e4f5ff';
+    for (const f of flakes) {
+      f.y += f.v; f.p += .012; f.x += Math.sin(f.p) * .35 * dpr;
+      if (f.y > H + 6) { f.y = -6; f.x = Math.random() * W; }
+      ctx.globalAlpha = f.a; ctx.beginPath(); ctx.arc(f.x, f.y, f.r, 0, 6.283); ctx.fill();
+    }
+  });
+  addEventListener('resize', () => { resize(); moveInd(0); });
+
+  if (matchMedia('(hover: hover)').matches) document.addEventListener('pointermove', e => {
+    const el = e.target.closest?.('.spell, .atk-row, .item, .panel');
+    if (!el) return;
+    const r = el.getBoundingClientRect();
+    el.style.setProperty('--mx', (e.clientX - r.left) + 'px'); el.style.setProperty('--my', (e.clientY - r.top) + 'px');
+  }, { passive: true });
+
+  /* ---------------- abertura ---------------- */
+  moveInd(0);
+  const wide = innerWidth >= 900;
+  G.timeline({ defaults: { ease: 'expo.out' } })
+    .from('.sigil', { scale: .3, rotation: -140, autoAlpha: 0, duration: 1.4, clearProps: 'transform' })
+    .fromTo('.hero h1', { clipPath: 'inset(0 100% 0 0)', letterSpacing: '.2em' },
+      { clipPath: 'inset(0 0% 0 0)', letterSpacing: '.05em', duration: 1.4, clearProps: 'clipPath,letterSpacing' }, '<.1')
+    .from(['.eyebrow', '.hero .sub'], { y: 10, autoAlpha: 0, duration: .8, stagger: .1, clearProps: 'transform,opacity,visibility' }, '<.25')
+    .from('.stat', { y: 24, autoAlpha: 0, duration: .9, stagger: .07, clearProps: 'transform,opacity,visibility' }, '<.1')
+    .from('.substats', { y: 6, autoAlpha: 0, duration: .6, clearProps: 'transform,opacity,visibility' }, '<.3')
+    .from('.tabs', wide ? { y: -12, autoAlpha: 0, duration: .8 } : { yPercent: 100, duration: .9 }, '<')
+    .add(() => { moveInd(0); animatePanel(); }, '<.1');
+})();
 </script>
 </body>
 </html>

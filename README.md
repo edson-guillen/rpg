@@ -2,7 +2,9 @@
 
 Ficha de controle de **magias e recursos limitados** para **Søren Frostgaard**, Golias (Gigante das Nuvens) **Feiticeiro Dracônico de nível 4** em **D&D 2024 (5.5)**.
 
-É um web app em **um único arquivo HTML** (CSS e JavaScript embutidos), com tema escuro medieval-glacial, pensado para uso **no celular durante a sessão** e também no computador.
+É um web app em **um único arquivo HTML** (CSS e JavaScript embutidos), com tema escuro medieval-glacial e animações em [GSAP](https://gsap.com), pensado para uso **no celular durante a sessão** e também no computador.
+
+🔗 **https://edson-guillen.github.io/rpg/**
 
 > CD de Magia **14** (15 com Feitiçaria Inata) · Ataque Mágico **+6** · Carisma **18 (+4)** · CA **16** (21 com Escudo Arcano) · PV **30**
 
@@ -76,9 +78,9 @@ Ficha de controle de **magias e recursos limitados** para **Søren Frostgaard**,
 
 ---
 
-## 🧪 Versão beta animada (`beta/`)
+## 🌌 Visual e animações
 
-Uma versão de teste com a mesma ficha e os mesmos dados, mas com animações em [GSAP](https://gsap.com) e acabamento visual refinado:
+Animações feitas com [GSAP](https://gsap.com) 3.12.5, carregado do cdnjs:
 
 - **Ambiente:** aurora em movimento lento, neve sutil e textura granulada; título com gradiente de ouro para gelo.
 - **Abertura:** o sigilo gira e o nome se revela; os cartões entram em sequência.
@@ -90,15 +92,15 @@ Uma versão de teste com a mesma ficha e os mesmos dados, mas com animações em
 - **Descanso Longo:** tela de amanhecer antes de restaurar tudo.
 - **Modais:** sobem como uma folha, com o conteúdo em cascata.
 
-Endereço: `https://edson-guillen.github.io/rpg/beta/`
+As animações ficam numa camada separada no fim do arquivo, que só envolve as funções do app. Sem internet para carregar o GSAP, ou com **"reduzir movimento"** ativado no sistema, tudo funciona igual, só que sem animação.
 
-O progresso é **compartilhado** com a versão estável (mesmo `localStorage`). Sem internet para carregar o GSAP, ou com "reduzir movimento" ativo no sistema, a beta funciona como a versão estável, só que sem as animações.
+O antigo endereço `/beta/` redireciona para a página principal.
 
 ---
 
 ## 🚀 Como usar
 
-1. Baixe o arquivo [`index.html`](index.html) e abra no navegador. Funciona offline; as fontes são opcionais.
+1. Baixe o arquivo [`index.html`](index.html) e abra no navegador. Funciona offline; as fontes e as animações são opcionais.
 2. **No celular:** publique com **GitHub Pages** (*Settings → Pages → Deploy from branch*) e abra o link. Use *"Adicionar à tela inicial"* para abrir como um app.
 
 > ⚠️ O progresso fica salvo **por navegador e por dispositivo**. Para passar de um aparelho para outro, use *Exportar / Importar backup*.

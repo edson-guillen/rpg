@@ -72,6 +72,26 @@ Ficha de controle de **magias e recursos limitados** para **Søren Frostgaard**,
 
 ---
 
+## 🧪 Versão beta animada (`beta/`)
+
+Uma versão de teste com a mesma ficha e os mesmos dados, mas com animações em [GSAP](https://gsap.com) e acabamento visual refinado:
+
+- **Ambiente:** aurora em movimento lento, neve sutil e textura granulada; título com gradiente de ouro para gelo.
+- **Abertura:** o sigilo gira e o nome se revela; os cartões entram em sequência.
+- **Abas:** um indicador desliza até a aba escolhida e o conteúdo entra em cascata.
+- **Gemas:** ao gastar, a gema se estilhaça em faíscas; ao recuperar, renasce com um anel de luz. Os números contam até o novo valor.
+- **Conjurar:** explosão de energia na cor do círculo da magia.
+- **Dados:** os números giram antes de parar no resultado. O crítico solta faíscas douradas e a falha treme.
+- **Dano e cura:** o valor flutua sobre o PV, que pisca em vermelho ou verde.
+- **Descanso Longo:** tela de amanhecer antes de restaurar tudo.
+- **Modais:** sobem como uma folha, com o conteúdo em cascata.
+
+Endereço: `https://edson-guillen.github.io/rpg/beta/`
+
+O progresso é **compartilhado** com a versão estável (mesmo `localStorage`). Sem internet para carregar o GSAP, ou com "reduzir movimento" ativo no sistema, a beta funciona como a versão estável, só que sem as animações.
+
+---
+
 ## 🚀 Como usar
 
 1. Baixe o arquivo [`index.html`](index.html) e abra no navegador. Funciona offline; as fontes são opcionais.

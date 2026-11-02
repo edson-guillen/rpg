@@ -1,0 +1,17 @@
+# Sistema operacional
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editores
+.vscode/
+.idea/
+*.swp
+*~
+
+# Dependências / logs (caso adicione ferramentas no futuro)
+node_modules/
+*.log
+
+# Backups pessoais exportados pela ficha
+soren-frostgaard-backup-*.json

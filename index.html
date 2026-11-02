@@ -1,0 +1,1409 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0b0e14">
+<meta name="color-scheme" content="dark">
+<meta name="description" content="Ficha interativa de magias e recursos de Søren Frostgaard — Feiticeiro Dracônico nível 4 (D&D 2024).">
+<title>Søren Frostgaard · Grimório</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cpath d='M32 4 54 32 32 60 10 32Z' fill='%239fdcff' stroke='%23d9b46c' stroke-width='4'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Crimson+Pro:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   TOKENS
+   ============================================================ */
+:root{
+  --bg:#0b0e14; --bg2:#10151f; --panel:#141b27; --panel2:#1a2331; --raise:#212c3e;
+  --line:rgba(217,180,108,.20); --line2:rgba(217,180,108,.42);
+  --gold:#d9b46c; --gold-d:#a8843f; --gold-l:#f1d9a6;
+  --frost:#9fdcff; --frost-d:#3f8fcb;
+  --arcane:#c7adff; --arcane-d:#7f58db;
+  --silver:#d5dbe3; --silver-d:#7d8794;
+  --text:#ece5d5; --muted:#a8a191; --faint:#6b675f;
+  --danger:#f07c6c; --danger-d:#9c3a2e; --ok:#88d8a6;
+  --r:16px; --r-sm:10px;
+  --shadow:0 12px 32px rgba(0,0,0,.5);
+  --f-display:'Cinzel', 'Trajan Pro', Georgia, serif;
+  --f-body:'Crimson Pro', Georgia, 'Times New Roman', serif;
+  --nav-h:68px;
+  --safe-b:env(safe-area-inset-bottom, 0px);
+}
+
+/* ============================================================
+   BASE
+   ============================================================ */
+*,*::before,*::after{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;scroll-behavior:smooth}
+body{
+  margin:0; min-height:100vh; color:var(--text); font-family:var(--f-body); font-size:18px; line-height:1.45;
+  background:
+    radial-gradient(1200px 600px at 85% -10%, rgba(63,143,203,.16), transparent 60%),
+    radial-gradient(900px 500px at -10% 10%, rgba(127,88,219,.12), transparent 60%),
+    radial-gradient(800px 800px at 50% 120%, rgba(217,180,108,.07), transparent 60%),
+    var(--bg);
+  background-attachment:fixed;
+  font-variant-numeric:lining-nums;
+  -webkit-tap-highlight-color:transparent;
+}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:2px solid var(--frost);outline-offset:2px;border-radius:8px}
+h1,h2,h3,h4{font-family:var(--f-display);font-weight:600;letter-spacing:.04em;margin:0}
+p{margin:0}
+[hidden]{display:none!important}
+.num{font-variant-numeric:lining-nums tabular-nums}
+.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+svg.ic{width:22px;height:22px;flex:none;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+
+.app{max-width:1040px;margin:0 auto;padding:0 16px calc(var(--nav-h) + var(--safe-b) + 28px)}
+
+/* ============================================================
+   HERO / HEADER
+   ============================================================ */
+.hero{padding:20px 0 6px;position:relative}
+.hero-top{display:flex;gap:14px;align-items:center}
+.sigil{width:58px;height:58px;flex:none;display:grid;place-items:center;border-radius:50%;
+  background:radial-gradient(circle at 50% 40%, rgba(159,220,255,.25), rgba(20,27,39,.9) 70%);
+  border:1px solid var(--line2);box-shadow:0 0 24px rgba(159,220,255,.18), inset 0 0 12px rgba(0,0,0,.6)}
+.sigil svg{width:36px;height:36px}
+.hero-id{flex:1;min-width:0}
+.eyebrow{font-family:var(--f-display);font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--gold)}
+.hero h1{font-size:clamp(24px,6vw,34px);line-height:1.1;color:var(--gold-l);
+  text-shadow:0 2px 0 rgba(0,0,0,.6),0 0 22px rgba(217,180,108,.25)}
+.hero .sub{color:var(--muted);font-size:16px;margin-top:2px}
+.icon-btn{width:44px;height:44px;flex:none;display:grid;place-items:center;border-radius:12px;
+  background:var(--panel);border:1px solid var(--line);color:var(--gold)}
+.icon-btn:hover{border-color:var(--line2);background:var(--panel2)}
+
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:16px}
+.stat{position:relative;background:linear-gradient(180deg,var(--panel2),var(--panel));border:1px solid var(--line);
+  border-radius:var(--r-sm);padding:8px 6px 7px;text-align:center;min-width:0;transition:border-color .2s, box-shadow .2s}
+.stat .lbl{font-family:var(--f-display);font-size:10px;letter-spacing:.16em;color:var(--muted);text-transform:uppercase}
+.stat .val{font-size:26px;font-weight:700;line-height:1.05;color:var(--text)}
+.stat .val small{font-size:15px;color:var(--muted);font-weight:500}
+.stat .hint{font-size:12px;color:var(--muted);line-height:1.1;min-height:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.stat.boost{border-color:rgba(159,220,255,.6);box-shadow:0 0 0 1px rgba(159,220,255,.25),0 0 18px rgba(159,220,255,.18)}
+.stat.boost .val{color:var(--frost)}
+.stat.hp{cursor:pointer}
+.stat.hp:hover{border-color:var(--line2)}
+.hpbar{height:4px;border-radius:4px;background:rgba(255,255,255,.08);margin:4px 4px 0;overflow:hidden}
+.hpbar i{display:block;height:100%;background:linear-gradient(90deg,#c0483a,#e9a35a 50%,var(--ok));background-size:300% 100%;transition:width .3s}
+.substats{display:flex;flex-wrap:wrap;gap:6px 14px;justify-content:center;margin-top:10px;color:var(--muted);font-size:15px}
+.substats b{color:var(--text);font-weight:600}
+
+/* ============================================================
+   ACTIVE EFFECTS STRIP (sticky)
+   ============================================================ */
+.effects{position:sticky;top:0;z-index:30;display:flex;gap:8px;flex-wrap:wrap;padding:10px 0;margin:0 -16px;padding-inline:16px;
+  background:linear-gradient(180deg,rgba(11,14,20,.97) 70%,rgba(11,14,20,0))}
+.effects:empty{display:none}
+@media (max-width:899px){ .effects{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;scroll-snap-type:x proximity} .effects::-webkit-scrollbar{display:none} .fx{flex:none;scroll-snap-align:start} }
+.fx{display:inline-flex;align-items:center;gap:8px;min-height:38px;padding:4px 6px 4px 12px;border-radius:999px;font-size:15px;white-space:nowrap;
+  background:var(--panel2);border:1px solid var(--c, var(--line2));color:var(--text);box-shadow:0 0 14px color-mix(in srgb, var(--c, #000) 25%, transparent)}
+.fx b{font-weight:600;color:var(--c)}
+.fx .x{width:28px;height:28px;border-radius:50%;border:0;background:rgba(255,255,255,.06);display:grid;place-items:center;color:var(--muted)}
+.fx .x:hover{background:rgba(255,255,255,.14);color:var(--text)}
+.fx .mini{display:inline-flex;gap:3px}
+.fx .mini button{width:26px;height:26px;border:0;background:none;padding:0;display:grid;place-items:center}
+.fx .mini button i{width:12px;height:12px;transform:rotate(45deg);border:1.5px solid var(--c);background:var(--c);border-radius:2px}
+.fx .mini button.off i{background:transparent;opacity:.4}
+.fx .act{border:1px solid var(--line);background:rgba(255,255,255,.04);border-radius:999px;padding:3px 10px;font-size:13px;color:var(--text)}
+
+/* ============================================================
+   TABS / NAV
+   ============================================================ */
+.tabs{position:fixed;left:0;right:0;bottom:0;z-index:40;display:grid;grid-template-columns:repeat(4,1fr);
+  height:calc(var(--nav-h) + var(--safe-b));padding-bottom:var(--safe-b);
+  background:rgba(14,19,28,.96);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-top:1px solid var(--line)}
+.tab{border:0;background:none;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;color:var(--faint);
+  font-family:var(--f-display);font-size:11px;letter-spacing:.1em;text-transform:uppercase;position:relative}
+.tab svg.ic{width:24px;height:24px}
+.tab[aria-selected="true"]{color:var(--gold-l)}
+.tab[aria-selected="true"]::before{content:"";position:absolute;top:0;left:28%;right:28%;height:2px;background:var(--gold);box-shadow:0 0 10px var(--gold)}
+.tab .badge{position:absolute;top:8px;left:calc(50% + 8px);min-width:18px;height:18px;padding:0 5px;border-radius:9px;background:var(--frost-d);color:#fff;
+  font-family:var(--f-body);font-size:12px;letter-spacing:0;display:grid;place-items:center}
+
+main{margin-top:8px}
+.panel-tab{display:none;animation:fadeUp .25s ease}
+.panel-tab.on{display:block}
+@keyframes fadeUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+@media (min-width:900px){
+  .tabs{position:sticky;top:0;bottom:auto;height:56px;padding:0;margin:4px 0 0;border:1px solid var(--line);border-radius:14px;
+    grid-template-columns:repeat(4,auto);justify-content:start;gap:4px;padding-inline:6px;background:rgba(20,27,39,.92)}
+  .tab{flex-direction:row;gap:8px;font-size:13px;padding:0 18px}
+  .tab[aria-selected="true"]::before{top:auto;bottom:-1px;left:14px;right:14px}
+  .tab .badge{position:static}
+  .effects{top:56px}
+  .app{padding-bottom:40px}
+}
+
+/* ============================================================
+   PANELS
+   ============================================================ */
+.grid{display:grid;gap:14px}
+@media (min-width:760px){ .grid.two{grid-template-columns:1fr 1fr} .span2{grid-column:1/-1} }
+.panel{position:relative;background:linear-gradient(180deg,rgba(26,35,49,.92),rgba(20,27,39,.92));border:1px solid var(--line);
+  border-radius:var(--r);padding:16px;box-shadow:var(--shadow)}
+.panel::before{content:"";position:absolute;inset:4px;border:1px solid rgba(217,180,108,.08);border-radius:calc(var(--r) - 4px);pointer-events:none}
+.panel-h{display:flex;align-items:center;flex-wrap:wrap;gap:4px 10px;margin-bottom:12px}
+.panel-h h2{font-size:15px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);white-space:nowrap}
+.panel-h .rule{flex:1 1 24px;height:1px;background:linear-gradient(90deg,var(--line2),transparent)}
+.panel-h .aside{color:var(--muted);font-size:14.5px;margin-left:auto}
+.note{color:var(--muted);font-size:15px;line-height:1.4}
+.note b{color:var(--text);font-weight:600}
+
+/* ---------- Spell slot rows ---------- */
+.slot-row{display:grid;grid-template-columns:auto 1fr;gap:4px 14px;align-items:center;padding:10px 0;border-top:1px dashed rgba(217,180,108,.14)}
+.slot-row:first-of-type{border-top:0;padding-top:2px}
+.lvl-badge{width:52px;height:52px;display:grid;place-items:center;border-radius:12px;font-family:var(--f-display);font-weight:700;font-size:20px;
+  color:var(--c);background:radial-gradient(circle at 50% 30%, color-mix(in srgb,var(--c) 22%, transparent), transparent 70%);border:1px solid color-mix(in srgb,var(--c) 45%, transparent)}
+.lvl-badge small{display:block;font-size:9px;letter-spacing:.14em;margin-top:-4px;color:var(--muted);font-weight:600}
+.slot-meta{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.slot-meta h3{font-size:16px;color:var(--text)}
+.slot-meta .count{font-size:20px;font-weight:700;color:var(--c)}
+.slot-meta .count small{font-size:15px;color:var(--muted);font-weight:500}
+.gems{display:flex;flex-wrap:wrap;gap:2px;margin-left:-6px}
+
+.gem{width:46px;height:46px;border:0;background:none;padding:0;display:grid;place-items:center;position:relative;border-radius:12px}
+.gem i{width:24px;height:24px;transform:rotate(45deg);border-radius:5px;border:2px solid var(--c);
+  background:radial-gradient(circle at 30% 30%, #fff 0, var(--c) 38%, var(--cd) 100%);
+  box-shadow:0 0 14px color-mix(in srgb,var(--c) 70%, transparent), inset 0 0 6px rgba(255,255,255,.5);
+  transition:transform .18s ease, background .2s, box-shadow .2s, opacity .2s}
+.gem:hover i{transform:rotate(45deg) scale(1.08)}
+.gem:active i{transform:rotate(45deg) scale(.9)}
+.gem.spent i{background:rgba(0,0,0,.35);box-shadow:inset 0 0 6px rgba(0,0,0,.7);border-color:color-mix(in srgb,var(--c) 30%, #333);opacity:.75}
+.gem.spent i::after{content:"";position:absolute;left:50%;top:-2px;bottom:-2px;width:2px;background:color-mix(in srgb,var(--c) 35%, #222);transform:translateX(-50%) rotate(-45deg)}
+.gem.extra i{border-style:dashed;background:radial-gradient(circle at 30% 30%, #fff 0, var(--gold) 40%, var(--gold-d) 100%);border-color:var(--gold);box-shadow:0 0 14px rgba(217,180,108,.6)}
+.gem.pop i{animation:pop .35s ease}
+@keyframes pop{50%{transform:rotate(45deg) scale(1.3)}}
+.lv0{--c:var(--silver);--cd:var(--silver-d)}
+.lv1{--c:var(--frost);--cd:var(--frost-d)}
+.lv2{--c:var(--arcane);--cd:var(--arcane-d)}
+.lvG{--c:var(--gold);--cd:var(--gold-d)}
+.lvR{--c:#ff9d8a;--cd:#b4483a}
+.lvO{--c:var(--ok);--cd:#3f8f62}
+
+/* ---------- Rest buttons ---------- */
+.rests{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:46px;padding:8px 16px;border-radius:12px;
+  border:1px solid var(--line2);background:linear-gradient(180deg,var(--raise),var(--panel2));color:var(--text);font-size:17px;font-weight:600;
+  transition:transform .12s, border-color .2s, background .2s, opacity .2s}
+.btn:hover{border-color:var(--gold)}
+.btn:active{transform:translateY(1px)}
+.btn:disabled{opacity:.4;cursor:not-allowed;transform:none}
+.btn.gold{background:linear-gradient(180deg,#e4c27e,#b88f45);color:#1d1406;border-color:#f3dba8;text-shadow:0 1px 0 rgba(255,255,255,.3)}
+.btn.frost{background:linear-gradient(180deg,#2c5f86,#1c3c58);border-color:rgba(159,220,255,.55)}
+.btn.ghost{background:transparent}
+.btn.danger{border-color:rgba(240,124,108,.5);color:var(--danger);background:transparent}
+.btn.sm{min-height:38px;padding:5px 12px;font-size:15px;border-radius:10px}
+.btn.block{width:100%}
+.rest-btn{flex-direction:column;gap:2px;min-height:70px;padding:10px}
+.rest-btn span{font-family:var(--f-display);font-size:14px;letter-spacing:.08em}
+.rest-btn small{font-weight:400;font-size:13px;opacity:.8}
+
+/* ---------- Font of magic ---------- */
+.fom{display:grid;gap:12px}
+.fom-row h4{font-family:var(--f-body);font-size:15px;font-weight:600;color:var(--muted);letter-spacing:0;margin-bottom:6px}
+.fom-btns{display:flex;flex-wrap:wrap;gap:8px}
+.chipbtn{display:inline-flex;align-items:center;gap:6px;min-height:40px;padding:4px 12px;border-radius:999px;border:1px solid var(--line);
+  background:var(--panel2);font-size:15px;color:var(--text)}
+.chipbtn:hover:not(:disabled){border-color:var(--line2)}
+.chipbtn:disabled{opacity:.38;cursor:not-allowed}
+.chipbtn .dot{width:10px;height:10px;transform:rotate(45deg);background:var(--c);border-radius:2px;box-shadow:0 0 6px var(--c)}
+.chipbtn .arrow{color:var(--muted)}
+.chipbtn b{color:var(--gold-l);font-weight:600}
+</style>
+<style>
+/* ============================================================
+   GRIMOIRE
+   ============================================================ */
+.toolbar{display:grid;gap:10px;margin-bottom:14px}
+.search{position:relative}
+.search svg.ic{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--muted);pointer-events:none}
+.search input{width:100%;min-height:50px;padding:10px 44px 10px 46px;border-radius:14px;border:1px solid var(--line);background:var(--panel);font-size:18px;color:var(--text)}
+.search input::placeholder{color:var(--faint)}
+.search input:focus{outline:none;border-color:var(--frost);box-shadow:0 0 0 3px rgba(159,220,255,.15)}
+.search .clear{position:absolute;right:6px;top:50%;transform:translateY(-50%);width:38px;height:38px;border:0;border-radius:10px;background:none;color:var(--muted);display:grid;place-items:center}
+.filters{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;scrollbar-width:none;margin:0 -16px;padding-inline:16px}
+.filters::-webkit-scrollbar{display:none}
+.filter{flex:none;min-height:40px;padding:4px 14px;border-radius:999px;border:1px solid var(--line);background:var(--panel);color:var(--muted);font-size:15px;white-space:nowrap}
+.filter[aria-pressed="true"]{background:linear-gradient(180deg,#e4c27e,#b88f45);border-color:#f3dba8;color:#1d1406;font-weight:600}
+
+.spell-group{margin-top:18px}
+.spell-group:first-child{margin-top:0}
+.group-h{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.group-h h3{font-size:14px;letter-spacing:.16em;text-transform:uppercase;color:var(--c)}
+.group-h .rule{flex:1;height:1px;background:linear-gradient(90deg,color-mix(in srgb,var(--c) 50%, transparent),transparent)}
+.group-h .mini-gems{display:flex;gap:4px}
+.group-h .mini-gems i{width:9px;height:9px;transform:rotate(45deg);border:1.5px solid var(--c);background:var(--c);border-radius:2px}
+.group-h .mini-gems i.off{background:transparent;opacity:.45}
+.spell-list{display:grid;gap:8px}
+@media (min-width:760px){ .spell-list{grid-template-columns:1fr 1fr} }
+.spell{display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:center;width:100%;text-align:left;padding:12px 12px 12px 10px;border-radius:14px;
+  border:1px solid var(--line);background:linear-gradient(180deg,rgba(33,44,62,.75),rgba(20,27,39,.85));position:relative;overflow:hidden;
+  transition:border-color .2s, transform .12s, box-shadow .2s}
+.spell::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--c);box-shadow:0 0 12px var(--c)}
+.spell:hover{border-color:color-mix(in srgb,var(--c) 60%, transparent);box-shadow:0 0 20px color-mix(in srgb,var(--c) 14%, transparent)}
+.spell:active{transform:scale(.99)}
+.spell .rune{width:40px;height:40px;border-radius:10px;display:grid;place-items:center;color:var(--c);
+  background:color-mix(in srgb,var(--c) 10%, transparent);border:1px solid color-mix(in srgb,var(--c) 30%, transparent)}
+.spell .rune svg.ic{width:22px;height:22px}
+.spell .t{min-width:0}
+.spell .name{font-size:19px;font-weight:600;line-height:1.15;color:var(--text)}
+.spell .en{font-style:italic;color:var(--muted);font-size:14px;font-weight:400;margin-left:4px}
+.spell .sum{color:var(--muted);font-size:15px;line-height:1.3;margin-top:3px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.spell .tags{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px}
+.tag{display:inline-flex;align-items:center;gap:4px;padding:1px 8px;border-radius:999px;font-size:12.5px;line-height:1.5;border:1px solid var(--line);color:var(--muted);background:rgba(0,0,0,.18);white-space:nowrap}
+.tag.conc{color:#ffd28a;border-color:rgba(255,210,138,.45)}
+.tag.drac{color:#9ff0d0;border-color:rgba(159,240,208,.4)}
+.tag.new{color:var(--frost);border-color:rgba(159,220,255,.45)}
+.tag.react{color:#ffb2a6;border-color:rgba(255,178,166,.45)}
+.spell .chev{color:var(--faint)}
+.spell.conc-on{border-color:rgba(255,210,138,.7);box-shadow:0 0 0 1px rgba(255,210,138,.25)}
+.empty{text-align:center;color:var(--muted);padding:30px 10px;border:1px dashed var(--line);border-radius:14px}
+mark{background:rgba(217,180,108,.35);color:inherit;border-radius:3px;padding:0 1px}
+
+/* ============================================================
+   RESOURCES
+   ============================================================ */
+.res{display:grid;gap:10px}
+.res-top{display:flex;align-items:flex-start;gap:12px}
+.res-ic{width:44px;height:44px;flex:none;border-radius:12px;display:grid;place-items:center;color:var(--c);
+  background:color-mix(in srgb,var(--c) 12%, transparent);border:1px solid color-mix(in srgb,var(--c) 35%, transparent)}
+.res-t{flex:1;min-width:0}
+.res-t h3{font-size:16px;color:var(--text);letter-spacing:.04em;line-height:1.2}
+.res-t .meta{font-size:13.5px;color:var(--muted);margin-top:1px}
+.res-desc{color:var(--muted);font-size:15.5px;line-height:1.38}
+.res-desc b{color:var(--text);font-weight:600}
+.counter{display:flex;align-items:center;gap:6px;flex:none}
+.counter .v{min-width:66px;text-align:center;font-size:26px;font-weight:700;line-height:1}
+.counter .v small{font-size:16px;color:var(--muted);font-weight:500}
+.step{width:44px;height:44px;border-radius:12px;border:1px solid var(--line2);background:var(--panel2);display:grid;place-items:center;font-size:24px;line-height:1;color:var(--gold-l)}
+.step:hover:not(:disabled){background:var(--raise);border-color:var(--gold)}
+.step:active:not(:disabled){transform:scale(.94)}
+.step:disabled{opacity:.3;cursor:not-allowed}
+.res-foot{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
+.res-foot .gems{flex:1 1 auto}
+.res-foot .ctl{display:flex;align-items:center;gap:8px;margin-left:auto}
+.res-val{flex:none;font-size:30px;font-weight:700;line-height:1;color:var(--c);text-shadow:0 0 14px color-mix(in srgb,var(--c) 35%, transparent)}
+.res-val small{font-size:17px;color:var(--muted);font-weight:500;text-shadow:none}
+.res-foot .gems{margin-left:-8px}
+.res-foot .gem{width:40px;height:40px}
+.res-foot .gem i{width:20px;height:20px}
+
+.hp-big{display:flex;align-items:center;justify-content:center;gap:16px;flex-wrap:wrap}
+.hp-num{font-size:46px;font-weight:700;line-height:1;text-align:center}
+.hp-num small{font-size:22px;color:var(--muted);font-weight:500}
+.hp-num .tmp{display:block;font-size:15px;color:var(--frost);font-weight:500;margin-top:4px}
+.hp-panel .hpbar{height:8px;margin:12px 0 14px}
+.hp-ctrl{display:grid;grid-template-columns:1fr auto auto auto;gap:8px}
+.hp-ctrl input{min-width:0;min-height:46px;border-radius:12px;border:1px solid var(--line);background:var(--bg2);padding:6px 12px;font-size:20px;text-align:center}
+.hp-ctrl input:focus{outline:none;border-color:var(--frost)}
+@media (max-width:480px){ .hp-ctrl{grid-template-columns:1fr 1fr 1fr} .hp-ctrl input{grid-column:1/-1} }
+.meta-list{display:grid;gap:10px}
+.meta-item{display:grid;grid-template-columns:1fr auto;gap:4px 10px;align-items:center;padding:12px;border-radius:12px;background:rgba(0,0,0,.18);border:1px solid var(--line)}
+.meta-item h4{font-family:var(--f-body);font-size:18px;font-weight:600;letter-spacing:0}
+.meta-item h4 .cost{font-size:14px;color:var(--gold);font-weight:500;margin-left:6px}
+.meta-item p{grid-column:1/-1;color:var(--muted);font-size:15px;line-height:1.35}
+details.passive{border-top:1px dashed rgba(217,180,108,.14);padding:10px 0}
+details.passive:first-of-type{border-top:0;padding-top:0}
+details.passive summary{cursor:pointer;list-style:none;display:flex;align-items:center;gap:8px;font-weight:600;font-size:17px;min-height:34px}
+details.passive summary::-webkit-details-marker{display:none}
+details.passive summary::before{content:"";width:8px;height:8px;border-right:2px solid var(--gold);border-bottom:2px solid var(--gold);transform:rotate(-45deg);transition:transform .2s;margin-right:4px}
+details.passive[open] summary::before{transform:rotate(45deg)}
+details.passive p,details.passive ul{color:var(--muted);font-size:15.5px;margin:6px 0 0 18px}
+details.passive ul{padding-left:18px}
+
+/* ============================================================
+   INVENTORY
+   ============================================================ */
+.items{display:grid;gap:8px}
+@media (min-width:760px){ .items{grid-template-columns:1fr 1fr} }
+.item{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center;padding:10px 10px 10px 14px;border-radius:14px;border:1px solid var(--line);
+  background:linear-gradient(180deg,rgba(33,44,62,.7),rgba(20,27,39,.85))}
+.item .it{min-width:0;border:0;background:none;text-align:left;padding:4px 0;color:inherit}
+.item .it b{display:block;font-size:18px;font-weight:600;line-height:1.2}
+.item .it span{display:block;font-size:14.5px;color:var(--muted);line-height:1.3;margin-top:2px}
+.item.zero{opacity:.55}
+.item .counter .v{min-width:52px;font-size:24px}
+.add-row{display:flex;gap:8px;margin-top:12px}
+
+/* ============================================================
+   MODAL (bottom sheet on mobile)
+   ============================================================ */
+.modal{position:fixed;inset:0;z-index:100;display:flex;align-items:flex-end;justify-content:center;background:rgba(3,5,9,.66);
+  backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);animation:fade .2s ease}
+.modal[hidden]{display:none}
+@keyframes fade{from{opacity:0}}
+.sheet{width:100%;max-width:640px;max-height:min(90vh,900px);overflow:auto;overscroll-behavior:contain;
+  background:linear-gradient(180deg,#1c2535,#121925);border:1px solid var(--line2);border-bottom:0;border-radius:22px 22px 0 0;
+  padding:8px 18px calc(20px + var(--safe-b));box-shadow:0 -20px 60px rgba(0,0,0,.6);animation:slideUp .26s cubic-bezier(.2,.8,.2,1)}
+@keyframes slideUp{from{transform:translateY(40px);opacity:.4}}
+.sheet .grab{width:44px;height:5px;border-radius:3px;background:rgba(255,255,255,.18);margin:4px auto 10px}
+@media (min-width:700px){
+  .modal{align-items:center;padding:24px}
+  .sheet{border-radius:22px;border-bottom:1px solid var(--line2);padding:22px 26px 24px}
+  .sheet .grab{display:none}
+}
+.m-head{display:flex;align-items:flex-start;gap:12px}
+.m-head .t{flex:1;min-width:0}
+.m-kicker{font-family:var(--f-display);font-size:11.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--c, var(--gold))}
+.m-title{font-size:clamp(22px,5.5vw,28px);color:var(--gold-l);line-height:1.15;margin-top:2px}
+.m-en{font-style:italic;color:var(--muted);font-size:16px}
+.m-close{width:42px;height:42px;flex:none;border-radius:12px;border:1px solid var(--line);background:rgba(255,255,255,.04);display:grid;place-items:center;color:var(--muted)}
+.m-close:hover{color:var(--text);border-color:var(--line2)}
+.m-tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.m-tags .tag{font-size:13.5px;padding:2px 10px}
+.props{display:grid;grid-template-columns:1fr 1fr;gap:1px;margin:16px 0;border-radius:14px;overflow:hidden;border:1px solid var(--line);background:var(--line)}
+.prop{background:#141b27;padding:10px 12px}
+.prop dt{font-family:var(--f-display);font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--gold)}
+.prop dd{margin:2px 0 0;font-size:16.5px;line-height:1.3}
+.m-body p{margin:0 0 10px;font-size:17.5px;line-height:1.5}
+.m-body ul{margin:0 0 10px;padding-left:20px}
+.m-body li{margin:4px 0;font-size:17px;line-height:1.45}
+.m-body li b,.m-body p b{color:var(--gold-l);font-weight:600}
+.box{border-radius:12px;padding:10px 14px;margin:12px 0;font-size:16px;line-height:1.45;border:1px solid var(--line);background:rgba(0,0,0,.2)}
+.box h5{margin:0 0 3px;font-family:var(--f-display);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--gold)}
+.box.tactic{border-color:rgba(159,220,255,.35);background:rgba(63,143,203,.08)}
+.box.tactic h5{color:var(--frost)}
+.box.warn{border-color:rgba(255,210,138,.4);background:rgba(255,210,138,.06)}
+.box.warn h5{color:#ffd28a}
+.cast{margin-top:16px;padding-top:14px;border-top:1px solid var(--line)}
+.cast h4{font-family:var(--f-display);font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
+.cast-row{display:flex;flex-wrap:wrap;gap:8px}
+.cast-row .btn{flex:1 1 140px}
+.meta-toggles{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px}
+.mt{display:inline-flex;align-items:center;gap:6px;min-height:40px;padding:4px 12px;border-radius:999px;border:1px solid var(--line);background:var(--panel2);font-size:15px}
+.mt[aria-pressed="true"]{border-color:var(--gold);background:rgba(217,180,108,.16);color:var(--gold-l)}
+.mt:disabled{opacity:.38;cursor:not-allowed}
+.field{display:grid;gap:4px;margin-bottom:12px}
+.field label{font-size:14px;color:var(--muted)}
+.field input,.field textarea{min-height:46px;border-radius:12px;border:1px solid var(--line);background:var(--bg2);padding:8px 12px;font-size:18px;width:100%}
+.field input:focus,.field textarea:focus{outline:none;border-color:var(--frost)}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.m-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
+.m-actions .btn{flex:1 1 140px}
+.restore-list{list-style:none;padding:0;margin:12px 0;display:grid;gap:6px}
+.restore-list li{display:flex;justify-content:space-between;gap:10px;padding:8px 12px;border-radius:10px;background:rgba(0,0,0,.2);font-size:16.5px}
+.restore-list li span:last-child{color:var(--muted)}
+.restore-list li.up span:last-child{color:var(--ok)}
+.rolls{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0;min-height:10px}
+.roll{padding:4px 10px;border-radius:10px;background:rgba(136,216,166,.12);border:1px solid rgba(136,216,166,.35);color:var(--ok);font-size:15px}
+.dc-big{font-size:44px;font-weight:700;text-align:center;color:#ffd28a;line-height:1;margin:6px 0}
+
+/* ============================================================
+   MENU & TOAST
+   ============================================================ */
+.menu{position:absolute;right:0;top:76px;z-index:60;min-width:230px;padding:6px;border-radius:14px;border:1px solid var(--line2);background:#1a2331;box-shadow:var(--shadow);animation:fade .15s}
+.menu[hidden]{display:none}
+.menu button{display:flex;align-items:center;gap:10px;width:100%;min-height:44px;padding:6px 12px;border:0;border-radius:10px;background:none;text-align:left;font-size:16.5px}
+.menu button:hover{background:rgba(255,255,255,.06)}
+.menu button.danger{color:var(--danger)}
+.menu hr{border:0;border-top:1px solid var(--line);margin:4px 6px}
+.toast{position:fixed;left:0;right:0;margin-inline:auto;width:fit-content;bottom:calc(var(--nav-h) + var(--safe-b) + 14px);z-index:120;transform:translateY(20px);opacity:0;pointer-events:none;
+  display:flex;align-items:center;gap:12px;max-width:min(560px,calc(100vw - 32px));padding:8px 8px 8px 16px;border-radius:14px;
+  background:#232f42;border:1px solid var(--line2);box-shadow:var(--shadow);font-size:16px;transition:opacity .2s, transform .2s}
+.toast.show{opacity:1;transform:none;pointer-events:auto}
+.toast .msg{flex:1}
+.toast button{border:0;background:rgba(217,180,108,.16);color:var(--gold-l);border-radius:10px;min-height:38px;padding:4px 12px;font-weight:600;white-space:nowrap}
+@media (min-width:900px){ .toast{bottom:24px} }
+footer.foot{margin-top:28px;text-align:center;color:var(--faint);font-size:14px}
+@media (prefers-reduced-motion:reduce){ *,*::before,*::after{animation:none!important;transition:none!important} html{scroll-behavior:auto} }
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-gem" viewBox="0 0 24 24"><path d="M6 3h12l4 6-10 12L2 9z"/><path d="M2 9h20M12 21 8 9l4-6 4 6z"/></symbol>
+  <symbol id="i-book" viewBox="0 0 24 24"><path d="M4 4.5A2.5 2.5 0 0 1 6.5 2H20v17H6.5A2.5 2.5 0 0 0 4 21.5z"/><path d="M4 19.5v-15M8 7h8M8 11h6"/></symbol>
+  <symbol id="i-flame" viewBox="0 0 24 24"><path d="M12 2c1 4 6 6 6 12a6 6 0 0 1-12 0c0-3 2-5 3-6 0 2 1 3 2 3 0-4 1-6 1-9z"/></symbol>
+  <symbol id="i-bag" viewBox="0 0 24 24"><path d="M5 8h14l-1 13H6z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></symbol>
+  <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></symbol>
+  <symbol id="i-x" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></symbol>
+  <symbol id="i-moon" viewBox="0 0 24 24"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/></symbol>
+  <symbol id="i-camp" viewBox="0 0 24 24"><path d="M12 3c2 3 4 4 4 7a4 4 0 0 1-8 0c0-2 1-3 2-4 0 1.5.8 2 1.5 2C11.5 6 12 4.5 12 3z"/><path d="M4 21l16-4M20 21 4 17"/></symbol>
+  <symbol id="i-dots" viewBox="0 0 24 24"><circle cx="12" cy="5" r="1.4"/><circle cx="12" cy="12" r="1.4"/><circle cx="12" cy="19" r="1.4"/></symbol>
+  <symbol id="i-chev" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></symbol>
+  <symbol id="i-snow" viewBox="0 0 24 24"><path d="M12 2v20M3.3 7l17.4 10M20.7 7 3.3 17"/><path d="m9 3.5 3 2 3-2M9 20.5l3-2 3 2"/></symbol>
+  <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 3 4 6v6c0 5 3.5 8 8 9 4.5-1 8-4 8-9V6z"/></symbol>
+  <symbol id="i-eye" viewBox="0 0 24 24"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></symbol>
+  <symbol id="i-spark" viewBox="0 0 24 24"><path d="M12 2v6M12 16v6M2 12h6M16 12h6M5 5l3.5 3.5M15.5 15.5 19 19M19 5l-3.5 3.5M8.5 15.5 5 19"/></symbol>
+  <symbol id="i-charm" viewBox="0 0 24 24"><path d="M12 21s-7-4.5-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 11c0 5.5-7 10-7 10z"/><path d="M9.5 11.5c1.2 1.2 3.8 1.2 5 0"/></symbol>
+  <symbol id="i-hand" viewBox="0 0 24 24"><path d="M8 13V5a1.5 1.5 0 0 1 3 0v6M11 11V4a1.5 1.5 0 0 1 3 0v7M14 11V5.5a1.5 1.5 0 0 1 3 0V14a7 7 0 0 1-7 7h-.5A5.5 5.5 0 0 1 4 15.5V12a1.5 1.5 0 0 1 3 0v2"/></symbol>
+  <symbol id="i-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M1 12h4M19 12h4"/></symbol>
+  <symbol id="i-swap" viewBox="0 0 24 24"><path d="M4 7h13l-3-3M20 17H7l3 3"/></symbol>
+  <symbol id="i-cloud" viewBox="0 0 24 24"><path d="M7 18a4 4 0 0 1-.5-8A5.5 5.5 0 0 1 17 8.5 4.5 4.5 0 0 1 17.5 18z"/><path d="M9 21h6"/></symbol>
+  <symbol id="i-d20" viewBox="0 0 24 24"><path d="M12 2 21 7v10l-9 5-9-5V7z"/><path d="M12 2 7 12h10zM7 12l5 10 5-10M3 7l4 5M21 7l-4 5"/></symbol>
+  <symbol id="i-heart" viewBox="0 0 24 24"><path d="M12 21s-8-5-8-11a4.5 4.5 0 0 1 8-2.8A4.5 4.5 0 0 1 20 10c0 6-8 11-8 11z"/></symbol>
+  <symbol id="i-die" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="3"/><circle cx="8.5" cy="8.5" r=".8"/><circle cx="15.5" cy="15.5" r=".8"/><circle cx="12" cy="12" r=".8"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+  <symbol id="i-undo" viewBox="0 0 24 24"><path d="M9 14 4 9l5-5"/><path d="M4 9h10a6 6 0 0 1 0 12h-3"/></symbol>
+  <symbol id="i-down" viewBox="0 0 24 24"><path d="M12 3v12m0 0-5-5m5 5 5-5M4 21h16"/></symbol>
+  <symbol id="i-up" viewBox="0 0 24 24"><path d="M12 21V9m0 0-5 5m5-5 5 5M4 3h16"/></symbol>
+  <symbol id="i-trash" viewBox="0 0 24 24"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></symbol>
+  <symbol id="i-conc" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.5"/></symbol>
+  <symbol id="i-mirror" viewBox="0 0 24 24"><rect x="3" y="5" width="7" height="14" rx="3"/><rect x="14" y="5" width="7" height="14" rx="3" stroke-dasharray="2 2.4"/></symbol>
+  <symbol id="i-bolt" viewBox="0 0 24 24"><path d="M13 2 4 14h7l-1 8 9-12h-7z"/></symbol>
+  <symbol id="i-hush" viewBox="0 0 24 24"><path d="M4 12h3M17 12h3M12 4v3M12 17v3"/><circle cx="12" cy="12" r="3"/><path d="M5 19 19 5"/></symbol>
+  <symbol id="i-scroll" viewBox="0 0 24 24"><path d="M6 3h11a2 2 0 0 1 2 2v12M6 3a2 2 0 0 0-2 2v2h4M6 3a2 2 0 0 1 2 2v14a2 2 0 0 0 2 2h9a2 2 0 0 0 2-2v-2H10"/></symbol>
+</svg>
+
+<div class="app">
+  <header class="hero">
+    <div class="hero-top">
+      <div class="sigil" aria-hidden="true">
+        <svg viewBox="0 0 48 48" fill="none" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M24 4 40 24 24 44 8 24Z" stroke="#d9b46c" stroke-width="1.6"/>
+          <path d="M24 10v28M14 18l20 12M34 18 14 30" stroke="#9fdcff" stroke-width="2"/>
+          <path d="m20 12 4 3 4-3M20 36l4-3 4 3" stroke="#9fdcff" stroke-width="1.6"/>
+          <circle cx="24" cy="24" r="3.2" fill="#9fdcff"/>
+        </svg>
+      </div>
+      <div class="hero-id">
+        <p class="eyebrow">D&amp;D 2024 · Grimório Dracônico</p>
+        <h1>Søren Frostgaard</h1>
+        <p class="sub">Golias (Gigante das Nuvens) · Feiticeiro Dracônico · Nível 4</p>
+      </div>
+      <button class="icon-btn" data-action="menu" aria-label="Opções" aria-haspopup="true" aria-expanded="false"><svg class="ic"><use href="#i-dots"/></svg></button>
+    </div>
+    <div class="menu" id="menu" hidden role="menu">
+      <button role="menuitem" data-action="export"><svg class="ic"><use href="#i-down"/></svg>Exportar backup (.json)</button>
+      <button role="menuitem" data-action="import"><svg class="ic"><use href="#i-up"/></svg>Importar backup</button>
+      <hr>
+      <button role="menuitem" class="danger" data-action="reset"><svg class="ic"><use href="#i-trash"/></svg>Restaurar ficha original</button>
+    </div>
+    <div class="stats" id="stats" aria-live="polite"></div>
+    <div class="substats" id="substats"></div>
+  </header>
+
+  <nav class="tabs" role="tablist" aria-label="Seções da ficha">
+    <button class="tab" role="tab" data-action="tab" data-tab="magia" id="t-magia" aria-controls="tab-magia"><svg class="ic"><use href="#i-gem"/></svg>Magia<span class="badge num" id="badge-slots" hidden></span></button>
+    <button class="tab" role="tab" data-action="tab" data-tab="grimorio" id="t-grimorio" aria-controls="tab-grimorio"><svg class="ic"><use href="#i-book"/></svg>Grimório</button>
+    <button class="tab" role="tab" data-action="tab" data-tab="recursos" id="t-recursos" aria-controls="tab-recursos"><svg class="ic"><use href="#i-flame"/></svg>Recursos</button>
+    <button class="tab" role="tab" data-action="tab" data-tab="mochila" id="t-mochila" aria-controls="tab-mochila"><svg class="ic"><use href="#i-bag"/></svg>Mochila</button>
+  </nav>
+
+  <div class="effects" id="effects" aria-live="polite"></div>
+
+  <main>
+    <!-- ======================= MAGIA ======================= -->
+    <section class="panel-tab" id="tab-magia" role="tabpanel" aria-labelledby="t-magia">
+      <div class="grid two">
+        <div class="panel span2">
+          <div class="panel-h"><h2>Espaços de Magia</h2><span class="rule"></span><span class="aside">toque para gastar / recuperar</span></div>
+          <div id="slots"></div>
+          <div class="rests">
+            <button class="btn frost rest-btn" data-action="short-rest"><svg class="ic"><use href="#i-camp"/></svg><span>Descanso Curto</span><small>gastar Dados de Vida</small></button>
+            <button class="btn gold rest-btn" data-action="long-rest"><svg class="ic"><use href="#i-moon"/></svg><span>Descanso Longo</span><small>recupera tudo</small></button>
+          </div>
+        </div>
+        <div class="panel">
+          <div class="panel-h"><h2>Fonte de Magia</h2><span class="rule"></span><span class="aside num" id="fom-sp"></span></div>
+          <div class="fom" id="fom"></div>
+        </div>
+        <div class="panel">
+          <div class="panel-h"><h2>Lembretes</h2><span class="rule"></span></div>
+          <div class="note" id="reminders"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================= GRIMÓRIO ======================= -->
+    <section class="panel-tab" id="tab-grimorio" role="tabpanel" aria-labelledby="t-grimorio">
+      <div class="toolbar">
+        <div class="search">
+          <svg class="ic"><use href="#i-search"/></svg>
+          <input id="q" type="search" placeholder="Buscar magia, efeito, dano…" autocomplete="off" aria-label="Buscar magia">
+          <button class="clear" data-action="clear-q" aria-label="Limpar busca" hidden><svg class="ic"><use href="#i-x"/></svg></button>
+        </div>
+        <div class="filters" id="filters" role="group" aria-label="Filtrar magias"></div>
+      </div>
+      <div id="grim"></div>
+    </section>
+
+    <!-- ======================= RECURSOS ======================= -->
+    <section class="panel-tab" id="tab-recursos" role="tabpanel" aria-labelledby="t-recursos">
+      <div class="grid two">
+        <div class="panel hp-panel span2" id="hp-panel"></div>
+        <div id="res-list" class="grid two span2"></div>
+        <div class="panel">
+          <div class="panel-h"><h2>Metamagia</h2><span class="rule"></span><span class="aside num" id="meta-sp"></span></div>
+          <div class="meta-list" id="meta"></div>
+        </div>
+        <div class="panel">
+          <div class="panel-h"><h2>Traços Passivos</h2><span class="rule"></span></div>
+          <div id="passives"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================= MOCHILA ======================= -->
+    <section class="panel-tab" id="tab-mochila" role="tabpanel" aria-labelledby="t-mochila">
+      <div class="panel">
+        <div class="panel-h"><h2>Consumíveis &amp; Itens</h2><span class="rule"></span><span class="aside">toque no nome para editar</span></div>
+        <div class="items" id="items"></div>
+        <div class="add-row"><button class="btn block" data-action="item-new"><svg class="ic"><use href="#i-plus"/></svg>Adicionar item</button></div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="foot">Progresso salvo automaticamente neste navegador.</footer>
+</div>
+
+<div class="modal" id="modal" hidden>
+  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="m-title" id="sheet"></div>
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite"><span class="msg"></span><button data-action="undo"><svg class="ic" style="width:18px;height:18px;vertical-align:-3px"><use href="#i-undo"/></svg> Desfazer</button></div>
+<input type="file" id="file" accept="application/json,.json" hidden>
+
+<script>
+/* =====================================================================
+   DADOS DO PERSONAGEM — edite aqui para adaptar a outra ficha.
+   Textos das magias: resumos parafraseados das regras de D&D 2024.
+   ===================================================================== */
+const CHAR = {
+  storageKey: 'soren-frostgaard-nv4',
+  stats: { ac: 16, shieldBonus: 5, hpMax: 30, dc: 14, atk: 6, init: 2, speed: '10,5 m', pb: 2, cha: 4, conSave: 4 },
+  hitDie: 6, conMod: 2,
+  slots: { 1: 4, 2: 3 },                // espaços por círculo
+  createSlotCost: { 1: 2, 2: 3 },       // Fonte de Magia: PF para criar espaço
+  resources: [
+    { id: 'sp', name: 'Pontos de Feitiçaria', icon: 'i-spark', c: 'lvG', max: 4, meta: 'Fonte de Magia · Descanso Longo',
+      desc: 'Convertem espaços de magia ou custeiam <b>Metamagia</b>. Máximo de 4 — não é possível passar disso.' },
+    { id: 'innate', name: 'Feitiçaria Inata', icon: 'i-snow', c: 'lv1', max: 2, meta: 'Ação Bônus · 1 minuto · Descanso Longo',
+      desc: '<b>+1 na CD</b> (fica 15) e <b>Vantagem</b> nas jogadas de ataque de magias de Feiticeiro.', action: { label: 'Ativar', fx: 'innate' } },
+    { id: 'jaunt', name: 'Salto das Nuvens', icon: 'i-cloud', c: 'lv0', max: 2, meta: 'Golias · Ação Bônus · Descanso Longo',
+      desc: 'Teleporte mágico de até <b>9 m</b> para um espaço desocupado que possa ver. Não provoca ataques de oportunidade.', action: { label: 'Usar' } },
+    { id: 'luck', name: 'Pontos de Sorte', icon: 'i-d20', c: 'lvO', max: 2, meta: 'Talento Sortudo · Descanso Longo',
+      desc: 'Gaste 1 para ter <b>Vantagem</b> num Teste de d20 ou impor <b>Desvantagem</b> num ataque feito contra você.', action: { label: 'Usar' } },
+    { id: 'hd', name: 'Dados de Vida', icon: 'i-die', c: 'lvR', max: 4, meta: 'd6 · Descanso Curto para gastar',
+      desc: 'Cada dado gasto num Descanso Curto cura <b>1d6 + 2</b>. Todos voltam no Descanso Longo (regra 2024).', action: { label: 'Gastar', fx: 'hd' } }
+  ],
+  metamagic: [
+    { id: 'quick', name: 'Magia Acelerada', en: 'Quickened Spell', cost: 2, icon: 'i-bolt',
+      desc: 'Uma magia de <b>1 Ação</b> passa a ser conjurada como <b>Ação Bônus</b>. Não funciona se você já conjurou uma magia de 1º círculo ou maior neste turno (nem permite outra depois) — mas sua Ação ainda pode lançar um truque.' },
+    { id: 'subtle', name: 'Magia Sutil', en: 'Subtle Spell', cost: 1, icon: 'i-hush',
+      desc: 'Conjura sem componentes <b>Verbais, Somáticos ou Materiais</b> (exceto materiais consumidos ou com custo em PO). Ninguém percebe a conjuração.' }
+  ],
+  passives: [
+    { t: 'Conjurador Bélico (War Caster)', items: ['<b>Vantagem</b> nas salvaguardas de CON para manter Concentração (+4).', '<b>Magia Reativa:</b> quando uma criatura provoca seu ataque de oportunidade, use a Reação para conjurar nela uma magia de 1 Ação que tenha só ela como alvo.', 'Executa componentes somáticos com as mãos ocupadas.'] },
+    { t: 'Resiliência Dracônica', items: ['+4 PV máximos (já incluídos nos 30).', 'Sem armadura, CA = 10 + DES + CAR = <b>16</b>.'] },
+    { t: 'Golias — Gigante das Nuvens', items: ['Constituição Poderosa: Vantagem em testes para encerrar a condição Agarrado; conta como um tamanho maior para carga.', 'Forma Grande (a partir do nível 5 de personagem).'] },
+    { t: 'Andarilho (Wayfarer)', items: ['Perícias: Intuição (+2) e Furtividade (+4).', 'Ferramentas de Ladrão (+4).'] }
+  ],
+  items: [
+    { name: 'Poção de Cura', note: 'Cura 2d4 + 2 PV · beber é Ação Bônus', qty: 2 },
+    { name: 'Tochas', note: 'Luz plena 6 m · queima por 1 hora', qty: 10 },
+    { name: 'Rações (dias)', note: 'Pacote de Explorador', qty: 10 },
+    { name: 'Frascos de Óleo', note: 'Encharca o alvo: +5 de Fogo se ele pegar fogo', qty: 2 },
+    { name: 'Adagas', note: 'Arremesso 6/18 m · 1d4 Perfurante', qty: 2 },
+    { name: 'Diamante (50 PO)', note: 'Componente do Orbe Cromático — não é consumido ❓', qty: 1 },
+    { name: 'Peças de Ouro (PO)', note: 'Toque no nome para ajustar valores grandes', qty: 0 }
+  ]
+};
+
+const SCHOOL_ICON = { 'Abjuração':'i-shield','Adivinhação':'i-target','Encantamento':'i-charm','Evocação':'i-spark','Ilusão':'i-eye','Invocação':'i-hand','Transmutação':'i-swap' };
+
+const SPELLS = [
+  /* ------------------------------ TRUQUES ------------------------------ */
+  { id:'mind-sliver', name:'Talho Mental', en:'Mind Sliver', level:0, school:'Encantamento', isNew:true,
+    time:'1 Ação', range:'18 m (60 pés)', comp:'V', dur:'1 rodada',
+    sum:'1d6 Psíquico (salv. INT) e o alvo subtrai 1d4 da próxima salvaguarda.',
+    desc:['Você tenta fragmentar por um instante a mente de uma criatura que possa ver dentro do alcance. O alvo deve ser bem-sucedido numa <b>salvaguarda de Inteligência</b> (CD 14) ou sofre <b>1d6 de dano Psíquico</b> e <b>subtrai 1d4</b> da próxima salvaguarda que fizer antes do fim do seu próximo turno.'],
+    upgrade:'O dano aumenta em 1d6 nos níveis 5 (2d6), 11 (3d6) e 17 (4d6).',
+    tactic:'Abre o combo principal: aplique o −1d4 com a Ação e, gastando 2 PF em <b>Magia Acelerada</b>, conjure <i>Teia</i>, <i>Sugestão</i> ou <i>Força Espectral</i> na Ação Bônus contra o alvo enfraquecido.' },
+  { id:'sorcerous-burst', name:'Explosão Elemental', en:'Sorcerous Burst', level:0, school:'Evocação',
+    time:'1 Ação', range:'36 m (120 pés)', comp:'V, S', dur:'Instantânea',
+    sum:'Ataque à distância (+6): 1d8 do elemento escolhido; 8s explodem.',
+    desc:['Você dispara energia mágica contra uma criatura ou objeto dentro do alcance. Faça um <b>ataque mágico à distância (+6)</b>. Se acertar, o alvo sofre <b>1d8</b> de dano de um tipo à sua escolha: Ácido, Elétrico, Frio, Fogo, Psíquico, Trovejante ou Veneno.',
+          'Sempre que rolar <b>8</b> num d8 desta magia, role mais um d8 e some ao dano. Esses dados extras podem ocorrer no máximo <b>4 vezes</b> (seu modificador de Carisma) por conjuração.'],
+    upgrade:'O dano aumenta em 1d8 nos níveis 5 (2d8), 11 (3d8) e 17 (4d8).',
+    tactic:'Sua artilharia de longo alcance. Escolha <b>Frio</b> para manter a temática gélida.' },
+  { id:'true-strike', name:'Golpe Certeiro', en:'True Strike', level:0, school:'Adivinhação',
+    time:'1 Ação', range:'Pessoal', comp:'S, M (uma arma com a qual tenha proficiência, de valor 1 PC ou mais)', dur:'Instantânea',
+    sum:'Ataque com arma usando Carisma (+6); dano pode virar Radiante.',
+    desc:['Guiado por um lampejo de intuição mágica, você faz um ataque com a arma usada na conjuração. O ataque usa seu <b>Carisma</b> nas jogadas de ataque e de dano (<b>+6</b> para acertar, <b>+4</b> no dano) em vez de Força ou Destreza.',
+          'Se o ataque causar dano, ele pode ser <b>Radiante</b> ou do tipo normal da arma, à sua escolha.'],
+    upgrade:'O ataque causa dano Radiante extra nos níveis 5 (1d6), 11 (2d6) e 17 (3d6).',
+    tactic:'Útil quando inimigos resistem a frio/psíquico ou quando você precisa de um golpe corpo a corpo com o cetro.' },
+  { id:'minor-illusion', name:'Ilusão Menor', en:'Minor Illusion', level:0, school:'Ilusão',
+    time:'1 Ação', range:'9 m (30 pés)', comp:'S, M (um pouco de lã)', dur:'1 minuto',
+    sum:'Cria um som ou a imagem de um objeto (cubo de 1,5 m).',
+    desc:['Você cria um <b>som</b> ou a <b>imagem de um objeto</b> dentro do alcance, que dura até o fim da magia.'],
+    list:['<b>Som:</b> de um sussurro a um grito; pode ser contínuo ou intermitente — sua voz, a de outra pessoa, um rugido, passos, tambores…',
+          '<b>Imagem:</b> um objeto que caiba num cubo de 1,5 m. A imagem não emite som, luz, cheiro nem outro efeito sensorial.'],
+    desc2:['Interação física revela a ilusão, pois as coisas a atravessam. Uma criatura que use a ação <b>Estudar</b> pode perceber a farsa com um teste de <b>Inteligência (Investigação) contra CD 14</b>; para ela, a ilusão fica translúcida.'],
+    tactic:'Uma caixa ilusória num corredor dá cobertura visual para fugir ou se esconder. Combine com Furtividade (+4).' },
+  { id:'mage-hand', name:'Mãos Mágicas', en:'Mage Hand', level:0, school:'Invocação',
+    time:'1 Ação', range:'9 m (30 pés)', comp:'V, S', dur:'1 minuto',
+    sum:'Mão espectral manipula objetos leves (até 5 kg) a distância.',
+    desc:['Uma mão espectral flutuante surge num ponto à sua escolha dentro do alcance. Ela some se ficar a mais de 9 m de você ou se você conjurar a magia de novo.',
+          'Ao conjurar, você pode usar a mão para manipular um objeto, abrir uma porta ou recipiente destrancado, guardar ou pegar um item de um recipiente aberto, ou esvaziar um frasco.',
+          'Nos turnos seguintes, com uma ação <b>Usar Magia</b>, você controla a mão de novo e pode movê-la até 9 m.',
+          'A mão não pode atacar, ativar itens mágicos nem carregar mais de <b>5 kg</b>.'],
+    tactic:'Combine com Ferramentas de Ladrão para acionar alavancas, testar armadilhas ou pegar chaves sem se expor.' },
+
+  /* ------------------------------ 1º CÍRCULO ------------------------------ */
+  { id:'ice-knife', name:'Faca de Gelo', en:'Ice Knife', level:1, school:'Invocação', isNew:true,
+    time:'1 Ação', range:'18 m (60 pés)', comp:'S, M (uma gota d\'água ou um pedaço de gelo)', dur:'Instantânea',
+    sum:'Ataque (+6): 1d10 Perfurante; explosão de 2d6 Frio (salv. DES) em 1,5 m.',
+    desc:['Você cria um estilhaço de gelo e o arremessa contra uma criatura dentro do alcance. Faça um <b>ataque mágico à distância (+6)</b>. Se acertar, o alvo sofre <b>1d10 de dano Perfurante</b>.',
+          'Acertando ou errando, o estilhaço <b>explode</b>: o alvo e cada criatura a até 1,5 m dele devem ser bem-sucedidos numa <b>salvaguarda de Destreza</b> (CD 14) ou sofrem <b>2d6 de dano de Frio</b>.'],
+    higher:'O dano de Frio aumenta em 1d6 por nível de espaço acima do 1º (3d6 com espaço de 2º).',
+    tactic:'Não usa concentração — dano gélido enquanto <i>Teia</i> mantém os inimigos presos (e Contidos têm Desvantagem em salvaguardas de DES).' },
+  { id:'shield', name:'Escudo Arcano', en:'Shield', level:1, school:'Abjuração', reaction:true, effect:'shield',
+    time:'1 Reação, quando for atingido por um ataque ou alvo de Mísseis Mágicos', range:'Pessoal', comp:'V, S', dur:'1 rodada',
+    sum:'Reação: +5 na CA (vai a 21) até o início do seu próximo turno.',
+    desc:['Uma barreira invisível de força mágica surge para protegê-lo. Até o início do seu próximo turno, você recebe <b>+5 na CA</b> — inclusive contra o ataque que desencadeou a magia — e não sofre dano de <i>Mísseis Mágicos</i>.'],
+    tactic:'Sua CA vai de <b>16 para 21</b>. Use quando o ataque acertar por 5 ou menos. Acumula com <i>Reflexos</i>.' },
+  { id:'disguise-self', name:'Disfarçar-se', en:'Disguise Self', level:1, school:'Ilusão',
+    time:'1 Ação', range:'Pessoal', comp:'V, S', dur:'1 hora',
+    sum:'Muda sua aparência, roupas e equipamento por 1 hora.',
+    desc:['Você faz com que você — incluindo roupas, armadura, armas e pertences — pareça diferente até a magia acabar. Pode parecer até <b>30 cm</b> mais alto ou mais baixo e mais magro ou mais pesado, mas mantém a mesma disposição básica de membros.',
+          'As mudanças não resistem a inspeção física: um chapéu ilusório não é tocável e quem tocar seu rosto sente as feições reais.',
+          'Para perceber o disfarce, uma criatura pode usar a ação <b>Estudar</b> e passar num teste de <b>Inteligência (Investigação) contra CD 14</b>.'],
+    tactic:'Com <b>Magia Sutil</b> (1 PF), ninguém nota a conjuração. Lembre-se: como Golias, você continua alto — só ±30 cm.' },
+  { id:'chromatic-orb', name:'Orbe Cromático', en:'Chromatic Orb', level:1, school:'Evocação', draconic:true,
+    time:'1 Ação', range:'27 m (90 pés)', comp:'V, S, M (um diamante de 50+ PO)', dur:'Instantânea',
+    sum:'Ataque (+6): 3d8 do elemento escolhido; dados iguais fazem o orbe saltar.',
+    desc:['Você arremessa uma esfera de energia contra uma criatura dentro do alcance. Escolha Ácido, Elétrico, Frio, Fogo, Trovejante ou Veneno e faça um <b>ataque mágico à distância (+6)</b>. Se acertar, o alvo sofre <b>3d8</b> de dano do tipo escolhido.',
+          'Se você rolar o <b>mesmo número em dois ou mais d8</b>, o orbe salta para outro alvo à sua escolha a até 9 m do primeiro: faça um novo ataque e uma nova rolagem de dano.'],
+    higher:'+1d8 de dano por nível de espaço acima do 1º. O orbe pode saltar um número de vezes igual ao nível do espaço gasto, e cada criatura só pode ser alvo uma vez por conjuração.',
+    warn:'Exige um <b>diamante de 50 PO</b> (não consumido). O foco arcano não o substitui, e Magia Sutil não dispensa componentes com custo.',
+    tactic:'Seu maior dano de 1º círculo. Varie o elemento conforme as resistências do inimigo.' },
+  { id:'command', name:'Comando', en:'Command', level:1, school:'Encantamento', draconic:true,
+    time:'1 Ação', range:'18 m (60 pés)', comp:'V', dur:'Instantânea',
+    sum:'Ordem de uma palavra (salv. SAB): Aproxime, Largue, Fuja, Rasteje ou Pare.',
+    desc:['Você profere uma ordem de uma palavra a uma criatura que possa ver dentro do alcance. O alvo deve ser bem-sucedido numa <b>salvaguarda de Sabedoria</b> (CD 14) ou segue a ordem no próximo turno dele:'],
+    list:['<b>Aproxime-se:</b> move-se até você pelo caminho mais curto e encerra o turno se chegar a 1,5 m.',
+          '<b>Largue:</b> solta o que estiver segurando e encerra o turno.',
+          '<b>Fuja:</b> gasta o turno se afastando de você pelo meio mais rápido.',
+          '<b>Rasteje:</b> fica Caído e encerra o turno.',
+          '<b>Pare:</b> não se move nem realiza ações ou ações bônus.'],
+    higher:'Afeta uma criatura adicional por nível de espaço acima do 1º.',
+    tactic:'Com <b>Magia Sutil</b>, a ordem sai sem palavra audível — ideal na corte. "Largue" desarma; "Rasteje" dá Vantagem corpo a corpo aos aliados.' },
+
+  /* ------------------------------ 2º CÍRCULO ------------------------------ */
+  { id:'mirror-image', name:'Reflexos', en:'Mirror Image', level:2, school:'Ilusão', isNew:true, effect:'mirror',
+    time:'1 Ação', range:'Pessoal', comp:'V, S', dur:'1 minuto',
+    sum:'3 duplicatas ilusórias desviam ataques. Sem concentração.',
+    desc:['Três duplicatas ilusórias suas surgem no seu espaço. Até o fim da magia, elas se movem com você e imitam suas ações, trocando de posição para que seja impossível saber qual é a real.',
+          'Sempre que uma criatura o <b>atingir</b> com uma jogada de ataque, role <b>um d6 para cada duplicata restante</b>. Se qualquer d6 resultar em <b>3 ou mais</b>, uma duplicata é atingida no seu lugar e destruída. As duplicatas ignoram qualquer outro dano ou efeito; a magia termina quando as três forem destruídas.',
+          'Criaturas Cegas, ou com Visão às Cegas ou Visão Verdadeira, não são enganadas.'],
+    tactic:'Conjure no turno 1. Camada defensiva: CA 16 → Reflexos → <i>Escudo Arcano</i> (21). As duplicatas aparecem na barra de efeitos para você riscar.' },
+  { id:'web', name:'Teia', en:'Web', level:2, school:'Invocação', conc:true,
+    time:'1 Ação', range:'18 m (60 pés)', comp:'V, S, M (um pedaço de teia de aranha)', dur:'Concentração, até 1 hora',
+    sum:'Cubo de 6 m de teias: terreno difícil e Contido (salv. DES).',
+    desc:['Você conjura uma massa de teias pegajosas num ponto dentro do alcance, preenchendo um <b>Cubo de 6 m</b>. As teias são <b>Terreno Difícil</b> e a área fica <b>Levemente Obscurecida</b>.',
+          'Se não estiverem ancoradas entre duas massas sólidas (paredes, árvores) ou estendidas sobre chão, parede ou teto, as teias desabam e a magia termina no início do seu próximo turno. Sobre uma superfície plana, têm 1,5 m de profundidade.',
+          'Na primeira vez que uma criatura entra nas teias num turno, ou começa o turno nelas, deve passar numa <b>salvaguarda de Destreza</b> (CD 14) ou fica <b>Contida</b> enquanto estiver nelas ou até se libertar.',
+          'Uma criatura Contida pode usar uma ação para fazer um teste de <b>Força (Atletismo) contra CD 14</b>; se passar, se solta.',
+          'As teias são inflamáveis: cada cubo de 1,5 m exposto ao fogo queima em 1 rodada, causando <b>2d4 de Fogo</b> a quem começar o turno nele.'],
+    tactic:'Seu principal controle de grupo. Ataques contra criaturas Contidas têm <b>Vantagem</b>, e elas têm Desvantagem em salvaguardas de DES — combine com <i>Faca de Gelo</i>.' },
+  { id:'suggestion', name:'Sugestão', en:'Suggestion', level:2, school:'Encantamento', conc:true,
+    time:'1 Ação', range:'9 m (30 pés)', comp:'V, M (uma gota de mel)', dur:'Concentração, até 8 horas',
+    sum:'Alvo Enfeitiçado segue uma sugestão razoável (salv. SAB).',
+    desc:['Você sugere um curso de ação — descrito em <b>até 25 palavras</b> — a uma criatura que possa ver dentro do alcance e que possa ouvi-lo e compreendê-lo. A sugestão deve soar realizável e não pode envolver nada obviamente danoso ao alvo ou a seus aliados.',
+          'O alvo deve passar numa <b>salvaguarda de Sabedoria</b> (CD 14) ou fica <b>Enfeitiçado</b> pela duração, ou até que você ou seus aliados lhe causem dano. Enfeitiçado, segue a sugestão da melhor forma possível.',
+          'Se a atividade puder ser concluída antes do fim da duração, a magia termina para o alvo quando ele a concluir.'],
+    tactic:'Ex.: "Leve-nos até o capitão pela passagem dos fundos e não alerte ninguém." Com <b>Magia Sutil</b>, conjure no meio de um interrogatório sem ser notado.' },
+  { id:'phantasmal-force', name:'Força Espectral', en:'Phantasmal Force', level:2, school:'Ilusão', conc:true,
+    time:'1 Ação', range:'18 m (60 pés)', comp:'V, S, M (um pouco de lã)', dur:'Concentração, até 1 minuto',
+    sum:'Ilusão só o alvo percebe (salv. INT); até 2d8 Psíquico por turno.',
+    desc:['Você tenta implantar uma ilusão na mente de uma criatura que possa ver dentro do alcance. O alvo faz uma <b>salvaguarda de Inteligência</b> (CD 14). Se falhar, você cria um objeto, criatura ou fenômeno fantasmagórico que caiba num <b>Cubo de 3 m</b> e que <b>só o alvo percebe</b>, com som, temperatura e outros estímulos.',
+          'O alvo pode usar a ação <b>Estudar</b> e fazer um teste de <b>Inteligência (Investigação) contra CD 14</b>; se passar, percebe a ilusão e a magia termina.',
+          'Enquanto afetado, o alvo trata o fantasma como real e racionaliza qualquer resultado ilógico.',
+          'Se o fantasma for uma criatura ou perigo, em cada um dos seus turnos ele pode causar <b>2d8 de dano Psíquico</b> ao alvo se ele estiver na área do fantasma ou a até 1,5 m dele. O alvo percebe o dano como de um tipo coerente com a ilusão.'],
+    tactic:'Combine com <i>Talho Mental</i> (−1d4 na salvaguarda de INT). Uma jaula ou um abismo ilusório pode prender o alvo na percepção dele.' },
+  { id:'alter-self', name:'Alterar-se', en:'Alter Self', level:2, school:'Transmutação', conc:true, draconic:true,
+    time:'1 Ação', range:'Pessoal', comp:'V, S', dur:'Concentração, até 1 hora',
+    sum:'Adaptação aquática, mudar aparência ou armas naturais (1d6 + 4).',
+    desc:['Você altera sua forma física. Escolha uma opção; durante a duração, pode usar uma ação <b>Usar Magia</b> para trocá-la por outra.'],
+    list:['<b>Adaptação Aquática:</b> guelras e membranas entre os dedos; respira debaixo d\'água e ganha Deslocamento de Natação igual ao seu (10,5 m).',
+          '<b>Mudar Aparência:</b> altura, peso, feições, voz, cabelo e cores — pode parecer de outra espécie (suas estatísticas não mudam). Não altera tamanho nem forma básica. Toque físico não revela o disfarce.',
+          '<b>Armas Naturais:</b> garras (Cortante), presas ou chifres (Perfurante) ou cascos (Contundente). Seu Ataque Desarmado com elas causa <b>1d6 + 4</b> e usa Carisma (<b>+6</b> para acertar).'],
+    tactic:'Disfarce "tátil" real, superior a <i>Disfarçar-se</i> para infiltração longa — mas exige concentração.' },
+  { id:'dragons-breath', name:'Sopro de Dragão', en:'Dragon\'s Breath', level:2, school:'Transmutação', conc:true, draconic:true,
+    time:'1 Ação Bônus', range:'Toque', comp:'V, S, M (uma pimenta picante)', dur:'Concentração, até 1 minuto',
+    sum:'Alvo exala cone de 4,5 m: 3d6 do elemento (salv. DES, metade).',
+    desc:['Você toca uma criatura voluntária (pode ser você) e escolhe Ácido, Elétrico, Frio, Fogo ou Veneno. Até a magia acabar, o alvo pode usar uma ação <b>Usar Magia</b> para exalar um <b>Cone de 4,5 m</b>.',
+          'Cada criatura na área faz uma <b>salvaguarda de Destreza</b> (CD 14), sofrendo <b>3d6</b> de dano do tipo escolhido se falhar, ou metade se passar.'],
+    higher:'O dano aumenta em 1d6 por nível de espaço acima do 2º.',
+    tactic:'Por ser Ação Bônus, dá para tocar um aliado e ainda usar sua Ação num truque. Escolha <b>Frio</b> como herdeiro dos dragões brancos.' }
+];
+</script>
+<script>
+'use strict';
+/* =====================================================================
+   ESTADO, PERSISTÊNCIA E DESFAZER
+   ===================================================================== */
+const LEVELS = Object.keys(CHAR.slots).map(Number);
+const ORD = n => n + 'º';
+const RES = Object.fromEntries(CHAR.resources.map(r => [r.id, r]));
+const SPELL = Object.fromEntries(SPELLS.map(s => [s.id, s]));
+
+function defaultState() {
+  return {
+    v: 1,
+    used:  Object.fromEntries(LEVELS.map(l => [l, 0])),
+    extra: Object.fromEntries(LEVELS.map(l => [l, 0])),
+    res:   Object.fromEntries(CHAR.resources.map(r => [r.id, r.max])),
+    hp: CHAR.stats.hpMax, temp: 0,
+    conc: null,
+    fx: { innate: false, shield: false, mirror: 0 },
+    items: CHAR.items.map((it, i) => ({ id: 'it' + i, ...it })),
+    ui: { tab: 'magia', filter: 'all' }
+  };
+}
+
+function sanitize(raw) {
+  const d = defaultState();
+  if (!raw || typeof raw !== 'object') return d;
+  const int = (v, lo, hi, def) => Number.isFinite(+v) ? Math.min(hi, Math.max(lo, Math.round(+v))) : def;
+  for (const l of LEVELS) {
+    d.used[l]  = int(raw.used?.[l], 0, CHAR.slots[l], 0);
+    d.extra[l] = int(raw.extra?.[l], 0, 9, 0);
+  }
+  for (const r of CHAR.resources) d.res[r.id] = int(raw.res?.[r.id], 0, r.max, r.max);
+  d.hp = int(raw.hp, 0, CHAR.stats.hpMax, CHAR.stats.hpMax);
+  d.temp = int(raw.temp, 0, 999, 0);
+  d.conc = SPELL[raw.conc]?.conc ? raw.conc : null;
+  d.fx.innate = !!raw.fx?.innate; d.fx.shield = !!raw.fx?.shield; d.fx.mirror = int(raw.fx?.mirror, 0, 3, 0);
+  if (Array.isArray(raw.items)) {
+    d.items = raw.items.filter(it => it && typeof it.name === 'string').map((it, i) => ({
+      id: String(it.id || 'it' + Date.now() + i), name: it.name.slice(0, 80), note: String(it.note || '').slice(0, 160), qty: int(it.qty, 0, 999999, 0)
+    }));
+  }
+  if (['magia', 'grimorio', 'recursos', 'mochila'].includes(raw.ui?.tab)) d.ui.tab = raw.ui.tab;
+  if (typeof raw.ui?.filter === 'string') d.ui.filter = raw.ui.filter;
+  return d;
+}
+
+function load() {
+  try { return sanitize(JSON.parse(localStorage.getItem(CHAR.storageKey))); }
+  catch (e) { return defaultState(); }
+}
+function save() {
+  try { localStorage.setItem(CHAR.storageKey, JSON.stringify(state)); } catch (e) { /* armazenamento indisponível */ }
+}
+
+let state = load();
+const undoStack = [];
+let popKey = null;
+
+/** Aplica uma mudança com suporte a desfazer, salva e redesenha. */
+function commit(label, fn, opts = {}) {
+  const snap = JSON.stringify(state);
+  const res = fn(state);
+  if (res === false) return false;
+  undoStack.push(snap);
+  if (undoStack.length > 40) undoStack.shift();
+  save(); render();
+  if (label) toast(label, opts.undo !== false);
+  return true;
+}
+function undo() {
+  const snap = undoStack.pop();
+  if (!snap) return;
+  const ui = state.ui;
+  state = sanitize(JSON.parse(snap)); state.ui = ui;
+  save(); render(); toast('Ação desfeita', false);
+}
+function setUI(key, val) { state.ui[key] = val; save(); }
+
+/* =====================================================================
+   UTILITÁRIOS
+   ===================================================================== */
+const $ = (s, el = document) => el.querySelector(s);
+const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const icon = (id, cls = '') => `<svg class="ic ${cls}" aria-hidden="true"><use href="#${id}"/></svg>`;
+const d = n => 1 + Math.floor(Math.random() * n);
+const sign = n => (n >= 0 ? '+' : '−') + Math.abs(n);
+const lvClass = l => 'lv' + Math.min(l, 2);
+const avail = l => CHAR.slots[l] - state.used[l];
+const totalAvail = l => avail(l) + state.extra[l];
+const dc = () => CHAR.stats.dc + (state.fx.innate ? 1 : 0);
+const ac = () => CHAR.stats.ac + (state.fx.shield ? CHAR.stats.shieldBonus : 0);
+const norm = s => [...String(s)].map(ch => ch.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase()).join('');
+const strip = s => String(s).replace(/<[^>]+>/g, '');
+
+let toastTimer;
+function toast(msg, undoable = true) {
+  const t = $('#toast');
+  $('.msg', t).textContent = msg;
+  $('button', t).hidden = !undoable || !undoStack.length;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), undoable ? 5000 : 2200);
+}
+
+function gem(cls, spent, action, data = {}, label = '') {
+  const attrs = Object.entries(data).map(([k, v]) => `data-${k}="${esc(v)}"`).join(' ');
+  const key = `${action}:${Object.values(data).join(':')}`;
+  return `<button class="gem ${cls} ${spent ? 'spent' : ''} ${popKey === key ? 'pop' : ''}" data-action="${action}" ${attrs}
+    aria-label="${esc(label)}" aria-pressed="${spent}"><i></i></button>`;
+}
+
+/* =====================================================================
+   CABEÇALHO E EFEITOS ATIVOS
+   ===================================================================== */
+function renderStats() {
+  const s = CHAR.stats, hpPct = Math.round(100 * state.hp / s.hpMax);
+  $('#stats').innerHTML = `
+    <div class="stat ${state.fx.shield ? 'boost' : ''}"><div class="lbl">CA</div><div class="val num">${ac()}</div><div class="hint">${state.fx.shield ? 'com Escudo' : 'natural'}</div></div>
+    <div class="stat hp" data-action="goto-hp" role="button" tabindex="0" aria-label="Pontos de vida ${state.hp} de ${s.hpMax}. Ajustar">
+      <div class="lbl">PV</div><div class="val num">${state.hp}<small>/${s.hpMax}</small></div>
+      <div class="hpbar"><i style="width:${hpPct}%;background-position:${100 - hpPct}% 0"></i></div>
+      <div class="hint">${state.temp ? `+${state.temp} temp.` : 'ajustar'}</div></div>
+    <div class="stat ${state.fx.innate ? 'boost' : ''}"><div class="lbl">CD Magia</div><div class="val num">${dc()}</div><div class="hint">${state.fx.innate ? 'F. Inata' : 'Carisma'}</div></div>
+    <div class="stat ${state.fx.innate ? 'boost' : ''}"><div class="lbl">Ataque</div><div class="val num">${sign(s.atk)}</div><div class="hint">${state.fx.innate ? 'Vantagem' : 'mágico'}</div></div>`;
+  $('#substats').innerHTML = `<span>Iniciativa <b>${sign(s.init)}</b></span><span>Desloc. <b>${s.speed}</b></span><span>BP <b>${sign(s.pb)}</b></span><span>Salv. CON <b>${sign(s.conSave)}</b> <small>(V em conc.)</small></span>`;
+}
+
+function renderEffects() {
+  const f = state.fx, out = [];
+  if (state.conc) out.push(`<span class="fx" style="--c:#ffd28a">${icon('i-conc')}<span>Concentração: <b>${esc(SPELL[state.conc].name)}</b></span>
+      <button class="act" data-action="conc-check">Teste</button><button class="x" data-action="conc-end" aria-label="Encerrar concentração">${icon('i-x')}</button></span>`);
+  if (f.innate) out.push(`<span class="fx" style="--c:var(--frost)">${icon('i-snow')}<span><b>Feitiçaria Inata</b> · CD ${dc()} · Vantagem</span>
+      <button class="x" data-action="fx-end" data-fx="innate" aria-label="Encerrar Feitiçaria Inata">${icon('i-x')}</button></span>`);
+  if (f.shield) out.push(`<span class="fx" style="--c:var(--arcane)">${icon('i-shield')}<span><b>Escudo Arcano</b> · CA ${ac()}</span>
+      <button class="x" data-action="fx-end" data-fx="shield" aria-label="Encerrar Escudo Arcano">${icon('i-x')}</button></span>`);
+  if (f.mirror) {
+    const pips = [0, 1, 2].map(i => `<button class="${i < f.mirror ? '' : 'off'}" data-action="mirror-hit" data-i="${i}" aria-label="Duplicata ${i + 1}${i < f.mirror ? ' — tocar quando for destruída' : ' destruída'}"><i></i></button>`).join('');
+    out.push(`<span class="fx" style="--c:var(--silver)">${icon('i-mirror')}<span><b>Reflexos</b></span><span class="mini">${pips}</span>
+      <button class="x" data-action="fx-end" data-fx="mirror" aria-label="Encerrar Reflexos">${icon('i-x')}</button></span>`);
+  }
+  $('#effects').innerHTML = out.join('');
+}
+
+/* =====================================================================
+   ABA MAGIA: ESPAÇOS, FONTE DE MAGIA, LEMBRETES
+   ===================================================================== */
+function renderSlots() {
+  $('#slots').innerHTML = LEVELS.map(l => {
+    const max = CHAR.slots[l], av = avail(l), ex = state.extra[l];
+    let gems = '';
+    for (let i = 0; i < max; i++) gems += gem('', i >= av, 'slot', { lv: l, i }, `Espaço de ${ORD(l)} círculo ${i + 1}: ${i >= av ? 'gasto, tocar para recuperar' : 'disponível, tocar para gastar'}`);
+    for (let i = 0; i < ex; i++) gems += gem('extra', false, 'slot-extra', { lv: l, i }, `Espaço criado de ${ORD(l)} círculo: tocar para gastar`);
+    return `<div class="slot-row ${lvClass(l)}">
+      <div class="lvl-badge">${ORD(l)}<small>CÍRC.</small></div>
+      <div>
+        <div class="slot-meta"><h3>${ORD(l)} Círculo</h3>
+          <span class="count num">${av + ex}<small>/${max}${ex ? ` · +${ex} criado${ex > 1 ? 's' : ''}` : ''}</small></span></div>
+        <div class="gems">${gems}</div>
+      </div></div>`;
+  }).join('');
+  const total = LEVELS.reduce((a, l) => a + totalAvail(l), 0), b = $('#badge-slots');
+  b.textContent = total; b.hidden = false;
+  b.setAttribute('aria-label', `${total} espaços disponíveis`);
+}
+
+function renderFom() {
+  const sp = state.res.sp, max = RES.sp.max;
+  $('#fom-sp').innerHTML = `<b style="color:var(--gold-l)">${sp}</b>/${max} PF`;
+  const toSp = LEVELS.map(l => `<button class="chipbtn ${lvClass(l)}" data-action="slot-to-sp" data-lv="${l}" ${totalAvail(l) && sp + l <= max ? '' : 'disabled'}>
+      <span class="dot"></span>${ORD(l)} <span class="arrow">→</span> <b>+${l} PF</b></button>`).join('');
+  const toSlot = LEVELS.filter(l => CHAR.createSlotCost[l]).map(l => `<button class="chipbtn ${lvClass(l)}" data-action="sp-to-slot" data-lv="${l}" ${sp >= CHAR.createSlotCost[l] ? '' : 'disabled'}>
+      <b>${CHAR.createSlotCost[l]} PF</b> <span class="arrow">→</span> <span class="dot"></span>${ORD(l)}</button>`).join('');
+  $('#fom').innerHTML = `
+    <div class="fom-row"><h4>Converter espaço em Pontos de Feitiçaria <small>(sem ação)</small></h4><div class="fom-btns">${toSp}</div></div>
+    <div class="fom-row"><h4>Criar espaço de magia <small>(Ação Bônus)</small></h4><div class="fom-btns">${toSlot}</div></div>
+    <p class="note">Espaços criados aparecem em <b style="color:var(--gold)">dourado</b> e somem no Descanso Longo. Você não pode passar de ${max} PF.</p>`;
+}
+
+function renderReminders() {
+  $('#reminders').innerHTML = `<ul style="margin:0;padding-left:18px;display:grid;gap:6px">
+    <li><b>CD ${dc()}</b> · ataque mágico <b>${sign(CHAR.stats.atk)}</b>${state.fx.innate ? ' <b>com Vantagem</b>' : ''} <small>(Feitiçaria Inata: CD 15 e Vantagem)</small></li>
+    <li><b>Um espaço de magia por turno</b> (regra 2024). Com <i>Magia Acelerada</i>, sua Ação ainda pode lançar um truque.</li>
+    <li><b>Concentração:</b> CON ${sign(CHAR.stats.conSave)} com <b>Vantagem</b> (Conjurador Bélico). CD = 10 ou metade do dano, o que for maior.</li>
+    <li><b>Defesa em camadas:</b> CA 16 → <i>Reflexos</i> → <i>Escudo Arcano</i> (CA 21).</li>
+    <li><b>Mobilidade:</b> <i>Salto das Nuvens</i> (Ação Bônus, 9 m) não provoca ataques de oportunidade.</li></ul>`;
+}
+
+/* =====================================================================
+   ABA GRIMÓRIO
+   ===================================================================== */
+const FILTERS = [
+  { id: 'all', label: 'Todas' }, { id: '0', label: 'Truques' }, { id: '1', label: '1º Círculo' }, { id: '2', label: '2º Círculo' },
+  { id: 'conc', label: 'Concentração' }, { id: 'noconc', label: 'Sem concentração' }, { id: 'drac', label: 'Dracônicas' }
+];
+const GROUP_NAME = { 0: 'Truques', 1: '1º Círculo', 2: '2º Círculo' };
+let query = '';
+
+function highlight(text, q) {
+  if (!q) return esc(text);
+  const i = norm(text).indexOf(q);
+  if (i < 0) return esc(text);
+  const chars = [...text];
+  return esc(chars.slice(0, i).join('')) + '<mark>' + esc(chars.slice(i, i + q.length).join('')) + '</mark>' + esc(chars.slice(i + q.length).join(''));
+}
+function matchFilter(s, f) {
+  if (f === 'all') return true;
+  if (f === 'conc') return !!s.conc;
+  if (f === 'noconc') return !s.conc && s.level > 0;
+  if (f === 'drac') return !!s.draconic;
+  return String(s.level) === f;
+}
+function spellHaystack(s) {
+  return s._hay || (s._hay = norm([s.name, s.en, s.school, s.sum, s.time, s.range, s.dur, ...(s.desc || []), ...(s.list || []), ...(s.desc2 || []), s.conc ? 'concentracao' : '', s.draconic ? 'draconica' : ''].map(strip).join(' ')));
+}
+
+function renderFilters() {
+  $('#filters').innerHTML = FILTERS.map(f => `<button class="filter" data-action="filter" data-f="${f.id}" aria-pressed="${state.ui.filter === f.id}">${f.label}</button>`).join('');
+}
+
+function spellCard(s, q) {
+  const tags = [];
+  if (s.time !== '1 Ação') tags.push(`<span class="tag ${s.reaction ? 'react' : ''}">${s.reaction ? 'Reação' : esc(s.time)}</span>`);
+  tags.push(`<span class="tag">${esc(s.range.replace(/ \(.*\)/, ''))}</span>`);
+  if (s.conc) tags.push('<span class="tag conc">Concentração</span>');
+  if (s.draconic) tags.push('<span class="tag drac">Dracônica</span>');
+  if (s.isNew) tags.push('<span class="tag new">Nova</span>');
+  return `<button class="spell ${lvClass(s.level)} ${state.conc === s.id ? 'conc-on' : ''}" data-action="spell" data-id="${s.id}">
+    <span class="rune">${icon(SCHOOL_ICON[s.school] || 'i-spark')}</span>
+    <span class="t"><span class="name">${highlight(s.name, q)}<span class="en">${highlight(s.en, q)}</span></span>
+      <span class="sum">${highlight(s.sum, q)}</span><span class="tags">${tags.join('')}</span></span>
+    <span class="chev">${icon('i-chev')}</span></button>`;
+}
+
+function renderGrim() {
+  const q = norm(query.trim()), f = state.ui.filter;
+  const list = SPELLS.filter(s => matchFilter(s, f) && (!q || spellHaystack(s).includes(q)));
+  if (!list.length) { $('#grim').innerHTML = `<p class="empty">Nenhuma magia encontrada${query ? ` para “${esc(query)}”` : ''}.</p>`; return; }
+  const levels = [...new Set(list.map(s => s.level))].sort();
+  $('#grim').innerHTML = levels.map(l => {
+    const spells = list.filter(s => s.level === l);
+    const mini = l > 0 ? `<span class="mini-gems" aria-label="${totalAvail(l)} espaços disponíveis">${Array.from({ length: CHAR.slots[l] + state.extra[l] }, (_, i) => `<i class="${i < totalAvail(l) ? '' : 'off'}"></i>`).join('')}</span>` : '<span class="aside note">à vontade</span>';
+    return `<section class="spell-group ${lvClass(l)}"><div class="group-h"><h3>${GROUP_NAME[l] || ORD(l) + ' Círculo'}</h3><span class="rule"></span>${mini}</div>
+      <div class="spell-list">${spells.map(s => spellCard(s, q)).join('')}</div></section>`;
+  }).join('');
+}
+
+/* =====================================================================
+   ABA RECURSOS
+   ===================================================================== */
+function renderHp() {
+  const s = CHAR.stats, pct = Math.round(100 * state.hp / s.hpMax);
+  $('#hp-panel').innerHTML = `
+    <div class="panel-h"><h2>Pontos de Vida</h2><span class="rule"></span><span class="aside">Dados de Vida: ${state.res.hd}/${RES.hd.max} d${CHAR.hitDie}</span></div>
+    <div class="hp-big"><div class="hp-num num">${state.hp}<small> / ${s.hpMax}</small>${state.temp ? `<span class="tmp">+${state.temp} PV temporários</span>` : ''}</div></div>
+    <div class="hpbar"><i style="width:${pct}%;background-position:${100 - pct}% 0"></i></div>
+    <div class="hp-ctrl">
+      <input id="hp-amt" type="number" inputmode="numeric" min="0" max="999" placeholder="Valor" aria-label="Quantidade de PV">
+      <button class="btn danger" data-action="hp" data-op="dmg">Dano</button>
+      <button class="btn" data-action="hp" data-op="heal" style="color:var(--ok)">Curar</button>
+      <button class="btn ghost" data-action="hp" data-op="temp" style="color:var(--frost)">Temp.</button>
+    </div>`;
+}
+
+function renderRes() {
+  $('#res-list').innerHTML = CHAR.resources.map(r => {
+    const cur = state.res[r.id];
+    let gems = '';
+    for (let i = 0; i < r.max; i++) gems += gem('', i >= cur, 'res-gem', { id: r.id, i }, `${r.name} ${i + 1}: ${i >= cur ? 'gasto' : 'disponível'}`);
+    let act = '';
+    if (r.action) {
+      if (r.action.fx === 'innate' && state.fx.innate) act = `<button class="btn sm" data-action="fx-end" data-fx="innate">Encerrar</button>`;
+      else act = `<button class="btn sm ${r.action.fx === 'innate' ? 'frost' : ''}" data-action="res-use" data-id="${r.id}" ${cur ? '' : 'disabled'}>${r.action.label}</button>`;
+    }
+    return `<div class="panel res ${r.c}">
+      <div class="res-top"><div class="res-ic">${icon(r.icon)}</div>
+        <div class="res-t"><h3>${r.name}</h3><div class="meta">${r.meta}</div></div>
+        <div class="res-val num" aria-live="polite">${cur}<small>/${r.max}</small></div></div>
+      <p class="res-desc">${r.desc}</p>
+      <div class="res-foot"><div class="gems">${gems}</div>
+        <div class="ctl"><button class="step" data-action="res-step" data-id="${r.id}" data-d="-1" ${cur ? '' : 'disabled'} aria-label="Gastar ${r.name}">−</button>
+          <button class="step" data-action="res-step" data-id="${r.id}" data-d="1" ${cur < r.max ? '' : 'disabled'} aria-label="Recuperar ${r.name}">+</button>${act}</div></div></div>`;
+  }).join('');
+}
+
+function renderMeta() {
+  $('#meta-sp').innerHTML = `<b style="color:var(--gold-l)">${state.res.sp}</b>/${RES.sp.max} PF`;
+  $('#meta').innerHTML = CHAR.metamagic.map(m => `<div class="meta-item">
+      <h4>${m.name}<span class="cost">${m.cost} PF</span></h4>
+      <button class="btn sm" data-action="meta-use" data-id="${m.id}" ${state.res.sp >= m.cost ? '' : 'disabled'}>Usar</button>
+      <p>${m.desc}</p></div>`).join('') +
+    `<p class="note">Dica: no grimório, marque a metamagia antes de conjurar para gastar PF e espaço de uma vez.</p>`;
+}
+
+function renderPassives() {
+  $('#passives').innerHTML = CHAR.passives.map((p, i) => `<details class="passive" ${i === 0 ? 'open' : ''}><summary>${p.t}</summary><ul>${p.items.map(x => `<li>${x}</li>`).join('')}</ul></details>`).join('');
+}
+
+/* =====================================================================
+   ABA MOCHILA
+   ===================================================================== */
+function renderItems() {
+  $('#items').innerHTML = state.items.length ? state.items.map(it => `<div class="item ${it.qty ? '' : 'zero'}">
+      <button class="it" data-action="item-edit" data-id="${esc(it.id)}"><b>${esc(it.name)}</b>${it.note ? `<span>${esc(it.note)}</span>` : ''}</button>
+      <div class="counter"><button class="step" data-action="item-step" data-id="${esc(it.id)}" data-d="-1" ${it.qty ? '' : 'disabled'} aria-label="Gastar ${esc(it.name)}">−</button>
+        <div class="v num">${it.qty}</div>
+        <button class="step" data-action="item-step" data-id="${esc(it.id)}" data-d="1" aria-label="Adicionar ${esc(it.name)}">+</button></div></div>`).join('')
+    : '<p class="empty">Mochila vazia. Adicione poções, tochas, flechas…</p>';
+}
+
+function render() {
+  renderStats(); renderEffects(); renderSlots(); renderFom(); renderReminders();
+  renderFilters(); renderGrim(); renderHp(); renderRes(); renderMeta(); renderItems();
+  popKey = null;
+  if (modalRefresh) modalRefresh();
+}
+
+/* =====================================================================
+   MODAIS
+   ===================================================================== */
+let modalRefresh = null, lastFocus = null;
+function openModal(build) {
+  lastFocus = document.activeElement;
+  const sh = $('#sheet');
+  modalRefresh = () => { const st = sh.scrollTop; sh.innerHTML = '<div class="grab"></div>' + build(); sh.scrollTop = st; };
+  modalRefresh();
+  $('#modal').hidden = false; document.body.style.overflow = 'hidden'; sh.scrollTop = 0;
+  setTimeout(() => ($('[autofocus]', sh) || $('.m-close', sh))?.focus({ preventScroll: true }), 40);
+}
+function closeModal() {
+  if ($('#modal').hidden) return;
+  $('#modal').hidden = true; modalRefresh = null; document.body.style.overflow = '';
+  lastFocus?.focus?.({ preventScroll: true });
+}
+const mHead = (kicker, title, sub = '') => `<div class="m-head"><div class="t"><div class="m-kicker">${kicker}</div>
+  <h2 class="m-title" id="m-title">${title}</h2>${sub ? `<div class="m-en">${sub}</div>` : ''}</div>
+  <button class="m-close" data-action="close" aria-label="Fechar">${icon('i-x')}</button></div>`;
+const box = (h, body, cls = '') => `<div class="box ${cls}"><h5>${h}</h5>${body}</div>`;
+
+/* ---------- Magia ---------- */
+let castMeta = new Set();
+const META = Object.fromEntries(CHAR.metamagic.map(m => [m.id, m]));
+const metaCost = () => [...castMeta].reduce((a, id) => a + META[id].cost, 0);
+
+function castSection(s) {
+  const spent = metaCost();
+  const metas = CHAR.metamagic.map(m => {
+    const on = castMeta.has(m.id), okType = m.id !== 'quick' || s.time === '1 Ação';
+    const can = okType && (on || state.res.sp - spent >= m.cost);
+    return `<button class="mt" data-action="meta-toggle" data-id="${m.id}" aria-pressed="${on}" ${can ? '' : 'disabled'}>${icon(m.icon)}${m.name} · ${m.cost} PF</button>`;
+  }).join('');
+  const btns = s.level === 0
+    ? `<button class="btn frost" data-action="cast" data-id="${s.id}" data-lv="0">${icon('i-spark')}Conjurar truque${spent ? ` (−${spent} PF)` : ''}</button>`
+    : LEVELS.filter(l => l >= s.level).map(l => {
+        const n = totalAvail(l);
+        return `<button class="btn ${l === s.level ? 'frost' : ''}" data-action="cast" data-id="${s.id}" data-lv="${l}" ${n ? '' : 'disabled'}>
+          Conjurar no ${ORD(l)}${l > s.level ? ' (ampliada)' : ''} <small style="opacity:.75;font-weight:400">· ${n ? n + (n > 1 ? ' restam' : ' resta') : 'sem espaços'}</small></button>`;
+      }).join('');
+  const notes = [];
+  if (s.level === 0) notes.push('Truques são à vontade — não gastam espaços.');
+  if (s.conc && state.conc && state.conc !== s.id) notes.push(`⚠ Conjurar encerra a concentração em <b>${esc(SPELL[state.conc].name)}</b>.`);
+  if (s.level && !LEVELS.some(l => l >= s.level && totalAvail(l))) notes.push('Sem espaços disponíveis. Use a <b>Fonte de Magia</b> para criar um ou faça um Descanso Longo.');
+  return `<div class="cast"><h4>Conjurar</h4><div class="meta-toggles" role="group" aria-label="Metamagia">${metas}</div>
+    <div class="cast-row">${btns}</div>${notes.map(n => `<p class="note" style="margin-top:8px">${n}</p>`).join('')}</div>`;
+}
+
+function spellModal(id) {
+  const s = SPELL[id]; castMeta = new Set();
+  openModal(() => {
+    const tags = [`<span class="tag">${esc(s.school)}</span>`];
+    if (s.conc) tags.push('<span class="tag conc">Concentração</span>');
+    if (s.reaction) tags.push('<span class="tag react">Reação</span>');
+    if (s.draconic) tags.push('<span class="tag drac">Dracônica · sempre preparada</span>');
+    if (s.isNew) tags.push('<span class="tag new">Nova no nível 4</span>');
+    if (state.conc === s.id) tags.push('<span class="tag conc">● Concentrando agora</span>');
+    const prop = (k, v) => `<div class="prop"><dt>${k}</dt><dd>${esc(v)}</dd></div>`;
+    return `<div class="${lvClass(s.level)}">${mHead(s.level ? `${ORD(s.level)} Círculo · ${s.school}` : `Truque · ${s.school}`, esc(s.name), esc(s.en))}
+      <div class="m-tags">${tags.join('')}</div>
+      <dl class="props">${prop('Tempo de Conjuração', s.time)}${prop('Alcance', s.range)}${prop('Componentes', s.comp)}${prop('Duração', s.dur)}</dl>
+      <div class="m-body">${s.desc.map(p => `<p>${p}</p>`).join('')}${s.list ? `<ul>${s.list.map(li => `<li>${li}</li>`).join('')}</ul>` : ''}${(s.desc2 || []).map(p => `<p>${p}</p>`).join('')}</div>
+      ${s.upgrade ? box('Aprimoramento de Truque', s.upgrade) : ''}${s.higher ? box('Em círculos superiores', s.higher) : ''}
+      ${s.warn ? box('Atenção', s.warn, 'warn') : ''}${s.tactic ? box('Tática de Søren', s.tactic, 'tactic') : ''}
+      ${castSection(s)}</div>`;
+  });
+}
+
+function doCast(id, lv) {
+  const s = SPELL[id], cost = metaCost(), prev = state.conc;
+  const metaTxt = [...castMeta].map(m => META[m].name).join(' + ');
+  let label = `${s.name} conjurada${lv ? ` (${ORD(lv)})` : ''}${metaTxt ? ` · ${metaTxt} (−${cost} PF)` : ''}`;
+  if (s.conc && prev && prev !== id) label += ` · fim da concentração em ${SPELL[prev].name}`;
+  const ok = commit(label, st => {
+    if (st.res.sp < cost) return false;
+    if (lv > 0) {
+      if (st.used[lv] < CHAR.slots[lv]) st.used[lv]++;
+      else if (st.extra[lv] > 0) st.extra[lv]--;
+      else return false;
+    }
+    st.res.sp -= cost;
+    if (s.conc) st.conc = s.id;
+    if (s.effect === 'shield') st.fx.shield = true;
+    if (s.effect === 'mirror') st.fx.mirror = 3;
+  });
+  if (ok) closeModal(); else toast('Recursos insuficientes', false);
+}
+
+/* ---------- Descansos ---------- */
+let restRolls = [];
+function shortRestModal() {
+  restRolls = [];
+  openModal(() => {
+    const hd = state.res.hd, full = state.hp >= CHAR.stats.hpMax, can = hd > 0 && !full;
+    const gems = Array.from({ length: RES.hd.max }, (_, i) => `<span class="gem ${i < hd ? '' : 'spent'}"><i></i></span>`).join('');
+    return `${mHead('Descanso Curto · 1 hora', 'Recuperar o fôlego')}
+      <p class="note" style="margin-top:10px">Gaste Dados de Vida para curar: cada dado cura <b>1d${CHAR.hitDie} + ${CHAR.conMod}</b> (CON).</p>
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin-top:10px">
+        <div class="gems lvR" aria-label="${hd} Dados de Vida">${gems}</div>
+        <div class="hp-num num" style="font-size:30px">${state.hp}<small> / ${CHAR.stats.hpMax} PV</small></div></div>
+      <div class="rolls">${restRolls.map(r => `<span class="roll">🎲 ${r.die} + ${CHAR.conMod} = +${r.heal} PV</span>`).join('')}</div>
+      <button class="btn frost block" data-action="hd-roll" ${can ? '' : 'disabled'}>${icon('i-die')}${full ? 'PV já estão no máximo' : hd ? 'Rolar e gastar 1 Dado de Vida' : 'Sem Dados de Vida'}</button>
+      <p class="note" style="margin:12px 0 6px">Rolou um d${CHAR.hitDie} físico? Toque no resultado:</p>
+      <div class="fom-btns">${Array.from({ length: CHAR.hitDie }, (_, i) => `<button class="chipbtn" style="min-width:46px;justify-content:center" data-action="hd-roll" data-v="${i + 1}" ${can ? '' : 'disabled'}><b>${i + 1}</b></button>`).join('')}</div>
+      ${box('Feiticeiro nível 4', 'Nenhum recurso de classe volta no Descanso Curto. A <b>Restauração Feiticeira</b> (recuperar PF no descanso curto) chega no nível 5.', 'warn')}
+      <div class="m-actions"><button class="btn gold" data-action="close">Concluir descanso</button></div>`;
+  });
+}
+function spendHitDie(v) {
+  const die = v || d(CHAR.hitDie), heal = Math.max(1, die + CHAR.conMod);
+  restRolls.push({ die, heal });
+  if (!commit(`Dado de Vida: ${die} + ${CHAR.conMod} = +${heal} PV`, st => {
+    if (!st.res.hd || st.hp >= CHAR.stats.hpMax) return false;
+    st.res.hd--; st.hp = Math.min(CHAR.stats.hpMax, st.hp + heal);
+  })) restRolls.pop();
+}
+
+function longRestModal() {
+  openModal(() => {
+    const rows = LEVELS.map(l => [`Espaços de ${ORD(l)} círculo`, avail(l), CHAR.slots[l]])
+      .concat(CHAR.resources.map(r => [r.name, state.res[r.id], r.max]), [['Pontos de Vida', state.hp, CHAR.stats.hpMax]]);
+    const extras = LEVELS.reduce((a, l) => a + state.extra[l], 0), f = state.fx;
+    const notes = [];
+    if (extras) notes.push(`${extras} espaço(s) criado(s) pela Fonte de Magia desaparece(m).`);
+    if (state.temp) notes.push('PV temporários são perdidos.');
+    if (state.conc || f.innate || f.shield || f.mirror) notes.push('Efeitos ativos e concentração são encerrados.');
+    return `${mHead('Descanso Longo · 8 horas', 'Descansar até o amanhecer')}
+      <ul class="restore-list">${rows.map(([n, c, m]) => `<li class="${c < m ? 'up' : ''}"><span>${n}</span><span class="num">${c < m ? `${c} → ${m}` : `${m}/${m} ✓`}</span></li>`).join('')}</ul>
+      ${notes.map(n => `<p class="note">${n}</p>`).join('')}
+      <div class="m-actions"><button class="btn ghost" data-action="close">Cancelar</button><button class="btn gold" data-action="long-rest-go" autofocus>${icon('i-moon')}Descansar</button></div>`;
+  });
+}
+function longRest() {
+  commit('Descanso Longo concluído — tudo recuperado', st => {
+    LEVELS.forEach(l => { st.used[l] = 0; st.extra[l] = 0; });
+    CHAR.resources.forEach(r => { st.res[r.id] = r.max; });
+    st.hp = CHAR.stats.hpMax; st.temp = 0; st.conc = null;
+    st.fx = { innate: false, shield: false, mirror: 0 };
+  });
+  closeModal();
+}
+
+/* ---------- Concentração ---------- */
+let concDmg = 0, concRoll = null;
+const concDC = () => Math.min(30, Math.max(10, Math.floor(concDmg / 2)));
+function concModal(dmg = 0) {
+  if (!state.conc) return;
+  concDmg = dmg; concRoll = null;
+  openModal(() => {
+    const r = concRoll;
+    const roll = r ? `<span class="roll" style="${r.ok ? '' : 'color:var(--danger);border-color:rgba(240,124,108,.45);background:rgba(240,124,108,.1)'}">🎲 ${r.a} e ${r.b} → ${Math.max(r.a, r.b)} + ${CHAR.stats.conSave} = <b>${r.total}</b> · ${r.ok ? 'Mantida ✓' : 'Falhou ✗'}</span>` : '';
+    return `${mHead('Concentração · ' + esc(SPELL[state.conc]?.name || ''), 'Teste de Concentração')}
+      <div class="field" style="margin-top:14px"><label for="conc-dmg">Dano sofrido</label>
+        <input id="conc-dmg" type="number" inputmode="numeric" min="0" value="${concDmg || ''}" placeholder="0"></div>
+      <div class="dc-big num" id="conc-dc">CD ${concDC()}</div>
+      <p class="note" style="text-align:center">Salvaguarda de Constituição <b>${sign(CHAR.stats.conSave)}</b> com <b>Vantagem</b> (Conjurador Bélico)</p>
+      <div class="rolls" style="justify-content:center">${roll}</div>
+      <button class="btn frost block" data-action="conc-roll">${icon('i-d20')}Rolar 2d20 (maior) ${sign(CHAR.stats.conSave)}</button>
+      <div class="m-actions"><button class="btn danger" data-action="conc-lost">Perdi a concentração</button><button class="btn gold" data-action="close">Mantive</button></div>`;
+  });
+}
+
+/* ---------- Itens ---------- */
+let editingItem = null;
+function itemModal(id) {
+  const it = id ? state.items.find(x => x.id === id) : null;
+  editingItem = it ? it.id : null;
+  openModal(() => `${mHead(it ? 'Mochila · editar' : 'Mochila · novo item', it ? esc(it.name) : 'Adicionar item')}
+    <form id="item-form" style="margin-top:14px" autocomplete="off">
+      <div class="field"><label for="f-name">Nome</label><input id="f-name" required maxlength="80" value="${it ? esc(it.name) : ''}" placeholder="Ex.: Flechas" ${it ? '' : 'autofocus'}></div>
+      <div class="field"><label for="f-note">Observação (opcional)</label><input id="f-note" maxlength="160" value="${it ? esc(it.note) : ''}" placeholder="Ex.: 1d8 perfurante"></div>
+      <div class="field"><label for="f-qty">Quantidade</label><input id="f-qty" type="number" inputmode="numeric" min="0" max="999999" value="${it ? it.qty : 1}"></div>
+      <div class="m-actions">${it ? `<button type="button" class="btn danger" data-action="item-del">${icon('i-trash')}Excluir</button>` : ''}
+        <button type="submit" class="btn gold">Salvar</button></div>
+    </form>`);
+}
+
+function resetModal() {
+  openModal(() => `${mHead('Opções', 'Restaurar ficha original?')}
+    <p class="note" style="margin-top:12px">Espaços, recursos, PV e a mochila voltam aos valores iniciais da ficha. Logo em seguida você ainda pode tocar em <b>Desfazer</b>.</p>
+    <div class="m-actions"><button class="btn ghost" data-action="close" autofocus>Cancelar</button><button class="btn danger" data-action="reset-go">${icon('i-trash')}Restaurar</button></div>`);
+}
+
+/* =====================================================================
+   AÇÕES
+   ===================================================================== */
+function setTab(t) {
+  setUI('tab', t);
+  document.querySelectorAll('.tab').forEach(b => { const on = b.dataset.tab === t; b.setAttribute('aria-selected', on); b.tabIndex = on ? 0 : -1; });
+  document.querySelectorAll('.panel-tab').forEach(p => p.classList.toggle('on', p.id === 'tab-' + t));
+  const top = $('main').getBoundingClientRect().top + window.scrollY - 70;
+  if (window.scrollY > top) window.scrollTo({ top: Math.max(0, top) });
+}
+function toggleMenu(force) {
+  const m = $('#menu'), open = force ?? m.hidden;
+  m.hidden = !open; $('[data-action="menu"]').setAttribute('aria-expanded', open);
+}
+function exportData() {
+  const blob = new Blob([JSON.stringify({ app: CHAR.storageKey, exported: new Date().toISOString(), state }, null, 2)], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob); a.download = `soren-frostgaard-backup-${new Date().toISOString().slice(0, 10)}.json`;
+  document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+  toast('Backup exportado', false);
+}
+const clampRes = (id, v) => Math.min(RES[id].max, Math.max(0, v));
+const FX_NAME = { innate: 'Feitiçaria Inata', shield: 'Escudo Arcano', mirror: 'Reflexos' };
+
+function handle(a, el) {
+  const ds = el.dataset, lv = +ds.lv, i = +ds.i;
+  switch (a) {
+    case 'menu': toggleMenu(); break;
+    case 'export': toggleMenu(false); exportData(); break;
+    case 'import': toggleMenu(false); $('#file').click(); break;
+    case 'reset': toggleMenu(false); resetModal(); break;
+    case 'reset-go': commit('Ficha restaurada', st => { const ui = st.ui; Object.assign(st, defaultState(), { ui }); }); closeModal(); break;
+    case 'undo': undo(); break;
+    case 'close': closeModal(); break;
+    case 'tab': setTab(ds.tab); break;
+    case 'goto-hp': setTab('recursos'); setTimeout(() => { $('#hp-panel').scrollIntoView({ block: 'center' }); $('#hp-amt').focus({ preventScroll: true }); }, 30); break;
+
+    /* espaços de magia */
+    case 'slot': {
+      const av = avail(lv), spend = i < av;
+      popKey = `slot:${lv}:${spend ? av - 1 : av}`;
+      commit(`Espaço de ${ORD(lv)} círculo ${spend ? 'gasto' : 'recuperado'} (${spend ? av - 1 : av + 1}/${CHAR.slots[lv]})`, st => { st.used[lv] += spend ? 1 : -1; });
+      break;
+    }
+    case 'slot-extra': commit(`Espaço criado de ${ORD(lv)} círculo gasto`, st => { if (!st.extra[lv]) return false; st.extra[lv]--; }); break;
+    case 'slot-to-sp': commit(`Espaço de ${ORD(lv)} convertido em ${lv} PF`, st => {
+      if (st.res.sp + lv > RES.sp.max) return false;
+      if (st.used[lv] < CHAR.slots[lv]) st.used[lv]++; else if (st.extra[lv]) st.extra[lv]--; else return false;
+      st.res.sp += lv;
+    }); break;
+    case 'sp-to-slot': { const c = CHAR.createSlotCost[lv];
+      commit(`${c} PF → espaço de ${ORD(lv)} círculo criado`, st => { if (st.res.sp < c) return false; st.res.sp -= c; st.extra[lv]++; }); break; }
+    case 'short-rest': shortRestModal(); break;
+    case 'long-rest': longRestModal(); break;
+    case 'long-rest-go': longRest(); break;
+    case 'hd-roll': spendHitDie(+ds.v || 0); break;
+
+    /* recursos */
+    case 'res-gem': {
+      const r = RES[ds.id], cur = state.res[r.id], spend = i < cur;
+      popKey = `res-gem:${r.id}:${spend ? cur - 1 : cur}`;
+      commit(`${r.name}: ${spend ? cur - 1 : cur + 1}/${r.max}`, st => { st.res[r.id] = clampRes(r.id, cur + (spend ? -1 : 1)); });
+      break;
+    }
+    case 'res-step': { const r = RES[ds.id], v = clampRes(r.id, state.res[r.id] + +ds.d);
+      commit(`${r.name}: ${v}/${r.max}`, st => { if (st.res[r.id] === v) return false; st.res[r.id] = v; }); break; }
+    case 'res-use': {
+      const r = RES[ds.id];
+      if (r.action?.fx === 'hd') { shortRestModal(); break; }
+      if (r.action?.fx === 'innate') { commit(`Feitiçaria Inata ativada: CD ${CHAR.stats.dc + 1} e Vantagem por 1 minuto`, st => { if (!st.res.innate) return false; st.res.innate--; st.fx.innate = true; }); break; }
+      commit(`${r.name} usado (${state.res[r.id] - 1}/${r.max})`, st => { if (!st.res[r.id]) return false; st.res[r.id]--; });
+      break;
+    }
+    case 'meta-use': { const m = META[ds.id]; commit(`${m.name}: −${m.cost} PF`, st => { if (st.res.sp < m.cost) return false; st.res.sp -= m.cost; }); break; }
+    case 'fx-end': commit(`${FX_NAME[ds.fx]} encerrado`, st => { st.fx[ds.fx] = ds.fx === 'mirror' ? 0 : false; }); break;
+    case 'mirror-hit': { const m = state.fx.mirror, hit = i < m;
+      commit(hit ? (m - 1 ? `Duplicata destruída — restam ${m - 1}` : 'Última duplicata destruída — Reflexos termina') : 'Duplicata restaurada', st => { st.fx.mirror = Math.max(0, Math.min(3, m + (hit ? -1 : 1))); }); break; }
+    case 'conc-end': commit(`Concentração em ${SPELL[state.conc]?.name} encerrada`, st => { st.conc = null; }); break;
+    case 'conc-check': concModal(0); break;
+    case 'conc-roll': { const a1 = d(20), b1 = d(20), total = Math.max(a1, b1) + CHAR.stats.conSave; concRoll = { a: a1, b: b1, total, ok: total >= concDC() }; modalRefresh?.(); break; }
+    case 'conc-lost': commit(`Concentração em ${SPELL[state.conc]?.name} perdida`, st => { st.conc = null; }); closeModal(); break;
+    case 'hp': {
+      const inp = $('#hp-amt'), amt = Math.round(+inp.value);
+      if (!amt || amt < 0) { toast('Digite um valor de PV primeiro', false); inp.focus(); break; }
+      if (ds.op === 'dmg') {
+        const absorbed = Math.min(state.temp, amt), rest = amt - absorbed, hadConc = state.conc;
+        commit(`−${amt} PV${absorbed ? ` (${absorbed} absorvido${absorbed > 1 ? 's' : ''} pelos temporários)` : ''}`, st => {
+          st.temp -= absorbed; st.hp = Math.max(0, st.hp - rest); if (!st.hp) st.conc = null;
+        });
+        if (hadConc && !state.conc) toast(`0 PV — concentração em ${SPELL[hadConc].name} perdida`);
+        else if (state.conc) concModal(amt);
+      } else if (ds.op === 'heal') {
+        const healed = Math.min(CHAR.stats.hpMax - state.hp, amt);
+        commit(`+${healed} PV`, st => { if (!healed) return false; st.hp += healed; }) || toast('PV já estão no máximo', false);
+      } else commit(`${amt} PV temporários`, st => { st.temp = amt; });
+      break;
+    }
+
+    /* grimório */
+    case 'filter': setUI('filter', ds.f); renderFilters(); renderGrim(); break;
+    case 'clear-q': query = ''; $('#q').value = ''; syncClear(); renderGrim(); $('#q').focus(); break;
+    case 'spell': spellModal(ds.id); break;
+    case 'meta-toggle': castMeta.has(ds.id) ? castMeta.delete(ds.id) : castMeta.add(ds.id); modalRefresh?.(); break;
+    case 'cast': doCast(ds.id, +ds.lv); break;
+
+    /* mochila */
+    case 'item-step': { const it = state.items.find(x => x.id === ds.id); if (!it) break;
+      const v = Math.max(0, it.qty + +ds.d);
+      commit(`${it.name}: ${v}`, st => { const x = st.items.find(y => y.id === ds.id); if (!x || x.qty === v) return false; x.qty = v; }); break; }
+    case 'item-edit': itemModal(ds.id); break;
+    case 'item-new': itemModal(null); break;
+    case 'item-del': { const it = state.items.find(x => x.id === editingItem);
+      if (it) commit(`${it.name} removido da mochila`, st => { st.items = st.items.filter(x => x.id !== it.id); }); closeModal(); break; }
+  }
+}
+
+function syncClear() { $('[data-action="clear-q"]').hidden = !query; }
+
+/* =====================================================================
+   EVENTOS E INICIALIZAÇÃO
+   ===================================================================== */
+document.addEventListener('click', e => {
+  const el = e.target.closest('[data-action]');
+  if (!e.target.closest('#menu') && !e.target.closest('[data-action="menu"]')) toggleMenu(false);
+  if (el && !el.disabled) handle(el.dataset.action, el);
+  else if (e.target.id === 'modal') closeModal();
+});
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') { if (!$('#modal').hidden) closeModal(); else toggleMenu(false); return; }
+  const el = e.target.closest?.('[role="button"][data-action]');
+  if (el && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); handle(el.dataset.action, el); return; }
+  if (e.target.getAttribute?.('role') === 'tab' && (e.key === 'ArrowRight' || e.key === 'ArrowLeft')) {
+    const tabs = [...document.querySelectorAll('.tab')], k = tabs.indexOf(e.target), n = tabs[(k + (e.key === 'ArrowRight' ? 1 : -1) + tabs.length) % tabs.length];
+    setTab(n.dataset.tab); n.focus(); return;
+  }
+  if (e.key === '/' && !/INPUT|TEXTAREA/.test(document.activeElement.tagName) && $('#modal').hidden) { e.preventDefault(); setTab('grimorio'); $('#q').focus(); }
+  if ((e.ctrlKey || e.metaKey) && e.key === 'z' && !/INPUT|TEXTAREA/.test(document.activeElement.tagName)) { e.preventDefault(); undo(); }
+});
+document.addEventListener('input', e => {
+  if (e.target.id === 'q') { query = e.target.value; syncClear(); renderGrim(); }
+  if (e.target.id === 'conc-dmg') { concDmg = Math.max(0, +e.target.value || 0); $('#conc-dc').textContent = 'CD ' + concDC(); }
+});
+document.addEventListener('submit', e => {
+  if (e.target.id !== 'item-form') return;
+  e.preventDefault();
+  const name = $('#f-name').value.trim(), note = $('#f-note').value.trim(), qty = Math.max(0, Math.round(+$('#f-qty').value || 0));
+  if (!name) { $('#f-name').focus(); return; }
+  commit(editingItem ? `${name} atualizado` : `${name} adicionado à mochila`, st => {
+    const it = editingItem && st.items.find(x => x.id === editingItem);
+    if (it) Object.assign(it, { name, note, qty });
+    else st.items.push({ id: 'it' + Date.now().toString(36), name, note, qty });
+  });
+  closeModal();
+});
+$('#file').addEventListener('change', async e => {
+  const f = e.target.files[0]; e.target.value = '';
+  if (!f) return;
+  try {
+    const data = JSON.parse(await f.text()), raw = data.state || data;
+    if (typeof raw !== 'object' || !raw.res) throw new Error('formato');
+    commit('Backup importado', st => { const ui = st.ui; Object.assign(st, sanitize(raw), { ui }); });
+  } catch (err) { toast('Arquivo de backup inválido', false); }
+});
+window.addEventListener('storage', e => { if (e.key === CHAR.storageKey) { const ui = state.ui; state = load(); state.ui = ui; render(); } });
+
+render();
+renderPassives();
+setTab(state.ui.tab);
+</script>
+</body>
+</html>

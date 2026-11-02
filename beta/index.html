@@ -486,8 +486,9 @@ details.passive ul{padding-left:18px}
 .rr{grid-template-columns:auto minmax(0,1fr) auto}
 @media (max-width:420px){ .rbs{flex-direction:column;align-items:stretch} }
 @media (max-width:520px){ .inv-group .group-h .aside{display:none} }
-.mat-line{display:flex;align-items:center;gap:8px;font-size:15px;color:var(--muted);margin:8px 0 0}
-.mat-line svg.ic{width:18px;height:18px;color:var(--gold)}
+.mat-line{font-size:15px;color:var(--muted);margin:8px 0 0;line-height:1.4}
+.mat-line svg.ic{width:18px;height:18px;color:var(--gold);vertical-align:-4px;margin-right:6px}
+.mat-line b{color:var(--text)}
 
 /* pop-up de rolagem */
 .rollpop{position:fixed;left:0;right:0;top:12px;margin-inline:auto;width:min(420px,calc(100vw - 32px));z-index:130;padding:12px 16px 14px;border-radius:18px;text-align:center;cursor:pointer;
@@ -509,6 +510,58 @@ details.passive ul{padding-left:18px}
 .item .tags{display:flex;flex-wrap:wrap;gap:4px;margin-top:5px}
 .item .chev{color:var(--faint);padding-right:6px}
 .field select{min-height:46px;border-radius:12px;border:1px solid var(--line);background:var(--bg2);padding:8px 12px;font-size:17px;width:100%;color:var(--text)}
+/* ============================================================
+   PONTOS DE FEITIÇARIA (painel)
+   ============================================================ */
+.sp-top{display:grid;gap:14px;align-items:center}
+@media (min-width:760px){ .sp-top{grid-template-columns:auto 1fr} }
+.sp-meter{display:flex;align-items:center;gap:10px 14px;flex-wrap:wrap;padding:12px 14px;border-radius:16px;
+  background:radial-gradient(120% 140% at 0% 0%,rgba(217,180,108,.16),transparent 60%),rgba(0,0,0,.22);border:1px solid rgba(217,180,108,.28)}
+.sp-big{font-size:46px;font-weight:700;line-height:1;color:var(--gold-l);text-shadow:0 0 18px rgba(217,180,108,.35)}
+.sp-big small{font-size:18px;color:var(--muted);font-weight:500;text-shadow:none;margin-left:2px}
+.sp-meter .gems{margin-left:-6px}
+.sp-meter .ctl{display:flex;gap:8px;margin-left:auto}
+.afford-list{display:flex;flex-wrap:wrap;gap:6px}
+.afford{display:inline-flex;gap:6px;align-items:baseline;padding:4px 11px;border-radius:999px;border:1px solid rgba(217,180,108,.35);background:rgba(217,180,108,.07);font-size:15px}
+.afford b{color:var(--gold-l)}
+.afford.off{opacity:.38}
+.sp-top .sub-h{margin-top:0}
+.sp-grid{display:grid;gap:4px 18px;margin-top:6px}
+@media (min-width:760px){ .sp-grid{grid-template-columns:1.1fr 1fr} }
+.sp-cards{display:grid;gap:10px}
+.sp-card{padding:12px;border-radius:14px;border:1px solid var(--line);background:rgba(0,0,0,.2);display:grid;gap:6px}
+.sp-card-h{display:flex;align-items:center;gap:10px}
+.sp-card-h svg.ic{color:var(--gold)}
+.sp-card-h b{display:block;font-size:18px;line-height:1.15}
+.sp-card-h small{color:var(--muted);font-style:italic;font-size:13.5px}
+.sp-card-h .cost{margin-left:auto;display:flex;align-items:center;gap:5px;flex:none}
+.cost i{width:10px;height:10px;transform:rotate(45deg);background:var(--gold);border-radius:2px;box-shadow:0 0 6px var(--gold)}
+.cost em{font-style:normal;font-size:13px;color:var(--muted);margin-left:3px}
+.sp-card p{font-size:15px;color:var(--muted);line-height:1.38}
+.sp-card p b{color:var(--text)}
+.sp-card .when{color:var(--frost);font-size:14.5px}
+.sp-card .btn{justify-self:start}
+.conv{display:grid;grid-template-columns:auto auto 1fr auto;gap:2px 10px;align-items:center;padding:9px 0;border-top:1px dashed rgba(217,180,108,.14)}
+.sub-h + .conv{border-top:0}
+.conv .arrow{color:var(--muted)}
+.conv .dot{display:inline-block;width:10px;height:10px;transform:rotate(45deg);background:var(--c);border-radius:2px;box-shadow:0 0 6px var(--c);margin-right:7px;vertical-align:1px}
+.conv-a,.conv-b{font-size:16px;white-space:nowrap}
+.conv b{color:var(--gold-l)}
+.conv .btn{grid-column:4;grid-row:1}
+.conv .why{grid-column:1/-1;font-size:13.5px;color:var(--muted)}
+.sp-foot{display:grid;gap:12px 18px;margin-top:14px;padding-top:12px;border-top:1px solid var(--line)}
+@media (min-width:760px){ .sp-foot{grid-template-columns:1fr 1fr} }
+.sp-foot .sub-h{margin-top:0}
+.sp-rules ul{margin:6px 0 0;padding-left:20px;display:grid;gap:4px}
+.sp-log ul{list-style:none;margin:0;padding:0;display:grid;gap:4px}
+.sp-log li{display:grid;grid-template-columns:auto auto minmax(0,1fr) auto;gap:8px;align-items:baseline;font-size:14.5px;padding:5px 9px;border-radius:9px;background:rgba(0,0,0,.2)}
+.sp-log .t{color:var(--faint);font-size:12.5px}
+.sp-log .up{color:var(--ok)}
+.sp-log .down{color:var(--danger)}
+.sp-log .x{color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sp-log .s{color:var(--gold-l);font-size:13.5px}
+.mt-group{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-bottom:10px}
+.mt-group .note{flex-basis:100%;margin:0}
 footer.foot a{color:var(--frost)}
 footer.foot{margin-top:28px;text-align:center;color:var(--faint);font-size:14px}
 @media (prefers-reduced-motion:reduce){ *,*::before,*::after{animation:none!important;transition:none!important} html{scroll-behavior:auto} }
@@ -722,11 +775,8 @@ body::after{content:"";position:fixed;inset:0;z-index:300;pointer-events:none;op
             <button class="btn gold rest-btn" data-action="long-rest"><svg class="ic"><use href="#i-moon"/></svg><span>Descanso Longo</span><small>recupera tudo</small></button>
           </div>
         </div>
-        <div class="panel">
-          <div class="panel-h"><h2>Fonte de Magia</h2><span class="rule"></span><span class="aside num" id="fom-sp"></span></div>
-          <div class="fom" id="fom"></div>
-        </div>
-        <div class="panel">
+        <div class="panel span2 sp-hub lvG" id="sp-hub"></div>
+        <div class="panel span2">
           <div class="panel-h"><h2>Economia do Turno</h2><span class="rule"></span></div>
           <div class="note" id="reminders"></div>
         </div>
@@ -751,11 +801,7 @@ body::after{content:"";position:fixed;inset:0;z-index:300;pointer-events:none;op
       <div class="grid two">
         <div class="panel hp-panel span2" id="hp-panel"></div>
         <div id="res-list" class="grid two span2"></div>
-        <div class="panel">
-          <div class="panel-h"><h2>Metamagia</h2><span class="rule"></span><span class="aside num" id="meta-sp"></span></div>
-          <div class="meta-list" id="meta"></div>
-        </div>
-        <div class="panel">
+        <div class="panel span2">
           <div class="panel-h"><h2>Traços Passivos</h2><span class="rule"></span></div>
           <div id="passives"></div>
         </div>
@@ -822,7 +868,7 @@ const CHAR = {
   createSlotCost: { 1: 2, 2: 3 },       // Fonte de Magia: PF para criar espaço
   resources: [
     { id: 'sp', name: 'Pontos de Feitiçaria', icon: 'i-spark', c: 'lvG', max: 4, meta: 'Fonte de Magia · Descanso Longo',
-      desc: 'Convertem espaços de magia ou custeiam <b>Metamagia</b>. Máximo de 4 — não é possível passar disso.' },
+      desc: 'Convertem espaços de magia ou custeiam <b>Metamagia</b>. Máximo de 4 — não é possível passar disso.', action: { label: 'Fonte de Magia →', goto: 'sp-hub' } },
     { id: 'innate', name: 'Feitiçaria Inata', icon: 'i-snow', c: 'lv1', max: 2, meta: 'Ação Bônus · 1 minuto · Descanso Longo',
       desc: '<b>+1 na CD</b> (fica 15) e <b>Vantagem</b> nas jogadas de ataque de magias de Feiticeiro.', action: { label: 'Ativar', fx: 'innate' } },
     { id: 'jaunt', name: 'Salto das Nuvens', icon: 'i-cloud', c: 'lv0', max: 2, meta: 'Golias · Ação Bônus · Descanso Longo',
@@ -834,9 +880,11 @@ const CHAR = {
   ],
   metamagic: [
     { id: 'quick', name: 'Magia Acelerada', en: 'Quickened Spell', cost: 2, icon: 'i-bolt',
-      desc: 'Uma magia de <b>1 Ação</b> passa a ser conjurada como <b>Ação Bônus</b>. Não funciona se você já conjurou uma magia de 1º círculo ou maior neste turno (nem permite outra depois) — sua Ação fica para um <b>truque</b>.' },
+      desc: 'Uma magia de <b>1 Ação</b> passa a ser conjurada como <b>Ação Bônus</b>. Não funciona se você já conjurou uma magia de 1º círculo ou maior neste turno (nem permite outra depois) — sua Ação fica para um <b>truque</b>.',
+      when: 'Combo: <i>Teia</i>, <i>Sugestão</i> ou <i>Força Espectral</i> acelerada + <i>Talho Mental</i> na Ação.' },
     { id: 'subtle', name: 'Magia Sutil', en: 'Subtle Spell', cost: 1, icon: 'i-hush',
-      desc: 'Conjura sem componentes <b>Verbais, Somáticos ou Materiais</b> (exceto materiais consumidos ou com custo em PO). Ninguém percebe a conjuração.' }
+      desc: 'Conjura sem componentes <b>Verbais, Somáticos ou Materiais</b> (exceto materiais consumidos ou com custo em PO). Ninguém percebe a conjuração.',
+      when: 'Intriga: <i>Sugestão</i>, <i>Comando</i> ou <i>Disfarçar-se</i> no meio da corte. Também impede que reajam com <i>Contramágica</i>.' }
   ],
   passives: [
     { t: 'Conjurador Bélico (War Caster)', items: ['<b>Vantagem</b> nas salvaguardas de CON para manter Concentração (+4).', '<b>Magia Reativa:</b> quando uma criatura provoca seu ataque de oportunidade, use a Reação para conjurar nela uma magia de 1 Ação que tenha só ela como alvo.', 'Executa componentes somáticos com as mãos ocupadas.'] },
@@ -1064,6 +1112,7 @@ function defaultState() {
     hp: CHAR.stats.hpMax, temp: 0,
     conc: null,
     fx: { innate: false, shield: false, mirror: 0 },
+    spLog: [],
     items: CHAR.items.map((it, i) => ({ id: 'it' + i, ...it })),
     ui: { tab: 'magia', filter: 'all' }
   };
@@ -1081,6 +1130,8 @@ function sanitize(raw) {
   d.hp = int(raw.hp, 0, CHAR.stats.hpMax, CHAR.stats.hpMax);
   d.temp = int(raw.temp, 0, 999, 0);
   d.conc = SPELL[raw.conc]?.conc ? raw.conc : null;
+  if (Array.isArray(raw.spLog)) d.spLog = raw.spLog.filter(e => e && typeof e.txt === 'string').slice(0, 8)
+    .map(e => ({ t: String(e.t || '').slice(0, 5), d: int(e.d, -99, 99, 0), txt: e.txt.slice(0, 160), sp: int(e.sp, 0, RES.sp.max, 0) }));
   d.fx.innate = !!raw.fx?.innate; d.fx.shield = !!raw.fx?.shield; d.fx.mirror = int(raw.fx?.mirror, 0, 3, 0);
   // v1 tinha um inventário genérico: a partir da v2 usa-se o inventário exato da ficha.
   if ((raw.v || 1) >= 2 && Array.isArray(raw.items)) {
@@ -1111,9 +1162,13 @@ let popKey = null;
 
 /** Aplica uma mudança com suporte a desfazer, salva e redesenha. */
 function commit(label, fn, opts = {}) {
-  const snap = JSON.stringify(state);
+  const snap = JSON.stringify(state), sp0 = state.res.sp;
   const res = fn(state);
   if (res === false) return false;
+  if (state.res.sp !== sp0) {
+    const t = new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+    state.spLog = [{ t, d: state.res.sp - sp0, txt: label || 'Ajuste manual', sp: state.res.sp }, ...(state.spLog || [])].slice(0, 8);
+  }
   undoStack.push(snap);
   if (undoStack.length > 40) undoStack.shift();
   save(); render();
@@ -1239,7 +1294,7 @@ function renderStats() {
       <div class="hint">${state.temp ? `+${state.temp} temp.` : 'ajustar'}</div></div>
     <div class="stat ${state.fx.innate ? 'boost' : ''}"><div class="lbl">CD Magia</div><div class="val num">${dc()}</div><div class="hint">${state.fx.innate ? 'F. Inata' : 'Carisma'}</div></div>
     <div class="stat ${state.fx.innate ? 'boost' : ''}"><div class="lbl">Ataque</div><div class="val num">${sign(s.atk)}</div><div class="hint">${state.fx.innate ? 'Vantagem' : 'mágico'}</div></div>`;
-  $('#substats').innerHTML = `<span>Iniciativa <b>${sign(s.init)}</b></span><span>Desloc. <b>${s.speed}</b></span><span>BP <b>${sign(s.pb)}</b></span><span>Salv. CON <b>${sign(s.conSave)}</b> <small>(V em conc.)</small></span>`;
+  $('#substats').innerHTML = `<span>Iniciativa <b>${sign(s.init)}</b></span><span>Desloc. <b>${s.speed}</b></span><span>BP <b>${sign(s.pb)}</b></span><span>PF <b>${state.res.sp}/${RES.sp.max}</b></span><span>Salv. CON <b>${sign(s.conSave)}</b> <small>(V em conc.)</small></span>`;
 }
 
 function renderEffects() {
@@ -1280,17 +1335,67 @@ function renderSlots() {
   b.setAttribute('aria-label', `${total} espaços disponíveis`);
 }
 
-function renderFom() {
+let spRulesOpen = false;
+function renderSpHub() {
   const sp = state.res.sp, max = RES.sp.max;
-  $('#fom-sp').innerHTML = `<b style="color:var(--gold-l)">${sp}</b>/${max} PF`;
-  const toSp = LEVELS.map(l => `<button class="chipbtn ${lvClass(l)}" data-action="slot-to-sp" data-lv="${l}" ${totalAvail(l) && sp + l <= max ? '' : 'disabled'}>
-      <span class="dot"></span>${ORD(l)} <span class="arrow">→</span> <b>+${l} PF</b></button>`).join('');
-  const toSlot = LEVELS.filter(l => CHAR.createSlotCost[l]).map(l => `<button class="chipbtn ${lvClass(l)}" data-action="sp-to-slot" data-lv="${l}" ${sp >= CHAR.createSlotCost[l] ? '' : 'disabled'}>
-      <b>${CHAR.createSlotCost[l]} PF</b> <span class="arrow">→</span> <span class="dot"></span>${ORD(l)}</button>`).join('');
-  $('#fom').innerHTML = `
-    <div class="fom-row"><h4>Converter espaço em Pontos de Feitiçaria <small>(sem ação)</small></h4><div class="fom-btns">${toSp}</div></div>
-    <div class="fom-row"><h4>Criar espaço de magia <small>(Ação Bônus)</small></h4><div class="fom-btns">${toSlot}</div></div>
-    <p class="note">Espaços criados aparecem em <b style="color:var(--gold)">dourado</b> e somem no Descanso Longo. Você não pode passar de ${max} PF.</p>`;
+  let gems = '';
+  for (let i = 0; i < max; i++) gems += gem('', i >= sp, 'res-gem', { id: 'sp', i }, `Ponto de Feitiçaria ${i + 1}: ${i >= sp ? 'gasto, tocar para recuperar' : 'disponível, tocar para gastar'}`);
+  const afford = CHAR.metamagic.map(m => [m.name, Math.floor(sp / m.cost)])
+    .concat(LEVELS.filter(l => CHAR.createSlotCost[l]).map(l => [`Criar espaço de ${ORD(l)}`, Math.floor(sp / CHAR.createSlotCost[l])]))
+    .map(([n, k]) => `<span class="afford ${k ? '' : 'off'}"><b>${k}×</b> ${n}</span>`).join('');
+  const metas = CHAR.metamagic.map(m => {
+    const ok = sp >= m.cost;
+    return `<div class="sp-card">
+      <div class="sp-card-h">${icon(m.icon)}<div><b>${m.name}</b><small>${m.en}</small></div>
+        <span class="cost" aria-label="Custa ${m.cost} PF">${'<i></i>'.repeat(m.cost)}<em>${m.cost} PF</em></span></div>
+      <p>${m.desc}</p>${m.when ? `<p class="when">${m.when}</p>` : ''}
+      <button class="btn sm ${ok ? 'gold' : ''}" data-action="meta-use" data-id="${m.id}" ${ok ? '' : 'disabled'}>${ok ? `Usar · −${m.cost} PF` : `Faltam ${m.cost - sp} PF`}</button></div>`;
+  }).join('');
+  const toSp = LEVELS.map(l => {
+    const n = totalAvail(l), room = sp + l <= max, ok = n > 0 && room;
+    const why = !n ? `sem espaço de ${ORD(l)} disponível` : !room ? `passaria do máximo de ${max} PF` : `fica com ${sp + l} PF e ${n - 1} espaço${n - 1 === 1 ? '' : 's'} de ${ORD(l)}`;
+    return `<div class="conv ${lvClass(l)}"><span class="conv-a"><span class="dot"></span>Espaço de ${ORD(l)}</span><span class="arrow">→</span>
+      <span class="conv-b"><b>+${l} PF</b></span><button class="btn sm" data-action="slot-to-sp" data-lv="${l}" ${ok ? '' : 'disabled'}>Converter</button>
+      <small class="why">${why}</small></div>`;
+  }).join('');
+  const toSlot = LEVELS.filter(l => CHAR.createSlotCost[l]).map(l => {
+    const c = CHAR.createSlotCost[l], ok = sp >= c;
+    return `<div class="conv ${lvClass(l)}"><span class="conv-a"><b>${c} PF</b></span><span class="arrow">→</span>
+      <span class="conv-b"><span class="dot"></span>Espaço de ${ORD(l)}</span><button class="btn sm" data-action="sp-to-slot" data-lv="${l}" ${ok ? '' : 'disabled'}>Criar</button>
+      <small class="why">${ok ? `fica com ${sp - c} PF · espaço dourado até o Descanso Longo` : `faltam ${c - sp} PF`}</small></div>`;
+  }).join('');
+  const log = state.spLog || [];
+  $('#sp-hub').innerHTML = `
+    <div class="panel-h"><h2>Pontos de Feitiçaria</h2><span class="rule"></span><span class="aside">Fonte de Magia · recupera no Descanso Longo</span></div>
+    <div class="sp-top">
+      <div class="sp-meter">
+        <div class="sp-big num" id="fom-sp" aria-live="polite"><b>${sp}</b><small>/${max} PF</small></div>
+        <div class="gems">${gems}</div>
+        <div class="ctl"><button class="step" data-action="res-step" data-id="sp" data-d="-1" ${sp ? '' : 'disabled'} aria-label="Gastar 1 Ponto de Feitiçaria">−</button>
+          <button class="step" data-action="res-step" data-id="sp" data-d="1" ${sp < max ? '' : 'disabled'} aria-label="Recuperar 1 Ponto de Feitiçaria">+</button></div>
+      </div>
+      <div><p class="sub-h">Com ${sp} PF você pode</p><div class="afford-list">${afford}</div></div>
+    </div>
+    <div class="sp-grid">
+      <section><p class="sub-h">Metamagia · uma por magia</p><div class="sp-cards">${metas}</div></section>
+      <section>
+        <p class="sub-h">Espaço → PF <small>(sem ação)</small></p>${toSp}
+        <p class="sub-h">PF → Espaço <small>(Ação Bônus)</small></p>${toSlot}
+        <p class="note" style="margin-top:6px">Espaço de 3º círculo (5 PF) só a partir do nível 5.</p>
+      </section>
+    </div>
+    <div class="sp-foot">
+      <details class="passive sp-rules" ${spRulesOpen ? 'open' : ''}><summary>Regras rápidas (2024)</summary><ul>
+        <li>Máximo de <b>${max} PF</b>; você não pode passar disso.</li>
+        <li><b>Espaço → PF:</b> sem ação; ganha PF igual ao círculo do espaço.</li>
+        <li><b>PF → Espaço:</b> Ação Bônus; 1º = ${CHAR.createSlotCost[1]} PF, 2º = ${CHAR.createSlotCost[2]} PF. Somem no Descanso Longo.</li>
+        <li>Só <b>uma Metamagia</b> por magia.</li>
+        <li><b>Magia Sutil</b> também dispensa os componentes do inventário (teia, pimenta, mel, lã), mas não o diamante de 50 PO.</li>
+        <li>Recupera tudo no <b>Descanso Longo</b>. No nível 5, a <i>Restauração Feiticeira</i> devolve até 2 PF num Descanso Curto.</li></ul></details>
+      <div class="sp-log"><p class="sub-h">Histórico de PF</p>${log.length
+        ? `<ul>${log.map(e => `<li><span class="t num">${esc(e.t)}</span><b class="num ${e.d > 0 ? 'up' : 'down'}">${e.d > 0 ? '+' : '−'}${Math.abs(e.d)}</b><span class="x" title="${esc(e.txt)}">${esc(e.txt)}</span><span class="s num">${e.sp}/${max}</span></li>`).join('')}</ul>`
+        : '<p class="note">Nenhum ponto gasto ou recuperado ainda.</p>'}</div>
+    </div>`;
 }
 
 function renderReminders() {
@@ -1435,7 +1540,8 @@ function renderRes() {
     for (let i = 0; i < r.max; i++) gems += gem('', i >= cur, 'res-gem', { id: r.id, i }, `${r.name} ${i + 1}: ${i >= cur ? 'gasto' : 'disponível'}`);
     let act = '';
     if (r.action) {
-      if (r.action.fx === 'innate' && state.fx.innate) act = `<button class="btn sm" data-action="fx-end" data-fx="innate">Encerrar</button>`;
+      if (r.action.goto) act = `<button class="btn sm" data-action="goto-sp">${r.action.label}</button>`;
+      else if (r.action.fx === 'innate' && state.fx.innate) act = `<button class="btn sm" data-action="fx-end" data-fx="innate">Encerrar</button>`;
       else act = `<button class="btn sm ${r.action.fx === 'innate' ? 'frost' : ''}" data-action="res-use" data-id="${r.id}" ${cur ? '' : 'disabled'}>${r.action.label}</button>`;
     }
     return `<div class="panel res ${r.c}">
@@ -1447,15 +1553,6 @@ function renderRes() {
         <div class="ctl"><button class="step" data-action="res-step" data-id="${r.id}" data-d="-1" ${cur ? '' : 'disabled'} aria-label="Gastar ${r.name}">−</button>
           <button class="step" data-action="res-step" data-id="${r.id}" data-d="1" ${cur < r.max ? '' : 'disabled'} aria-label="Recuperar ${r.name}">+</button>${act}</div></div></div>`;
   }).join('');
-}
-
-function renderMeta() {
-  $('#meta-sp').innerHTML = `<b style="color:var(--gold-l)">${state.res.sp}</b>/${RES.sp.max} PF`;
-  $('#meta').innerHTML = CHAR.metamagic.map(m => `<div class="meta-item">
-      <h4>${m.name}<span class="cost">${m.cost} PF</span></h4>
-      <button class="btn sm" data-action="meta-use" data-id="${m.id}" ${state.res.sp >= m.cost ? '' : 'disabled'}>Usar</button>
-      <p>${m.desc}</p></div>`).join('') +
-    `<p class="note">Dica: no grimório, marque a metamagia antes de conjurar para gastar PF e espaço de uma vez.</p>`;
 }
 
 function renderPassives() {
@@ -1491,8 +1588,8 @@ function renderItems() {
 }
 
 function render() {
-  renderStats(); renderEffects(); renderFicha(); renderSlots(); renderFom(); renderReminders();
-  renderFilters(); renderGrim(); renderHp(); renderRes(); renderMeta(); renderItems();
+  renderStats(); renderEffects(); renderFicha(); renderSlots(); renderSpHub(); renderReminders();
+  renderFilters(); renderGrim(); renderHp(); renderRes(); renderItems();
   popKey = null;
   if (modalRefresh) modalRefresh();
 }
@@ -1549,18 +1646,22 @@ function rollsSection(s) {
 
 function castSection(s) {
   const spent = metaCost(), blk = blocked(s);
+  const subtle = castMeta.has('subtle');
   const metas = CHAR.metamagic.map(m => {
     const on = castMeta.has(m.id), okType = m.id !== 'quick' || s.time === '1 Ação';
-    const can = okType && (on || state.res.sp - spent >= m.cost);
+    const can = okType && (on || state.res.sp >= m.cost);
     return `<button class="mt" data-action="meta-toggle" data-id="${m.id}" aria-pressed="${on}" ${can ? '' : 'disabled'}>${icon(m.icon)}${m.name} · ${m.cost} PF</button>`;
   }).join('');
   let matBtn = '', matNote = '';
   if (s.mat) {
     const it = matItem(s.mat.key), q = it?.qty ?? 0, name = it ? it.name : s.mat.key, n = s.mat.n || 1;
     if (s.mat.required) {
-      matNote = blk
+      if (subtle && !blk) matNote = `<p class="mat-line">${icon('i-gem')}Magia Sutil não dispensa o ${esc(name)} (tem custo em PO).</p>`;
+      else matNote = blk
         ? box('Bloqueada', `Requer <b>${esc(name)}</b> e você tem <b>0</b>. Quando conseguir um, ajuste a quantidade na Mochila.`, 'warn')
         : `<p class="mat-line">${icon('i-gem')}${esc(name)}: <b>${q}</b> no inventário — necessário, não é consumido.</p>`;
+    } else if (subtle) {
+      matNote = `<p class="mat-line">${icon('i-hush')}Magia Sutil: sem componentes — o estoque de <b>${esc(name)}</b> não é usado.</p>`;
     } else {
       const can = q >= n, on = castMat && can;
       matBtn = `<button class="mt" data-action="mat-toggle" aria-pressed="${on}" ${can ? '' : 'disabled'}>${icon('i-bag')}Gastar ${n}${it?.unit === 'cm' ? ' cm de' : ' ×'} ${esc(name)} · resta ${q}</button>`;
@@ -1576,9 +1677,11 @@ function castSection(s) {
       }).join('');
   const notes = [];
   if (s.level === 0) notes.push('Truques são à vontade — não gastam espaços.');
+  if (castMeta.has('quick')) notes.push('<b>Acelerada:</b> conjurada como Ação Bônus. Neste turno, sua Ação só pode lançar <b>truques</b>.');
   if (s.conc && state.conc && state.conc !== s.id) notes.push(`⚠ Conjurar encerra a concentração em <b>${esc(SPELL[state.conc].name)}</b>.`);
   if (s.level && !blk && !LEVELS.some(l => l >= s.level && totalAvail(l))) notes.push('Sem espaços disponíveis. Use a <b>Fonte de Magia</b> para criar um ou faça um Descanso Longo.');
-  return `<div class="cast"><h4>Conjurar</h4><div class="meta-toggles" role="group" aria-label="Metamagia e componentes">${metas}${matBtn}</div>
+  return `<div class="cast"><h4>Conjurar</h4><div class="mt-group" role="group" aria-label="Metamagia">${metas}
+      <p class="note">Metamagia: uma por magia · você tem <b>${state.res.sp} PF</b></p></div>${matBtn ? `<div class="meta-toggles">${matBtn}</div>` : ''}
     <div class="cast-row">${btns}</div>${matNote}${notes.map(n => `<p class="note" style="margin-top:8px">${n}</p>`).join('')}</div>`;
 }
 
@@ -1609,7 +1712,7 @@ function doCast(id, lv) {
   const s = SPELL[id], cost = metaCost(), prev = state.conc;
   if (blocked(s)) { toast(`${s.name} bloqueada: falta ${matItem(s.mat.key)?.name || 'componente'}`, false); return; }
   const it = s.mat && !s.mat.required ? matItem(s.mat.key) : null, n = s.mat?.n || 1;
-  const useMat = !!(it && castMat && (it.qty ?? 0) >= n);
+  const useMat = !!(it && castMat && !castMeta.has('subtle') && (it.qty ?? 0) >= n);
   const metaTxt = [...castMeta].map(m => META[m].name).join(' + ');
   let label = `${s.name} conjurada${lv ? ` (${ORD(lv)})` : ''}${metaTxt ? ` · ${metaTxt} (−${cost} PF)` : ''}`;
   if (useMat) label += ` · −${n}${it.unit === 'cm' ? ' cm' : ''} ${it.name} (resta ${it.qty - n})`;
@@ -1844,7 +1947,8 @@ function handle(a, el) {
     case 'filter': setUI('filter', ds.f); renderFilters(); renderGrim(); break;
     case 'clear-q': query = ''; $('#q').value = ''; syncClear(); renderGrim(); $('#q').focus(); break;
     case 'spell': spellModal(ds.id); break;
-    case 'meta-toggle': castMeta.has(ds.id) ? castMeta.delete(ds.id) : castMeta.add(ds.id); modalRefresh?.(); break;
+    case 'meta-toggle': { const on = castMeta.has(ds.id); castMeta.clear(); if (!on) castMeta.add(ds.id); modalRefresh?.(); break; }
+    case 'goto-sp': setTab('magia'); setTimeout(() => $('#sp-hub').scrollIntoView({ block: 'start', behavior: 'smooth' }), 40); break;
     case 'cast': doCast(ds.id, +ds.lv); break;
 
     /* mochila */
@@ -1906,6 +2010,7 @@ $('#file').addEventListener('change', async e => {
     commit('Backup importado', st => { const ui = st.ui; Object.assign(st, sanitize(raw), { ui }); });
   } catch (err) { toast('Arquivo de backup inválido', false); }
 });
+document.addEventListener('toggle', e => { if (e.target.classList?.contains('sp-rules')) spRulesOpen = e.target.open; }, true);
 window.addEventListener('storage', e => { if (e.key === CHAR.storageKey) { const ui = state.ui; state = load(); state.ui = ui; render(); } });
 
 render();
@@ -1980,7 +2085,7 @@ setTab(state.ui.tab);
 
   /* ---------------- diferenças entre renders ---------------- */
   const snap = () => ({ used: { ...state.used }, extra: { ...state.extra }, res: { ...state.res }, hp: state.hp, fx: { ...state.fx },
-    conc: state.conc, items: Object.fromEntries(state.items.map(i => [i.id, i.qty])) });
+    conc: state.conc, items: Object.fromEntries(state.items.map(i => [i.id, i.qty])), log0: JSON.stringify((state.spLog || [])[0] || null) });
   let prev = snap(), inRender = false;
 
   function diff(a, b) {
@@ -1995,13 +2100,19 @@ setTab(state.ui.tab);
     }
     for (const r of CHAR.resources) {
       const o = a.res[r.id], n = b.res[r.id]; if (o === n) continue;
-      const panel = $(`[data-action="res-step"][data-id="${r.id}"]`)?.closest('.res'); if (!panel) continue;
-      const gems = qa('.gem', panel), color = cssVar(panel, '--c');
-      for (let i = n; i < o; i++) shatter(gems[i], color);
-      for (let i = o; i < n; i++) glowIn(gems[i], color, (i - o) * .07);
-      tweenNum($('.res-val', panel), o, n);
+      const boxes = new Set(qa(`.gem[data-action="res-gem"][data-id="${r.id}"]`).map(g => g.closest('.res, .sp-meter')).filter(Boolean));
+      boxes.forEach(box => {
+        const gems = qa(`.gem[data-id="${r.id}"]`, box), color = cssVar(box, '--c', '#d9b46c');
+        for (let i = n; i < o; i++) shatter(gems[i], color);
+        for (let i = o; i < n; i++) glowIn(gems[i], color, (i - o) * .07);
+        tweenNum($('.res-val', box), o, n);
+      });
     }
-    if (a.res.sp !== b.res.sp) { tweenNum($('#fom-sp b'), a.res.sp, b.res.sp); tweenNum($('#meta-sp b'), a.res.sp, b.res.sp); }
+    if (a.res.sp !== b.res.sp) tweenNum($('#fom-sp b'), a.res.sp, b.res.sp);
+    if (a.log0 !== b.log0) {
+      const li = $('.sp-log li');
+      if (li) G.fromTo(li, { x: -14, autoAlpha: 0, backgroundColor: 'rgba(217,180,108,.25)' }, { x: 0, autoAlpha: 1, backgroundColor: 'rgba(0,0,0,.2)', duration: .7, ease: 'power3.out', clearProps: 'all' });
+    }
     if (a.hp !== b.hp) {
       const st = $('.stat.hp'), dmg = b.hp < a.hp;
       tweenNum($('.val', st), a.hp, b.hp); tweenNum($('#hp-panel .hp-num'), a.hp, b.hp);

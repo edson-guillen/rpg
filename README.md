@@ -33,7 +33,11 @@ Ficha de controle de **magias e recursos limitados** para **Søren Frostgaard**,
 
 ### 💎 Espaços de Magia
 - Gemas clicáveis por círculo: **1º círculo (4)** e **2º círculo (3)**. Um toque gasta e outro recupera.
-- **Fonte de Magia**: converte espaços em Pontos de Feitiçaria e cria espaços com PF (2 PF → 1º, 3 PF → 2º). Os espaços criados aparecem em **dourado** e somem no Descanso Longo.
+- **Pontos de Feitiçaria** (painel próprio, logo abaixo dos espaços):
+  - Medidor com os 4 PF (gemas, **+ / −**) e "**com X PF você pode**": quantas vezes dá para usar cada Metamagia ou criar cada espaço.
+  - **Metamagia** em cartões com custo, quando usar e botão **Usar**.
+  - **Fonte de Magia** nos dois sentidos: espaço → PF (sem ação) e PF → espaço (Ação Bônus: 2 PF → 1º, 3 PF → 2º), com o motivo quando algo está bloqueado ("passaria do máximo de 4 PF", "faltam 1 PF"). Espaços criados aparecem em **dourado** e somem no Descanso Longo.
+  - **Histórico de PF** com hora, ganho ou gasto, motivo e saldo (últimos 8), além de **regras rápidas** de 2024.
 - **Descanso Longo**: mostra antes o que vai voltar e recupera espaços, recursos, PV e Dados de Vida.
 - **Descanso Curto**: gasta Dados de Vida (1d6 + 2), com rolagem automática ou pelo resultado de um dado físico.
 
@@ -43,7 +47,7 @@ Ficha de controle de **magias e recursos limitados** para **Søren Frostgaard**,
 - Cada cartão já mostra os números: **ATQ +6**, **CD 14 · DES**, dados de dano.
 - Ao tocar numa magia, um modal mostra **Tempo de Conjuração, Alcance, Componentes, Duração**, um quadro **Números e rolagens** (acerto, CD, dano com média e versão ampliada no 2º círculo), a descrição completa e uma **dica tática** da ficha.
 - A **CD** nos textos acompanha a Feitiçaria Inata (14 → 15).
-- O botão **Conjurar** gasta o espaço certo (com opção de conjurar em círculo maior) e, se você marcar uma **Metamagia**, gasta os PF junto.
+- O botão **Conjurar** gasta o espaço certo (com opção de conjurar em círculo maior) e, se você marcar uma **Metamagia**, gasta os PF junto. Só é possível marcar **uma Metamagia por magia** (regra 2024). Com **Magia Sutil**, os componentes do inventário não são descontados (o diamante continua obrigatório).
 
 ### ⚔️ Efeitos ativos (barra fixa no topo)
 - **Concentração**: mostra a magia mantida, encerra a anterior ao conjurar outra e tem um **teste de concentração** (CD automática, 2d20 + 4 por causa do Conjurador Bélico).
@@ -54,7 +58,7 @@ Ficha de controle de **magias e recursos limitados** para **Søren Frostgaard**,
 ### 🔥 Recursos de classe
 - Contadores com **+ / −** e gemas para Pontos de Feitiçaria (4), Feitiçaria Inata (2), Salto das Nuvens (2), Pontos de Sorte (2) e Dados de Vida (4d6).
 - Controle de **PV**: dano (absorvido primeiro pelos PV temporários, com teste de concentração automático), cura e PV temporários.
-- Metamagia (**Acelerada** e **Sutil**) e um resumo dos traços passivos.
+- Atalho **Fonte de Magia →** no cartão de PF e um resumo dos traços passivos.
 
 ### 🎒 Inventário exato
 - **Componentes de conjuração** ligados às magias: Teia de Aranha (49), Pimenta Seca (19), Mel (1 cantil, ~100 usos), Lã (10 cm) e Diamante de 50 PO (0).

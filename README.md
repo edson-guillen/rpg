@@ -71,10 +71,20 @@ Ficha de controle de **magias e recursos limitados** para **Søren Frostgaard**,
 - **Equipamento**: Ferramentas de Ladrão, Kit de Masmorra, Kit de Tarot, Capa da Ondulação, Medalha da Casa Frostgaard, Roupas de Viagem, 2 Algibeiras e Saco de Dormir.
 - Itens podem ser adicionados, editados, recategorizados ou excluídos.
 
+### 📝 Anotações
+- Aba **Notas** com um editor de texto: **títulos** (T1 e T2), **negrito**, *itálico*, sublinhado, tachado, listas com marcadores e numeradas, citações, separadores e limpar formatação, além de desfazer e refazer.
+- Notas organizadas em **tópicos** (Sessões, NPCs, Lugares, Missões, Lore e Segredos, Geral). Em **⚙ Tópicos** você cria, renomeia, troca a cor ou apaga tópicos; as notas de um tópico apagado vão para outro.
+- Filtro por tópico, **busca** no título e no texto (com o trecho encontrado destacado) e **alfinete** para fixar notas no topo.
+- Uma nota nova em *Sessões* já vem com título "Sessão N — data".
+- **Salvamento automático** enquanto você escreve (ou `Ctrl/⌘ + S`), com aviso "Salvo às…". Excluir uma nota ou um tópico tem **Desfazer**.
+- No celular, a lista e o editor ocupam a tela um de cada vez; no computador, ficam lado a lado.
+- Texto colado entra **sem formatação**, e o conteúdo salvo passa por uma limpeza que só mantém a formatação do editor (nada de scripts ou estilos externos).
+- As anotações ficam num armazenamento separado da ficha: **Restaurar ficha original não as apaga**, e o backup do menu **⋮** as inclui.
+
 ### 💾 Persistência
 - Tudo fica salvo automaticamente no **`localStorage`** do navegador e é restaurado ao reabrir a página.
 - **Desfazer** em toda ação (botão no aviso ou `Ctrl+Z`).
-- Menu **⋮** para **exportar/importar backup (.json)** e restaurar a ficha original.
+- Menu **⋮** para **exportar/importar backup (.json)**, com ficha e anotações, e para restaurar a ficha original.
 
 ---
 
@@ -109,7 +119,9 @@ O antigo endereço `/beta/` redireciona para a página principal.
 | Tecla | Ação |
 | :--- | :--- |
 | `/` | Abre o grimório e foca a busca |
-| `Ctrl/⌘ + Z` | Desfaz a última ação |
+| `Ctrl/⌘ + Z` | Desfaz a última ação (no editor de notas, desfaz o texto) |
+| `Ctrl/⌘ + S` | Salva a anotação aberta na hora |
+| `Ctrl/⌘ + B / I / U` | Negrito, itálico e sublinhado no editor de notas |
 | `Esc` | Fecha o modal ou o menu |
 | `← / →` | Troca de aba (com o foco nas abas) |
 

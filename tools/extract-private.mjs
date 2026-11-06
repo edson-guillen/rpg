@@ -70,14 +70,16 @@ function material(comp) {
   return { comp: comp.replace(/\s*\(.*$/, '').trim(), mat: m ? m[1] : '' };
 }
 
+const DURACAO = /^((?:Concentração, até )?(?:\d+ (?:rodadas?|minutos?|horas?|dias?)|Instantânea|Até ser dissipada(?: ou acionada)?|Especial))\s+(\p{Lu}.*)$/su;
+
 /** Magias do Livro do Jogador em português. */
 function magiasPT(fonte, pgs) {
   // O cabeçalho e o "Tempo de Conjuração" às vezes vêm na mesma linha.
-  const ls = linhas(pgs, 241).filter(x => !/^As magias são apresentadas/.test(x.l)).flatMap(x => {
+  const ls = linhas(pgs, 241, 349).filter(x => !/^As magias são apresentadas/.test(x.l)).flatMap(x => {
     const i = x.l.search(/ Tempo de Conjuração:/);
-    return i > 0 && /^(Truque de |\dº Círculo, )/.test(x.l) ? [{ p: x.p, l: x.l.slice(0, i) }, { p: x.p, l: x.l.slice(i + 1) }] : [x];
+    return i > 0 && /^(Truque de |\d[º°] Círculo, )/.test(x.l) ? [{ p: x.p, l: x.l.slice(0, i) }, { p: x.p, l: x.l.slice(i + 1) }] : [x];
   });
-  const HEAD = /^(?:Truque de ([\p{L}]+)|(\d)º Círculo, ([\p{L}]+))(?: \((.*)\))?$/u;
+  const HEAD = /^(?:Truque de ([\p{L}]+)|(\d)[º°] Círculo, ([\p{L}]+))(?: \((.*)\))?$/u;
   const inicios = [];
   ls.forEach((x, i) => { if (HEAD.test(x.l) && /^Tempo de Conjuração:/.test(ls[i + 1]?.l || '')) inicios.push(i); });
   const out = [];
@@ -86,13 +88,15 @@ function magiasPT(fonte, pgs) {
     let j = i + 1, cab = ls[j].l;
     while (j + 1 < fim && !/Duração: .*\S/.test(cab)) cab += ' ' + ls[++j].l;
     // A duração pode continuar na linha seguinte quando termina sem ponto; o texto da magia começa com maiúscula.
-    const c = campos(cab, ['Tempo de Conjuração', 'Alcance', 'Componentes', 'Duração']);
-    const corpo = [];
+    const c = campos(cab, ['Tempo de Conjuração', 'Alcance', 'Componentes', 'Componente', 'Duração']);
+    // Em algumas magias o texto vem na mesma linha da duração.
+    const [, durLimpa, resto] = (c['Duração'] || '').match(DURACAO) || [, c['Duração'] || '', ''];
+    const corpo = resto ? [resto] : [];
     for (let q = j + 1; q < fim; q++) if (!ruido(ls[q].l)) corpo.push(ls[q].l);
     const texto = juntar(corpo);
     const sup = texto.search(/^(Usando um Espaço de Magia de Círculo Superior|Aprimoramento de Truque)\./m);
-    const { comp, mat } = material(c['Componentes'] || '');
-    const dur = c['Duração'] || '', tempo = c['Tempo de Conjuração'] || '';
+    const { comp, mat } = material(c['Componentes'] || c['Componente'] || '');
+    const dur = durLimpa, tempo = c['Tempo de Conjuração'] || '';
     const nome = ls[i - 1]?.l || '';
     out.push({
       id: slug(nome), nome, nomeEn: '', circulo: m[2] ? +m[2] : 0, escola: ESCOLAS_PT[m[1] || m[3]] || (m[1] || m[3]),
@@ -232,6 +236,18 @@ function ligarIdiomas(pt, en) {
   return ligadas;
 }
 
+/* O OCR do livro em inglês estraga alguns nomes, e duas magias de mesma ficha técnica se trocam. */
+const TROCADAS = { 'Aura de Pureza': 'Aura de Vida', 'Aura de Vida': 'Aura de Pureza' };
+const NOME_EN = { 'Aura de Pureza': 'Aura of Purity', 'Aura de Vida': 'Aura of Life', 'Fonte do Luar': 'Fount of Moonlight', 'Saraivada de Espinhos': 'Hail of Thorns', 'Raio de Bruxa': 'Witch Bolt', 'Manto do Cruzado': "Crusader's Mantle" };
+function corrigirNomesEn(magias) {
+  const srd = JSON.parse(fs.readFileSync(path.join(root, 'data/spells.json'), 'utf8')), porNome = new Map(srd.map(s => [s.name, s.en]));
+  const copia = new Map(magias.map(m => [m.nome, m.original]));
+  for (const m of magias) {
+    if (TROCADAS[m.nome]) m.original = copia.get(TROCADAS[m.nome]);
+    m.nomeEn = porNome.get(m.nome) || NOME_EN[m.nome] || m.nomeEn;
+  }
+}
+
 // ---------- talentos, antecedentes e espécies ----------
 
 function talentosPT(fonte, pgs) {
@@ -272,7 +288,7 @@ function antecedentesPT(fonte, pgs) {
 
 function especiesPT(fonte, pgs) {
   const ls = linhas(pgs, 192, 204).filter(x => x.l);
-  const nomes = linhas(pgs, 183, 193).map(x => x.l).join(' ').match(/espécies são apresentadas[^:]*ordem alfabética: ([^.]+)\./)?.[1].split(/,| e /).map(n => n.trim()).filter(Boolean) || [];
+  const nomes = ['Aasimar', 'Anão', 'Draconato', 'Elfo', 'Gnomo', 'Golias', 'Humano', 'Orc', 'Pequenino', 'Tiferino'];
   const inicios = [];
   ls.forEach((x, i) => { if (/^Tipo de Criatura:/.test(x.l)) inicios.push(i); });
   return inicios.map((i, k) => {
@@ -347,6 +363,7 @@ async function main() {
   const magiasBase = textos['phb24-pt'] ? magiasPT(fontes.get('phb24-pt').fonte, textos['phb24-pt']) : [];
   const en = textos['phb24-en'] ? magiasEN(fontes.get('phb24-en').fonte, textos['phb24-en']) : [];
   const ligadas = ligarIdiomas(magiasBase, en);
+  corrigirNomesEn(magiasBase);
   const extras = [];
   for (const id of ['tce', 'erftlw']) if (textos[id]) extras.push(...magiasAntigas(fontes.get(id).fonte, textos[id]));
   if (textos.efota) extras.push(...magiasInline(fontes.get('efota').fonte, textos.efota));

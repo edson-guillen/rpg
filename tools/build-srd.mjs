@@ -22,7 +22,7 @@ if (process.argv.includes('--baixar')) {
 const ler = (f, padrao) => (fs.existsSync(data(f)) ? JSON.parse(fs.readFileSync(data(f), 'utf8')) : padrao);
 
 const ESCOLA = { abjuration: 'Abjuração', conjuration: 'Invocação', divination: 'Adivinhação', enchantment: 'Encantamento', evocation: 'Evocação', illusion: 'Ilusão', necromancy: 'Necromancia', transmutation: 'Transmutação' };
-const TIPO = { Acid: 'Ácido', Bludgeoning: 'Contundente', Cold: 'Frio', Fire: 'Fogo', Force: 'Energético', Lightning: 'Elétrico', Necrotic: 'Necrótico', Piercing: 'Perfurante', Poison: 'Veneno', Psychic: 'Psíquico', Radiant: 'Radiante', Slashing: 'Cortante', Thunder: 'Trovejante' };
+const TIPO = { Acid: 'Ácido', Bludgeoning: 'Contundente', Cold: 'Gélido', Fire: 'Ígneo', Force: 'Energético', Lightning: 'Elétrico', Necrotic: 'Necrótico', Piercing: 'Perfurante', Poison: 'Venenoso', Psychic: 'Psíquico', Radiant: 'Radiante', Slashing: 'Cortante', Thunder: 'Trovejante' };
 const ATRIB = { Strength: 'FOR', Dexterity: 'DES', Constitution: 'CON', Intelligence: 'INT', Wisdom: 'SAB', Charisma: 'CAR' };
 const FORMA = { Sphere: 'Esfera', Cone: 'Cone', Cube: 'Cubo', Cylinder: 'Cilindro', Line: 'Linha', Emanation: 'Emanação', Wall: 'Muralha' };
 const TIPOS_RE = Object.keys(TIPO).join('|');
@@ -48,7 +48,7 @@ function alcance(r) {
 }
 function duracao(d, conc) {
   const tx = d.replace(/^concentration /i, '').trim();
-  const fixo = { Instantaneous: 'Instantânea', 'Until dispelled': 'Até ser dissipada', 'Until dispelled or triggered': 'Até ser dissipada ou ativada', Special: 'Especial' }[tx];
+  const fixo = { Instantaneous: 'Instantânea', 'Until dispelled': 'Até ser dissipada', 'Until dispelled or triggered': 'Até ser dissipada ou acionada', Special: 'Especial' }[tx];
   if (fixo) return fixo;
   const x = tx.match(/^(up to )?(\d+) (round|minute|hour|day)s?$/i);
   if (!x) return tx;

@@ -937,7 +937,7 @@ body::after{content:"";position:fixed;inset:0;z-index:300;pointer-events:none;op
           <div class="panel-h"><h2>Espaços de Magia</h2><span class="rule"></span><span class="aside">toque para gastar / recuperar</span></div>
           <div id="slots"></div>
           <div class="rests">
-            <button class="btn frost rest-btn" data-action="short-rest"><svg class="ic"><use href="#i-camp"/></svg><span>Descanso Curto</span><small>gastar Dados de Vida</small></button>
+            <button class="btn frost rest-btn" data-action="short-rest"><svg class="ic"><use href="#i-camp"/></svg><span>Descanso Curto</span><small>gastar Dados de Pontos de Vida</small></button>
             <button class="btn gold rest-btn" data-action="long-rest"><svg class="ic"><use href="#i-moon"/></svg><span>Descanso Longo</span><small>recupera tudo</small></button>
           </div>
         </div>
@@ -1023,7 +1023,7 @@ body::after{content:"";position:fixed;inset:0;z-index:300;pointer-events:none;op
 <script>
 /* =====================================================================
    DADOS DO PERSONAGEM — edite aqui para adaptar a outra ficha.
-   Textos das magias: resumos parafraseados das regras de D&D 2024.
+   Textos das magias: resumos com palavras próprias, conferidos com o Livro do Jogador 2024.
    "{CD}" nos textos é trocado pela CD atual (14, ou 15 com Feitiçaria Inata).
    ===================================================================== */
 const SOREN = {
@@ -1046,7 +1046,7 @@ const SOREN = {
     { k: 'CAR', n: 'Carisma', s: 18, prof: true, note: '+1 do Conjurador Bélico' }
   ],
   skills: [
-    ['Acrobacia', 'DES'], ['Adestrar Animais', 'SAB'], ['Arcanismo', 'INT'], ['Atletismo', 'FOR'], ['Atuação', 'CAR'],
+    ['Acrobacia', 'DES'], ['Lidar com Animais', 'SAB'], ['Arcanismo', 'INT'], ['Atletismo', 'FOR'], ['Atuação', 'CAR'],
     ['Enganação', 'CAR', 'Classe'], ['Furtividade', 'DES', 'Andarilho'], ['História', 'INT'], ['Intimidação', 'CAR'],
     ['Intuição', 'SAB', 'Andarilho'], ['Investigação', 'INT'], ['Medicina', 'SAB'], ['Natureza', 'INT'], ['Percepção', 'SAB'],
     ['Persuasão', 'CAR', 'Classe'], ['Prestidigitação', 'DES'], ['Religião', 'INT'], ['Sobrevivência', 'SAB']
@@ -1069,11 +1069,11 @@ const SOREN = {
       desc: 'Convertem espaços de magia ou custeiam <b>Metamagia</b>. Máximo de 4 — não é possível passar disso.', action: { label: 'Fonte de Magia →', goto: 'sp-hub' } },
     { id: 'innate', name: 'Feitiçaria Inata', icon: 'i-snow', c: 'lv1', max: 2, meta: 'Ação Bônus · 1 minuto · Descanso Longo',
       desc: '<b>+1 na CD</b> (fica 15) e <b>Vantagem</b> nas jogadas de ataque de magias de Feiticeiro.', action: { label: 'Ativar', fx: 'innate' } },
-    { id: 'jaunt', name: 'Salto das Nuvens', icon: 'i-cloud', c: 'lv0', max: 2, meta: 'Golias · Ação Bônus · Descanso Longo',
+    { id: 'jaunt', name: 'Salto da Nuvem', icon: 'i-cloud', c: 'lv0', max: 2, meta: 'Golias · Ação Bônus · Descanso Longo',
       desc: 'Teleporte mágico de até <b>9 m</b> para um espaço desocupado que possa ver. Não provoca ataques de oportunidade.', action: { label: 'Usar' } },
     { id: 'luck', name: 'Pontos de Sorte', icon: 'i-d20', c: 'lvO', max: 2, meta: 'Talento Sortudo · Descanso Longo',
-      desc: 'Gaste 1 para ter <b>Vantagem</b> num Teste de d20 ou impor <b>Desvantagem</b> num ataque feito contra você.', action: { label: 'Usar' } },
-    { id: 'hd', name: 'Dados de Vida', icon: 'i-die', c: 'lvR', max: 4, meta: 'd6 · Descanso Curto para gastar',
+      desc: 'Gaste 1 para ter <b>Vantagem</b> num Teste de D20 ou impor <b>Desvantagem</b> num ataque feito contra você.', action: { label: 'Usar' } },
+    { id: 'hd', name: 'Dados de Pontos de Vida', icon: 'i-die', c: 'lvR', max: 4, meta: 'd6 · Descanso Curto para gastar',
       desc: 'Cada dado gasto num Descanso Curto cura <b>1d6 + 2</b>. Todos voltam no Descanso Longo (regra 2024).', action: { label: 'Gastar', fx: 'hd' } }
   ],
   metamagic: [
@@ -1087,7 +1087,7 @@ const SOREN = {
   passives: [
     { t: 'Conjurador Bélico (War Caster)', items: ['<b>Vantagem</b> nas salvaguardas de CON para manter Concentração (+4).', '<b>Magia Reativa:</b> quando uma criatura provoca seu ataque de oportunidade, use a Reação para conjurar nela uma magia de 1 Ação que tenha só ela como alvo.', 'Executa componentes somáticos com as mãos ocupadas.'] },
     { t: 'Resiliência Dracônica', items: ['+4 PV máximos (já incluídos nos 30).', 'Sem armadura, CA = 10 + DES 2 + CAR 4 = <b>16</b>.'] },
-    { t: 'Golias — Gigante das Nuvens', items: ['<b>Constituição Poderosa:</b> Vantagem em testes para encerrar a condição Agarrado e conta como um tamanho maior para carga — <b>120 kg</b>, todo o equipamento sem penalidade.', 'Forma Grande (a partir do nível 5 de personagem).'] },
+    { t: 'Golias — Gigante das Nuvens', items: ['<b>Porte Poderoso:</b> Vantagem em testes para encerrar a condição Imobilizado e conta como um tamanho maior para carga — <b>120 kg</b>, todo o equipamento sem penalidade.', 'Forma Grande (a partir do nível 5 de personagem).'] },
     { t: 'Andarilho (Wayfarer)', items: ['Perícias: Intuição (+2) e Furtividade (+4).', 'Ferramentas de Ladrão (+4).', 'Talento de origem: Sortudo.'] }
   ],
   /* Inventário. cat: comp | arma | cons | equip.  qty: null = item sem contagem.
@@ -1102,12 +1102,12 @@ const SOREN = {
     { key: 'spear',   cat: 'arma', name: 'Lança',  qty: 1, unit: 'un.', note: '1d6 (1d8 com 2 mãos) Perfurante · Arremesso 6/18 m' },
     { key: 'dagger',  cat: 'arma', name: 'Adagas', qty: 4, unit: 'un.', note: '1d4 Perfurante · Acuidade, Leve, Arremesso 6/18 m' },
     { key: 'gold',    cat: 'cons', name: 'Peças de Ouro', qty: 53, unit: 'PO', note: 'Toque no nome para ajustar valores grandes' },
-    { cat: 'cons', name: 'Tochas',          qty: 10, unit: 'un.', note: 'Kit de Masmorra · luz plena 6 m por 1 hora' },
-    { cat: 'cons', name: 'Rações',          qty: 10, unit: 'dias', note: 'Kit de Masmorra' },
-    { cat: 'cons', name: 'Frascos de Óleo', qty: 2,  unit: 'un.', note: 'Kit de Masmorra · alvo encharcado sofre +5 de Fogo se pegar fogo' },
-    { cat: 'cons', name: 'Estrepes',        qty: 1,  unit: 'bolsa', note: 'Kit de Masmorra · cobrem 1,5 m²' },
+    { cat: 'cons', name: 'Tochas',          qty: 10, unit: 'un.', note: 'Kit de Explorador de Masmorras · Luz Plena em 6 m e Meia-luz por mais 6 m, por 1 hora' },
+    { cat: 'cons', name: 'Rações',          qty: 10, unit: 'dias', note: 'Kit de Explorador de Masmorras' },
+    { cat: 'cons', name: 'Potes de Óleo', qty: 2,  unit: 'un.', note: 'Kit de Explorador de Masmorras · alvo encharcado sofre +5 de dano Ígneo se pegar fogo' },
+    { cat: 'cons', name: 'Estrepes',        qty: 1,  unit: 'bolsa', note: 'Kit de Explorador de Masmorras · cobrem um quadrado de 1,5 m de lado' },
     { cat: 'equip', name: 'Ferramentas de Ladrão', qty: null, note: 'Proficiente · +4 (DES 2 + BP 2) · Andarilho' },
-    { cat: 'equip', name: 'Kit de Masmorra', qty: null, note: 'Mochila, Pé de Cabra, Corda, Pederneira, Cantil (+ tochas, rações, óleo e estrepes)' },
+    { cat: 'equip', name: 'Kit de Explorador de Masmorras', qty: null, note: 'Mochila, Pé de Cabra, Corda, Caixa para Fogo e Cantil (mais tochas, rações, óleo e estrepes)' },
     { cat: 'equip', name: 'Kit de Tarot', qty: null, note: 'Conjunto de jogo (Andarilho)' },
     { cat: 'equip', name: 'Capa da Ondulação', qty: null, note: 'Item mágico comum · Ação Bônus: a capa ondula dramaticamente' },
     { cat: 'equip', name: 'Medalha da Casa Frostgaard', qty: null, note: 'Herança do norte' },
@@ -1143,14 +1143,14 @@ const SOREN_SPELLS = [
     desc:['Você tenta fragmentar por um instante a mente de uma criatura que possa ver dentro do alcance. O alvo deve ser bem-sucedido numa <b>salvaguarda de Inteligência</b> (CD {CD}) ou sofre <b>1d6 de dano Psíquico</b> e <b>subtrai 1d4</b> da próxima salvaguarda que fizer antes do fim do seu próximo turno.'],
     upgrade:'O dano aumenta em 1d6 nos níveis 5 (2d6), 11 (3d6) e 17 (4d6). No nível 4, o Carisma não soma ao dano.',
     tactic:'Abre o combo principal: aplique o −1d4 com a Ação e, gastando 2 PF em <b>Magia Acelerada</b>, conjure <i>Teia</i>, <i>Sugestão</i> ou <i>Força Espectral</i> na Ação Bônus contra o alvo enfraquecido.' },
-  { id:'sorcerous-burst', name:'Explosão Elemental', en:'Sorcerous Burst', level:0, school:'Evocação', choice:['Ácido', 'Elétrico', 'Frio', 'Fogo', 'Psíquico', 'Trovejante', 'Veneno'],
+  { id:'sorcerous-burst', name:'Explosão Elemental', en:'Sorcerous Burst', level:0, school:'Evocação', choice:['Ácido', 'Elétrico', 'Gélido', 'Ígneo', 'Psíquico', 'Trovejante', 'Venenoso'],
     time:'1 Ação', range:'36 m (120 pés)', comp:'V, S', dur:'Instantânea',
     sum:'Ataque à distância ({ATQ}): 1d8 do elemento escolhido; 8s explodem.', dmgChip:'1d8',
-    r:[{ t:'atk' }, { t:'dmg', d:'1d8', type:'Frio (ou outro elemento)', label:'Se acertar · cada 8 rola outro d8', crit:true, explode:8, maxMod:true, cantrip:'1d8' }],
-    desc:['Você dispara energia mágica contra uma criatura ou objeto dentro do alcance. Faça um <b>ataque mágico à distância ({ATQ})</b>. Se acertar, o alvo sofre <b>1d8</b> de dano de um tipo à sua escolha: Ácido, Elétrico, Frio, Fogo, Psíquico, Trovejante ou Veneno.',
+    r:[{ t:'atk' }, { t:'dmg', d:'1d8', type:'Gélido (ou outro elemento)', label:'Se acertar · cada 8 rola outro d8', crit:true, explode:8, maxMod:true, cantrip:'1d8' }],
+    desc:['Você dispara energia mágica contra uma criatura ou objeto dentro do alcance. Faça um <b>ataque mágico à distância ({ATQ})</b>. Se acertar, o alvo sofre <b>1d8</b> de dano de um tipo à sua escolha: Ácido, Elétrico, Gélido, Ígneo, Psíquico, Trovejante ou Venenoso.',
           'Sempre que rolar <b>8</b> num d8 desta magia, role mais um d8 e some ao dano. Esses dados extras podem ocorrer no máximo <b>4 vezes</b> (seu modificador de Carisma) por conjuração.'],
     upgrade:'O dano aumenta em 1d8 nos níveis 5 (2d8), 11 (3d8) e 17 (4d8). No nível 4, o Carisma não soma ao dano.',
-    tactic:'Sua artilharia de longo alcance. Escolha <b>Frio</b> para manter a temática gélida.' },
+    tactic:'Sua artilharia de longo alcance. Escolha <b>Gélido</b> para manter o tema do personagem.' },
   { id:'true-strike', name:'Golpe Certeiro', en:'True Strike', level:0, school:'Adivinhação',
     time:'1 Ação', range:'Pessoal', comp:'S, M (arma com proficiência de 1 PC ou mais — sua Lança ou Adaga)', dur:'Instantânea',
     sum:'Ataque com arma usando Carisma ({ATQ}); Lança 1d6+4 / 1d8+4, Adaga 1d4+4.', dmgChip:'1d6+4',
@@ -1163,11 +1163,11 @@ const SOREN_SPELLS = [
           'Se o ataque causar dano, ele pode ser <b>Radiante</b> ou do tipo normal da arma, à sua escolha.'],
     upgrade:'O ataque causa dano Radiante extra nos níveis 5 (1d6), 11 (2d6) e 17 (3d6).',
     warn:'O foco arcano <b>não</b> substitui a arma: você precisa empunhar a Lança ou uma Adaga.',
-    tactic:'Seu melhor dano corpo a corpo: Lança com 2 mãos = <b>1d8 + 4</b> (média 8,5). Útil contra quem resiste a frio/psíquico.' },
+    tactic:'Seu melhor dano corpo a corpo: Lança com 2 mãos = <b>1d8 + 4</b> (média 8,5). Útil contra quem resiste a dano Gélido ou Psíquico.' },
   { id:'minor-illusion', name:'Ilusão Menor', en:'Minor Illusion', level:0, school:'Ilusão',
     time:'1 Ação', range:'9 m (30 pés)', comp:'S, M (um pouco de lã — o foco arcano substitui)', dur:'1 minuto',
     sum:'Cria um som ou a imagem de um objeto (cubo de 1,5 m).',
-    r:[{ t:'dc', txt:'Quem usar Estudar faz teste de INT (Investigação)' }],
+    r:[{ t:'dc', txt:'Quem usar Analisar faz teste de INT (Investigação)' }],
     desc:['Você cria um <b>som</b> ou a <b>imagem de um objeto</b> dentro do alcance, que dura até o fim da magia.'],
     list:['<b>Som:</b> de um sussurro a um grito; pode ser contínuo ou intermitente — sua voz, a de outra pessoa, um rugido, passos, tambores…',
           '<b>Imagem:</b> um objeto que caiba num cubo de 1,5 m. A imagem não emite som, luz, cheiro nem outro efeito sensorial.'],
@@ -1186,57 +1186,57 @@ const SOREN_SPELLS = [
   /* ------------------------------ 1º CÍRCULO ------------------------------ */
   { id:'ice-knife', name:'Faca de Gelo', en:'Ice Knife', level:1, school:'Invocação', isNew:true,
     time:'1 Ação', range:'18 m (60 pés)', comp:'S, M (uma gota d\'água ou um pedaço de gelo — o foco arcano substitui)', dur:'Instantânea',
-    sum:'Ataque ({ATQ}): 1d10 Perfurante; explosão de 2d6 Frio (salv. DES) em 1,5 m.', dmgChip:'1d10 + 2d6',
+    sum:'Ataque ({ATQ}): 1d10 Perfurante; explosão de 2d6 Gélido (salv. DES) em 1,5 m.', dmgChip:'1d10 + 2d6',
     r:[{ t:'atk' }, { t:'dmg', d:'1d10', type:'Perfurante', label:'No alvo, se acertar', crit:true },
        { t:'save', a:'DES', txt:'Alvo e todos a até 1,5 m dele · sucesso = 0 de dano' },
-       { t:'dmg', d:'2d6', type:'Frio', label:'Explosão, em quem falhar', up:'1d6', gate:'save' }],
+       { t:'dmg', d:'2d6', type:'Gélido', label:'Explosão, em quem falhar', up:'1d6', gate:'save' }],
     desc:['Você cria um estilhaço de gelo e o arremessa contra uma criatura dentro do alcance. Faça um <b>ataque mágico à distância ({ATQ})</b>. Se acertar, o alvo sofre <b>1d10 de dano Perfurante</b>.',
-          'Acertando ou errando, o estilhaço <b>explode</b>: o alvo e cada criatura a até 1,5 m dele devem ser bem-sucedidos numa <b>salvaguarda de Destreza</b> (CD {CD}) ou sofrem <b>2d6 de dano de Frio</b>. Quem passa não sofre dano.'],
-    higher:'O dano de Frio aumenta em 1d6 por nível de espaço acima do 1º (3d6 com espaço de 2º).',
-    tactic:'Não usa concentração — dano gélido enquanto <i>Teia</i> mantém os inimigos presos (Contidos têm Desvantagem em salvaguardas de DES).' },
+          'Acertando ou errando, o estilhaço <b>explode</b>: o alvo e cada criatura a até 1,5 m dele devem ser bem-sucedidos numa <b>salvaguarda de Destreza</b> (CD {CD}) ou sofrem <b>2d6 de dano Gélido</b>. Quem passa não sofre dano.'],
+    higher:'O dano Gélido aumenta em 1d6 por nível de espaço acima do 1º (3d6 com espaço de 2º).',
+    tactic:'Não usa concentração — dano Gélido enquanto <i>Teia</i> mantém os inimigos presos (Contidos têm Desvantagem em salvaguardas de DES).' },
   { id:'shield', name:'Escudo Arcano', en:'Shield', level:1, school:'Abjuração', reaction:true, effect:'shield',
-    time:'1 Reação, quando for atingido por um ataque ou alvo de Mísseis Mágicos', range:'Pessoal', comp:'V, S', dur:'1 rodada',
+    time:'Reação, ao ser atingido por um ataque ou ser alvo de Mísseis Mágicos', range:'Pessoal', comp:'V, S', dur:'1 rodada',
     sum:'Reação: +5 na CA (vai a 21) até o início do seu próximo turno.', dmgChip:'CA 21',
     r:[{ t:'note', txt:'CA <b>16 → 21</b> até o início do seu próximo turno, inclusive contra o ataque que acionou a magia.' }],
-    desc:['Uma barreira invisível de força mágica surge para protegê-lo. Até o início do seu próximo turno, você recebe <b>+5 na CA</b> — inclusive contra o ataque que desencadeou a magia — e não sofre dano de <i>Mísseis Mágicos</i>.'],
+    desc:['Uma barreira imperceptível de energia mágica surge para protegê-lo. Até o início do seu próximo turno, você recebe <b>+5 na CA</b> — inclusive contra o ataque que desencadeou a magia — e não sofre dano de <i>Mísseis Mágicos</i>.'],
     tactic:'Use quando o ataque acertar por 5 ou menos. Acumula com <i>Reflexos</i>.' },
   { id:'disguise-self', name:'Disfarçar-se', en:'Disguise Self', level:1, school:'Ilusão',
     time:'1 Ação', range:'Pessoal', comp:'V, S', dur:'1 hora',
     sum:'Muda sua aparência, roupas e equipamento por 1 hora.',
-    r:[{ t:'dc', txt:'Quem usar Estudar faz teste de INT (Investigação)' }],
+    r:[{ t:'dc', txt:'Quem usar Analisar faz teste de INT (Investigação)' }],
     desc:['Você faz com que você — incluindo roupas, armadura, armas e pertences — pareça diferente até a magia acabar. Pode parecer até <b>30 cm</b> mais alto ou mais baixo e mais magro ou mais pesado, mas mantém a mesma disposição básica de membros.',
           'As mudanças não resistem a inspeção física: um chapéu ilusório não é tocável e quem tocar seu rosto sente as feições reais.',
           'Para perceber o disfarce, uma criatura pode usar a ação <b>Estudar</b> e passar num teste de <b>Inteligência (Investigação) contra CD {CD}</b>.'],
     tactic:'Com <b>Magia Sutil</b> (1 PF), ninguém nota a conjuração. Lembre-se: como Golias, você continua alto — só ±30 cm.' },
-  { id:'chromatic-orb', name:'Orbe Cromático', en:'Chromatic Orb', level:1, school:'Evocação', draconic:true, choice:['Ácido', 'Frio', 'Fogo', 'Elétrico', 'Veneno', 'Trovejante'],
+  { id:'chromatic-orb', name:'Orbe Cromático', en:'Chromatic Orb', level:1, school:'Evocação', draconic:true, choice:['Ácido', 'Gélido', 'Ígneo', 'Elétrico', 'Venenoso', 'Trovejante'],
     mat:{ key:'diamond', required:true },
     time:'1 Ação', range:'27 m (90 pés)', comp:'V, S, M (um diamante de 50+ PO — não é consumido)', dur:'Instantânea',
     sum:'Ataque ({ATQ}): 3d8 do elemento escolhido; dados iguais fazem o orbe saltar.', dmgChip:'3d8',
     r:[{ t:'atk' }, { t:'dmg', d:'3d8', type:'Elemental à escolha', label:'Se acertar · dados iguais = salto', up:'1d8', crit:true, orb:true }],
-    desc:['Você arremessa uma esfera de energia contra uma criatura dentro do alcance. Escolha Ácido, Elétrico, Frio, Fogo, Trovejante ou Veneno e faça um <b>ataque mágico à distância ({ATQ})</b>. Se acertar, o alvo sofre <b>3d8</b> de dano do tipo escolhido.',
+    desc:['Você arremessa uma esfera de energia contra uma criatura dentro do alcance. Escolha Ácido, Elétrico, Gélido, Ígneo, Trovejante ou Venenoso e faça um <b>ataque mágico à distância ({ATQ})</b>. Se acertar, o alvo sofre <b>3d8</b> de dano do tipo escolhido.',
           'Se você rolar o <b>mesmo número em dois ou mais d8</b>, o orbe salta para outro alvo à sua escolha a até 9 m do primeiro: faça um novo ataque e uma nova rolagem de dano.'],
     higher:'+1d8 de dano por nível de espaço acima do 1º. O orbe pode saltar um número de vezes igual ao nível do espaço gasto, e cada criatura só pode ser alvo uma vez por conjuração.',
     tactic:'Seu maior dano de 1º círculo (média 13,5). Varie o elemento conforme as resistências do inimigo.' },
   { id:'command', name:'Comando', en:'Command', level:1, school:'Encantamento', draconic:true,
     time:'1 Ação', range:'18 m (60 pés)', comp:'V', dur:'Instantânea',
-    sum:'Ordem de uma palavra (salv. SAB): Aproxime, Largue, Fuja, Rasteje ou Pare.',
+    sum:'Ordem de uma palavra (salv. SAB): Abaixar, Aproximar, Fugir, Largar ou Parar.',
     r:[{ t:'save', a:'SAB', txt:'Se falhar, cumpre a ordem no próximo turno dele' }],
     desc:['Você profere uma ordem de uma palavra a uma criatura que possa ver dentro do alcance. O alvo deve ser bem-sucedido numa <b>salvaguarda de Sabedoria</b> (CD {CD}) ou segue a ordem no próximo turno dele:'],
-    list:['<b>Aproxime-se:</b> move-se até você pelo caminho mais curto e encerra o turno se chegar a 1,5 m.',
-          '<b>Largue:</b> solta o que estiver segurando e encerra o turno.',
-          '<b>Fuja:</b> gasta o turno se afastando de você pelo meio mais rápido.',
-          '<b>Rasteje:</b> fica Caído e encerra o turno.',
-          '<b>Pare:</b> não se move nem realiza ações ou ações bônus.'],
+    list:['<b>Abaixar:</b> fica Caído e encerra o turno.',
+          '<b>Aproximar:</b> move-se até você pelo caminho mais curto e encerra o turno se chegar a 1,5 m.',
+          '<b>Fugir:</b> gasta o turno se afastando de você pelo meio mais rápido.',
+          '<b>Largar:</b> solta o que estiver segurando e encerra o turno.',
+          '<b>Parar:</b> não se move nem realiza ações ou Ações Bônus.'],
     higher:'Afeta uma criatura adicional por nível de espaço acima do 1º.',
-    tactic:'Com <b>Magia Sutil</b>, a ordem sai sem palavra audível — ideal na corte. "Largue" desarma; "Rasteje" dá Vantagem corpo a corpo aos aliados.' },
+    tactic:'Com <b>Magia Sutil</b>, a ordem sai sem palavra audível — ideal na corte. "Largar" desarma; "Abaixar" dá Vantagem corpo a corpo aos aliados.' },
 
   /* ------------------------------ 2º CÍRCULO ------------------------------ */
   { id:'mirror-image', name:'Reflexos', en:'Mirror Image', level:2, school:'Ilusão', isNew:true, effect:'mirror',
     time:'1 Ação', range:'Pessoal', comp:'V, S', dur:'1 minuto',
-    sum:'3 duplicatas ilusórias desviam ataques. Sem concentração.', dmgChip:'3 duplicatas',
-    r:[{ t:'note', txt:'Ao ser <b>atingido</b>, role 1d6 por duplicata restante: qualquer <b>3+</b> faz uma duplicata ser atingida no seu lugar. Use o botão <b>Rolar</b> na barra de efeitos.' }],
-    desc:['Três duplicatas ilusórias suas surgem no seu espaço. Até o fim da magia, elas se movem com você e imitam suas ações, trocando de posição para que seja impossível saber qual é a real.',
-          'Sempre que uma criatura o <b>atingir</b> com uma jogada de ataque, role <b>um d6 para cada duplicata restante</b>. Se qualquer d6 resultar em <b>3 ou mais</b>, uma duplicata é atingida no seu lugar e destruída. As duplicatas ignoram qualquer outro dano ou efeito; a magia termina quando as três forem destruídas.',
+    sum:'3 cópias ilusórias desviam ataques. Sem concentração.', dmgChip:'3 cópias',
+    r:[{ t:'note', txt:'Ao ser <b>atingido</b>, role 1d6 por cópia restante: qualquer <b>3+</b> faz uma cópia ser atingida no seu lugar. Use o botão <b>Rolar</b> na barra de efeitos.' }],
+    desc:['Três cópias ilusórias suas surgem no seu espaço. Até o fim da magia, elas se movem com você e imitam suas ações, trocando de posição para que seja impossível saber qual é a real.',
+          'Sempre que uma criatura o <b>atingir</b> com uma jogada de ataque, role <b>um d6 para cada cópia restante</b>. Se qualquer d6 resultar em <b>3 ou mais</b>, uma cópia é atingida no seu lugar e destruída. As cópias ignoram qualquer outro dano ou efeito; a magia termina quando as três forem destruídas.',
           'Criaturas Cegas, ou com Visão às Cegas ou Visão Verdadeira, não são enganadas.'],
     tactic:'Conjure no turno 1. Camada defensiva: CA 16 → Reflexos → <i>Escudo Arcano</i> (21).' },
   { id:'web', name:'Teia', en:'Web', level:2, school:'Invocação', conc:true,
@@ -1245,12 +1245,12 @@ const SOREN_SPELLS = [
     sum:'Cubo de 6 m de teias: terreno difícil e Contido (salv. DES).', dmgChip:'Contido',
     r:[{ t:'save', a:'DES', txt:'Ao entrar ou começar o turno nas teias · falha = Contido' },
        { t:'dc', txt:'Contido usa uma ação: FOR (Atletismo) para se soltar' },
-       { t:'dmg', d:'2d4', type:'Fogo', label:'Teia em chamas, por cubo de 1,5 m', depois:true }],
-    desc:['Você conjura uma massa de teias pegajosas num ponto dentro do alcance, preenchendo um <b>Cubo de 6 m</b>. As teias são <b>Terreno Difícil</b> e a área fica <b>Levemente Obscurecida</b>.',
+       { t:'dmg', d:'2d4', type:'Ígneo', label:'Teia em chamas, por cubo de 1,5 m', depois:true }],
+    desc:['Você conjura uma massa de teias pegajosas num ponto dentro do alcance, preenchendo um <b>Cubo de 6 m</b>. As teias são <b>Terreno Difícil</b> e a área fica <b>Parcialmente Obscurecida</b>.',
           'Se não estiverem ancoradas entre duas massas sólidas (paredes, árvores) ou estendidas sobre chão, parede ou teto, as teias desabam e a magia termina no início do seu próximo turno. Sobre uma superfície plana, têm 1,5 m de profundidade.',
           'Na primeira vez que uma criatura entra nas teias num turno, ou começa o turno nelas, deve passar numa <b>salvaguarda de Destreza</b> (CD {CD}) ou fica <b>Contida</b> enquanto estiver nelas ou até se libertar.',
           'Uma criatura Contida pode usar uma ação para fazer um teste de <b>Força (Atletismo) contra CD {CD}</b>; se passar, se solta.',
-          'As teias são inflamáveis: cada cubo de 1,5 m exposto ao fogo queima em 1 rodada, causando <b>2d4 de Fogo</b> a quem começar o turno nele.'],
+          'As teias são inflamáveis: cada cubo de 1,5 m exposto ao fogo queima em 1 rodada, causando <b>2d4 de dano Ígneo</b> a quem começar o turno nele.'],
     tactic:'Seu principal controle de grupo. Ataques contra criaturas Contidas têm <b>Vantagem</b>, e elas têm Desvantagem em salvaguardas de DES — combine com <i>Faca de Gelo</i>.' },
   { id:'suggestion', name:'Sugestão', en:'Suggestion', level:2, school:'Encantamento', conc:true,
     mat:{ key:'honey', n:1 },
@@ -1265,7 +1265,7 @@ const SOREN_SPELLS = [
     mat:{ key:'fleece', n:1 },
     time:'1 Ação', range:'18 m (60 pés)', comp:'V, S, M (um pouco de lã)', dur:'Concentração, até 1 minuto',
     sum:'Ilusão só o alvo percebe (salv. INT); até 2d8 Psíquico por turno.', dmgChip:'2d8/turno',
-    r:[{ t:'save', a:'INT' }, { t:'dmg', d:'2d8', type:'Psíquico', label:'Em cada um dos seus turnos', depois:true }, { t:'dc', txt:'O alvo pode usar Estudar: INT (Investigação) para desfazer' }],
+    r:[{ t:'save', a:'INT' }, { t:'dmg', d:'2d8', type:'Psíquico', label:'Em cada um dos seus turnos', depois:true }, { t:'dc', txt:'O alvo pode usar Analisar: INT (Investigação) para desfazer' }],
     desc:['Você tenta implantar uma ilusão na mente de uma criatura que possa ver dentro do alcance. O alvo faz uma <b>salvaguarda de Inteligência</b> (CD {CD}). Se falhar, você cria um objeto, criatura ou fenômeno fantasmagórico que caiba num <b>Cubo de 3 m</b> e que <b>só o alvo percebe</b>, com som, temperatura e outros estímulos.',
           'O alvo pode usar a ação <b>Estudar</b> e fazer um teste de <b>Inteligência (Investigação) contra CD {CD}</b>; se passar, percebe a ilusão e a magia termina.',
           'Enquanto afetado, o alvo trata o fantasma como real e racionaliza qualquer resultado ilógico.',
@@ -1280,15 +1280,15 @@ const SOREN_SPELLS = [
           '<b>Mudar Aparência:</b> altura, peso, feições, voz, cabelo e cores — pode parecer de outra espécie (suas estatísticas não mudam). Não altera tamanho nem forma básica. Toque físico não revela o disfarce.',
           '<b>Armas Naturais:</b> garras (Cortante), presas ou chifres (Perfurante) ou cascos (Contundente). Seu Ataque Desarmado com elas causa <b>1d6 + 4</b> e usa Carisma (<b>+6</b> para acertar).'],
     tactic:'Disfarce "tátil" real, superior a <i>Disfarçar-se</i> para infiltração longa — mas exige concentração.' },
-  { id:'dragons-breath', name:'Sopro de Dragão', en:'Dragon\'s Breath', level:2, school:'Transmutação', choice:['Ácido', 'Frio', 'Fogo', 'Elétrico', 'Veneno'], conc:true, draconic:true,
+  { id:'dragons-breath', name:'Sopro de Dragão', en:'Dragon\'s Breath', level:2, school:'Transmutação', choice:['Ácido', 'Gélido', 'Ígneo', 'Elétrico', 'Venenoso'], conc:true, draconic:true,
     mat:{ key:'pepper', n:1 },
-    time:'1 Ação Bônus', range:'Toque', comp:'V, S, M (uma pimenta picante)', dur:'Concentração, até 1 minuto',
+    time:'1 Ação Bônus', range:'Toque', comp:'V, S, M (uma pimenta)', dur:'Concentração, até 1 minuto',
     sum:'Alvo exala cone de 4,5 m: 3d6 do elemento (salv. DES, metade).', dmgChip:'3d6',
-    r:[{ t:'save', a:'DES', txt:'Cone de 4,5 m · sucesso = metade do dano' }, { t:'dmg', d:'3d6', type:'Frio (ou outro elemento)', label:'Por sopro (ação Usar Magia)', half:true, up:'1d6' }],
-    desc:['Você toca uma criatura voluntária (pode ser você) e escolhe Ácido, Elétrico, Frio, Fogo ou Veneno. Até a magia acabar, o alvo pode usar uma ação <b>Usar Magia</b> para exalar um <b>Cone de 4,5 m</b>.',
+    r:[{ t:'save', a:'DES', txt:'Cone de 4,5 m · sucesso = metade do dano' }, { t:'dmg', d:'3d6', type:'Gélido (ou outro elemento)', label:'Por sopro (ação Usar Magia)', half:true, up:'1d6' }],
+    desc:['Você toca uma criatura voluntária (pode ser você) e escolhe Ácido, Elétrico, Gélido, Ígneo ou Venenoso. Até a magia acabar, o alvo pode usar uma ação <b>Usar Magia</b> para exalar um <b>Cone de 4,5 m</b>.',
           'Cada criatura na área faz uma <b>salvaguarda de Destreza</b> (CD {CD}), sofrendo <b>3d6</b> de dano do tipo escolhido se falhar, ou metade se passar.'],
     higher:'O dano aumenta em 1d6 por nível de espaço acima do 2º.',
-    tactic:'Por ser Ação Bônus, dá para tocar um aliado e ainda usar sua Ação num truque. Escolha <b>Frio</b> como herdeiro dos dragões brancos.' }
+    tactic:'Por ser Ação Bônus, dá para tocar um aliado e ainda usar sua Ação num truque. Escolha <b>Gélido</b> como herdeiro dos dragões brancos.' }
 ];
 </script>
 <script>
@@ -1296,26 +1296,25 @@ const SOREN_SPELLS = [
 const SORCERER_LEVELS = [{"pb":2,"cantrips":4,"prepared":2,"slots":[2,0,0,0,0,0,0,0,0]},{"pb":2,"cantrips":4,"prepared":4,"slots":[3,0,0,0,0,0,0,0,0]},{"pb":2,"cantrips":4,"prepared":6,"slots":[4,2,0,0,0,0,0,0,0]},{"pb":2,"cantrips":5,"prepared":7,"slots":[4,3,0,0,0,0,0,0,0]},{"pb":3,"cantrips":5,"prepared":9,"slots":[4,3,2,0,0,0,0,0,0]},{"pb":3,"cantrips":5,"prepared":10,"slots":[4,3,3,0,0,0,0,0,0]},{"pb":3,"cantrips":5,"prepared":11,"slots":[4,3,3,1,0,0,0,0,0]},{"pb":3,"cantrips":5,"prepared":12,"slots":[4,3,3,2,0,0,0,0,0]},{"pb":4,"cantrips":5,"prepared":14,"slots":[4,3,3,3,1,0,0,0,0]},{"pb":4,"cantrips":6,"prepared":15,"slots":[4,3,3,3,2,0,0,0,0]},{"pb":4,"cantrips":6,"prepared":16,"slots":[4,3,3,3,2,1,0,0,0]},{"pb":4,"cantrips":6,"prepared":16,"slots":[4,3,3,3,2,1,0,0,0]},{"pb":5,"cantrips":6,"prepared":17,"slots":[4,3,3,3,2,1,1,0,0]},{"pb":5,"cantrips":6,"prepared":17,"slots":[4,3,3,3,2,1,1,0,0]},{"pb":5,"cantrips":6,"prepared":18,"slots":[4,3,3,3,2,1,1,1,0]},{"pb":5,"cantrips":6,"prepared":18,"slots":[4,3,3,3,2,1,1,1,0]},{"pb":6,"cantrips":6,"prepared":19,"slots":[4,3,3,3,2,1,1,1,1]},{"pb":6,"cantrips":6,"prepared":20,"slots":[4,3,3,3,3,1,1,1,1]},{"pb":6,"cantrips":6,"prepared":21,"slots":[4,3,3,3,3,2,1,1,1]},{"pb":6,"cantrips":6,"prepared":22,"slots":[4,3,3,3,3,2,2,1,1]}];
 /* =====================================================================
    CONTEÚDO DE REGRAS (D&D 2024)
-   Resumos com palavras próprias, baseados no SRD 5.2 (CC BY 4.0).
-   Andarilho, Sortudo e Conjurador Bélico não estão no SRD: aparecem aqui
-   só o que a ficha do Søren já usa, também resumido.
+   Resumos com palavras próprias, conferidos com o Livro do Jogador 2024.
+   Os nomes seguem o livro em português.
    ===================================================================== */
 const ATTR = [['FOR', 'Força'], ['DES', 'Destreza'], ['CON', 'Constituição'], ['INT', 'Inteligência'], ['SAB', 'Sabedoria'], ['CAR', 'Carisma']];
-const SKILLS = [['Acrobacia', 'DES'], ['Adestrar Animais', 'SAB'], ['Arcanismo', 'INT'], ['Atletismo', 'FOR'], ['Atuação', 'CAR'], ['Enganação', 'CAR'], ['Furtividade', 'DES'], ['História', 'INT'], ['Intimidação', 'CAR'], ['Intuição', 'SAB'], ['Investigação', 'INT'], ['Medicina', 'SAB'], ['Natureza', 'INT'], ['Percepção', 'SAB'], ['Persuasão', 'CAR'], ['Prestidigitação', 'DES'], ['Religião', 'INT'], ['Sobrevivência', 'SAB']];
+const SKILLS = [['Acrobacia', 'DES'], ['Lidar com Animais', 'SAB'], ['Arcanismo', 'INT'], ['Atletismo', 'FOR'], ['Atuação', 'CAR'], ['Enganação', 'CAR'], ['Furtividade', 'DES'], ['História', 'INT'], ['Intimidação', 'CAR'], ['Intuição', 'SAB'], ['Investigação', 'INT'], ['Medicina', 'SAB'], ['Natureza', 'INT'], ['Percepção', 'SAB'], ['Persuasão', 'CAR'], ['Prestidigitação', 'DES'], ['Religião', 'INT'], ['Sobrevivência', 'SAB']];
 const SORCERER_SKILLS = ['Arcanismo', 'Enganação', 'Intimidação', 'Intuição', 'Persuasão', 'Religião'];
 const ASI_LEVELS = [4, 8, 12, 16], SLOT_COST = { 1: 2, 2: 3, 3: 5, 4: 6, 5: 7 };
 const metamagicKnown = n => (n >= 17 ? 6 : n >= 10 ? 4 : n >= 2 ? 2 : 0);
 
 const SPECIES = [
-  { id: 'dragonborn', name: 'Draconato', speed: 30, traits: [['Ancestralidade Dracônica', 'Escolha um tipo de dragão: ele define o elemento do sopro e da resistência.'], ['Arma de Sopro', 'Troca um ataque por um Cone ou uma Linha de energia. Os usos são iguais ao Bônus de Proficiência.'], ['Resistência a Dano', 'Resistência ao elemento da sua ancestralidade.'], ['Visão no Escuro', 'Enxerga no escuro até 18 m.'], ['Voo Dracônico', 'A partir do nível 5, asas espectrais dão Deslocamento de voo por 10 minutos, uma vez por Descanso Longo.']] },
-  { id: 'dwarf', name: 'Anão', speed: 30, traits: [['Visão no Escuro', 'Enxerga no escuro até 36 m.'], ['Resiliência Anã', 'Resistência a Veneno e Vantagem contra a condição Envenenado.'], ['Tenacidade Anã', 'Ganha 1 PV máximo por nível.'], ['Sensibilidade à Pedra', 'Ação Bônus para sentir tremores ao tocar em pedra, algumas vezes por Descanso Longo.']] },
-  { id: 'elf', name: 'Elfo', speed: 30, traits: [['Visão no Escuro', 'Enxerga no escuro até 18 m.'], ['Ancestralidade Feérica', 'Vantagem contra a condição Enfeitiçado.'], ['Linhagem Élfica', 'Escolha Drow, Alto Elfo ou Elfo da Floresta, que dão magias e benefícios próprios.'], ['Sentidos Aguçados', 'Proficiência em Intuição, Percepção ou Sobrevivência.'], ['Transe', 'Descanso Longo em 4 horas de transe.']] },
-  { id: 'gnome', name: 'Gnomo', speed: 30, traits: [['Visão no Escuro', 'Enxerga no escuro até 18 m.'], ['Astúcia Gnômica', 'Vantagem em salvaguardas de Inteligência, Sabedoria e Carisma.'], ['Linhagem Gnômica', 'Gnomo da Floresta ou das Rochas, com truques e magias próprios.']] },
-  { id: 'goliath', name: 'Golias', speed: 35, traits: [['Ascendência Gigante', 'Escolha um gigante ancestral. Ele dá um benefício sobrenatural com usos iguais ao Bônus de Proficiência, por Descanso Longo.'], ['Forma Grande', 'A partir do nível 5, Ação Bônus para virar Grande por 10 minutos, uma vez por Descanso Longo, com Vantagem em testes de Força e +3 m de Deslocamento.'], ['Constituição Poderosa', 'Vantagem para encerrar a condição Agarrado e conta como um tamanho maior para carga.']],
-    lineages: { cloud: ['Gigante das Nuvens', 'Salto das Nuvens: Ação Bônus para se teleportar até 9 m.'], fire: ['Gigante do Fogo', 'Queimadura do Fogo: ao acertar, causa 1d10 extra de Fogo.'], frost: ['Gigante do Gelo', 'Gelo do Frio: ao acertar, causa 1d6 extra de Frio e reduz o Deslocamento do alvo.'], hill: ['Gigante da Colina', 'Tombo da Colina: ao acertar, derruba um alvo Grande ou menor.'], stone: ['Gigante da Pedra', 'Resistência da Pedra: Reação para reduzir o dano sofrido.'], storm: ['Gigante da Tempestade', 'Trovão da Tempestade: Reação para causar 1d8 Trovejante a quem o atingiu.'] } },
-  { id: 'halfling', name: 'Pequenino', speed: 30, traits: [['Bravura', 'Vantagem contra a condição Amedrontado.'], ['Agilidade Pequenina', 'Atravessa o espaço de criaturas maiores.'], ['Sorte', 'Pode rolar de novo um 1 natural em Testes de d20.'], ['Furtividade Natural', 'Pode se esconder atrás de criaturas maiores.']] },
-  { id: 'human', name: 'Humano', speed: 30, traits: [['Engenhoso', 'Ganha Inspiração Heroica ao terminar um Descanso Longo.'], ['Habilidoso', 'Proficiência em uma perícia à escolha.'], ['Versátil', 'Um talento de origem à escolha.']] },
-  { id: 'orc', name: 'Orc', speed: 30, traits: [['Descarga de Adrenalina', 'Ação Bônus para Disparar e ganhar PV temporários, com usos iguais ao Bônus de Proficiência.'], ['Visão no Escuro', 'Enxerga no escuro até 36 m.'], ['Resistência Implacável', 'Uma vez por Descanso Longo, cai para 1 PV em vez de 0.']] },
+  { id: 'dragonborn', name: 'Draconato', speed: 30, traits: [['Herança Dracônica', 'Escolha um tipo de dragão: ele define o elemento do sopro e da resistência.'], ['Ataque de Sopro', 'Troca um ataque por um Cone ou uma Linha de energia. Os usos são iguais ao Bônus de Proficiência.'], ['Resistência a Dano', 'Resistência ao elemento da sua ancestralidade.'], ['Visão no Escuro', 'Enxerga no escuro até 18 m.'], ['Voo Dracônico', 'A partir do nível 5, asas espectrais dão Deslocamento de voo por 10 minutos, uma vez por Descanso Longo.']] },
+  { id: 'dwarf', name: 'Anão', speed: 30, traits: [['Visão no Escuro', 'Enxerga no escuro até 36 m.'], ['Resistência a Toxinas', 'Resistência a dano Venenoso e Vantagem contra a condição Envenenado.'], ['Tenacidade Anã', 'Ganha 1 PV máximo por nível.'], ['Conhecimento de Pedras', 'Ação Bônus para ganhar Sismiconsciência de 18 m por 10 minutos ao tocar em pedra.']] },
+  { id: 'elf', name: 'Elfo', speed: 30, traits: [['Visão no Escuro', 'Enxerga no escuro até 18 m.'], ['Ancestralidade Feérica', 'Vantagem contra a condição Enfeitiçado.'], ['Linhagem Élfica', 'Escolha Drow, Alto Elfo ou Elfo Silvestre, que dão magias e benefícios próprios.'], ['Sentidos Aguçados', 'Proficiência em Intuição, Percepção ou Sobrevivência.'], ['Transe', 'Descanso Longo em 4 horas de transe.']] },
+  { id: 'gnome', name: 'Gnomo', speed: 30, traits: [['Visão no Escuro', 'Enxerga no escuro até 18 m.'], ['Astúcia de Gnomo', 'Vantagem em salvaguardas de Inteligência, Sabedoria e Carisma.'], ['Linhagem Gnômica', 'Gnomo do Bosque ou das Rochas, com truques e magias próprios.']] },
+  { id: 'goliath', name: 'Golias', speed: 35, traits: [['Ancestralidade Gigante', 'Escolha um gigante ancestral. Ele dá um benefício sobrenatural com usos iguais ao Bônus de Proficiência, por Descanso Longo.'], ['Forma Grande', 'A partir do nível 5, Ação Bônus para virar Grande por 10 minutos, uma vez por Descanso Longo, com Vantagem em testes de Força e +3 m de Deslocamento.'], ['Porte Poderoso', 'Vantagem para encerrar a condição Imobilizado e conta como um tamanho maior para carga.']],
+    lineages: { cloud: ['Gigante das Nuvens', 'Salto da Nuvem: Ação Bônus para se teleportar até 9 m.'], fire: ['Gigante de Fogo', 'Queimadura de Fogo: ao acertar, causa 1d10 extra de dano Ígneo.'], frost: ['Gigante do Gelo', 'Arrepio do Gelo: ao acertar, causa 1d6 extra de dano Gélido e reduz em 3 m o Deslocamento do alvo.'], hill: ['Gigante da Colina', 'Tombo da Colina: ao acertar, derruba um alvo Grande ou menor.'], stone: ['Gigante da Pedra', 'Resistência da Pedra: Reação para reduzir o dano sofrido.'], storm: ['Gigante da Tempestade', 'Trovão da Tempestade: Reação para causar 1d8 Trovejante a quem o atingiu.'] } },
+  { id: 'halfling', name: 'Pequenino', speed: 30, traits: [['Corajoso', 'Vantagem contra a condição Amedrontado.'], ['Agilidade Pequenina', 'Atravessa o espaço de criaturas maiores.'], ['Sorte', 'Pode jogar de novo um 1 no d20 de um Teste de D20.'], ['Furtividade Natural', 'Pode se esconder atrás de criaturas maiores.']] },
+  { id: 'human', name: 'Humano', speed: 30, traits: [['Eficiente', 'Ganha Inspiração Heroica ao terminar um Descanso Longo.'], ['Hábil', 'Proficiência em uma perícia à escolha.'], ['Versátil', 'Um talento de origem à escolha.']] },
+  { id: 'orc', name: 'Orc', speed: 30, traits: [['Pico de Adrenalina', 'Ação Bônus para Correr e ganhar PV temporários, com usos iguais ao Bônus de Proficiência.'], ['Visão no Escuro', 'Enxerga no escuro até 36 m.'], ['Vigor Implacável', 'Uma vez por Descanso Longo, cai para 1 PV em vez de 0.']] },
   { id: 'tiefling', name: 'Tiferino', speed: 30, traits: [['Visão no Escuro', 'Enxerga no escuro até 18 m.'], ['Legado Ínfero', 'Escolha Abissal, Ctônico ou Infernal, que dão resistência e magias próprias.'], ['Presença Sobrenatural', 'Conhece o truque Taumaturgia.']] }
 ];
 const BACKGROUNDS = [
@@ -1332,31 +1331,31 @@ const FEATS = [
   { id: 'skilled', name: 'Habilidoso', cat: 'origem', desc: 'Ganha proficiência em três perícias ou ferramentas à escolha.' },
   { id: 'lucky', name: 'Sortudo', cat: 'origem', desc: 'Ganha Pontos de Sorte iguais ao Bônus de Proficiência para ter Vantagem ou impor Desvantagem.' },
   { id: 'war-caster', name: 'Conjurador Bélico', cat: 'geral', min: 4, desc: 'Vantagem para manter Concentração, conjura com as mãos ocupadas e pode responder com magia a um ataque de oportunidade.' },
-  { id: 'grappler', name: 'Agarrador', cat: 'geral', min: 4, desc: 'Ataca e agarra com mais facilidade e move-se sem penalidade com quem agarrou.' },
+  { id: 'grappler', name: 'Imobilizador', cat: 'geral', min: 4, desc: 'Ataca e imobiliza com mais facilidade e move-se sem penalidade com quem imobilizou.' },
   { id: 'asi', name: 'Aumento no Valor de Atributo', cat: 'geral', min: 4, desc: '+2 em um atributo ou +1 em dois, até o máximo de 20.' },
   { id: 'archery', name: 'Arquearia', cat: 'estilo', desc: '+2 nas jogadas de ataque à distância com armas.' },
-  { id: 'defense', name: 'Defesa', cat: 'estilo', desc: '+1 na CA usando armadura.' },
+  { id: 'defense', name: 'Defensivo', cat: 'estilo', desc: '+1 na CA usando armadura.' },
   { id: 'great-weapon-fighting', name: 'Combate com Armas Grandes', cat: 'estilo', desc: 'Dados de dano 1 e 2 contam como 3 em armas de duas mãos.' },
   { id: 'two-weapon-fighting', name: 'Combate com Duas Armas', cat: 'estilo', desc: 'Soma o modificador ao dano do ataque extra.' },
   { id: 'boon-combat-prowess', name: 'Dádiva da Proeza em Combate', cat: 'dadiva', min: 19, desc: 'Uma vez por turno, transforma um ataque errado em acerto.' },
   { id: 'boon-dimensional-travel', name: 'Dádiva da Viagem Dimensional', cat: 'dadiva', min: 19, desc: 'Teleporta-se 9 m depois de atacar ou conjurar.' },
-  { id: 'boon-fate', name: 'Dádiva do Destino', cat: 'dadiva', min: 19, desc: 'Soma ou subtrai 2d4 de um Teste de d20 próximo.' },
-  { id: 'boon-irresistible-offense', name: 'Dádiva da Ofensiva Irresistível', cat: 'dadiva', min: 19, desc: 'Seus ataques ignoram Resistência e um 20 natural causa dano extra.' },
-  { id: 'boon-spell-recall', name: 'Dádiva da Lembrança Mágica', cat: 'dadiva', min: 19, desc: 'Às vezes conjura sem gastar o espaço de magia.' },
+  { id: 'boon-fate', name: 'Dádiva do Destino', cat: 'dadiva', min: 19, desc: 'Soma ou subtrai 2d4 de um Teste de D20 próximo.' },
+  { id: 'boon-irresistible-offense', name: 'Dádiva do Ataque Irresistível', cat: 'dadiva', min: 19, desc: 'Seus ataques ignoram Resistência e um 20 natural causa dano extra.' },
+  { id: 'boon-spell-recall', name: 'Dádiva da Recordação de Magia', cat: 'dadiva', min: 19, desc: 'Às vezes conjura sem gastar o espaço de magia.' },
   { id: 'boon-night-spirit', name: 'Dádiva do Espírito da Noite', cat: 'dadiva', min: 19, desc: 'Fica Invisível na penumbra e resiste a quase todo dano nela.' },
   { id: 'boon-truesight', name: 'Dádiva da Visão Verdadeira', cat: 'dadiva', min: 19, desc: 'Ganha Visão Verdadeira até 18 m.' }
 ];
 const METAMAGIC = [
-  { id: 'careful', name: 'Magia Cuidadosa', en: 'Careful Spell', cost: 1, icon: 'i-shield', desc: 'Protege criaturas à escolha do efeito de uma magia com salvaguarda.', when: 'Para lançar área perto de aliados.' },
+  { id: 'careful', name: 'Magia Cautelosa', en: 'Careful Spell', cost: 1, icon: 'i-shield', desc: 'Protege criaturas à escolha do efeito de uma magia com salvaguarda.', when: 'Para lançar área perto de aliados.' },
   { id: 'distant', name: 'Magia Distante', en: 'Distant Spell', cost: 1, icon: 'i-spark', desc: 'Dobra o alcance da magia, ou dá 9 m a uma magia de Toque.', when: 'Para atingir de longe.' },
   { id: 'empowered', name: 'Magia Potencializada', en: 'Empowered Spell', cost: 1, icon: 'i-flame', desc: 'Rola de novo alguns dados de dano e fica com os novos resultados.', when: 'Depois de uma rolagem fraca.' },
-  { id: 'extended', name: 'Magia Estendida', en: 'Extended Spell', cost: 1, icon: 'i-moon', desc: 'Dobra a duração, até 24 horas, e dá Vantagem para manter a Concentração.', when: 'Em magias longas de controle.' },
-  { id: 'heightened', name: 'Magia Elevada', en: 'Heightened Spell', cost: 2, icon: 'i-gem', desc: 'Um alvo tem Desvantagem na salvaguarda contra a magia.', when: 'Contra o alvo mais perigoso.' },
+  { id: 'extended', name: 'Magia Persistente', en: 'Extended Spell', cost: 1, icon: 'i-moon', desc: 'Dobra a duração, até 24 horas, e dá Vantagem para manter a Concentração.', when: 'Em magias longas de controle.' },
+  { id: 'heightened', name: 'Magia Agravada', en: 'Heightened Spell', cost: 2, icon: 'i-gem', desc: 'Um alvo tem Desvantagem na salvaguarda contra a magia.', when: 'Contra o alvo mais perigoso.' },
   { id: 'quick', name: 'Magia Acelerada', en: 'Quickened Spell', cost: 2, icon: 'i-bolt', desc: 'Uma magia de 1 Ação passa a ser conjurada como Ação Bônus.', when: 'Para agir duas vezes no turno.' },
-  { id: 'seeking', name: 'Magia Rastreadora', en: 'Seeking Spell', cost: 1, icon: 'i-eye', desc: 'Rola de novo um ataque mágico que errou.', when: 'Depois de errar um ataque importante.' },
+  { id: 'seeking', name: 'Magia Buscadora', en: 'Seeking Spell', cost: 1, icon: 'i-eye', desc: 'Rola de novo um ataque mágico que errou.', when: 'Depois de errar um ataque importante.' },
   { id: 'subtle', name: 'Magia Sutil', en: 'Subtle Spell', cost: 1, icon: 'i-hush', desc: 'Conjura sem componentes Verbais, Somáticos ou Materiais sem custo.', when: 'Para conjurar sem ser percebido.' },
-  { id: 'transmuted', name: 'Magia Transmutada', en: 'Transmuted Spell', cost: 1, icon: 'i-flame', desc: 'Troca o tipo de dano da magia entre Ácido, Elétrico, Frio, Fogo, Trovejante e Veneno.', when: 'Contra resistências.' },
-  { id: 'twinned', name: 'Magia Geminada', en: 'Twinned Spell', cost: 1, icon: 'i-spark', desc: 'A magia ganha um alvo adicional ao ser ampliada em um círculo.', when: 'Para dobrar buffs e controle.' }
+  { id: 'transmuted', name: 'Magia Transmutada', en: 'Transmuted Spell', cost: 1, icon: 'i-flame', desc: 'Troca o tipo de dano da magia entre Ácido, Elétrico, Gélido, Ígneo, Trovejante e Venenoso.', when: 'Contra resistências.' },
+  { id: 'twinned', name: 'Magia Duplicada', en: 'Twinned Spell', cost: 1, icon: 'i-spark', desc: 'A magia ganha um alvo adicional ao ser ampliada em um círculo.', when: 'Para dobrar buffs e controle.' }
 ];
 const SORCERER_FEATURES = [
   [1, 'Conjuração', 'Conjura magias de Feiticeiro usando Carisma.'], [1, 'Feitiçaria Inata', 'Ação Bônus para somar +1 à CD e ter Vantagem em ataques de magia por 1 minuto, duas vezes por Descanso Longo.'],
@@ -1368,13 +1367,13 @@ const SORCERER_FEATURES = [
 ];
 const DRACONIC_FEATURES = [
   [3, 'Resiliência Dracônica', '+3 PV máximos, mais 1 por nível, e CA sem armadura = 10 + DES + CAR.'], [3, 'Magias Dracônicas', 'Alterar-se, Orbe Cromático, Comando e Sopro de Dragão sempre preparadas.'],
-  [5, 'Magias Dracônicas', 'Medo e Voo sempre preparadas.'], [6, 'Afinidade Elemental', 'Escolha um elemento: Resistência a ele e soma Carisma a um dano de magia desse tipo.'],
+  [5, 'Magias Dracônicas', 'Medo e Voo sempre preparadas.'], [6, 'Afinidade Elemental', 'Escolha Ácido, Elétrico, Gélido, Ígneo ou Venenoso: Resistência a ele e soma Carisma a uma jogada de dano de magia desse tipo.'],
   [7, 'Magias Dracônicas', 'Olho Arcano e Enfeitiçar Monstro sempre preparadas.'], [9, 'Magias Dracônicas', 'Lendas e Histórias e Invocar Dragão sempre preparadas.'],
-  [14, 'Asas de Dragão', 'Ação Bônus para ganhar Deslocamento de voo de 18 m por 1 hora, uma vez por Descanso Longo.'], [18, 'Companheiro Dracônico', 'Conjura Invocar Dragão sem componente Material e, uma vez, sem espaço de magia.']
+  [14, 'Asas de Dragão', 'Ação Bônus para ganhar Deslocamento de Voo de 18 m por 1 hora. Volta no Descanso Longo ou gastando 3 PF.'], [18, 'Companheiro Dracônico', 'Conjura Invocar Dragão sem componente Material e, uma vez por Descanso Longo, sem espaço de magia; pode dispensar a Concentração, com duração de 1 minuto.']
 ];
 const DRACONIC_SPELLS = { 3: ['alter-self', 'chromatic-orb', 'command', 'dragons-breath'], 5: ['fear', 'fly'], 7: ['arcane-eye', 'charm-monster'], 9: ['legend-lore', 'summon-dragon'] };
 const STARTING_GEAR = {
-  a: { label: 'Lança, 2 Adagas, Foco Arcano, Kit de Masmorra e 28 PO', items: [['Lança', 1, 'arm'], ['Adaga', 2, 'arm'], ['Foco Arcano', 1, 'arm'], ['Kit de Masmorra', 1, 'eq'], ['Peças de Ouro', 28, 'cons']] },
+  a: { label: 'Lança, 2 Adagas, Foco Arcano, Kit de Explorador de Masmorras e 28 PO', items: [['Lança', 1, 'arm'], ['Adaga', 2, 'arm'], ['Foco Arcano', 1, 'arm'], ['Kit de Explorador de Masmorras', 1, 'eq'], ['Peças de Ouro', 28, 'cons']] },
   b: { label: '50 PO para comprar o que quiser', items: [['Peças de Ouro', 50, 'cons']] }
 };
 const speciesById = id => SPECIES.find(s => s.id === id) || privateCatalog().especies.find(s => s.id === id);
@@ -1565,6 +1564,25 @@ function sanitizeCharacter(c) {
   return { ...c, id: String(c.id || newId('c')), name: c.name.slice(0, 60) || 'Sem nome', sub: String(c.sub || '').slice(0, 120), template, spells: Array.isArray(c.spells) ? c.spells : [] };
 }
 
+/* Nomes antigos guardados no navegador, trocados pelos do Livro do Jogador 2024. */
+const TIPOS_ANTIGOS = { Fogo: 'Ígneo', Frio: 'Gélido', Veneno: 'Venenoso' };
+const ITENS_ANTIGOS = [['Kit de Masmorra', 'Kit de Explorador de Masmorras'], ['Frascos de Óleo', 'Potes de Óleo'], ['Pederneira', 'Caixa para Fogo']];
+function atualizaTermos(s) {
+  const tipo = v => TIPOS_ANTIGOS[v] || v;
+  const magias = l => (Array.isArray(l) ? l : []).forEach(m => {
+    if (m?.choice) m.choice = m.choice.map(tipo);
+    (m?.r || []).forEach(x => { if (x.type) x.type = tipo(x.type); });
+  });
+  s.characters.forEach(c => {
+    if (c.lastElement) c.lastElement = tipo(c.lastElement);
+    if (c.choices) c.choices = Object.fromEntries(Object.entries(c.choices).map(([k, v]) => [k, tipo(v)]));
+    magias(c.spells); magias(c.grimoire?.added);
+    [...(c.state?.items || []), ...(c.sheet?.items || [])].forEach(i => ITENS_ANTIGOS.forEach(([a, b]) => { for (const k of ['name', 'note']) if (typeof i[k] === 'string') i[k] = i[k].split(a).join(b); }));
+  });
+  magias(s.library.custom); magias(Object.values(s.library.overrides || {}));
+  return s;
+}
+
 function sanitizeStore(raw) {
   const s = emptyStore();
   if (!raw || typeof raw !== 'object' || !Array.isArray(raw.characters)) return null;
@@ -1575,7 +1593,7 @@ function sanitizeStore(raw) {
   s.campaignNotes = raw.campaignNotes || null;
   s.library = { ...s.library, ...raw.library };
   s.settings = { ...s.settings, ...raw.settings };
-  return s;
+  return atualizaTermos(s);
 }
 
 function migrateStore() {
@@ -1975,7 +1993,7 @@ function renderEffects() {
   if (f.mirror) {
     const pips = [0, 1, 2].map(i => `<button class="${i < f.mirror ? '' : 'off'}" data-action="mirror-hit" data-i="${i}" aria-label="Duplicata ${i + 1}${i < f.mirror ? ' — tocar quando for destruída' : ' destruída'}"><i></i></button>`).join('');
     out.push(`<span class="fx" style="--c:var(--silver)">${icon('i-mirror')}<span><b>Reflexos</b></span><span class="mini">${pips}</span>
-      <button class="act" data-action="mirror-roll" title="Fui atingido: rolar 1d6 por duplicata">Rolar</button><button class="x" data-action="fx-end" data-fx="mirror" aria-label="Encerrar Reflexos">${icon('i-x')}</button></span>`);
+      <button class="act" data-action="mirror-roll" title="Fui atingido: rolar 1d6 por cópia">Rolar</button><button class="x" data-action="fx-end" data-fx="mirror" aria-label="Encerrar Reflexos">${icon('i-x')}</button></span>`);
   }
   $('#effects').innerHTML = out.join('');
 }
@@ -2202,7 +2220,7 @@ function summaryOf(s) {
 function renderHp() {
   const s = CHAR.stats, pct = Math.round(100 * state.hp / s.hpMax);
   $('#hp-panel').innerHTML = `
-    <div class="panel-h"><h2>Pontos de Vida</h2><span class="rule"></span><span class="aside">Dados de Vida: ${state.res.hd}/${RES.hd.max} d${CHAR.hitDie}</span></div>
+    <div class="panel-h"><h2>Pontos de Vida</h2><span class="rule"></span><span class="aside">Dados de Pontos de Vida: ${state.res.hd}/${RES.hd.max} d${CHAR.hitDie}</span></div>
     <div class="hp-big"><div class="hp-num num">${state.hp}<small> / ${s.hpMax}</small>${state.temp ? `<span class="tmp">+${state.temp} PV temporários</span>` : ''}</div></div>
     <div class="hpbar"><i style="width:${pct}%;background-position:${100 - pct}% 0"></i></div>
     <div class="hp-ctrl">
@@ -2458,12 +2476,12 @@ function shortRestModal() {
     const hd = state.res.hd, full = state.hp >= CHAR.stats.hpMax, can = hd > 0 && !full;
     const gems = Array.from({ length: RES.hd.max }, (_, i) => `<span class="gem ${i < hd ? '' : 'spent'}"><i></i></span>`).join('');
     return `${mHead('Descanso Curto · 1 hora', 'Recuperar o fôlego')}
-      <p class="note" style="margin-top:10px">Gaste Dados de Vida para curar: cada dado cura <b>1d${CHAR.hitDie} + ${CHAR.conMod}</b> (CON).</p>
+      <p class="note" style="margin-top:10px">Gaste Dados de Pontos de Vida para curar: cada dado cura <b>1d${CHAR.hitDie} + ${CHAR.conMod}</b> (CON).</p>
       <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin-top:10px">
-        <div class="gems lvR" aria-label="${hd} Dados de Vida">${gems}</div>
+        <div class="gems lvR" aria-label="${hd} Dados de Pontos de Vida">${gems}</div>
         <div class="hp-num num" style="font-size:30px">${state.hp}<small> / ${CHAR.stats.hpMax} PV</small></div></div>
       <div class="rolls">${restRolls.map(r => `<span class="roll">🎲 ${r.die} + ${CHAR.conMod} = +${r.heal} PV</span>`).join('')}</div>
-      <button class="btn frost block" data-action="hd-roll" ${can ? '' : 'disabled'}>${icon('i-die')}${full ? 'PV já estão no máximo' : hd ? 'Rolar e gastar 1 Dado de Vida' : 'Sem Dados de Vida'}</button>
+      <button class="btn frost block" data-action="hd-roll" ${can ? '' : 'disabled'}>${icon('i-die')}${full ? 'PV já estão no máximo' : hd ? 'Rolar e gastar 1 Dado de Ponto de Vida' : 'Sem Dados de Pontos de Vida'}</button>
       <p class="note" style="margin:12px 0 6px">Rolou um d${CHAR.hitDie} físico? Toque no resultado:</p>
       <div class="fom-btns">${Array.from({ length: CHAR.hitDie }, (_, i) => `<button class="chipbtn" style="min-width:46px;justify-content:center" data-action="hd-roll" data-v="${i + 1}" ${can ? '' : 'disabled'}><b>${i + 1}</b></button>`).join('')}</div>
       ${box('Feiticeiro nível 4', 'Nenhum recurso de classe volta no Descanso Curto. A <b>Restauração Feiticeira</b> (recuperar PF no descanso curto) chega no nível 5.', 'warn')}
@@ -2473,7 +2491,7 @@ function shortRestModal() {
 function spendHitDie(v) {
   const die = v || d(CHAR.hitDie), heal = Math.max(1, die + CHAR.conMod);
   restRolls.push({ die, heal });
-  if (!commit(`Dado de Vida: ${die} + ${CHAR.conMod} = +${heal} PV`, st => {
+  if (!commit(`Dado de Ponto de Vida: ${die} + ${CHAR.conMod} = +${heal} PV`, st => {
     if (!st.res.hd || st.hp >= CHAR.stats.hpMax) return false;
     st.res.hd--; st.hp = Math.min(CHAR.stats.hpMax, st.hp + heal);
   })) restRolls.pop();
@@ -2590,7 +2608,7 @@ function handle(a, el) {
       const m = state.fx.mirror; if (!m) break;
       const rolls = Array.from({ length: m }, () => d(6)), hit = rolls.some(x => x >= 3);
       showRoll('Reflexos · você foi atingido', hit ? 'Desviado!' : 'Acertou', `🎲 ${rolls.join(', ')} (precisa de 3+ em algum)`,
-        hit ? `Uma duplicata é destruída${m - 1 ? ` — restam ${m - 1}` : ' — Reflexos termina'}.` : 'Nenhuma duplicata intercepta: o ataque atinge Søren.', hit ? '' : 'fail');
+        hit ? `Uma cópia é destruída${m - 1 ? ` — restam ${m - 1}` : ' — Reflexos termina'}.` : 'Nenhuma cópia intercepta: o ataque atinge Søren.', hit ? '' : 'fail');
       if (hit) commit(null, st => { st.fx.mirror = m - 1; });
       break;
     }
@@ -2637,7 +2655,7 @@ function handle(a, el) {
     case 'meta-use': { const m = META[ds.id]; commit(`${m.name}: −${m.cost} PF`, st => { if (st.res.sp < m.cost) return false; st.res.sp -= m.cost; }); break; }
     case 'fx-end': commit(`${FX_NAME[ds.fx]} encerrado`, st => { st.fx[ds.fx] = ds.fx === 'mirror' ? 0 : false; }); break;
     case 'mirror-hit': { const m = state.fx.mirror, hit = i < m;
-      commit(hit ? (m - 1 ? `Duplicata destruída — restam ${m - 1}` : 'Última duplicata destruída — Reflexos termina') : 'Duplicata restaurada', st => { st.fx.mirror = Math.max(0, Math.min(3, m + (hit ? -1 : 1))); }); break; }
+      commit(hit ? (m - 1 ? `Duplicata destruída — restam ${m - 1}` : 'Última cópia destruída — Reflexos termina') : 'Duplicata restaurada', st => { st.fx.mirror = Math.max(0, Math.min(3, m + (hit ? -1 : 1))); }); break; }
     case 'conc-end': commit(`Concentração em ${SPELL[state.conc]?.name} encerrada`, st => { st.conc = null; }); break;
     case 'conc-check': concModal(0); break;
     case 'conc-roll': { const a1 = d(20), b1 = CHAR.warCaster ? d(20) : a1, total = Math.max(a1, b1) + CHAR.stats.conSave; concRoll = { a: a1, b: b1, total, ok: total >= concDC() }; modalRefresh?.(); break; }
@@ -3249,7 +3267,7 @@ function privateCatalog() {
 }
 const allFeats = () => [...FEATS.filter(f => !privateCatalog().talentos.some(p => norm(p.name) === norm(f.name))), ...privateCatalog().talentos, ...(store.library.feats || [])];
 const ABIL_KEYS = Object.keys(SAVE_NAME);
-const DMG_TYPES = ['Ácido', 'Contundente', 'Cortante', 'Elétrico', 'Energético', 'Fogo', 'Frio', 'Necrótico', 'Perfurante', 'Psíquico', 'Radiante', 'Trovejante', 'Veneno'];
+const DMG_TYPES = ['Ácido', 'Contundente', 'Cortante', 'Elétrico', 'Energético', 'Gélido', 'Ígneo', 'Necrótico', 'Perfurante', 'Psíquico', 'Radiante', 'Trovejante', 'Venenoso'];
 const SCHOOLS = ['Abjuração', 'Adivinhação', 'Encantamento', 'Evocação', 'Ilusão', 'Invocação', 'Necromancia', 'Transmutação'];
 const CLASS_NAMES = { artificer: 'Artífice', barbarian: 'Bárbaro', bard: 'Bardo', cleric: 'Clérigo', druid: 'Druida', fighter: 'Guerreiro', monk: 'Monge', paladin: 'Paladino', ranger: 'Patrulheiro', rogue: 'Ladino', sorcerer: 'Feiticeiro', warlock: 'Bruxo', wizard: 'Mago' };
 
@@ -3301,7 +3319,7 @@ function rollsFromPT(text, higher) {
   const nomes = { Força: 'FOR', Destreza: 'DES', Constituição: 'CON', Inteligência: 'INT', Sabedoria: 'SAB', Carisma: 'CAR' };
   [...new Set([...t.matchAll(/salvaguarda de (Força|Destreza|Constituição|Inteligência|Sabedoria|Carisma)/g)].map(m => nomes[m[1]]))].forEach(a => r.push({ t: 'save', a }));
   const metade = /metade/i.test(t), up = higher.match(/aumenta em (\d+d\d+)/)?.[1], vistos = new Set();
-  for (const m of t.matchAll(/(\d+d\d+(?:\s*\+\s*\d+)?) de dano (\p{L}+)/gu)) {
+  for (const m of t.matchAll(/(\d+d\d+(?:\s*\+\s*\d+)?) (?:pontos? )?de dano (\p{L}+)/gu)) {
     const d = m[1].replace(/\s/g, '');
     if (vistos.has(d + m[2])) continue;
     vistos.add(d + m[2]);
@@ -3331,9 +3349,9 @@ function chipOf(s) {
 function libraryAll() {
   const map = new Map();
   for (const s of window.GRIMORIO_LIBRARY?.magias || []) map.set(s.id, s);
-  const porEn = new Map([...map.values()].map(s => [norm(s.en), s.id]));
+  const porEn = new Map([...map.values()].map(s => [norm(s.en), s.id])), porNome = new Map([...map.values()].map(s => [norm(s.name), s.id]));
   for (const p of privateSpells) {
-    const id = p.en ? porEn.get(norm(p.en)) : null;
+    const id = (p.en && porEn.get(norm(p.en))) || porNome.get(norm(p.name));
     if (id) {
       const b = map.get(id);
       map.set(id, { ...b, name: p.name, desc: p.desc, higher: p.higher ?? b.higher, upgrade: p.upgrade ?? b.upgrade, material: p.material || b.material, src: 'srd+pessoal', fonte: p.fonte });
@@ -3361,6 +3379,24 @@ function libMatches(s, f, q) {
   return !q || spellHaystack(s).includes(q);
 }
 const SRC_TAG = { srd: 'SRD', 'srd+pessoal': 'SRD + pessoal', pessoal: 'Pessoal', minha: 'Minha' };
+
+/** Separa a Biblioteca por Truques e Círculos, com a mesma barra do grimório. */
+function libCard(s) {
+    const dano = chipOf(s), tem = inGrimoire(s);
+    return `<div class="spell lib-card ${lvClass(s.level)}" data-action="lib-open" data-id="${esc(s.id)}" role="button" tabindex="0">
+    <div class="s-main"><b>${esc(s.name)}</b><small>${s.level ? ORD(s.level) + ' círculo' : 'Truque'} · ${esc(s.school)}${s.en && s.en !== s.name ? ' · ' + esc(s.en) : ''}</small>
+    <div class="s-tags"><span class="tag">${SRC_TAG[s.src] || s.src}</span>${dano ? `<span class="tag dmg">${esc(dano)}</span>` : ''}${s.conc ? '<span class="tag conc">Conc.</span>' : ''}${s.ritual ? '<span class="tag">Ritual</span>' : ''}${tem ? '<span class="tag new">No grimório</span>' : ''}</div></div></div>`;
+}
+function libGrupos(list) {
+  const visiveis = list.slice(0, libLimit);
+  if (!visiveis.length) return '<p class="empty">Nenhuma magia com esses filtros.</p>';
+  const niveis = [...new Set(visiveis.map(s => s.level))].sort((a, b) => a - b);
+  return niveis.map(l => {
+    const total = list.filter(s => s.level === l).length;
+    return `<section class="spell-group ${lvClass(l)}"><div class="group-h"><h3>${l ? ORD(l) + ' Círculo' : 'Truques'}</h3><span class="rule"></span><span class="note">${total} ${total === 1 ? 'magia' : 'magias'}</span></div>
+      <div class="spell-list">${visiveis.filter(s => s.level === l).map(libCard).join('')}</div></section>`;
+  }).join('');
+}
 
 function renderLibrary() {
   const box = $('#lib-view');
@@ -3390,12 +3426,7 @@ function renderLibrary() {
         <button class="btn sm" data-action="lib-import">${icon('i-up')}Biblioteca pessoal${privateSpells.length ? ` (${privateSpells.length})` : ''}</button>
         <button class="btn sm gold" data-action="spell-new">${icon('i-plus')}Criar magia</button></div>
     </div>
-    <div class="spell-list">${list.slice(0, libLimit).map(s => {
-      const dano = chipOf(s), tem = inGrimoire(s);
-      return `<div class="spell lib-card ${lvClass(s.level)}" data-action="lib-open" data-id="${esc(s.id)}" role="button" tabindex="0">
-        <div class="s-main"><b>${esc(s.name)}</b><small>${s.level ? ORD(s.level) + ' círculo' : 'Truque'} · ${esc(s.school)}${s.en && s.en !== s.name ? ' · ' + esc(s.en) : ''}</small>
-        <div class="s-tags"><span class="tag">${SRC_TAG[s.src] || s.src}</span>${dano ? `<span class="tag dmg">${esc(dano)}</span>` : ''}${s.conc ? '<span class="tag conc">Conc.</span>' : ''}${s.ritual ? '<span class="tag">Ritual</span>' : ''}${tem ? '<span class="tag new">No grimório</span>' : ''}</div></div></div>`;
-    }).join('') || '<p class="empty">Nenhuma magia com esses filtros.</p>'}</div>
+    ${libGrupos(list)}
     ${list.length > libLimit ? `<div class="add-row"><button class="btn block" data-action="lib-more">Mostrar mais (${list.length - libLimit})</button></div>` : ''}`;
 }
 
@@ -3458,7 +3489,7 @@ async function importPrivate(file) {
 
 /* ---------- editor de magias ---------- */
 let draft = null;
-const newRow = () => ({ d: '1d6', type: 'Fogo', half: false, up: '', cantrip: '', heal: false, choose: false });
+const newRow = () => ({ d: '1d6', type: 'Ígneo', half: false, up: '', cantrip: '', heal: false, choose: false });
 
 function openEditor(id) {
   const s = id ? clone(stripSpell(libGet(id))) : { name: '', en: '', level: 1, school: 'Evocação', time: '1 Ação', range: '', comp: 'V, S', dur: 'Instantânea', conc: false, ritual: false, classes: ['sorcerer'], desc: [''], r: [], src: 'minha' };
@@ -3612,9 +3643,9 @@ loadPrivate().then(() => { if (privateSpells.length && grimView === 'lib') rende
 const FX_MAX_PARTICLES = 380, FX_ENTRA = 320, FX_DADOS = 900, FX_ATO = 1650, FX_SAI = 420;
 const DMG_COLORS = {
   'Ácido': ['#b8f25a', '#5fd23a', '#e9ff9a'], 'Contundente': ['#d6b48a', '#9c7b55', '#f2dfc2'], 'Cortante': ['#e6edf5', '#9fb2c8', '#ffffff'],
-  'Elétrico': ['#9fd8ff', '#5a8dff', '#ffffff'], 'Energético': ['#c9a6ff', '#7b5cff', '#f0e6ff'], 'Fogo': ['#ffb347', '#ff5a1f', '#fff1a8'],
-  'Frio': ['#bfeeff', '#62c4ff', '#ffffff'], 'Necrótico': ['#8fe388', '#3c6b45', '#d8ffd0'], 'Perfurante': ['#d9dfe8', '#8796a8', '#ffffff'],
-  'Psíquico': ['#ff8fd8', '#b44cff', '#ffe0f6'], 'Radiante': ['#fff3b0', '#ffd24a', '#ffffff'], 'Trovejante': ['#9fb8ff', '#4d63d6', '#e6ecff'], 'Veneno': ['#a6e36b', '#4f9e3a', '#e5ffc2']
+  'Elétrico': ['#9fd8ff', '#5a8dff', '#ffffff'], 'Energético': ['#c9a6ff', '#7b5cff', '#f0e6ff'], 'Ígneo': ['#ffb347', '#ff5a1f', '#fff1a8'],
+  'Gélido': ['#bfeeff', '#62c4ff', '#ffffff'], 'Necrótico': ['#8fe388', '#3c6b45', '#d8ffd0'], 'Perfurante': ['#d9dfe8', '#8796a8', '#ffffff'],
+  'Psíquico': ['#ff8fd8', '#b44cff', '#ffe0f6'], 'Radiante': ['#fff3b0', '#ffd24a', '#ffffff'], 'Trovejante': ['#9fb8ff', '#4d63d6', '#e6ecff'], 'Venenoso': ['#a6e36b', '#4f9e3a', '#e5ffc2']
 };
 const SCHOOL_COLORS = {
   'Abjuração': ['#9fdcff', '#4f9de0', '#ffffff'], 'Adivinhação': ['#d8e7ff', '#8fa8ff', '#ffffff'], 'Encantamento': ['#ffb3e6', '#e05cb8', '#fff0fa'], 'Evocação': ['#ffd28a', '#ff8a3c', '#fff4d6'],
@@ -3624,7 +3655,7 @@ const SCHOOL_COLORS = {
 const PALETAS = {
   luz: ['#fff3b0', '#ffd24a', '#ffffff'], ouro: ['#ffe08a', '#d4a12e', '#fff8dc'], lua: ['#dfe9ff', '#8fa8ff', '#ffffff'], prata: ['#e6edf5', '#9fb2c8', '#ffffff'], sombra: ['#9a8cc2', '#3d2f66', '#d9d0f5'],
   sangue: ['#ff8a8a', '#b3202a', '#ffd6d6'], natureza: ['#a9e87a', '#3f9e4a', '#e9ffc9'], agua: ['#8fd8ff', '#2f7fd6', '#e0f6ff'], terra: ['#d6b48a', '#7d5a3a', '#f2dfc2'], vento: ['#d8f0ee', '#7fb8b8', '#ffffff'],
-  sonho: ['#ffb3e6', '#8f5cff', '#fff0fa'], cura: ['#9df0b4', '#3fbf7a', '#eafff0'], fogo: DMG_COLORS['Fogo'], gelo: DMG_COLORS['Frio'], veneno: DMG_COLORS['Veneno'], arcano: DMG_COLORS['Energético'], morte: ['#b9c9b5', '#3a4a40', '#e6f2e0']
+  sonho: ['#ffb3e6', '#8f5cff', '#fff0fa'], cura: ['#9df0b4', '#3fbf7a', '#eafff0'], fogo: DMG_COLORS['Ígneo'], gelo: DMG_COLORS['Gélido'], veneno: DMG_COLORS['Venenoso'], arcano: DMG_COLORS['Energético'], morte: ['#b9c9b5', '#3a4a40', '#e6f2e0']
 };
 /* Céu de cada fundo: topo, meio, base e o detalhe que anima. */
 const FUNDOS = {
@@ -4696,7 +4727,7 @@ const CENAS = {
   'cone-of-cold': ['gelo', 'Um sopro de inverno absoluto', ['cone', { arco: 1.1 }], ['alvo', { em: [.34, .3], s: .18, reage: 'congela', t: [.2, 1] }], ['alvo', { em: [.66, .3], s: .18, reage: 'congela', t: [.2, 1] }], ['chover', { forma: 'neve', d: 3 }]],
   'conjure-elemental': ['arcano:prata', 'Um elemental maior atende', ['circulo', { lados: 4, s: .6, t: [0, .6] }], ['surgir', { art: '@ifrit', em: [.5, .46], s: .66, t: [.2, 1] }]],
   'contact-other-plane': ['astral:sonho', 'Uma mente vasta demais', ['aparecer', { art: '@overmind', s: .6, bob: 2 }], ['ondas', { em: 'C', s: .8, n: 4 }], ['alvo', { em: [.5, .74], s: .16, reage: 'treme' }]],
-  contagion: ['cripta:Veneno', 'Uma doença sai do seu toque', ['surgir', { art: '@evil-hand', em: [.5, .56], s: .32, t: [0, .5] }], ['revoada', { art: '@virus', n: 10, s: .08 }], ['alvo', { em: 'B', art: '@half-dead', s: .28, reage: 'treme', t: [.3, 1] }]],
+  contagion: ['cripta:veneno', 'Uma doença sai do seu toque', ['surgir', { art: '@evil-hand', em: [.5, .56], s: .32, t: [0, .5] }], ['revoada', { art: '@virus', n: 10, s: .08 }], ['alvo', { em: 'B', art: '@half-dead', s: .28, reage: 'treme', t: [.3, 1] }]],
   creation: ['astral:ouro', 'Algo surge a partir de nada', ['brilhos', { s: .4, n: 3 }], ['aparecer', { art: '@cubeforce', s: .4, s0: .05, s1: 1, giro: .2 }]],
   'dispel-evil-and-good': ['templo:luz', 'As criaturas de fora voltam para casa', ['aparecer', { art: '@horned-skull', em: 'B', s: .3, t: [0, .6], cor: 'sangue' }], ['feixe', { de: 'A', larg: 16, t: [.2, .8] }], ['portal', { em: 'B', s: .18, t: [.4, 1] }]],
   'dominate-person': ['sonho:sonho', 'Os olhos dele agora são seus', ['aparecer', { art: '@puppet', em: [.5, .32], s: .3 }], ['alvo', { em: [.5, .6], s: .3, reage: 'nada', cor: 'sonho' }], ['correntes', { em: [.5, .6], n: 3 }], ['espiral', { em: [.5, .6], s: .2 }]],

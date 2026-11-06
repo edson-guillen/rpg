@@ -56,6 +56,25 @@ function sanitizeCharacter(c) {
   return { ...c, id: String(c.id || newId('c')), name: c.name.slice(0, 60) || 'Sem nome', sub: String(c.sub || '').slice(0, 120), template, spells: Array.isArray(c.spells) ? c.spells : [] };
 }
 
+/* Nomes antigos guardados no navegador, trocados pelos do Livro do Jogador 2024. */
+const TIPOS_ANTIGOS = { Fogo: 'Ígneo', Frio: 'Gélido', Veneno: 'Venenoso' };
+const ITENS_ANTIGOS = [['Kit de Masmorra', 'Kit de Explorador de Masmorras'], ['Frascos de Óleo', 'Potes de Óleo'], ['Pederneira', 'Caixa para Fogo']];
+function atualizaTermos(s) {
+  const tipo = v => TIPOS_ANTIGOS[v] || v;
+  const magias = l => (Array.isArray(l) ? l : []).forEach(m => {
+    if (m?.choice) m.choice = m.choice.map(tipo);
+    (m?.r || []).forEach(x => { if (x.type) x.type = tipo(x.type); });
+  });
+  s.characters.forEach(c => {
+    if (c.lastElement) c.lastElement = tipo(c.lastElement);
+    if (c.choices) c.choices = Object.fromEntries(Object.entries(c.choices).map(([k, v]) => [k, tipo(v)]));
+    magias(c.spells); magias(c.grimoire?.added);
+    [...(c.state?.items || []), ...(c.sheet?.items || [])].forEach(i => ITENS_ANTIGOS.forEach(([a, b]) => { for (const k of ['name', 'note']) if (typeof i[k] === 'string') i[k] = i[k].split(a).join(b); }));
+  });
+  magias(s.library.custom); magias(Object.values(s.library.overrides || {}));
+  return s;
+}
+
 function sanitizeStore(raw) {
   const s = emptyStore();
   if (!raw || typeof raw !== 'object' || !Array.isArray(raw.characters)) return null;
@@ -66,7 +85,7 @@ function sanitizeStore(raw) {
   s.campaignNotes = raw.campaignNotes || null;
   s.library = { ...s.library, ...raw.library };
   s.settings = { ...s.settings, ...raw.settings };
-  return s;
+  return atualizaTermos(s);
 }
 
 function migrateStore() {

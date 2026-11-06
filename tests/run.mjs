@@ -21,7 +21,7 @@ const OLD_NOTES = {
   ui: { topic: 'all', open: null }
 };
 
-const DMG = { Fogo: '#ffb347', Frio: '#bfeeff' };
+const DMG = { Ígneo: '#ffb347', Gélido: '#bfeeff' };
 const VIEWPORTS = { celular: { width: 390, height: 844 }, desktop: { width: 1280, height: 800 } };
 let falhas = 0, total = 0;
 const ok = (cond, msg) => { total++; if (!cond) { falhas++; console.log(`    FALHOU: ${msg}`); } };
@@ -275,11 +275,16 @@ const cenarios = {
     await page.waitForFunction(() => /^\d+ de 339/.test(document.querySelector('#lib-count').textContent));
     const feit = await page.evaluate(() => libraryAll().filter(s => s.classes.includes('sorcerer')).length);
     ok(feit > 100 && +(await page.locator('#lib-count').textContent()).split(' ')[0] === feit, 'filtro padrão é Feiticeiro');
-    await page.selectOption('[data-lib="dmg"]', 'Fogo');
+    await page.selectOption('[data-lib="dmg"]', 'Ígneo');
     await page.selectOption('[data-lib="level"]', '3');
     await page.waitForFunction(() => document.querySelectorAll('.lib-card').length > 0);
     const nomes = await page.locator('.lib-card b').allTextContents();
     ok(nomes.includes('Bola de Fogo'), 'filtros de círculo e dano');
+    ok((await page.locator('#lib-view .group-h h3').allTextContents()).join() === '3º Círculo', 'biblioteca separada por círculo');
+    const termos = await page.evaluate(() => ({ tipos: Object.keys(DMG_COLORS), ruins: libraryAll().filter(s => /dano de (Fogo|Frio|Veneno)|Penumbra|Corruptor|ação Disparada|ação Estudar/.test(JSON.stringify(s.desc))).map(s => s.name), conc: libGet('protection-from-evil-and-good').conc, nome: libGet('arcane-hand').name, meta: METAMAGIC.map(m => m.name).join() }));
+    ok(termos.tipos.includes('Ígneo') && termos.tipos.includes('Gélido') && termos.tipos.includes('Venenoso') && !termos.tipos.includes('Fogo'), 'tipos de dano com os nomes do livro');
+    ok(!termos.ruins.length, 'textos sem termos antigos');
+    ok(termos.conc && termos.nome === 'Mão de Bigby' && /Magia Agravada/.test(termos.meta), 'concentração, nomes e Metamagia como no livro');
     await clicar(page, '[data-action="lib-clear"]');
     await page.fill('#lib-q', 'fire bolt');
     await page.waitForFunction(() => /^1 de/.test(document.querySelector('#lib-count').textContent));
@@ -328,7 +333,7 @@ const cenarios = {
     await page.check('#e-atk');
     await clicar(page, '[data-action="ed-row-add"]');
     await page.fill('[data-r="d"]', '2d6');
-    await page.selectOption('[data-r="type"]', 'Frio');
+    await page.selectOption('[data-r="type"]', 'Gélido');
     await page.fill('[data-r="up"]', '1d6');
     await page.selectOption('#e-mat', 'web');
     await page.fill('#e-mat-n', '2');
@@ -414,7 +419,7 @@ const cenarios = {
       const cor = t => spellRecipe(libGet('chromatic-orb'), t).palette[0];
       const baixo = impacto({ temDano: true, total: 12, sorte: 0 }), alto = impacto({ temDano: true, total: 44, sorte: 1 });
       const dano = libraryAll().filter(s => s.r.some(x => x.t === 'dmg' && !x.heal && !x.depois && DMG_COLORS[x.type])).every(s => spellRecipe(s).elemento);
-      return { total: ids.length, unicas: sigs.size, semCena: semCena.slice(0, 40), nSem: semCena.length, repetidas: repetidas.slice(0, 8), falhas: falhas.slice(0, 5), semArte: [...new Set(semArte)].slice(0, 8), verbos: verbos.size, frases: frases.slice(0, 5), dano, fogo: spellRecipe(fb).palette[0], frio: spellRecipe(libGet('cone-of-cold')).palette[0], corF: cor('Fogo'), corG: cor('Frio'), baixo, alto, nVerbos: Object.keys(ATOS).length };
+      return { total: ids.length, unicas: sigs.size, semCena: semCena.slice(0, 40), nSem: semCena.length, repetidas: repetidas.slice(0, 8), falhas: falhas.slice(0, 5), semArte: [...new Set(semArte)].slice(0, 8), verbos: verbos.size, frases: frases.slice(0, 5), dano, fogo: spellRecipe(fb).palette[0], frio: spellRecipe(libGet('cone-of-cold')).palette[0], corF: cor('Ígneo'), corG: cor('Gélido'), baixo, alto, nVerbos: Object.keys(ATOS).length };
     });
     ok(r.total >= 340, `todas as magias entram na conta: ${r.total}`);
     ok(!r.nSem, `toda magia tem cena escrita à mão: faltam ${r.nSem}: ${r.semCena}`);
@@ -488,17 +493,17 @@ const cenarios = {
     await page.evaluate(() => spellModal('sorcerous-burst'));
     await clicar(page, '[data-action="cast"]');
     ok(await page.evaluate(() => !document.querySelector('#modal').hidden), 'sem elemento não conjura');
-    await clicar(page, '[data-action="cast-type"][data-t="Fogo"]');
-    ok((await page.locator('.rolls-box').textContent()).includes('Fogo'), 'rolagem mostra o elemento');
+    await clicar(page, '[data-action="cast-type"][data-t="Ígneo"]');
+    ok((await page.locator('.rolls-box').textContent()).includes('Ígneo'), 'rolagem mostra o elemento');
     const antes = await page.evaluate(() => { window.__fx = null; const p = playSpell; playSpell = (...a) => { window.__fx = a[1]; return p(...a); }; return 1; });
     await clicar(page, '[data-action="cast"]');
-    await page.waitForFunction(() => activeChar().choices?.['sorcerous-burst'] === 'Fogo');
+    await page.waitForFunction(() => activeChar().choices?.['sorcerous-burst'] === 'Ígneo');
     await clicar(page, '[data-action="mesa-go"]');
-    ok(await page.evaluate(() => window.__fx) === 'Fogo', 'animação recebe o elemento');
-    ok(await page.evaluate(() => activeChar().lastElement) === 'Fogo', 'última escolha guardada');
+    ok(await page.evaluate(() => window.__fx) === 'Ígneo', 'animação recebe o elemento');
+    ok(await page.evaluate(() => activeChar().lastElement) === 'Ígneo', 'última escolha guardada');
     await page.waitForFunction(() => document.querySelector('#modal').hidden);
     await page.evaluate(() => spellModal('sorcerous-burst'));
-    ok(await page.locator('[data-action="cast-type"][data-t="Fogo"]').getAttribute('aria-pressed') === 'true', 'lembra a última escolha');
+    ok(await page.locator('[data-action="cast-type"][data-t="Ígneo"]').getAttribute('aria-pressed') === 'true', 'lembra a última escolha');
     await page.evaluate(() => { closeModal(); store.settings.anim = 'off'; });
     ok(await page.evaluate(() => playSpell(SPELLS[0])) === null, 'animações desligadas não tocam');
     ok(!erros.length, `sem erros de JS: ${erros}`);
@@ -524,15 +529,15 @@ const cenarios = {
       o.bola5 = n('fireball', 5).grupos[0].n;
       o.missil = [n('magic-missile', 1).inst, n('magic-missile', 3).inst, n('scorching-ray', 2).inst, n('scorching-ray', 4).inst];
       o.feixe = n('eldritch-blast', 0).inst;
-      const a = novoLance(n('sorcerous-burst', 0, { tipo: 'Fogo' })), g = a.spec.grupos[0];
+      const a = novoLance(n('sorcerous-burst', 0, { tipo: 'Ígneo' })), g = a.spec.grupos[0];
       fixa(a, 0, g, [8]); a.d20[0] = [12]; o.abre = extrasAbertos(a, g, 0);
       a.extras[cellKey(0, g)] = [8]; o.abre2 = extrasAbertos(a, g, 0);
       a.extras[cellKey(0, g)] = [8, 8, 8, 8, 8]; o.abreMax = extrasAbertos(a, g, 0);
       o.lim = CHAR.stats.cha;
-      const c = novoLance(n('chromatic-orb', 1, { tipo: 'Fogo' })), go = c.spec.grupos[0];
+      const c = novoLance(n('chromatic-orb', 1, { tipo: 'Ígneo' })), go = c.spec.grupos[0];
       c.d20[0] = [12]; fixa(c, 0, go, [3, 3, 5]); o.salta = instanciasDe(c);
       c.d20[1] = [12]; fixa(c, 1, go, [2, 2, 6]); o.salta1 = instanciasDe(c);
-      const c3 = novoLance(n('chromatic-orb', 3, { tipo: 'Fogo' })), g3 = c3.spec.grupos[0];
+      const c3 = novoLance(n('chromatic-orb', 3, { tipo: 'Ígneo' })), g3 = c3.spec.grupos[0];
       c3.d20[0] = [12]; fixa(c3, 0, g3, [1, 1, 2, 3, 4]); c3.d20[1] = [12]; fixa(c3, 1, g3, [1, 1, 2, 3, 4]); o.salta3 = instanciasDe(c3);
       const cr = novoLance(n('fire-bolt', 0)), gc = cr.spec.grupos[0];
       cr.d20[0] = [20]; o.crit = dicePorGrupo(cr, gc, 0);
@@ -571,7 +576,7 @@ const cenarios = {
 
     await aba(page, 'grimorio');
     await page.evaluate(() => { closeModal(); commit('Diamante', st => { st.items.find(i => i.key === 'diamond').qty = 1; }); spellModal('chromatic-orb'); });
-    await clicar(page, '[data-action="cast-type"][data-t="Fogo"]');
+    await clicar(page, '[data-action="cast-type"][data-t="Ígneo"]');
     await clicar(page, '[data-action="cast"]:not([disabled])');
     await page.waitForSelector('[data-action="mesa-go"]');
     const casas = page.locator('#sheet .dc');
@@ -588,7 +593,7 @@ const cenarios = {
     const res = await page.evaluate(() => window.__res);
     ok(res.inst[0].dados.map(x => x.v).join() === '4,4,7' && res.inst[0].total === 15, 'valores físicos entram no resultado');
     ok(res.inst.length === 2 && res.inst[1].salto, 'salto chega à cena');
-    ok(/Fogo/.test(await page.locator('#roll').textContent()), 'resultado aparece no aviso de rolagem');
+    ok(/Ígneo/.test(await page.locator('#roll').textContent()), 'resultado aparece no aviso de rolagem');
     await page.evaluate(() => { spellModal('ice-knife'); });
     await page.waitForSelector('.rolls-box [data-action="roll"][data-mesa]');
     const antes = await estado(page);

@@ -31,7 +31,7 @@ Ficha de controle de **magias e recursos limitados** para **Søren Frostgaard**,
 - Botões de **ataque** e **dano** em cada arma e magia. Um pop-up mostra o total e cada dado rolado.
 - Com **Feitiçaria Inata** ativa, os ataques de magia rolam com **Vantagem** automaticamente.
 - Um **20 natural** num ataque faz a próxima rolagem de dano daquele ataque dobrar os dados (crítico).
-- Regras especiais já incluídas: os 8 da *Explosão Elemental* explodem (até +4d8); no *Orbe Cromático*, dados iguais avisam que o orbe salta; o *Sopro de Dragão* mostra também a metade para quem passa na salvaguarda; em *Reflexos*, o botão **Rolar** rola 1d6 por duplicata.
+- Regras especiais já incluídas: os 8 da *Explosão Elemental* explodem (até +4d8); no *Orbe Cromático*, dados iguais avisam que o orbe salta; o *Sopro de Dragão* mostra também a metade para quem passa na salvaguarda; em *Reflexos*, o botão **Rolar** rola 1d6 por cópia.
 
 ### 💎 Espaços de Magia
 - Gemas clicáveis por círculo: **1º círculo (4)** e **2º círculo (3)**. Um toque gasta e outro recupera.
@@ -40,8 +40,8 @@ Ficha de controle de **magias e recursos limitados** para **Søren Frostgaard**,
   - **Metamagia** em cartões com custo, quando usar e botão **Usar**.
   - **Fonte de Magia** nos dois sentidos: espaço → PF (sem ação) e PF → espaço (Ação Bônus: 2 PF → 1º, 3 PF → 2º), com o motivo quando algo está bloqueado ("passaria do máximo de 4 PF", "faltam 1 PF"). Espaços criados aparecem em **dourado** e somem no Descanso Longo.
   - **Histórico de PF** com hora, ganho ou gasto, motivo e saldo (últimos 8), além de **regras rápidas** de 2024.
-- **Descanso Longo**: mostra antes o que vai voltar e recupera espaços, recursos, PV e Dados de Vida.
-- **Descanso Curto**: gasta Dados de Vida (1d6 + 2), com rolagem automática ou pelo resultado de um dado físico.
+- **Descanso Longo**: mostra antes o que vai voltar e recupera espaços, recursos, PV e Dados de Pontos de Vida.
+- **Descanso Curto**: gasta Dados de Pontos de Vida (1d6 + 2), com rolagem automática ou pelo resultado de um dado físico.
 
 ### 📖 Grimório
 - 5 truques, 7 magias preparadas e 4 magias dracônicas, organizados por círculo.
@@ -55,10 +55,10 @@ Ficha de controle de **magias e recursos limitados** para **Søren Frostgaard**,
 - **Concentração**: mostra a magia mantida, encerra a anterior ao conjurar outra e tem um **teste de concentração** (CD automática, 2d20 + 4 por causa do Conjurador Bélico).
 - **Feitiçaria Inata**: a CD sobe para 15 e o cabeçalho indica Vantagem nos ataques.
 - **Escudo Arcano**: a CA vai para 21 no cabeçalho.
-- **Reflexos**: as 3 duplicatas aparecem para você riscar quando forem destruídas.
+- **Reflexos**: as 3 cópias aparecem para você riscar quando forem destruídas.
 
 ### 🔥 Recursos de classe
-- Contadores com **+ / −** e gemas para Pontos de Feitiçaria (4), Feitiçaria Inata (2), Salto das Nuvens (2), Pontos de Sorte (2) e Dados de Vida (4d6).
+- Contadores com **+ / −** e gemas para Pontos de Feitiçaria (4), Feitiçaria Inata (2), Salto das Nuvens (2), Pontos de Sorte (2) e Dados de Pontos de Vida (4d6).
 - Controle de **PV**: dano (absorvido primeiro pelos PV temporários, com teste de concentração automático), cura e PV temporários.
 - Atalho **Fonte de Magia →** no cartão de PF e um resumo dos traços passivos.
 
@@ -67,8 +67,8 @@ Ficha de controle de **magias e recursos limitados** para **Søren Frostgaard**,
   - Ao conjurar *Teia*, *Sopro de Dragão*, *Sugestão* ou *Força Espectral*, 1 unidade é **descontada automaticamente**. Pelas regras de 2024 o foco arcano substitui esses componentes, então o desconto pode ser desmarcado na hora de conjurar.
   - O **Orbe Cromático** fica **bloqueado** enquanto o inventário tiver 0 diamantes.
 - **Armas e foco**: Cetro com Cristal Lapidado (foco arcano), 1 Lança e 4 Adagas.
-- **Consumíveis e moedas**: 53 PO, mais tochas, rações, óleo e estrepes do Kit de Masmorra.
-- **Equipamento**: Ferramentas de Ladrão, Kit de Masmorra, Kit de Tarot, Capa da Ondulação, Medalha da Casa Frostgaard, Roupas de Viagem, 2 Algibeiras e Saco de Dormir.
+- **Consumíveis e moedas**: 53 PO, mais tochas, rações, óleo e estrepes do Kit de Explorador de Masmorras.
+- **Equipamento**: Ferramentas de Ladrão, Kit de Explorador de Masmorras, Kit de Tarot, Capa da Ondulação, Medalha da Casa Frostgaard, Roupas de Viagem, 2 Algibeiras e Saco de Dormir.
 - Itens podem ser adicionados, editados, recategorizados ou excluídos.
 
 ### 📝 Anotações
@@ -93,7 +93,7 @@ Ficha de controle de **magias e recursos limitados** para **Søren Frostgaard**,
 - **Subir de nível:** rolar 1d6, digitar o dado físico ou usar a média; ver o que muda; escolher aumento de atributo, talento, Metamagia e magias; revisar. Dá para **desfazer o último nível**.
 
 ### 📚 Biblioteca de magias
-- As **339 magias do SRD 5.2** traduzidas para o português, com botão **Ver original**.
+- As **339 magias do SRD 5.2** traduzidas para o português, com botão **Ver original**, separadas por **Truques e Círculos** e com nomes e termos conferidos com o Livro do Jogador 2024.
 - Busca em português ou inglês e filtros por círculo, escola, classe, dano, concentração, ritual, tempo e fonte.
 - **Editor de magias:** crie ou altere magias, com linhas de dano, escalonamento por círculo e por nível, tipos à escolha e **consumível vinculado** à mochila.
 - **Biblioteca pessoal:** importe os dados gerados dos seus próprios livros. Eles ficam só neste navegador.
@@ -179,9 +179,9 @@ npm test
 
 ## 📜 Notas de regras (D&D 2024)
 
-- **Descanso Longo** recupera **todos** os Dados de Vida (mudança de 2024; em 2014 era metade).
+- **Descanso Longo** recupera **todos** os Dados de Pontos de Vida (mudança de 2024; em 2014 era metade).
 - **Teia** ocupa um **Cubo de 6 m** (não uma esfera).
-- **Faca de Gelo**: quem passa na salvaguarda de DES não sofre os 2d6 de Frio (não é "metade").
+- **Faca de Gelo**: quem passa na salvaguarda de DES não sofre os 2d6 de dano Gélido (não é "metade").
 - **Força Espectral** causa **2d8** Psíquico por turno em 2024 (1d6 era a versão de 2014).
 - No nível 4, truques e magias **não** somam Carisma ao dano. Só *Golpe Certeiro* e as armas naturais de *Alterar-se* somam.
 - Feiticeiro nível 4 **não** recupera recursos no Descanso Curto. A *Restauração Feiticeira* chega no nível 5.

@@ -9,9 +9,9 @@
 const FX_MAX_PARTICLES = 380, FX_ENTRA = 320, FX_DADOS = 900, FX_ATO = 1650, FX_SAI = 420;
 const DMG_COLORS = {
   'Ácido': ['#b8f25a', '#5fd23a', '#e9ff9a'], 'Contundente': ['#d6b48a', '#9c7b55', '#f2dfc2'], 'Cortante': ['#e6edf5', '#9fb2c8', '#ffffff'],
-  'Elétrico': ['#9fd8ff', '#5a8dff', '#ffffff'], 'Energético': ['#c9a6ff', '#7b5cff', '#f0e6ff'], 'Fogo': ['#ffb347', '#ff5a1f', '#fff1a8'],
-  'Frio': ['#bfeeff', '#62c4ff', '#ffffff'], 'Necrótico': ['#8fe388', '#3c6b45', '#d8ffd0'], 'Perfurante': ['#d9dfe8', '#8796a8', '#ffffff'],
-  'Psíquico': ['#ff8fd8', '#b44cff', '#ffe0f6'], 'Radiante': ['#fff3b0', '#ffd24a', '#ffffff'], 'Trovejante': ['#9fb8ff', '#4d63d6', '#e6ecff'], 'Veneno': ['#a6e36b', '#4f9e3a', '#e5ffc2']
+  'Elétrico': ['#9fd8ff', '#5a8dff', '#ffffff'], 'Energético': ['#c9a6ff', '#7b5cff', '#f0e6ff'], 'Ígneo': ['#ffb347', '#ff5a1f', '#fff1a8'],
+  'Gélido': ['#bfeeff', '#62c4ff', '#ffffff'], 'Necrótico': ['#8fe388', '#3c6b45', '#d8ffd0'], 'Perfurante': ['#d9dfe8', '#8796a8', '#ffffff'],
+  'Psíquico': ['#ff8fd8', '#b44cff', '#ffe0f6'], 'Radiante': ['#fff3b0', '#ffd24a', '#ffffff'], 'Trovejante': ['#9fb8ff', '#4d63d6', '#e6ecff'], 'Venenoso': ['#a6e36b', '#4f9e3a', '#e5ffc2']
 };
 const SCHOOL_COLORS = {
   'Abjuração': ['#9fdcff', '#4f9de0', '#ffffff'], 'Adivinhação': ['#d8e7ff', '#8fa8ff', '#ffffff'], 'Encantamento': ['#ffb3e6', '#e05cb8', '#fff0fa'], 'Evocação': ['#ffd28a', '#ff8a3c', '#fff4d6'],
@@ -21,7 +21,7 @@ const SCHOOL_COLORS = {
 const PALETAS = {
   luz: ['#fff3b0', '#ffd24a', '#ffffff'], ouro: ['#ffe08a', '#d4a12e', '#fff8dc'], lua: ['#dfe9ff', '#8fa8ff', '#ffffff'], prata: ['#e6edf5', '#9fb2c8', '#ffffff'], sombra: ['#9a8cc2', '#3d2f66', '#d9d0f5'],
   sangue: ['#ff8a8a', '#b3202a', '#ffd6d6'], natureza: ['#a9e87a', '#3f9e4a', '#e9ffc9'], agua: ['#8fd8ff', '#2f7fd6', '#e0f6ff'], terra: ['#d6b48a', '#7d5a3a', '#f2dfc2'], vento: ['#d8f0ee', '#7fb8b8', '#ffffff'],
-  sonho: ['#ffb3e6', '#8f5cff', '#fff0fa'], cura: ['#9df0b4', '#3fbf7a', '#eafff0'], fogo: DMG_COLORS['Fogo'], gelo: DMG_COLORS['Frio'], veneno: DMG_COLORS['Veneno'], arcano: DMG_COLORS['Energético'], morte: ['#b9c9b5', '#3a4a40', '#e6f2e0']
+  sonho: ['#ffb3e6', '#8f5cff', '#fff0fa'], cura: ['#9df0b4', '#3fbf7a', '#eafff0'], fogo: DMG_COLORS['Ígneo'], gelo: DMG_COLORS['Gélido'], veneno: DMG_COLORS['Venenoso'], arcano: DMG_COLORS['Energético'], morte: ['#b9c9b5', '#3a4a40', '#e6f2e0']
 };
 /* Céu de cada fundo: topo, meio, base e o detalhe que anima. */
 const FUNDOS = {

@@ -4,7 +4,7 @@
 function renderHp() {
   const s = CHAR.stats, pct = Math.round(100 * state.hp / s.hpMax);
   $('#hp-panel').innerHTML = `
-    <div class="panel-h"><h2>Pontos de Vida</h2><span class="rule"></span><span class="aside">Dados de Vida: ${state.res.hd}/${RES.hd.max} d${CHAR.hitDie}</span></div>
+    <div class="panel-h"><h2>Pontos de Vida</h2><span class="rule"></span><span class="aside">Dados de Pontos de Vida: ${state.res.hd}/${RES.hd.max} d${CHAR.hitDie}</span></div>
     <div class="hp-big"><div class="hp-num num">${state.hp}<small> / ${s.hpMax}</small>${state.temp ? `<span class="tmp">+${state.temp} PV temporários</span>` : ''}</div></div>
     <div class="hpbar"><i style="width:${pct}%;background-position:${100 - pct}% 0"></i></div>
     <div class="hp-ctrl">

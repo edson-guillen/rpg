@@ -18,7 +18,7 @@ function privateCatalog() {
 }
 const allFeats = () => [...FEATS.filter(f => !privateCatalog().talentos.some(p => norm(p.name) === norm(f.name))), ...privateCatalog().talentos, ...(store.library.feats || [])];
 const ABIL_KEYS = Object.keys(SAVE_NAME);
-const DMG_TYPES = ['Ácido', 'Contundente', 'Cortante', 'Elétrico', 'Energético', 'Fogo', 'Frio', 'Necrótico', 'Perfurante', 'Psíquico', 'Radiante', 'Trovejante', 'Veneno'];
+const DMG_TYPES = ['Ácido', 'Contundente', 'Cortante', 'Elétrico', 'Energético', 'Gélido', 'Ígneo', 'Necrótico', 'Perfurante', 'Psíquico', 'Radiante', 'Trovejante', 'Venenoso'];
 const SCHOOLS = ['Abjuração', 'Adivinhação', 'Encantamento', 'Evocação', 'Ilusão', 'Invocação', 'Necromancia', 'Transmutação'];
 const CLASS_NAMES = { artificer: 'Artífice', barbarian: 'Bárbaro', bard: 'Bardo', cleric: 'Clérigo', druid: 'Druida', fighter: 'Guerreiro', monk: 'Monge', paladin: 'Paladino', ranger: 'Patrulheiro', rogue: 'Ladino', sorcerer: 'Feiticeiro', warlock: 'Bruxo', wizard: 'Mago' };
 
@@ -70,7 +70,7 @@ function rollsFromPT(text, higher) {
   const nomes = { Força: 'FOR', Destreza: 'DES', Constituição: 'CON', Inteligência: 'INT', Sabedoria: 'SAB', Carisma: 'CAR' };
   [...new Set([...t.matchAll(/salvaguarda de (Força|Destreza|Constituição|Inteligência|Sabedoria|Carisma)/g)].map(m => nomes[m[1]]))].forEach(a => r.push({ t: 'save', a }));
   const metade = /metade/i.test(t), up = higher.match(/aumenta em (\d+d\d+)/)?.[1], vistos = new Set();
-  for (const m of t.matchAll(/(\d+d\d+(?:\s*\+\s*\d+)?) de dano (\p{L}+)/gu)) {
+  for (const m of t.matchAll(/(\d+d\d+(?:\s*\+\s*\d+)?) (?:pontos? )?de dano (\p{L}+)/gu)) {
     const d = m[1].replace(/\s/g, '');
     if (vistos.has(d + m[2])) continue;
     vistos.add(d + m[2]);
@@ -100,9 +100,9 @@ function chipOf(s) {
 function libraryAll() {
   const map = new Map();
   for (const s of window.GRIMORIO_LIBRARY?.magias || []) map.set(s.id, s);
-  const porEn = new Map([...map.values()].map(s => [norm(s.en), s.id]));
+  const porEn = new Map([...map.values()].map(s => [norm(s.en), s.id])), porNome = new Map([...map.values()].map(s => [norm(s.name), s.id]));
   for (const p of privateSpells) {
-    const id = p.en ? porEn.get(norm(p.en)) : null;
+    const id = (p.en && porEn.get(norm(p.en))) || porNome.get(norm(p.name));
     if (id) {
       const b = map.get(id);
       map.set(id, { ...b, name: p.name, desc: p.desc, higher: p.higher ?? b.higher, upgrade: p.upgrade ?? b.upgrade, material: p.material || b.material, src: 'srd+pessoal', fonte: p.fonte });
@@ -130,6 +130,24 @@ function libMatches(s, f, q) {
   return !q || spellHaystack(s).includes(q);
 }
 const SRC_TAG = { srd: 'SRD', 'srd+pessoal': 'SRD + pessoal', pessoal: 'Pessoal', minha: 'Minha' };
+
+/** Separa a Biblioteca por Truques e Círculos, com a mesma barra do grimório. */
+function libCard(s) {
+    const dano = chipOf(s), tem = inGrimoire(s);
+    return `<div class="spell lib-card ${lvClass(s.level)}" data-action="lib-open" data-id="${esc(s.id)}" role="button" tabindex="0">
+    <div class="s-main"><b>${esc(s.name)}</b><small>${s.level ? ORD(s.level) + ' círculo' : 'Truque'} · ${esc(s.school)}${s.en && s.en !== s.name ? ' · ' + esc(s.en) : ''}</small>
+    <div class="s-tags"><span class="tag">${SRC_TAG[s.src] || s.src}</span>${dano ? `<span class="tag dmg">${esc(dano)}</span>` : ''}${s.conc ? '<span class="tag conc">Conc.</span>' : ''}${s.ritual ? '<span class="tag">Ritual</span>' : ''}${tem ? '<span class="tag new">No grimório</span>' : ''}</div></div></div>`;
+}
+function libGrupos(list) {
+  const visiveis = list.slice(0, libLimit);
+  if (!visiveis.length) return '<p class="empty">Nenhuma magia com esses filtros.</p>';
+  const niveis = [...new Set(visiveis.map(s => s.level))].sort((a, b) => a - b);
+  return niveis.map(l => {
+    const total = list.filter(s => s.level === l).length;
+    return `<section class="spell-group ${lvClass(l)}"><div class="group-h"><h3>${l ? ORD(l) + ' Círculo' : 'Truques'}</h3><span class="rule"></span><span class="note">${total} ${total === 1 ? 'magia' : 'magias'}</span></div>
+      <div class="spell-list">${visiveis.filter(s => s.level === l).map(libCard).join('')}</div></section>`;
+  }).join('');
+}
 
 function renderLibrary() {
   const box = $('#lib-view');
@@ -159,12 +177,7 @@ function renderLibrary() {
         <button class="btn sm" data-action="lib-import">${icon('i-up')}Biblioteca pessoal${privateSpells.length ? ` (${privateSpells.length})` : ''}</button>
         <button class="btn sm gold" data-action="spell-new">${icon('i-plus')}Criar magia</button></div>
     </div>
-    <div class="spell-list">${list.slice(0, libLimit).map(s => {
-      const dano = chipOf(s), tem = inGrimoire(s);
-      return `<div class="spell lib-card ${lvClass(s.level)}" data-action="lib-open" data-id="${esc(s.id)}" role="button" tabindex="0">
-        <div class="s-main"><b>${esc(s.name)}</b><small>${s.level ? ORD(s.level) + ' círculo' : 'Truque'} · ${esc(s.school)}${s.en && s.en !== s.name ? ' · ' + esc(s.en) : ''}</small>
-        <div class="s-tags"><span class="tag">${SRC_TAG[s.src] || s.src}</span>${dano ? `<span class="tag dmg">${esc(dano)}</span>` : ''}${s.conc ? '<span class="tag conc">Conc.</span>' : ''}${s.ritual ? '<span class="tag">Ritual</span>' : ''}${tem ? '<span class="tag new">No grimório</span>' : ''}</div></div></div>`;
-    }).join('') || '<p class="empty">Nenhuma magia com esses filtros.</p>'}</div>
+    ${libGrupos(list)}
     ${list.length > libLimit ? `<div class="add-row"><button class="btn block" data-action="lib-more">Mostrar mais (${list.length - libLimit})</button></div>` : ''}`;
 }
 
@@ -227,7 +240,7 @@ async function importPrivate(file) {
 
 /* ---------- editor de magias ---------- */
 let draft = null;
-const newRow = () => ({ d: '1d6', type: 'Fogo', half: false, up: '', cantrip: '', heal: false, choose: false });
+const newRow = () => ({ d: '1d6', type: 'Ígneo', half: false, up: '', cantrip: '', heal: false, choose: false });
 
 function openEditor(id) {
   const s = id ? clone(stripSpell(libGet(id))) : { name: '', en: '', level: 1, school: 'Evocação', time: '1 Ação', range: '', comp: 'V, S', dur: 'Instantânea', conc: false, ritual: false, classes: ['sorcerer'], desc: [''], r: [], src: 'minha' };

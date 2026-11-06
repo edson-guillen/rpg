@@ -37,7 +37,7 @@ function handle(a, el) {
       const m = state.fx.mirror; if (!m) break;
       const rolls = Array.from({ length: m }, () => d(6)), hit = rolls.some(x => x >= 3);
       showRoll('Reflexos · você foi atingido', hit ? 'Desviado!' : 'Acertou', `🎲 ${rolls.join(', ')} (precisa de 3+ em algum)`,
-        hit ? `Uma duplicata é destruída${m - 1 ? ` — restam ${m - 1}` : ' — Reflexos termina'}.` : 'Nenhuma duplicata intercepta: o ataque atinge Søren.', hit ? '' : 'fail');
+        hit ? `Uma cópia é destruída${m - 1 ? ` — restam ${m - 1}` : ' — Reflexos termina'}.` : 'Nenhuma cópia intercepta: o ataque atinge Søren.', hit ? '' : 'fail');
       if (hit) commit(null, st => { st.fx.mirror = m - 1; });
       break;
     }
@@ -84,7 +84,7 @@ function handle(a, el) {
     case 'meta-use': { const m = META[ds.id]; commit(`${m.name}: −${m.cost} PF`, st => { if (st.res.sp < m.cost) return false; st.res.sp -= m.cost; }); break; }
     case 'fx-end': commit(`${FX_NAME[ds.fx]} encerrado`, st => { st.fx[ds.fx] = ds.fx === 'mirror' ? 0 : false; }); break;
     case 'mirror-hit': { const m = state.fx.mirror, hit = i < m;
-      commit(hit ? (m - 1 ? `Duplicata destruída — restam ${m - 1}` : 'Última duplicata destruída — Reflexos termina') : 'Duplicata restaurada', st => { st.fx.mirror = Math.max(0, Math.min(3, m + (hit ? -1 : 1))); }); break; }
+      commit(hit ? (m - 1 ? `Duplicata destruída — restam ${m - 1}` : 'Última cópia destruída — Reflexos termina') : 'Duplicata restaurada', st => { st.fx.mirror = Math.max(0, Math.min(3, m + (hit ? -1 : 1))); }); break; }
     case 'conc-end': commit(`Concentração em ${SPELL[state.conc]?.name} encerrada`, st => { st.conc = null; }); break;
     case 'conc-check': concModal(0); break;
     case 'conc-roll': { const a1 = d(20), b1 = CHAR.warCaster ? d(20) : a1, total = Math.max(a1, b1) + CHAR.stats.conSave; concRoll = { a: a1, b: b1, total, ok: total >= concDC() }; modalRefresh?.(); break; }

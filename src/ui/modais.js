@@ -182,12 +182,12 @@ function shortRestModal() {
     const hd = state.res.hd, full = state.hp >= CHAR.stats.hpMax, can = hd > 0 && !full;
     const gems = Array.from({ length: RES.hd.max }, (_, i) => `<span class="gem ${i < hd ? '' : 'spent'}"><i></i></span>`).join('');
     return `${mHead('Descanso Curto · 1 hora', 'Recuperar o fôlego')}
-      <p class="note" style="margin-top:10px">Gaste Dados de Vida para curar: cada dado cura <b>1d${CHAR.hitDie} + ${CHAR.conMod}</b> (CON).</p>
+      <p class="note" style="margin-top:10px">Gaste Dados de Pontos de Vida para curar: cada dado cura <b>1d${CHAR.hitDie} + ${CHAR.conMod}</b> (CON).</p>
       <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin-top:10px">
-        <div class="gems lvR" aria-label="${hd} Dados de Vida">${gems}</div>
+        <div class="gems lvR" aria-label="${hd} Dados de Pontos de Vida">${gems}</div>
         <div class="hp-num num" style="font-size:30px">${state.hp}<small> / ${CHAR.stats.hpMax} PV</small></div></div>
       <div class="rolls">${restRolls.map(r => `<span class="roll">🎲 ${r.die} + ${CHAR.conMod} = +${r.heal} PV</span>`).join('')}</div>
-      <button class="btn frost block" data-action="hd-roll" ${can ? '' : 'disabled'}>${icon('i-die')}${full ? 'PV já estão no máximo' : hd ? 'Rolar e gastar 1 Dado de Vida' : 'Sem Dados de Vida'}</button>
+      <button class="btn frost block" data-action="hd-roll" ${can ? '' : 'disabled'}>${icon('i-die')}${full ? 'PV já estão no máximo' : hd ? 'Rolar e gastar 1 Dado de Ponto de Vida' : 'Sem Dados de Pontos de Vida'}</button>
       <p class="note" style="margin:12px 0 6px">Rolou um d${CHAR.hitDie} físico? Toque no resultado:</p>
       <div class="fom-btns">${Array.from({ length: CHAR.hitDie }, (_, i) => `<button class="chipbtn" style="min-width:46px;justify-content:center" data-action="hd-roll" data-v="${i + 1}" ${can ? '' : 'disabled'}><b>${i + 1}</b></button>`).join('')}</div>
       ${box('Feiticeiro nível 4', 'Nenhum recurso de classe volta no Descanso Curto. A <b>Restauração Feiticeira</b> (recuperar PF no descanso curto) chega no nível 5.', 'warn')}
@@ -197,7 +197,7 @@ function shortRestModal() {
 function spendHitDie(v) {
   const die = v || d(CHAR.hitDie), heal = Math.max(1, die + CHAR.conMod);
   restRolls.push({ die, heal });
-  if (!commit(`Dado de Vida: ${die} + ${CHAR.conMod} = +${heal} PV`, st => {
+  if (!commit(`Dado de Ponto de Vida: ${die} + ${CHAR.conMod} = +${heal} PV`, st => {
     if (!st.res.hd || st.hp >= CHAR.stats.hpMax) return false;
     st.res.hd--; st.hp = Math.min(CHAR.stats.hpMax, st.hp + heal);
   })) restRolls.pop();

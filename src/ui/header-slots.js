@@ -25,7 +25,7 @@ function renderEffects() {
   if (f.mirror) {
     const pips = [0, 1, 2].map(i => `<button class="${i < f.mirror ? '' : 'off'}" data-action="mirror-hit" data-i="${i}" aria-label="Duplicata ${i + 1}${i < f.mirror ? ' — tocar quando for destruída' : ' destruída'}"><i></i></button>`).join('');
     out.push(`<span class="fx" style="--c:var(--silver)">${icon('i-mirror')}<span><b>Reflexos</b></span><span class="mini">${pips}</span>
-      <button class="act" data-action="mirror-roll" title="Fui atingido: rolar 1d6 por duplicata">Rolar</button><button class="x" data-action="fx-end" data-fx="mirror" aria-label="Encerrar Reflexos">${icon('i-x')}</button></span>`);
+      <button class="act" data-action="mirror-roll" title="Fui atingido: rolar 1d6 por cópia">Rolar</button><button class="x" data-action="fx-end" data-fx="mirror" aria-label="Encerrar Reflexos">${icon('i-x')}</button></span>`);
   }
   $('#effects').innerHTML = out.join('');
 }

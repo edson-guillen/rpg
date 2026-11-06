@@ -15,3 +15,9 @@ node_modules/
 
 # Backups pessoais exportados pela ficha
 soren-frostgaard-backup-*.json
+
+# Livros e dados extraídos: nunca versionar (repositório público)
+private/
+*.pdf
+*.epub
+DnD/

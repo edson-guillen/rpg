@@ -1,0 +1,92 @@
+/* ============================================================
+   CAMADA VISUAL "gelo & ouro" (animações via GSAP)
+   As regras com .gx só valem quando o GSAP carregou e o
+   usuário não pediu movimento reduzido.
+   ============================================================ */
+body{background:#06090f}
+.aurora{position:fixed;inset:0;z-index:-2;pointer-events:none;overflow:hidden}
+.aurora i{position:absolute;width:75vmax;height:75vmax;border-radius:50%;will-change:transform}
+.aurora i:nth-child(1){left:30%;top:-38vmax;background:radial-gradient(closest-side,rgba(63,143,203,.34),transparent)}
+.aurora i:nth-child(2){left:-34vmax;top:12%;background:radial-gradient(closest-side,rgba(127,88,219,.24),transparent)}
+.aurora i:nth-child(3){left:22%;top:58%;background:radial-gradient(closest-side,rgba(217,180,108,.12),transparent)}
+#snow{position:fixed;inset:0;width:100%;height:100%;z-index:-1;pointer-events:none}
+body::after{content:"";position:fixed;inset:0;z-index:300;pointer-events:none;opacity:.05;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+
+/* ---------- herói ---------- */
+.hero{padding-top:26px}
+.hero h1{background:linear-gradient(172deg,#fff4dc 8%,#e6c582 52%,#a6dbff 118%);-webkit-background-clip:text;background-clip:text;color:transparent;
+  text-shadow:none;filter:drop-shadow(0 2px 16px rgba(217,180,108,.2));letter-spacing:.05em}
+.sigil{background:radial-gradient(circle at 50% 35%,rgba(159,220,255,.3),rgba(8,12,20,.96) 70%);border-color:rgba(217,180,108,.5);
+  box-shadow:0 0 0 6px rgba(217,180,108,.05),0 0 44px rgba(159,220,255,.22)}
+.sigil svg{animation:sigil-spin 80s linear infinite}
+@keyframes sigil-spin{to{transform:rotate(360deg)}}
+.stat{background:linear-gradient(180deg,rgba(40,53,75,.6),rgba(15,21,32,.78));border-color:rgba(255,255,255,.08);border-radius:15px;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.08),0 14px 28px -18px rgba(0,0,0,.9)}
+.stat .lbl{letter-spacing:.2em}
+.stat .val{font-size:28px}
+.icon-btn{background:rgba(20,28,41,.7);border-color:rgba(255,255,255,.09)}
+
+/* ---------- painéis ---------- */
+.panel{background:linear-gradient(180deg,rgba(29,39,56,.8),rgba(14,20,30,.88));border-color:rgba(255,255,255,.075);border-radius:20px;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.06),0 26px 50px -26px rgba(0,0,0,.9)}
+.panel::before{inset:0 16% auto;height:1px;border:0;border-radius:0;background:linear-gradient(90deg,transparent,rgba(217,180,108,.6),transparent)}
+.panel-h h2{font-size:13.5px;letter-spacing:.22em}
+.spell{border-color:rgba(255,255,255,.075);border-radius:16px;background:linear-gradient(180deg,rgba(33,44,63,.74),rgba(15,21,31,.86));transition:border-color .25s, transform .25s, box-shadow .25s}
+.spell::before{top:14px;bottom:14px;width:2px;border-radius:2px}
+.spell .rune{border-radius:12px;background:radial-gradient(circle at 50% 30%,color-mix(in srgb,var(--c) 24%,transparent),transparent 72%)}
+.item,.atk-row,.abil,.meta-item{border-color:rgba(255,255,255,.075)}
+.item,.atk-row{position:relative}
+
+/* brilho que segue o cursor (só em dispositivos com mouse) */
+@media (hover:hover){
+  .spell::after,.panel::after,.atk-row::after,.item::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;opacity:0;transition:opacity .35s;
+    background:radial-gradient(280px circle at var(--mx,50%) var(--my,50%),color-mix(in srgb,var(--c,#d9b46c) 13%,transparent),transparent 65%)}
+  .spell:hover::after,.panel:hover::after,.atk-row:hover::after,.item:hover::after{opacity:1}
+  .spell:hover{transform:translateY(-2px)}
+}
+
+/* ---------- gemas com reflexo ---------- */
+.gem i{position:relative;overflow:hidden}
+.gem:not(.spent) i::before{content:"";position:absolute;inset:-50%;background:linear-gradient(120deg,transparent 42%,rgba(255,255,255,.8) 50%,transparent 58%);
+  transform:translateX(-70%);animation:glint 6s ease-in-out infinite}
+@keyframes glint{0%,72%{transform:translateX(-70%)}88%,100%{transform:translateX(70%)}}
+
+/* ---------- botões ---------- */
+.btn.gold{position:relative;overflow:hidden}
+.btn.gold::after{content:"";position:absolute;inset:0;background:linear-gradient(110deg,transparent 30%,rgba(255,255,255,.5) 50%,transparent 70%);transform:translateX(-120%);transition:transform .8s ease}
+.btn.gold:hover::after{transform:translateX(120%)}
+
+/* ---------- navegação com indicador deslizante ---------- */
+.tabs{background:rgba(9,13,21,.74);backdrop-filter:blur(18px) saturate(140%);-webkit-backdrop-filter:blur(18px) saturate(140%);border-color:rgba(255,255,255,.08)}
+.tab-ind{display:none;position:absolute;left:0;top:7px;width:60px;height:calc(var(--nav-h) - 14px);border-radius:16px;pointer-events:none;z-index:0;
+  background:linear-gradient(180deg,rgba(217,180,108,.18),rgba(217,180,108,.05));border:1px solid rgba(217,180,108,.3);box-shadow:0 0 26px rgba(217,180,108,.14)}
+.tab{z-index:1}
+.gx .tab-ind{display:block}
+.gx .tab[aria-selected="true"]::before{display:none}
+@media (min-width:900px){ .tab-ind{top:6px;height:42px;border-radius:11px} }
+
+/* ---------- efeitos, modal, rolagem ---------- */
+.effects{background:linear-gradient(180deg,rgba(6,9,15,.94) 70%,rgba(6,9,15,0))}
+.effects .fx[style*="ffd28a"]{animation:breathe 2.8s ease-in-out infinite}
+@keyframes breathe{50%{box-shadow:0 0 24px rgba(255,210,138,.45)}}
+.modal{background:rgba(3,5,9,.55);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+.sheet{background:linear-gradient(180deg,rgba(31,41,60,.97),rgba(13,18,28,.985));border-color:rgba(255,255,255,.1);
+  box-shadow:0 -30px 80px rgba(0,0,0,.6),inset 0 1px 0 rgba(255,255,255,.08)}
+.rollpop{background:linear-gradient(180deg,rgba(40,54,78,.94),rgba(18,25,38,.96));backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-radius:22px}
+.rp-t{display:inline-block;font-size:54px}
+.gx .rollpop{transition:opacity .2s}
+.gx .modal,.gx .sheet,.gx .panel-tab{animation:none}
+.gx .gem.pop i{animation:none}
+.gx .slot-meta .count,.gx #fom-sp b,.gx #meta-sp b{display:inline-block}
+
+/* ---------- partículas e sobreposições ---------- */
+.fx-burst{position:fixed;z-index:160;pointer-events:none;width:16px;height:16px;margin:-8px 0 0 -8px;border-radius:50%;border:2px solid var(--c);box-shadow:0 0 22px var(--c),inset 0 0 12px var(--c)}
+.fx-spark{position:fixed;z-index:160;pointer-events:none;width:7px;height:7px;margin:-3.5px 0 0 -3.5px;background:var(--c);border-radius:1px;box-shadow:0 0 10px var(--c);transform:rotate(45deg)}
+.fx-float{position:fixed;z-index:160;pointer-events:none;font-weight:700;font-size:24px;text-shadow:0 2px 12px rgba(0,0,0,.7)}
+.fx-flash{position:fixed;inset:0;z-index:155;pointer-events:none;background:radial-gradient(circle at var(--x) var(--y),color-mix(in srgb,var(--c) 32%,transparent),transparent 60%)}
+.dawn{position:fixed;inset:0;z-index:150;display:grid;place-items:center;align-content:center;gap:20px;pointer-events:none;
+  background:radial-gradient(130% 75% at 50% 112%,rgba(255,200,125,.6),rgba(214,120,96,.28) 36%,rgba(16,22,40,.94) 72%),#090e19}
+.dawn-sun{width:220px;height:220px;margin:-50px;border-radius:50%;background:radial-gradient(circle closest-side,#fff8e4 0%,#ffe0a0 24%,rgba(255,196,115,.55) 42%,rgba(255,170,90,.18) 66%,rgba(255,170,90,0) 100%)}
+.dawn p{font-family:var(--f-display);letter-spacing:.26em;text-transform:uppercase;color:#fcebc8;font-size:15px;text-align:center}
+.dawn small{display:block;margin-top:6px;font-family:var(--f-body);letter-spacing:.04em;text-transform:none;color:rgba(252,235,200,.75);font-size:16px}

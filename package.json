@@ -1,0 +1,16 @@
+{
+  "name": "grimorio",
+  "version": "3.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Grimório interativo para D&D 2024",
+  "scripts": {
+    "build": "node tools/build.mjs",
+    "extract": "node tools/extract-private.mjs",
+    "test": "node tools/build.mjs && node tests/run.mjs"
+  },
+  "devDependencies": {
+    "pdfjs-dist": "^4.10.38",
+    "playwright": "^1.65.0"
+  }
+}

@@ -484,3 +484,24 @@ footer.foot{margin-top:28px;text-align:center;color:var(--faint);font-size:14px}
 .t-short{display:none}
 @media (max-width:699px){ .t-long{display:none} .t-short{display:inline} .tab{min-width:0;overflow:hidden;letter-spacing:.02em} }
 @media (min-width:900px){ .tab{padding:0 12px;white-space:nowrap} }
+
+/* mesa de dados */
+.mi{margin:12px 0}.mi h4{font-family:var(--f-display);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);margin:0 0 6px}
+.mi h4:empty{display:none}
+.mg{padding:8px 0;border-top:1px dashed rgba(255,255,255,.08)}.mi>.mg:first-of-type{border-top:0}
+.mg-h{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;margin-bottom:6px}.mg-h span{color:var(--muted);font-size:13px}
+.mg>small{display:block;margin-top:4px;color:var(--muted);font-size:12px}
+.mg-t{margin-left:auto;min-height:32px;padding:2px 10px;border-radius:999px;border:1px solid var(--line);background:none;color:inherit;font-size:12px;cursor:pointer}
+.mg-t[aria-pressed="true"]{border-color:var(--gold);color:var(--gold)}
+.dcs{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.dc{width:48px;height:48px;padding:0;text-align:center;font-size:20px;font-weight:700;border-radius:12px;border:1px solid var(--line2);background:rgba(0,0,0,.3);color:inherit;font-variant-numeric:tabular-nums}
+.dcs.many .dc{width:42px;height:42px;font-size:17px}
+.dc.wide{width:96px}.dc:focus{outline:2px solid var(--gold);outline-offset:1px}
+.dc.up{border-color:#7fb4ff}.dc.crit{border-color:var(--gold)}.dc.exp{border-color:#ff9a5a}.dc.bad{border-color:#f07c6c;animation:dc-bad .3s}
+@keyframes dc-bad{25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
+.dc-re{width:26px;height:26px;margin-left:-4px;padding:0;border-radius:50%;border:1px solid var(--line);background:none;color:inherit;cursor:pointer}
+.seg{display:flex;flex-wrap:wrap;gap:6px}.stepper{display:flex;align-items:center;gap:12px}
+.mesa-msg{min-height:18px;margin:6px 0 0;color:#f07c6c;font-size:13px}
+.mesa-foot{position:sticky;bottom:-1px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;justify-content:space-between;padding:10px 0 2px;background:linear-gradient(to top,var(--bg2) 75%,transparent)}
+.mesa-foot .m-actions{margin:0;flex:1;justify-content:flex-end}
+.mesa-t{display:flex;flex-direction:column;line-height:1}.mesa-t small{font-size:11px;color:var(--muted)}.mesa-t b{font-size:30px}

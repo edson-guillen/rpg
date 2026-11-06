@@ -29,12 +29,13 @@ let castMat = true;
 const cantripTier = () => { const n = activeChar().level; return n >= 17 ? 4 : n >= 11 ? 3 : n >= 5 ? 2 : 1; };
 const modExpr = x => (x.addMod ? sign(CHAR.stats.cha).replace('−', '-') : '');
 function baseDice(x) {
-  const d = x.cantrip ? addDice(x.d, x.cantrip, cantripTier() - 1) : x.d;
+  const d = x.tiers ? x.tiers[cantripTier() - 1] : x.cantrip ? addDice(x.d, x.cantrip, cantripTier() - 1) : x.d;
   return x.addMod ? d + modExpr(x) : d;
 }
+const exprTxt = e => `${e.n}d${e.f}${e.mod ? (e.mod > 0 ? '+' : '') + e.mod : ''}`;
 function rollsSection(s) {
   if (!s.r || !s.r.length) return '';
-  const rows = s.r.map(x => {
+  const rows = s.r.filter(x => !(x.t === 'dmg' || x.t === 'aux') || rowExpr(s, x, s.level).n > 0).map(x => {
     if (x.t === 'atk') {
       const bonus = x.bonus ?? CHAR.stats.atk, spell = x.spell !== false, adv = spell && state.fx.innate;
       return `<div class="rr"><span class="rk atk">ATQ</span><div class="rt"><b>${x.label || 'Ataque mágico'} ${sign(bonus)}</b>
@@ -44,14 +45,13 @@ function rollsSection(s) {
     if (x.t === 'save') return `<div class="rr"><span class="rk save">CD ${dc()}</span><div class="rt"><b>Salvaguarda de ${SAVE_NAME[x.a]}</b><span>${x.txt || 'O alvo rola contra a sua CD'}</span></div></div>`;
     if (x.t === 'dc') return `<div class="rr"><span class="rk save">CD ${dc()}</span><div class="rt"><b>${x.txt}</b></div></div>`;
     if (x.t === 'note') return `<div class="rr"><span class="rk note">NOTA</span><div class="rt"><span>${x.txt}</span></div></div>`;
-    const base = baseDice(x), variants = [[base, s.level]];
-    if (x.table) LEVELS.filter(l => l > s.level && x.table[l]).forEach(l => variants.push([x.table[l] + modExpr(x), l]));
-    else if (x.up) LEVELS.filter(l => l > s.level).forEach(l => variants.push([addDice(base, x.up, l - s.level), l]));
-    const btns = variants.map(([e, l]) => rollBtn({ kind: 'dmg', expr: e, src: s.id, crit: x.crit, explode: x.explode, max: x.max, half: x.half, orb: x.orb, type: s.choice?.length && castType && !x.heal ? castType : x.type,
-      label: s.name + (l > s.level ? ` (${ORD(l)} círc.)` : '') }, `${icon('i-die')}<b class="num">${showDice(e)}</b>${l > s.level ? `<small>${ORD(l)}</small>` : ''}`)).join('');
-    const tipo = s.choice?.length && castType && !x.heal ? castType : x.type;
-    return `<div class="rr"><span class="rk dmg">${x.heal ? 'CURA' : 'DANO'}</span><div class="rt"><b>${showDice(base)} ${tipo}</b>
-      <span>${x.label ? x.label + ' · ' : ''}média ${decimal(avgOf(base))}${x.half ? ' · metade se passar' : ''}${x.up ? ` · +${x.up} por círculo acima` : ''}${x.cantrip ? ' · cresce nos níveis 5, 11 e 17' : ''}</span></div><div class="rbs">${btns}</div></div>`;
+    const base = exprTxt(rowExpr(s, x, s.level)), variants = [[base, s.level]], escala = x.table || x.up || x.upMod || x.addSlot;
+    if (escala) LEVELS.filter(l => l > s.level && (!x.table || x.table[l])).forEach(l => variants.push([exprTxt(rowExpr(s, x, l)), l]));
+    const btns = variants.map(([e, l]) => rollBtn({ kind: 'dmg', mesa: 1, lv: l, alt: x.alt, src: s.id }, `${icon('i-die')}<b class="num">${showDice(e)}</b>${l > s.level ? `<small>${ORD(l)}</small>` : ''}`)).join('');
+    const tipo = x.t === 'aux' ? '' : s.choice?.length && castType && !x.heal ? castType : x.type;
+    const nota = [x.alt, x.t === 'aux' ? x.label : x.label, x.t === 'aux' ? '' : `média ${decimal(avgOf(base))}`, x.half ? 'metade se passar' : '', x.up ? `+${x.up} por círculo acima` : '', x.cantrip || x.tiers ? 'cresce nos níveis 5, 11 e 17' : ''].filter(Boolean).join(' · ');
+    return `<div class="rr"><span class="rk ${x.t === 'aux' ? 'note' : 'dmg'}">${x.t === 'aux' ? 'DADO' : x.heal ? 'CURA' : 'DANO'}</span><div class="rt"><b>${showDice(base)} ${tipo}</b>
+      <span>${nota}</span></div><div class="rbs">${btns}</div></div>`;
   }).join('');
   return `<div class="rolls-box"><h4>Números e rolagens</h4>${rows}</div>`;
 }
@@ -164,8 +164,8 @@ function doCast(id, lv) {
   if (ok) {
     const c = activeChar();
     if (castType) { c.choices = { ...c.choices, [s.id]: castType }; c.lastElement = castType; persistStore(); }
-    closeModal();
-    playSpell(s, castType, lv || s.level);
+    if (diceSpec(s, lv || s.level, { tipo: castType }).grupos.length) openMesa(s, lv || s.level, { tipo: castType });
+    else { closeModal(); playSpell(s, castType, lv || s.level); }
   } else toast('Recursos insuficientes', false);
 }
 

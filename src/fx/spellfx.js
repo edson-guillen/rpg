@@ -37,7 +37,7 @@ function fxRng(seed) { let x = seed || 1; return () => { x ^= x << 13; x ^= x >>
 
 /** Monta a receita de uma magia. `tipo` é o elemento escolhido, quando a magia deixa escolher. */
 function spellRecipe(s, tipo, nivel = s.level) {
-  const dano = (s.r || []).find(x => x.t === 'dmg' && !x.heal), cura = (s.r || []).some(x => x.heal), hand = FX_RECIPES[s.id] || FX_RECIPES[norm(s.en || '').replace(/[^a-z0-9]+/g, '-')] || {};
+  const dano = (s.r || []).find(x => x.t === 'dmg' && !x.heal && DMG_COLORS[x.type]), cura = (s.r || []).some(x => x.heal), hand = FX_RECIPES[s.id] || FX_RECIPES[norm(s.en || '').replace(/[^a-z0-9]+/g, '-')] || {};
   const elemento = tipo || (dano && DMG_COLORS[dano.type] ? dano.type : null);
   const form = hand.form || (cura ? 'heal' : s.area && FORMS_BY_SHAPE[s.area.shape]) || ((s.r || []).some(x => x.t === 'atk') ? 'projectile' : dano ? 'ray' : FORMS_BY_SCHOOL[s.school] || 'shockwave');
   const sig = fxHash(s.id), r = fxRng(sig);
@@ -302,7 +302,7 @@ function fxFrame(now) {
   else { fxState.raf = 0; c.clearRect(0, 0, innerWidth, innerHeight); }
 }
 /** Toca a animação da magia. Devolve a receita, ou null quando as animações estão desligadas. */
-function playSpell(s, tipo, nivel) {
+function playSpell(s, tipo, nivel, res) {
   const mode = fxMode();
   if (mode === 'off') return null;
   const rec = spellRecipe(s, tipo, nivel);

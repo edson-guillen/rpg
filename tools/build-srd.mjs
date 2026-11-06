@@ -122,7 +122,7 @@ function escolhaDeTipo(tx) {
   return null;
 }
 
-const overrides = ler('srd-overrides.json', {});
+const { _legenda, ...overrides } = ler('srd-overrides.json', {});
 const pt = ler('i18n/spells.pt.json', {});
 const srd = ler('srd/Spells.json', []);
 

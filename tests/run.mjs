@@ -416,6 +416,7 @@ const cenarios = {
     const antes = await page.evaluate(() => { window.__fx = null; const p = playSpell; playSpell = (...a) => { window.__fx = a[1]; return p(...a); }; return 1; });
     await clicar(page, '[data-action="cast"]');
     await page.waitForFunction(() => activeChar().choices?.['sorcerous-burst'] === 'Fogo');
+    await clicar(page, '[data-action="mesa-go"]');
     ok(await page.evaluate(() => window.__fx) === 'Fogo', 'animação recebe o elemento');
     ok(await page.evaluate(() => activeChar().lastElement) === 'Fogo', 'última escolha guardada');
     await page.waitForFunction(() => document.querySelector('#modal').hidden);
@@ -423,6 +424,114 @@ const cenarios = {
     ok(await page.locator('[data-action="cast-type"][data-t="Fogo"]').getAttribute('aria-pressed') === 'true', 'lembra a última escolha');
     await page.evaluate(() => { closeModal(); store.settings.anim = 'off'; });
     ok(await page.evaluate(() => playSpell(SPELLS[0])) === null, 'animações desligadas não tocam');
+    ok(!erros.length, `sem erros de JS: ${erros}`);
+    await ctx.close();
+  },
+
+  async 'mesa de dados respeita cada magia'({ browser, opts }) {
+    const { ctx, page, erros } = await abrir(browser, opts);
+    const r = await page.evaluate(async () => {
+      await ensureLibrary();
+      const falhas = [], ms = [...libraryAll(), ...SPELLS];
+      for (const s of ms) for (let lv = Math.max(s.level, 0); lv <= (s.level ? 9 : 0); lv++) for (const modo of ['cast', 'livre']) for (const alt of [null, ...mesaAlts(s, modo)]) {
+        try {
+          const sp = diceSpec(s, lv, { modo, alt, tipo: s.choice?.[0] });
+          if (sp.grupos.some(g => !(g.n > 0 && g.f > 0) || !Number.isFinite(g.mod)) || sp.inst < 1) falhas.push(s.id + ' forma');
+          const res = resolveLance(completarLance(novoLance(sp)));
+          if (!Number.isFinite(res.total) || res.total < 0 || (res.temDano && res.bruto > res.max)) falhas.push(s.id + ' total');
+        } catch (e) { falhas.push(s.id + ': ' + e.message); }
+      }
+      const lib = id => libGet(id), n = (id, lv, ctx) => diceSpec(lib(id), lv, ctx);
+      const fixa = (L, i, g, vals) => { L.dados[cellKey(i, g)] = vals; };
+      const o = {};
+      o.bola5 = n('fireball', 5).grupos[0].n;
+      o.missil = [n('magic-missile', 1).inst, n('magic-missile', 3).inst, n('scorching-ray', 2).inst, n('scorching-ray', 4).inst];
+      o.feixe = n('eldritch-blast', 0).inst;
+      const a = novoLance(n('sorcerous-burst', 0, { tipo: 'Fogo' })), g = a.spec.grupos[0];
+      fixa(a, 0, g, [8]); a.d20[0] = [12]; o.abre = extrasAbertos(a, g, 0);
+      a.extras[cellKey(0, g)] = [8]; o.abre2 = extrasAbertos(a, g, 0);
+      a.extras[cellKey(0, g)] = [8, 8, 8, 8, 8]; o.abreMax = extrasAbertos(a, g, 0);
+      o.lim = CHAR.stats.cha;
+      const c = novoLance(n('chromatic-orb', 1, { tipo: 'Fogo' })), go = c.spec.grupos[0];
+      c.d20[0] = [12]; fixa(c, 0, go, [3, 3, 5]); o.salta = instanciasDe(c);
+      c.d20[1] = [12]; fixa(c, 1, go, [2, 2, 6]); o.salta1 = instanciasDe(c);
+      const c3 = novoLance(n('chromatic-orb', 3, { tipo: 'Fogo' })), g3 = c3.spec.grupos[0];
+      c3.d20[0] = [12]; fixa(c3, 0, g3, [1, 1, 2, 3, 4]); c3.d20[1] = [12]; fixa(c3, 1, g3, [1, 1, 2, 3, 4]); o.salta3 = instanciasDe(c3);
+      const cr = novoLance(n('fire-bolt', 0)), gc = cr.spec.grupos[0];
+      cr.d20[0] = [20]; o.crit = dicePorGrupo(cr, gc, 0);
+      cr.dados[cellKey(0, gc)] = [10, 10]; o.critTot = resolveLance(cr).total;
+      const er = novoLance(n('fire-bolt', 0)); er.d20[0] = [1]; er.dados[cellKey(0, er.spec.grupos[0])] = [10]; o.um = resolveLance(er).total;
+      const b = novoLance(n('fireball', 3)), gb = b.spec.grupos[0];
+      fixa(b, 0, gb, [6, 6, 6, 6, 6, 6, 6, 6]); o.cheia = resolveLance(b).total; b.save = 'passou'; o.metade = resolveLance(b).total;
+      const ac = novoLance(n('acid-arrow', 2)); ac.erro[0] = true; ac.d20[0] = [9]; ac.dados[cellKey(0, ac.spec.grupos[0])] = [4, 4, 4, 4]; o.errouMetade = resolveLance(ac).total;
+      const ik = novoLance(n('ice-knife', 1)); ik.d20[0] = [1]; ik.spec.grupos.forEach(x => { ik.dados[cellKey(0, x)] = Array(x.n).fill(2); }); o.gelo = resolveLance(ik).total;
+      o.altVerdadeiro = mesaAlts(lib('true-strike'));
+      o.semDadoAoConjurar = diceSpec(lib('hex'), 1).grupos.length; o.hexLivre = diceSpec(lib('hex'), 1, { modo: 'livre' }).grupos.length;
+      o.magoHand = diceSpec(lib('mage-hand'), 0).grupos.length;
+      o.desint = n('disintegrate', 7).grupos[0];
+      o.vida = n('false-life', 3).grupos[0].mod;
+      o.fraco = impacto({ temDano: true, total: 12, sorte: .1 }); o.forte = impacto({ temDano: true, total: 40, sorte: .9 });
+      return { falhas: falhas.slice(0, 6), o };
+    });
+    ok(!r.falhas.length, `especificação de dados vale para toda magia e círculo: ${r.falhas}`);
+    const o = r.o;
+    ok(o.bola5 === 10, 'Bola de Fogo no 5º rola 10d6');
+    ok(String(o.missil) === '3,5,3,5', 'dardos e raios crescem com o círculo');
+    ok(o.feixe === 1, 'Rajada Mística segue o nível');
+    ok(o.abre === 1 && o.abre2 === 2 && o.abreMax === o.lim, 'cada 8 abre outro dado, até o limite de Carisma');
+    ok(o.salta === 2 && o.salta1 === 2 && o.salta3 === 3, 'orbe salta nos repetidos, até o círculo do espaço');
+    ok(o.crit === 2 && o.critTot === 20, 'crítico dobra os dados');
+    ok(o.um === 0, '1 natural erra');
+    ok(o.cheia === 48 && o.metade === 24, 'salvaguarda reduz à metade');
+    ok(o.errouMetade === 8, 'Flecha Ácida errada causa metade');
+    ok(o.gelo === 4, 'Faca de Gelo explode mesmo errando');
+    ok(o.altVerdadeiro.length === 5, 'Golpe Certeiro pede a arma');
+    ok(o.semDadoAoConjurar === 0 && o.hexLivre === 1, 'dano que vem depois não entra na conjuração');
+    ok(o.magoHand === 0, 'magia sem dados vai direto');
+    ok(o.desint.n === 13 && o.desint.mod === 40, 'Desintegrar soma dados e bônus fixo');
+    ok(o.vida === 14, 'Vida Falsa soma 5 por círculo');
+    ok(o.forte.tamanho > o.fraco.tamanho && o.forte.forca > o.fraco.forca, 'dano maior gera impacto maior');
+
+    await aba(page, 'grimorio');
+    await page.evaluate(() => { closeModal(); commit('Diamante', st => { st.items.find(i => i.key === 'diamond').qty = 1; }); spellModal('chromatic-orb'); });
+    await clicar(page, '[data-action="cast-type"][data-t="Fogo"]');
+    await clicar(page, '[data-action="cast"]:not([disabled])');
+    await page.waitForSelector('[data-action="mesa-go"]');
+    const casas = page.locator('#sheet .dc');
+    ok(await casas.count() === 4, 'mesa do Orbe tem d20 e três d8');
+    await casas.nth(1).fill('9');
+    ok(await casas.nth(1).inputValue() === '', 'd8 recusa 9');
+    ok((await page.locator('#mesa-msg').textContent()).includes('1 a 8'), 'mesa explica o limite');
+    await casas.nth(0).fill('14'); await casas.nth(1).fill('4'); await casas.nth(2).fill('4'); await casas.nth(3).fill('7');
+    await page.waitForFunction(() => document.querySelectorAll('#sheet .dc').length === 8);
+    ok(await page.evaluate(() => document.querySelector('.mi:nth-of-type(2) h4')?.textContent || [...document.querySelectorAll('.mi h4')].map(x => x.textContent).join()).then(x => /Salto/.test(x)), 'repetidos abrem o salto na mesa');
+    await page.evaluate(() => { window.__res = null; const p = playSpell; playSpell = (...a) => { window.__res = a[3]; return p(...a); }; });
+    await clicar(page, '[data-action="mesa-go"]');
+    await page.waitForFunction(() => window.__res);
+    const res = await page.evaluate(() => window.__res);
+    ok(res.inst[0].dados.map(x => x.v).join() === '4,4,7' && res.inst[0].total === 15, 'valores físicos entram no resultado');
+    ok(res.inst.length === 2 && res.inst[1].salto, 'salto chega à cena');
+    ok(/Fogo/.test(await page.locator('#roll').textContent()), 'resultado aparece no aviso de rolagem');
+    await page.evaluate(() => { spellModal('ice-knife'); });
+    await page.waitForSelector('.rolls-box [data-action="roll"][data-mesa]');
+    const antes = await estado(page);
+    await page.locator('.rolls-box [data-action="roll"][data-mesa]').first().click();
+    await page.waitForSelector('[data-action="mesa-go"]');
+    ok(!(await page.locator('[data-action="mesa-pular"]').count()), 'botão de rolagem não oferece pular');
+    await clicar(page, '[data-action="mesa-go"]');
+    const depois = await estado(page);
+    ok(JSON.stringify(antes.used) === JSON.stringify(depois.used), 'rolar sem conjurar não gasta espaço');
+    await page.evaluate(() => { closeModal(); store.settings.anim = 'off'; spellModal('fireball-teste' in SPELL ? 'x' : SPELLS[0].id); closeModal(); openMesa(libGet('fireball'), 3, { modo: 'livre' }); });
+    await page.waitForSelector('[data-action="mesa-total"]');
+    await clicar(page, '[data-action="mesa-total"]');
+    const tot = page.locator('#sheet .dc.wide');
+    await tot.fill('49');
+    ok(await tot.inputValue() === '', 'só o total recusa acima do máximo');
+    await tot.fill('7'); await tot.blur();
+    ok(await tot.inputValue() === '', 'só o total recusa abaixo do mínimo');
+    await tot.fill('30');
+    await clicar(page, '[data-action="mesa-go"]');
+    await page.waitForFunction(() => document.querySelector('#roll .rp-t')?.textContent === '30');
     ok(!erros.length, `sem erros de JS: ${erros}`);
     await ctx.close();
   },

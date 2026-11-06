@@ -29,7 +29,7 @@ function handle(a, el) {
     case 'reset': toggleMenu(false); resetModal(); break;
     case 'reset-go': commit('Ficha restaurada', st => { const ui = st.ui; Object.assign(st, defaultState(), { ui }); }); closeModal(); break;
     case 'undo': if (toastUndo) { const f = toastUndo; toastUndo = null; $('#toast').classList.remove('show'); f(); } else undo(); break;
-    case 'roll': doRoll(ds); break;
+    case 'roll': if (ds.mesa) openMesa(spellById(ds.src), +ds.lv, { modo: 'livre', tipo: castType, alt: ds.alt }); else doRoll(ds); break;
     case 'roll-hide': el.classList.remove('show'); break;
     case 'mat-toggle': castMat = !castMat; modalRefresh?.(); break;
     case 'mirror-roll': {

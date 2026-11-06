@@ -23,13 +23,17 @@
     "d": "4d4",
     "type": "Ácido",
     "crit": true,
-    "up": "1d4"
+    "up": "1d4",
+    "alt": "Ao acertar",
+    "missHalf": true
    },
    {
     "t": "dmg",
     "d": "2d4",
     "type": "Ácido",
-    "crit": true
+    "crit": true,
+    "up": "1d4",
+    "alt": "No fim do próximo turno"
    }
   ],
   "desc": [
@@ -189,7 +193,16 @@
   "dur": "Concentração, até 1 hora",
   "conc": true,
   "ritual": false,
-  "r": [],
+  "r": [
+   {
+    "t": "dmg",
+    "d": "1d6",
+    "type": "Da forma natural",
+    "addMod": true,
+    "depois": true,
+    "label": "Arma natural"
+   }
+  ],
   "desc": [
    "Você altera sua forma física. Escolha uma das opções a seguir. Os efeitos duram pela magia, e nesse período você pode usar uma ação de Magia para trocar a opção escolhida por outra.",
    "<b>Adaptação Aquática.</b> Você ganha guelras e membranas entre os dedos. Respira debaixo d'água e ganha Deslocamento de natação igual ao seu Deslocamento.",
@@ -208,7 +221,8 @@
    "upgrade": "",
    "time": "Action"
   },
-  "ptOk": true
+  "ptOk": true,
+  "dmgChip": "1d6"
  },
  {
   "id": "animal-friendship",
@@ -378,7 +392,31 @@
   "dur": "Concentração, até 1 minuto",
   "conc": true,
   "ritual": false,
-  "r": [],
+  "r": [
+   {
+    "t": "dmg",
+    "d": "1d4+3",
+    "type": "Energético",
+    "alt": "Médio ou menor",
+    "depois": true
+   },
+   {
+    "t": "dmg",
+    "d": "2d6+3",
+    "type": "Energético",
+    "addMod": true,
+    "alt": "Grande",
+    "depois": true
+   },
+   {
+    "t": "dmg",
+    "d": "2d12+3",
+    "type": "Energético",
+    "addMod": true,
+    "alt": "Enorme",
+    "depois": true
+   }
+  ],
   "desc": [
    "Objetos ganham vida sob o seu comando. Escolha objetos não mágicos dentro do alcance que não estejam sendo vestidos ou carregados, não estejam fixos numa superfície e não sejam Imensos. O máximo é igual ao seu modificador do atributo de conjuração: um alvo Médio ou menor conta como um, um Grande como dois e um Enorme como três.",
    "Cada alvo ganha vida, cria pernas e se torna um Constructo com o bloco de estatísticas de Objeto Animado, sob seu controle até a magia terminar ou até chegar a 0 Pontos de Vida. As criaturas são aliadas de você e dos seus aliados. Em combate, dividem sua Iniciativa e agem logo depois de você.",
@@ -396,7 +434,8 @@
    "time": "Action"
   },
   "ptOk": true,
-  "higher": "O dano da Pancada aumenta em 1d4 (Médio ou menor), 1d6 (Grande) ou 1d12 (Enorme) para cada círculo do espaço de magia acima do 5º. Constructo: CA 15; PV 10 (Médio ou menor), 20 (Grande) ou 40 (Enorme); Deslocamento 9 m; Percepção às Cegas 9 m. Pancada: bônus igual ao seu ataque mágico, alcance 1,5 m, dano Energético de 1d4 + 3 (Médio ou menor), 2d6 + 3 + seu modificador (Grande) ou 2d12 + 3 + seu modificador (Enorme)."
+  "higher": "O dano da Pancada aumenta em 1d4 (Médio ou menor), 1d6 (Grande) ou 1d12 (Enorme) para cada círculo do espaço de magia acima do 5º. Constructo: CA 15; PV 10 (Médio ou menor), 20 (Grande) ou 40 (Enorme); Deslocamento 9 m; Percepção às Cegas 9 m. Pancada: bônus igual ao seu ataque mágico, alcance 1,5 m, dano Energético de 1d4 + 3 (Médio ou menor), 2d6 + 3 + seu modificador (Grande) ou 2d12 + 3 + seu modificador (Enorme).",
+  "dmgChip": "1d4+3"
  },
  {
   "id": "antilife-shell",
@@ -586,7 +625,18 @@
     "d": "5d8",
     "type": "Energético",
     "crit": true,
-    "up": "2d8"
+    "up": "2d8",
+    "alt": "Punho Cerrado",
+    "gate": "atk"
+   },
+   {
+    "t": "dmg",
+    "d": "4d6",
+    "type": "Contundente",
+    "addMod": true,
+    "up": "2d6",
+    "alt": "Mão Agarradora",
+    "gate": "none"
    }
   ],
   "desc": [
@@ -666,6 +716,13 @@
   "r": [
    {
     "t": "atk"
+   },
+   {
+    "t": "dmg",
+    "d": "4d12",
+    "type": "Energético",
+    "addMod": true,
+    "crit": true
    }
   ],
   "desc": [
@@ -687,7 +744,8 @@
   "ptOk": true,
   "material": "uma espada em miniatura que valha 250 PO ou mais",
   "matGp": 250,
-  "matUsed": false
+  "matUsed": false,
+  "dmgChip": "4d12"
  },
  {
   "id": "arcanists-magic-aura",
@@ -897,6 +955,12 @@
    {
     "t": "save",
     "a": "CAR"
+   },
+   {
+    "t": "aux",
+    "d": "1d4",
+    "label": "O alvo subtrai do ataque ou da salvaguarda",
+    "depois": true
    }
   ],
   "desc": [
@@ -1100,7 +1164,9 @@
    {
     "t": "dmg",
     "d": "1d8",
-    "type": "Necrótico"
+    "type": "Necrótico",
+    "depois": true,
+    "label": "Maldição de dano adicional"
    }
   ],
   "desc": [
@@ -1229,7 +1295,14 @@
   "dur": "Concentração, até 1 minuto",
   "conc": true,
   "ritual": false,
-  "r": [],
+  "r": [
+   {
+    "t": "aux",
+    "d": "1d4",
+    "label": "Soma ao ataque ou à salvaguarda",
+    "depois": true
+   }
+  ],
   "desc": [
    "Você abençoa até três criaturas dentro do alcance. Sempre que um alvo fizer uma jogada de ataque ou uma salvaguarda antes de a magia terminar, ele soma 1d4 ao resultado."
   ],
@@ -1352,7 +1425,14 @@
   "dur": "1 minuto",
   "conc": false,
   "ritual": false,
-  "r": [],
+  "r": [
+   {
+    "t": "aux",
+    "d": "1d6",
+    "label": "No fim de cada turno seu",
+    "depois": true
+   }
+  ],
   "desc": [
    "Role 1d6 no fim de cada um dos seus turnos, pela duração. Com 4 a 6, você desaparece do plano atual e surge no Plano Etéreo (a magia termina na hora se você já estiver lá). No Plano Etéreo, você percebe o plano que deixou em tons de cinza, mas não enxerga nada a mais de 18 m. Você só afeta e é afetado por outras criaturas no Plano Etéreo, e criaturas no outro plano não percebem você sem uma habilidade especial.",
    "Você volta ao outro plano no início do seu próximo turno e quando a magia termina, se estiver no Plano Etéreo. Você retorna a um espaço desocupado à sua escolha que possa ver, a até 3 m de onde saiu. Se não houver, surge no espaço desocupado mais próximo."
@@ -2257,6 +2337,12 @@
    {
     "t": "save",
     "a": "SAB"
+   },
+   {
+    "t": "aux",
+    "d": "1d10",
+    "label": "Comportamento no início do turno",
+    "depois": true
    }
   ],
   "desc": [
@@ -2355,6 +2441,15 @@
   "ritual": false,
   "r": [
    {
+    "t": "dmg",
+    "d": "4d12",
+    "type": "Cura",
+    "heal": true,
+    "addMod": true,
+    "up": "1d12",
+    "alt": "Luz Curativa"
+   },
+   {
     "t": "save",
     "a": "DES"
    },
@@ -2362,14 +2457,9 @@
     "t": "dmg",
     "d": "6d12",
     "type": "Radiante",
-    "half": true
-   },
-   {
-    "t": "dmg",
-    "d": "4d12",
-    "type": "Cura",
-    "heal": true,
-    "addMod": true
+    "half": true,
+    "up": "1d12",
+    "alt": "Luz Abrasadora"
    }
   ],
   "desc": [
@@ -2391,7 +2481,7 @@
   },
   "ptOk": true,
   "higher": "A cura e o dano aumentam em 1d12 para cada círculo do espaço de magia acima do 7º.",
-  "dmgChip": "6d12",
+  "dmgChip": "4d12",
   "area": {
    "shape": "Cilindro",
    "feet": 40,
@@ -2418,6 +2508,20 @@
    {
     "t": "save",
     "a": "DES"
+   },
+   {
+    "t": "dmg",
+    "d": "8d8",
+    "type": "Elemento escolhido",
+    "up": "1d8",
+    "alt": "Ao ser agarrado"
+   },
+   {
+    "t": "dmg",
+    "d": "4d8",
+    "type": "Elemento escolhido",
+    "up": "1d8",
+    "alt": "A cada turno contido"
    }
   ],
   "desc": [
@@ -2435,7 +2539,14 @@
    "time": "Action"
   },
   "ptOk": true,
-  "higher": "O dano aumenta em 1d8 para cada círculo do espaço de magia acima do 5º."
+  "higher": "O dano aumenta em 1d8 para cada círculo do espaço de magia acima do 5º.",
+  "dmgChip": "8d8",
+  "choice": [
+   "Elétrico",
+   "Trovejante",
+   "Fogo",
+   "Frio"
+  ]
  },
  {
   "id": "conjure-fey",
@@ -2455,6 +2566,14 @@
   "r": [
    {
     "t": "atk"
+   },
+   {
+    "t": "dmg",
+    "d": "3d12",
+    "type": "Psíquico",
+    "addMod": true,
+    "crit": true,
+    "up": "1d12"
    }
   ],
   "desc": [
@@ -2472,7 +2591,8 @@
    "time": "Action"
   },
   "ptOk": true,
-  "higher": "O dano aumenta em 1d12 para cada círculo do espaço de magia acima do 6º."
+  "higher": "O dano aumenta em 1d12 para cada círculo do espaço de magia acima do 6º.",
+  "dmgChip": "3d12"
  },
  {
   "id": "conjure-minor-elementals",
@@ -2490,7 +2610,16 @@
   "dur": "Concentração, até 10 minutos",
   "conc": true,
   "ritual": false,
-  "r": [],
+  "r": [
+   {
+    "t": "dmg",
+    "d": "2d8",
+    "type": "Elemento escolhido",
+    "up": "1d8",
+    "depois": true,
+    "label": "Adicional nos seus ataques"
+   }
+  ],
   "desc": [
    "Você conjura espíritos dos Planos Elementais que esvoaçam ao seu redor numa Emanação de 4,5 m pela duração. Até a magia terminar, qualquer ataque seu causa 2d8 de dano adicional ao acertar uma criatura na Emanação. O dano é de Ácido, Frio, Fogo ou Elétrico, à sua escolha a cada ataque.",
    "Além disso, o chão na Emanação é Terreno Difícil para seus inimigos."
@@ -2507,6 +2636,7 @@
   },
   "ptOk": true,
   "higher": "O dano aumenta em 1d8 para cada círculo do espaço de magia acima do 4º.",
+  "dmgChip": "2d8",
   "area": {
    "shape": "Emanação",
    "feet": 15,
@@ -2759,7 +2889,9 @@
     "t": "dmg",
     "d": "2d8",
     "type": "Contundente",
-    "half": true
+    "half": true,
+    "depois": true,
+    "label": "Redemoinho"
    }
   ],
   "desc": [
@@ -2814,7 +2946,13 @@
   "dur": "Concentração, até 8 horas",
   "conc": true,
   "ritual": false,
-  "r": [],
+  "r": [
+   {
+    "t": "aux",
+    "d": "1d4",
+    "label": "× 10 minutos até fazer efeito"
+   }
+  ],
   "desc": [
    "Você assume o controle do clima a até 8 km de você pela duração. Precisa estar ao ar livre, e a magia termina antes se você entrar num lugar fechado.",
    "Ao conjurar, você muda as condições atuais, definidas pelo Mestre: precipitação, temperatura e vento. As novas condições levam 1d4 × 10 minutos para fazer efeito, e depois você pode mudá-las de novo. Quando a magia termina, o clima volta ao normal aos poucos.",
@@ -3277,6 +3415,14 @@
    {
     "t": "save",
     "a": "DES"
+   },
+   {
+    "t": "dmg",
+    "d": "12d6",
+    "type": "Fogo",
+    "half": true,
+    "up": "1d6",
+    "acumula": "1d6"
    }
   ],
   "desc": [
@@ -3300,6 +3446,7 @@
   "ptOk": true,
   "material": "uma bola de guano de morcego e enxofre",
   "higher": "O dano básico aumenta em 1d6 para cada círculo do espaço de magia acima do 7º.",
+  "dmgChip": "12d6",
   "area": {
    "shape": "Esfera",
    "feet": 20,
@@ -3517,7 +3664,9 @@
    {
     "t": "dmg",
     "d": "4d6",
-    "type": "Energético"
+    "type": "Energético",
+    "depois": true,
+    "label": "Se o destino estiver ocupado"
    }
   ],
   "desc": [
@@ -3808,7 +3957,9 @@
    {
     "t": "dmg",
     "d": "1d4",
-    "type": "Radiante"
+    "type": "Radiante",
+    "depois": true,
+    "label": "Ao atingir com arma"
    }
   ],
   "desc": [
@@ -4056,6 +4207,13 @@
    {
     "t": "save",
     "a": "DES"
+   },
+   {
+    "t": "dmg",
+    "d": "3d6",
+    "type": "Elemento escolhido",
+    "half": true,
+    "up": "1d6"
    }
   ],
   "desc": [
@@ -4073,6 +4231,7 @@
   "ptOk": true,
   "material": "uma pimenta ardida",
   "higher": "O dano aumenta em 1d6 para cada círculo do espaço de magia acima do 2º.",
+  "dmgChip": "3d6",
   "area": {
    "shape": "Cone",
    "feet": 15,
@@ -4111,7 +4270,9 @@
    {
     "t": "dmg",
     "d": "3d6",
-    "type": "Psíquico"
+    "type": "Psíquico",
+    "depois": true,
+    "label": "Ao acordar do pesadelo"
    }
   ],
   "desc": [
@@ -4198,6 +4359,11 @@
   "ritual": false,
   "r": [
    {
+    "t": "aux",
+    "d": "1d6",
+    "label": "Fendas que se abrem"
+   },
+   {
     "t": "save",
     "a": "DES"
    },
@@ -4205,7 +4371,7 @@
     "t": "dmg",
     "d": "12d6",
     "type": "Contundente",
-    "half": true
+    "label": "Estrutura que desaba"
    }
   ],
   "desc": [
@@ -4255,7 +4421,8 @@
     "t": "dmg",
     "d": "1d10",
     "type": "Energético",
-    "crit": true
+    "crit": true,
+    "label": "Por feixe · 2 no nível 5, 3 no 11, 4 no 17"
    }
   ],
   "desc": [
@@ -4272,7 +4439,12 @@
   },
   "ptOk": true,
   "upgrade": "A magia cria dois feixes no nível 5, três no nível 11 e quatro no nível 17. Você pode direcionar os feixes ao mesmo alvo ou a alvos diferentes. Faça uma jogada de ataque separada para cada feixe.",
-  "dmgChip": "1d10"
+  "dmgChip": "1d10",
+  "inst": {
+   "n": 1,
+   "truque": true,
+   "rotulo": "Feixe"
+  }
  },
  {
   "id": "elementalism",
@@ -4384,6 +4556,12 @@
    {
     "t": "save",
     "a": "FOR"
+   },
+   {
+    "t": "aux",
+    "d": "1d4",
+    "label": "Soma (Aumentar) ou subtrai (Reduzir) do dano",
+    "depois": true
    }
   ],
   "desc": [
@@ -4431,7 +4609,9 @@
     "t": "dmg",
     "d": "1d6",
     "type": "Perfurante",
-    "up": "1d6"
+    "up": "1d6",
+    "depois": true,
+    "label": "No início de cada turno preso"
    }
   ],
   "desc": [
@@ -4749,7 +4929,9 @@
    {
     "t": "dmg",
     "d": "4d8",
-    "type": "Energético"
+    "type": "Energético",
+    "depois": true,
+    "label": "Mordida"
    }
   ],
   "desc": [
@@ -4790,7 +4972,15 @@
   "dur": "Instantânea",
   "conc": false,
   "ritual": false,
-  "r": [],
+  "r": [
+   {
+    "t": "dmg",
+    "d": "2d4+4",
+    "type": "PV temporários",
+    "heal": true,
+    "upMod": 5
+   }
+  ],
   "desc": [
    "Você ganha 2d4 + 4 Pontos de Vida Temporários."
   ],
@@ -4805,7 +4995,8 @@
   },
   "ptOk": true,
   "material": "uma gota de álcool",
-  "higher": "Você ganha mais 5 Pontos de Vida Temporários para cada círculo do espaço de magia acima do 1º."
+  "higher": "Você ganha mais 5 Pontos de Vida Temporários para cada círculo do espaço de magia acima do 1º.",
+  "dmgChip": "2d4+4"
  },
  {
   "id": "fear",
@@ -4945,7 +5136,25 @@
   "dur": "Instantânea",
   "conc": false,
   "ritual": false,
-  "r": [],
+  "r": [
+   {
+    "t": "dmg",
+    "d": "1d8",
+    "type": "Elemento escolhido",
+    "addSlot": true,
+    "alt": "Pancada",
+    "depois": true
+   },
+   {
+    "t": "dmg",
+    "d": "2d8",
+    "type": "Cura",
+    "heal": true,
+    "addSlot": true,
+    "alt": "Cura do Celestial",
+    "depois": true
+   }
+  ],
   "desc": [
    "Você invoca um ser de outro mundo que surge como uma montaria leal num espaço desocupado à sua escolha dentro do alcance. Ele usa o bloco de estatísticas Montaria de Outro Mundo. Se você já tiver uma montaria desta magia, ela é substituída.",
    "A montaria parece um animal Grande que se possa montar, à sua escolha, como um cavalo, camelo, lobo atroz ou alce. Ao conjurar, escolha o tipo dela: Celestial, Fada ou Corruptor, o que define alguns traços.",
@@ -4965,7 +5174,13 @@
    "time": "Action"
   },
   "ptOk": true,
-  "higher": "Use o círculo do espaço como círculo da magia no bloco de estatísticas. Montaria Grande, Neutra: CA 10 + 1 por círculo; PV 5 + 10 por círculo; Deslocamento 18 m e voo 18 m (exige 4º círculo ou maior). Ao recuperar PV de uma magia de 1º círculo ou maior, ela recupera o mesmo valor se estiver a até 1,5 m de você. Pancada: bônus igual ao seu ataque mágico, causa 1d8 + círculo de dano Radiante (Celestial), Psíquico (Fada) ou Necrótico (Corruptor). Uma vez por Descanso Longo, como Ação Bônus: o Corruptor deixa uma criatura Amedrontada, a Fada se teleporta 18 m com o cavaleiro, e o Celestial cura 2d8 + círculo a até 1,5 m."
+  "higher": "Use o círculo do espaço como círculo da magia no bloco de estatísticas. Montaria Grande, Neutra: CA 10 + 1 por círculo; PV 5 + 10 por círculo; Deslocamento 18 m e voo 18 m (exige 4º círculo ou maior). Ao recuperar PV de uma magia de 1º círculo ou maior, ela recupera o mesmo valor se estiver a até 1,5 m de você. Pancada: bônus igual ao seu ataque mágico, causa 1d8 + círculo de dano Radiante (Celestial), Psíquico (Fada) ou Necrótico (Corruptor). Uma vez por Descanso Longo, como Ação Bônus: o Corruptor deixa uma criatura Amedrontada, a Fada se teleporta 18 m com o cavaleiro, e o Celestial cura 2d8 + círculo a até 1,5 m.",
+  "dmgChip": "1d8",
+  "choice": [
+   "Radiante",
+   "Psíquico",
+   "Necrótico"
+  ]
  },
  {
   "id": "find-the-path",
@@ -5202,12 +5417,9 @@
    {
     "t": "dmg",
     "d": "2d8",
-    "type": "Fogo"
-   },
-   {
-    "t": "dmg",
-    "d": "2d8",
-    "type": "Frio"
+    "type": "Elemento escolhido",
+    "depois": true,
+    "label": "Em quem atingir você"
    }
   ],
   "desc": [
@@ -5228,7 +5440,11 @@
   },
   "ptOk": true,
   "material": "um pouco de fósforo ou um vaga-lume",
-  "dmgChip": "2d8"
+  "dmgChip": "2d8",
+  "choice": [
+   "Fogo",
+   "Frio"
+  ]
  },
  {
   "id": "fire-storm",
@@ -5300,6 +5516,14 @@
   "r": [
    {
     "t": "atk"
+   },
+   {
+    "t": "dmg",
+    "d": "3d6",
+    "type": "Fogo",
+    "addMod": true,
+    "crit": true,
+    "up": "1d6"
    }
   ],
   "desc": [
@@ -5320,7 +5544,8 @@
   },
   "ptOk": true,
   "material": "uma folha de sumagre",
-  "higher": "O dano aumenta em 1d6 para cada círculo do espaço de magia acima do 2º."
+  "higher": "O dano aumenta em 1d6 para cada círculo do espaço de magia acima do 2º.",
+  "dmgChip": "3d6"
  },
  {
   "id": "flame-strike",
@@ -5346,13 +5571,15 @@
     "t": "dmg",
     "d": "5d6",
     "type": "Fogo",
-    "half": true
+    "half": true,
+    "up": "1d6"
    },
    {
     "t": "dmg",
     "d": "5d6",
     "type": "Radiante",
-    "half": true
+    "half": true,
+    "up": "1d6"
    }
   ],
   "desc": [
@@ -5592,7 +5819,9 @@
    {
     "t": "dmg",
     "d": "5d10",
-    "type": "Radiante"
+    "type": "Radiante",
+    "depois": true,
+    "label": "Ao entrar na área"
    }
   ],
   "desc": [
@@ -5901,7 +6130,9 @@
    {
     "t": "dmg",
     "d": "5d10",
-    "type": "Psíquico"
+    "type": "Psíquico",
+    "depois": true,
+    "label": "Ao contrariar a ordem"
    }
   ],
   "desc": [
@@ -5976,7 +6207,31 @@
   "dur": "Concentração, até 10 minutos",
   "conc": true,
   "ritual": false,
-  "r": [],
+  "r": [
+   {
+    "t": "dmg",
+    "d": "1d6+3",
+    "type": "Perfurante",
+    "addSlot": true,
+    "alt": "Ferrão",
+    "depois": true
+   },
+   {
+    "t": "dmg",
+    "d": "1d4",
+    "type": "Veneno",
+    "alt": "Ferrão",
+    "depois": true
+   },
+   {
+    "t": "dmg",
+    "d": "1d10+3",
+    "type": "Contundente",
+    "addSlot": true,
+    "alt": "Teia",
+    "depois": true
+   }
+  ],
   "desc": [
    "Você invoca uma centopeia, aranha ou vespa gigante, escolhida ao conjurar. Ela surge num espaço desocupado que você possa ver dentro do alcance e usa o bloco de estatísticas de Inseto Gigante, com detalhes definidos pela forma. A criatura desaparece ao chegar a 0 Pontos de Vida ou quando a magia termina.",
    "Ela é aliada de você e dos seus aliados. Em combate, divide sua Iniciativa, mas age logo depois de você. Obedece às suas ordens verbais, sem você gastar ação. Sem ordens, usa a ação Esquivar e o movimento para evitar perigo."
@@ -5992,7 +6247,8 @@
    "time": "Action"
   },
   "ptOk": true,
-  "higher": "Use o círculo do espaço como círculo da magia no bloco. Fera Grande: CA 11 + círculo; PV 30 + 10 por círculo acima do 4º; Deslocamento e escalada 12 m, e voo 12 m só para a vespa. Faz ataques iguais à metade do círculo. Ferrão: bônus igual ao seu ataque mágico, alcance 3 m, causa 1d6 + 3 + círculo de dano Perfurante e 1d4 de Veneno. A aranha dispara teia a 18 m (1d10 + 3 + círculo de dano Contundente, Deslocamento 0 até o próximo turno dela). A centopeia, como Ação Bônus, pode deixar uma criatura a até 3 m Envenenada se falhar numa salvaguarda de Constituição."
+  "higher": "Use o círculo do espaço como círculo da magia no bloco. Fera Grande: CA 11 + círculo; PV 30 + 10 por círculo acima do 4º; Deslocamento e escalada 12 m, e voo 12 m só para a vespa. Faz ataques iguais à metade do círculo. Ferrão: bônus igual ao seu ataque mágico, alcance 3 m, causa 1d6 + 3 + círculo de dano Perfurante e 1d4 de Veneno. A aranha dispara teia a 18 m (1d10 + 3 + círculo de dano Contundente, Deslocamento 0 até o próximo turno dela). A centopeia, como Ação Bônus, pode deixar uma criatura a até 3 m Envenenada se falhar numa salvaguarda de Constituição.",
+  "dmgChip": "1d6+3"
  },
  {
   "id": "glibness",
@@ -6373,7 +6629,14 @@
   "dur": "Concentração, até 1 minuto",
   "conc": true,
   "ritual": false,
-  "r": [],
+  "r": [
+   {
+    "t": "aux",
+    "d": "1d4",
+    "label": "Soma ao teste de atributo",
+    "depois": true
+   }
+  ],
   "desc": [
    "Você toca uma criatura voluntária e escolhe uma perícia. Até a magia terminar, a criatura soma 1d4 a qualquer teste de atributo que use essa perícia."
   ],
@@ -6819,7 +7082,14 @@
   "dur": "Instantânea",
   "conc": false,
   "ritual": false,
-  "r": [],
+  "r": [
+   {
+    "t": "dmg",
+    "d": "2d10",
+    "type": "PV máximos",
+    "heal": true
+   }
+  ],
   "desc": [
    "Você conjura um banquete numa superfície, num Cubo desocupado de 3 m ao seu lado. Comer leva 1 hora, e os benefícios só começam depois disso, quando o banquete desaparece. Até doze criaturas podem participar.",
    "Quem participa ganha benefícios por 24 horas: Resistência a dano de Veneno, Imunidade às condições Amedrontado e Envenenado, e aumento de 2d10 nos Pontos de Vida máximos, recuperando a mesma quantidade."
@@ -6838,6 +7108,7 @@
   "material": "uma tigela incrustada de gemas que valha 1.000 PO ou mais, consumida pela magia",
   "matGp": 1000,
   "matUsed": true,
+  "dmgChip": "2d10",
   "area": {
    "shape": "Cubo",
    "feet": 10,
@@ -6895,7 +7166,9 @@
    {
     "t": "dmg",
     "d": "1d6",
-    "type": "Necrótico"
+    "type": "Necrótico",
+    "depois": true,
+    "label": "Ao atingir o alvo"
    }
   ],
   "desc": [
@@ -7102,7 +7375,9 @@
    {
     "t": "dmg",
     "d": "1d6",
-    "type": "Energético"
+    "type": "Energético",
+    "depois": true,
+    "label": "Ao atingir o alvo"
    }
   ],
   "desc": [
@@ -7191,21 +7466,23 @@
     "t": "atk"
    },
    {
+    "t": "dmg",
+    "d": "1d10",
+    "type": "Perfurante",
+    "crit": true,
+    "label": "No alvo, se acertar"
+   },
+   {
     "t": "save",
     "a": "DES"
    },
    {
     "t": "dmg",
-    "d": "1d10",
-    "type": "Perfurante",
-    "crit": true
-   },
-   {
-    "t": "dmg",
     "d": "2d6",
     "type": "Frio",
-    "crit": true,
-    "up": "1d6"
+    "up": "1d6",
+    "gate": "save",
+    "label": "Explosão, acertando ou errando"
    }
   ],
   "desc": [
@@ -8308,7 +8585,12 @@
   },
   "ptOk": true,
   "higher": "A magia cria mais um dardo para cada círculo do espaço de magia acima do 1º.",
-  "dmgChip": "1d4+1"
+  "dmgChip": "1d4+1",
+  "inst": {
+   "n": 3,
+   "up": 1,
+   "rotulo": "Dardo"
+  }
  },
  {
   "id": "magic-mouth",
@@ -8689,7 +8971,9 @@
    {
     "t": "dmg",
     "d": "6d6",
-    "type": "Energético"
+    "type": "Energético",
+    "depois": true,
+    "label": "Se a pedra for destruída"
    }
   ],
   "desc": [
@@ -9369,7 +9653,9 @@
    {
     "t": "dmg",
     "d": "2d8",
-    "type": "Psíquico"
+    "type": "Psíquico",
+    "depois": true,
+    "label": "Em cada um dos seus turnos"
    }
   ],
   "desc": [
@@ -9952,19 +10238,14 @@
     "a": "DES"
    },
    {
-    "t": "save",
-    "a": "CON"
+    "t": "aux",
+    "d": "1d8",
+    "label": "Cor que atinge cada alvo"
    },
    {
     "t": "dmg",
     "d": "12d6",
-    "type": "Ácido",
-    "half": true
-   },
-   {
-    "t": "dmg",
-    "d": "12d6",
-    "type": "Veneno",
+    "type": "Elemento escolhido",
     "half": true
    }
   ],
@@ -9994,7 +10275,14 @@
    "shape": "Cone",
    "feet": 60,
    "text": "Cone de 18 m"
-  }
+  },
+  "choice": [
+   "Fogo",
+   "Ácido",
+   "Elétrico",
+   "Veneno",
+   "Frio"
+  ]
  },
  {
   "id": "prismatic-wall",
@@ -10015,23 +10303,15 @@
   "r": [
    {
     "t": "save",
-    "a": "CON"
-   },
-   {
-    "t": "save",
     "a": "DES"
    },
    {
     "t": "dmg",
     "d": "12d6",
-    "type": "Ácido",
-    "half": true
-   },
-   {
-    "t": "dmg",
-    "d": "12d6",
-    "type": "Veneno",
-    "half": true
+    "type": "Elemento escolhido",
+    "half": true,
+    "depois": true,
+    "label": "Por camada atravessada"
    }
   ],
   "desc": [
@@ -10059,7 +10339,14 @@
    "time": "Action"
   },
   "ptOk": true,
-  "dmgChip": "12d6"
+  "dmgChip": "12d6",
+  "choice": [
+   "Fogo",
+   "Ácido",
+   "Elétrico",
+   "Veneno",
+   "Frio"
+  ]
  },
  {
   "id": "private-sanctum",
@@ -10434,6 +10721,12 @@
    {
     "t": "save",
     "a": "CON"
+   },
+   {
+    "t": "aux",
+    "d": "1d8",
+    "label": "O alvo subtrai das jogadas de dano",
+    "depois": true
    }
   ],
   "desc": [
@@ -10516,7 +10809,7 @@
   "r": [
    {
     "t": "dmg",
-    "d": "4d8",
+    "d": "4d8+15",
     "type": "Cura",
     "heal": true
    }
@@ -10535,7 +10828,7 @@
   },
   "ptOk": true,
   "material": "uma roda de orações",
-  "dmgChip": "4d8"
+  "dmgChip": "4d8+15"
  },
  {
   "id": "ray-of-sickness",
@@ -10596,7 +10889,13 @@
   "dur": "Instantânea",
   "conc": false,
   "ritual": false,
-  "r": [],
+  "r": [
+   {
+    "t": "aux",
+    "d": "1d10",
+    "label": "Espécie do novo corpo"
+   }
+  ],
   "desc": [
    "Você toca um Humanoide morto ou parte dele. Se a morte ocorreu há até 10 dias, a magia forma um novo corpo e chama a alma para ele. Role 1d10 para definir a espécie do corpo, ou o Mestre escolhe outra espécie jogável: 1 role de novo; 2 Draconato; 3 Anão; 4 Elfo; 5 Gnomo; 6 Golias; 7 Pequenino; 8 Humano; 9 Orc; 10 Tiferino.",
    "A criatura faz as escolhas que a descrição da espécie oferecer e se lembra da vida anterior. Mantém as capacidades que tinha, mas perde os traços da espécie antiga e ganha os da nova."
@@ -10708,7 +11007,14 @@
   "dur": "Concentração, até 1 minuto",
   "conc": true,
   "ritual": false,
-  "r": [],
+  "r": [
+   {
+    "t": "aux",
+    "d": "1d4",
+    "label": "Reduz o dano sofrido",
+    "depois": true
+   }
+  ],
   "desc": [
    "Você toca uma criatura voluntária e escolhe um tipo de dano: Ácido, Contundente, Frio, Fogo, Elétrico, Necrótico, Perfurante, Veneno, Radiante, Cortante ou Trovejante. Quando a criatura sofrer dano desse tipo antes de a magia terminar, ela reduz o dano total em 1d4. Uma criatura só se beneficia desta magia uma vez por turno."
   ],
@@ -10975,7 +11281,8 @@
     "t": "dmg",
     "d": "2d6",
     "type": "Fogo",
-    "crit": true
+    "crit": true,
+    "label": "Por raio · 3 raios, +1 por círculo acima"
    }
   ],
   "desc": [
@@ -10992,7 +11299,12 @@
   },
   "ptOk": true,
   "higher": "Você cria um raio adicional para cada círculo do espaço de magia acima do 2º.",
-  "dmgChip": "2d6"
+  "dmgChip": "2d6",
+  "inst": {
+   "n": 3,
+   "up": 1,
+   "rotulo": "Raio"
+  }
  },
  {
   "id": "scrying",
@@ -11447,7 +11759,26 @@
   "dur": "1 minuto",
   "conc": false,
   "ritual": false,
-  "r": [],
+  "r": [
+   {
+    "t": "atk",
+    "label": "Ataque com o cajado"
+   },
+   {
+    "t": "dmg",
+    "d": "1d8",
+    "tiers": [
+     "1d8",
+     "1d10",
+     "1d12",
+     "2d6"
+    ],
+    "type": "Energético",
+    "addMod": true,
+    "crit": true,
+    "depois": true
+   }
+  ],
   "desc": [
    "Uma Clava ou um Bordão que você esteja segurando é imbuído do poder da natureza. Pela duração, você pode usar seu atributo de conjuração em vez de Força nas jogadas de ataque e de dano corpo a corpo com essa arma, e o dado de dano dela vira d8. Se o ataque causar dano, ele pode ser Energético ou do tipo normal da arma, à sua escolha.",
    "A magia termina antes se você conjurá-la de novo ou se soltar a arma."
@@ -11464,7 +11795,8 @@
   },
   "ptOk": true,
   "material": "visco",
-  "upgrade": "O dado de dano muda quando você atinge os níveis 5 (d10), 11 (d12) e 17 (2d6)."
+  "upgrade": "O dado de dano muda quando você atinge os níveis 5 (d10), 11 (d12) e 17 (2d6).",
+  "dmgChip": "1d8"
  },
  {
   "id": "shining-smite",
@@ -11826,6 +12158,16 @@
   "r": [
    {
     "t": "atk"
+   },
+   {
+    "t": "dmg",
+    "d": "1d8",
+    "type": "Elemento escolhido",
+    "crit": true,
+    "cantrip": "1d8",
+    "explode": 8,
+    "maxMod": true,
+    "label": "Cada 8 rola outro d8"
    }
   ],
   "desc": [
@@ -11843,7 +12185,17 @@
    "time": "Action"
   },
   "ptOk": true,
-  "upgrade": "O dano aumenta em 1d8 quando você atinge os níveis 5 (2d8), 11 (3d8) e 17 (4d8)."
+  "upgrade": "O dano aumenta em 1d8 quando você atinge os níveis 5 (2d8), 11 (3d8) e 17 (4d8).",
+  "dmgChip": "1d8",
+  "choice": [
+   "Ácido",
+   "Frio",
+   "Fogo",
+   "Elétrico",
+   "Veneno",
+   "Psíquico",
+   "Trovejante"
+  ]
  },
  {
   "id": "spare-the-dying",
@@ -12044,7 +12396,9 @@
    {
     "t": "dmg",
     "d": "2d4",
-    "type": "Perfurante"
+    "type": "Perfurante",
+    "depois": true,
+    "label": "A cada 1,5 m percorridos"
    }
   ],
   "desc": [
@@ -12093,15 +12447,9 @@
    {
     "t": "dmg",
     "d": "3d8",
-    "type": "Radiante",
+    "type": "Elemento escolhido",
     "half": true,
     "up": "1d8"
-   },
-   {
-    "t": "dmg",
-    "d": "3d8",
-    "type": "Necrótico",
-    "half": true
    }
   ],
   "desc": [
@@ -12126,7 +12474,11 @@
    "shape": "Emanação",
    "feet": 15,
    "text": "Emanação de 4,5 m"
-  }
+  },
+  "choice": [
+   "Radiante",
+   "Necrótico"
+  ]
  },
  {
   "id": "spiritual-weapon",
@@ -12146,6 +12498,14 @@
   "r": [
    {
     "t": "atk"
+   },
+   {
+    "t": "dmg",
+    "d": "1d8",
+    "type": "Energético",
+    "addMod": true,
+    "crit": true,
+    "up": "1d8"
    }
   ],
   "desc": [
@@ -12163,7 +12523,8 @@
    "time": "Bonus Action"
   },
   "ptOk": true,
-  "higher": "O dano aumenta em 1d8 para cada círculo do espaço de magia acima do 2º."
+  "higher": "O dano aumenta em 1d8 para cada círculo do espaço de magia acima do 2º.",
+  "dmgChip": "1d8"
  },
  {
   "id": "starry-wisp",
@@ -12344,38 +12705,43 @@
     "a": "CON"
    },
    {
-    "t": "save",
-    "a": "DES"
-   },
-   {
     "t": "dmg",
     "d": "2d6",
     "type": "Trovejante",
-    "half": true
+    "alt": "Trovão inicial",
+    "gate": "save"
    },
    {
     "t": "dmg",
     "d": "4d6",
     "type": "Ácido",
-    "half": true
+    "alt": "Turno 2: chuva ácida",
+    "gate": "none"
+   },
+   {
+    "t": "save",
+    "a": "DES"
    },
    {
     "t": "dmg",
     "d": "10d6",
     "type": "Elétrico",
-    "half": true
+    "half": true,
+    "alt": "Turno 3: relâmpagos"
    },
    {
     "t": "dmg",
     "d": "2d6",
     "type": "Contundente",
-    "half": true
+    "alt": "Turno 4: granizo",
+    "gate": "none"
    },
    {
     "t": "dmg",
     "d": "1d6",
     "type": "Frio",
-    "half": true
+    "alt": "Turnos 5 a 10: chuva gelada",
+    "gate": "none"
    }
   ],
   "desc": [
@@ -12459,7 +12825,24 @@
   "dur": "Concentração, até 1 hora",
   "conc": true,
   "ritual": false,
-  "r": [],
+  "r": [
+   {
+    "t": "dmg",
+    "d": "1d6+4",
+    "type": "Perfurante",
+    "addSlot": true,
+    "alt": "Rasgar",
+    "depois": true
+   },
+   {
+    "t": "dmg",
+    "d": "2d6",
+    "type": "Elemento escolhido",
+    "half": true,
+    "alt": "Sopro",
+    "depois": true
+   }
+  ],
   "desc": [
    "Você chama um espírito de Dragão. Ele surge num espaço desocupado que você possa ver dentro do alcance e usa o bloco de estatísticas de Espírito Dracônico. Desaparece ao chegar a 0 Pontos de Vida ou quando a magia termina.",
    "Ele é aliado de você e dos seus aliados. Em combate, divide sua Iniciativa, mas age logo depois de você. Obedece às suas ordens verbais, sem você gastar ação. Sem ordens, usa a ação Esquivar e o movimento para evitar perigo."
@@ -12478,7 +12861,15 @@
   "material": "um objeto com a imagem de um dragão gravada que valha 500 PO ou mais",
   "matGp": 500,
   "matUsed": false,
-  "higher": "Use o círculo do espaço como círculo da magia no bloco. Dragão Grande: CA 14 + círculo; PV 50 + 10 por círculo acima do 5º; Deslocamento 9 m, voo 18 m, natação 9 m; Resistência a Ácido, Frio, Fogo, Elétrico e Veneno. Ao invocar, escolha uma dessas Resistências para você ter até a magia terminar. Faz ataques de Rasgar iguais à metade do círculo e usa a Arma de Sopro. Rasgar: bônus igual ao seu ataque mágico, alcance 3 m, 1d6 + 4 + círculo de dano Perfurante. Sopro: Cone de 9 m, salvaguarda de Destreza contra a CD das suas magias, 2d6 de um tipo ao qual ele resiste (escolhido ao conjurar), metade se passar."
+  "higher": "Use o círculo do espaço como círculo da magia no bloco. Dragão Grande: CA 14 + círculo; PV 50 + 10 por círculo acima do 5º; Deslocamento 9 m, voo 18 m, natação 9 m; Resistência a Ácido, Frio, Fogo, Elétrico e Veneno. Ao invocar, escolha uma dessas Resistências para você ter até a magia terminar. Faz ataques de Rasgar iguais à metade do círculo e usa a Arma de Sopro. Rasgar: bônus igual ao seu ataque mágico, alcance 3 m, 1d6 + 4 + círculo de dano Perfurante. Sopro: Cone de 9 m, salvaguarda de Destreza contra a CD das suas magias, 2d6 de um tipo ao qual ele resiste (escolhido ao conjurar), metade se passar.",
+  "dmgChip": "1d6+4",
+  "choice": [
+   "Ácido",
+   "Frio",
+   "Fogo",
+   "Elétrico",
+   "Veneno"
+  ]
  },
  {
   "id": "sunbeam",
@@ -12764,9 +13155,16 @@
   "ritual": false,
   "r": [
    {
+    "t": "aux",
+    "d": "1d100",
+    "label": "O Mestre rola a precisão"
+   },
+   {
     "t": "dmg",
     "d": "3d10",
-    "type": "Energético"
+    "type": "Energético",
+    "depois": true,
+    "label": "Acidente"
    }
   ],
   "desc": [
@@ -12956,7 +13354,13 @@
   "dur": "Instantânea",
   "conc": false,
   "ritual": false,
-  "r": [],
+  "r": [
+   {
+    "t": "aux",
+    "d": "1d4+1",
+    "label": "Turnos seguidos"
+   }
+  ],
   "desc": [
    "Você para por um instante o fluxo do tempo para todos, menos você. Nenhum tempo passa para as outras criaturas, e você faz 1d4 + 1 turnos seguidos, podendo usar ações e se mover normalmente.",
    "A magia termina se uma ação sua nesse período, ou um efeito criado por você, afetar outra criatura ou um objeto vestido ou carregado por outra pessoa. Também termina se você for a mais de 300 m do local da conjuração."
@@ -13257,7 +13661,60 @@
   "dur": "Instantânea",
   "conc": false,
   "ritual": false,
-  "r": [],
+  "r": [
+   {
+    "t": "atk",
+    "label": "Ataque com a arma"
+   },
+   {
+    "t": "dmg",
+    "d": "1d4",
+    "type": "Da arma",
+    "addMod": true,
+    "crit": true,
+    "alt": "Arma d4"
+   },
+   {
+    "t": "dmg",
+    "d": "1d6",
+    "type": "Da arma",
+    "addMod": true,
+    "crit": true,
+    "alt": "Arma d6"
+   },
+   {
+    "t": "dmg",
+    "d": "1d8",
+    "type": "Da arma",
+    "addMod": true,
+    "crit": true,
+    "alt": "Arma d8"
+   },
+   {
+    "t": "dmg",
+    "d": "1d10",
+    "type": "Da arma",
+    "addMod": true,
+    "crit": true,
+    "alt": "Arma d10"
+   },
+   {
+    "t": "dmg",
+    "d": "1d12",
+    "type": "Da arma",
+    "addMod": true,
+    "crit": true,
+    "alt": "Arma d12"
+   },
+   {
+    "t": "dmg",
+    "d": "0d6",
+    "type": "Radiante",
+    "cantrip": "1d6",
+    "crit": true,
+    "label": "Extra do truque"
+   }
+  ],
   "desc": [
    "Guiado por um lampejo de intuição mágica, você faz um ataque com a arma usada na conjuração. O ataque usa seu atributo de conjuração nas jogadas de ataque e de dano, em vez de Força ou Destreza. Se causar dano, ele pode ser Radiante ou do tipo normal da arma, à sua escolha."
   ],
@@ -13272,7 +13729,8 @@
   },
   "ptOk": true,
   "material": "uma arma na qual você tenha proficiência e que valha 1 PC ou mais",
-  "upgrade": "Seja qual for o tipo de dano escolhido, o ataque causa dano Radiante adicional quando você atinge os níveis 5 (1d6), 11 (2d6) e 17 (3d6)."
+  "upgrade": "Seja qual for o tipo de dano escolhido, o ataque causa dano Radiante adicional quando você atinge os níveis 5 (1d6), 11 (2d6) e 17 (3d6).",
+  "dmgChip": "1d4"
  },
  {
   "id": "tsunami",
@@ -13298,13 +13756,15 @@
     "t": "dmg",
     "d": "6d10",
     "type": "Contundente",
-    "half": true
+    "half": true,
+    "alt": "Primeiro impacto"
    },
    {
     "t": "dmg",
     "d": "5d10",
     "type": "Contundente",
-    "half": true
+    "alt": "Ao ser levado",
+    "gate": "save"
    }
   ],
   "desc": [
@@ -13480,12 +13940,16 @@
     "t": "dmg",
     "d": "10d4",
     "type": "Ácido",
-    "up": "2d4"
+    "half": true,
+    "up": "2d4",
+    "alt": "Na explosão"
    },
    {
     "t": "dmg",
     "d": "5d4",
-    "type": "Ácido"
+    "type": "Ácido",
+    "gate": "save",
+    "alt": "No fim do próximo turno"
    }
   ],
   "desc": [
@@ -13615,21 +14079,24 @@
     "a": "DES"
    },
    {
+    "t": "dmg",
+    "d": "10d6",
+    "type": "Frio",
+    "half": true,
+    "up": "2d6",
+    "alt": "Ao surgir"
+   },
+   {
     "t": "save",
     "a": "CON"
    },
    {
     "t": "dmg",
-    "d": "10d6",
-    "type": "Frio",
-    "half": true,
-    "up": "2d6"
-   },
-   {
-    "t": "dmg",
     "d": "5d6",
     "type": "Frio",
-    "half": true
+    "half": true,
+    "up": "1d6",
+    "alt": "Ao atravessar o ar gélido"
    }
   ],
   "desc": [
@@ -13725,13 +14192,17 @@
     "t": "dmg",
     "d": "7d8",
     "type": "Perfurante",
-    "half": true
+    "half": true,
+    "up": "1d8",
+    "alt": "Ao surgir"
    },
    {
     "t": "dmg",
     "d": "7d8",
     "type": "Cortante",
-    "half": true
+    "half": true,
+    "up": "1d8",
+    "alt": "Ao atravessar"
    }
   ],
   "desc": [
@@ -13885,7 +14356,9 @@
    {
     "t": "dmg",
     "d": "2d4",
-    "type": "Fogo"
+    "type": "Fogo",
+    "depois": true,
+    "label": "Teia em chamas"
    }
   ],
   "desc": [
@@ -13942,13 +14415,15 @@
     "t": "dmg",
     "d": "10d10",
     "type": "Psíquico",
-    "half": true
+    "half": true,
+    "alt": "Ao conjurar"
    },
    {
     "t": "dmg",
     "d": "5d10",
     "type": "Psíquico",
-    "half": true
+    "gate": "save",
+    "alt": "No fim de cada turno"
    }
   ],
   "desc": [
@@ -14074,7 +14549,9 @@
    {
     "t": "dmg",
     "d": "1d10",
-    "type": "Necrótico"
+    "type": "Necrótico",
+    "depois": true,
+    "label": "Por círculo, ao conjurar depois do desgaste"
    }
   ],
   "desc": [

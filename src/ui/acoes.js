@@ -13,12 +13,8 @@ function toggleMenu(force) {
   m.hidden = !open; $('[data-action="menu"]').setAttribute('aria-expanded', open);
 }
 function exportData() {
-  flushNote();
-  const notesOut = { ...notes, notes: notes.notes.map(({ text, ...n }) => n) };
-  const blob = new Blob([JSON.stringify({ app: CHAR.storageKey, exported: new Date().toISOString(), state, notes: notesOut }, null, 2)], { type: 'application/json' });
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob); a.download = `soren-frostgaard-backup-${new Date().toISOString().slice(0, 10)}.json`;
-  document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+  flushNote(); save();
+  downloadJSON(`grimorio-backup-${today()}.json`, { app: 'grimorio', tipo: 'backup', exported: new Date().toISOString(), store });
   toast('Backup exportado', false);
 }
 const clampRes = (id, v) => Math.min(RES[id].max, Math.max(0, v));

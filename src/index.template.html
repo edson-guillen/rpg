@@ -26,6 +26,7 @@
 <div class="aurora" aria-hidden="true"><i></i><i></i><i></i></div>
 <canvas id="snow" aria-hidden="true"></canvas>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-copy" viewBox="0 0 24 24"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15H4a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v1"/></symbol>
   <symbol id="i-gem" viewBox="0 0 24 24"><path d="M6 3h12l4 6-10 12L2 9z"/><path d="M2 9h20M12 21 8 9l4-6 4 6z"/></symbol>
   <symbol id="i-book" viewBox="0 0 24 24"><path d="M4 4.5A2.5 2.5 0 0 1 6.5 2H20v17H6.5A2.5 2.5 0 0 0 4 21.5z"/><path d="M4 19.5v-15M8 7h8M8 11h6"/></symbol>
   <symbol id="i-flame" viewBox="0 0 24 24"><path d="M12 2c1 4 6 6 6 12a6 6 0 0 1-12 0c0-3 2-5 3-6 0 2 1 3 2 3 0-4 1-6 1-9z"/></symbol>
@@ -75,14 +76,14 @@
         </svg>
       </div>
       <div class="hero-id">
-        <p class="eyebrow">D&amp;D 2024 · Grimório Dracônico</p>
-        <h1>Søren Frostgaard</h1>
-        <p class="sub">Golias (Gigante das Nuvens) · Feiticeiro Dracônico · Nível 4</p>
+        <p class="eyebrow" id="char-eyebrow">D&amp;D 2024 · Grimório Dracônico</p>
+        <h1><button class="char-name" data-action="chars" aria-haspopup="dialog" title="Trocar de personagem"><span id="char-name-txt">Søren Frostgaard</span><svg class="ic" aria-hidden="true"><use href="#i-chev"/></svg></button></h1>
+        <p class="sub" id="char-sub">Golias (Gigante das Nuvens) · Feiticeiro Dracônico · Nível 4</p>
       </div>
       <button class="icon-btn" data-action="menu" aria-label="Opções" aria-haspopup="true" aria-expanded="false"><svg class="ic"><use href="#i-dots"/></svg></button>
     </div>
     <div class="menu" id="menu" hidden role="menu">
-      <button role="menuitem" data-action="export"><svg class="ic"><use href="#i-down"/></svg>Exportar backup (.json)</button>
+      <button role="menuitem" data-action="export"><svg class="ic"><use href="#i-down"/></svg>Exportar tudo (.json)</button>
       <button role="menuitem" data-action="import"><svg class="ic"><use href="#i-up"/></svg>Importar backup</button>
       <hr>
       <button role="menuitem" class="danger" data-action="reset"><svg class="ic"><use href="#i-trash"/></svg>Restaurar ficha original</button>
@@ -172,7 +173,7 @@
     <!-- ======================= MOCHILA ======================= -->
     <section class="panel-tab" id="tab-mochila" role="tabpanel" aria-labelledby="t-mochila">
       <div class="panel">
-        <div class="panel-h"><h2>Inventário</h2><span class="rule"></span><span class="aside">Carga máx. 120 kg · toque no nome para editar</span></div>
+        <div class="panel-h"><h2>Inventário</h2><span class="rule"></span><span class="aside" id="carry-aside">Carga máx. 120 kg · toque no nome para editar</span></div>
         <div id="items"></div>
         <div class="add-row"><button class="btn block" data-action="item-new"><svg class="ic"><use href="#i-plus"/></svg>Adicionar item</button></div>
       </div>
@@ -183,6 +184,7 @@
       <div class="notes" id="notes">
         <aside class="panel nl" aria-label="Lista de anotações">
           <div class="panel-h"><h2>Anotações</h2><span class="rule"></span><button class="btn sm gold" data-action="note-new"><svg class="ic"><use href="#i-plus"/></svg>Nova nota</button></div>
+          <div class="nscope" id="note-scope" role="group" aria-label="De quem são as notas"></div>
           <div class="search nsearch">
             <svg class="ic"><use href="#i-search"/></svg>
             <input id="nq" type="search" placeholder="Buscar no título ou no texto…" autocomplete="off" aria-label="Buscar anotações">

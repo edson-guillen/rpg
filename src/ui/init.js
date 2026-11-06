@@ -41,11 +41,27 @@ $('#file').addEventListener('change', async e => {
   if (!f) return;
   try {
     const data = JSON.parse(await f.text()), raw = data.state || data;
+    if (data.app === 'grimorio' && data.tipo === 'backup') {
+      const next = sanitizeStore(data.store);
+      if (!next) throw new Error('formato');
+      flushNote(); save();
+      localStorage.setItem(STORE_KEY + '-antes-de-importar', JSON.stringify(store));
+      store = next;
+      activateCharacter(store.activeId);
+      toast('Backup importado', false);
+      return;
+    }
+    if (data.app === 'grimorio' && data.tipo === 'personagem') {
+      const c = sanitizeCharacter(data.character);
+      if (!c) throw new Error('formato');
+      addCharacter({ ...c, id: newId('c') });
+      toast(`${c.name} importado`, false);
+      return;
+    }
     if (typeof raw !== 'object' || !raw.res) throw new Error('formato');
     commit(data.notes ? 'Backup importado (ficha e anotações)' : 'Backup importado', st => { const ui = st.ui; Object.assign(st, sanitize(raw), { ui }); });
     if (data.notes) { notes = sanitizeNotes(data.notes); saveNotes(); initNotes(); }
   } catch (err) { toast('Arquivo de backup inválido', false); }
 });
 document.addEventListener('toggle', e => { if (e.target.classList?.contains('sp-rules')) spRulesOpen = e.target.open; }, true);
-window.addEventListener('storage', e => { if (e.key === CHAR.storageKey) { const ui = state.ui; state = load(); state.ui = ui; render(); } });
 

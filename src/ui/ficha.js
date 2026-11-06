@@ -19,10 +19,10 @@ function renderFicha() {
       <div class="atk-c">Acerto: ${w.calc} · ${w.type} · média ${decimal(avgOf(w.dmg))}</div></div>`).join('');
 
   const rows = [
-    ['Classe de Armadura', ac(), `10 + DES 2 + CAR 4 (Resiliência Dracônica)${state.fx.shield ? ' + 5 Escudo Arcano' : ' · 21 com Escudo Arcano'}`, state.fx.shield],
-    ['Pontos de Vida', s.hpMax, '8 (nv 1: 6 + CON 2) + 18 (3 × [4 + CON 2]) + 4 (Resiliência Dracônica)'],
-    ['CD de Magia', dc(), `8 + BP 2 + CAR 4${state.fx.innate ? ' + 1 Feitiçaria Inata' : ' · 15 com Feitiçaria Inata'}`, state.fx.innate],
-    ['Ataque Mágico', sign(s.atk), `BP 2 + CAR 4${state.fx.innate ? ' · com Vantagem' : ' · Vantagem com Feitiçaria Inata'}`, state.fx.innate],
+    ['Classe de Armadura', ac(), `${CHAR.calc.ac}${state.fx.shield ? ` + ${s.shieldBonus} Escudo Arcano` : ` · ${s.ac + s.shieldBonus} com Escudo Arcano`}`, state.fx.shield],
+    ['Pontos de Vida', s.hpMax, CHAR.calc.hp],
+    ['CD de Magia', dc(), `${CHAR.calc.dc}${state.fx.innate ? ' + 1 Feitiçaria Inata' : ` · ${s.dc + 1} com Feitiçaria Inata`}`, state.fx.innate],
+    ['Ataque Mágico', sign(s.atk), `${CHAR.calc.atk}${state.fx.innate ? ' · com Vantagem' : ' · Vantagem com Feitiçaria Inata'}`, state.fx.innate],
     ['Iniciativa', sign(s.init), 'DES 2'],
     ['Percepção Passiva', 10 + modOf(abil('SAB').s), '10 + SAB 0'],
     ['Deslocamento', s.speed, '35 pés · Salto das Nuvens: 9 m'],

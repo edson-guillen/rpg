@@ -3,7 +3,6 @@
    Ficam fora do estado da ficha: não entram no "Desfazer" da ficha nem
    são apagadas ao restaurar a ficha original.
    ===================================================================== */
-const NOTES_KEY = CHAR.storageKey + '-notas';
 const TOPIC_COLORS = ['#d9b46c', '#9fdcff', '#88d8a6', '#ff9d8a', '#c7adff', '#d5dbe3', '#ffd28a', '#7fe0d0'];
 const uid = p => p + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
 
@@ -75,14 +74,21 @@ function sanitizeNotes(raw) {
   const ui = { topic: raw.ui?.topic === 'all' || ids.has(raw.ui?.topic) ? raw.ui.topic : 'all', open: notes.some(n => n.id === raw.ui?.open) ? raw.ui.open : null };
   return { v: 1, topics, notes, ui };
 }
+const inCampaign = () => store.settings.notesScope === 'camp';
 function loadNotes() {
-  try { const raw = localStorage.getItem(NOTES_KEY); return raw ? sanitizeNotes(JSON.parse(raw)) : sanitizeNotes(defaultNotes()); }
-  catch (e) { return sanitizeNotes(defaultNotes()); }
+  const raw = inCampaign() ? store.campaignNotes : activeChar().notes;
+  if (raw) return sanitizeNotes(raw);
+  const d = sanitizeNotes(defaultNotes());
+  if (inCampaign()) { d.notes = []; d.ui.open = null; }
+  return d;
 }
 let notes = loadNotes(), noteQuery = '', noteTimer = null, savedRange = null;
 function saveNotes() {
-  try { localStorage.setItem(NOTES_KEY, JSON.stringify({ v: notes.v, topics: notes.topics, notes: notes.notes.map(({ text, ...n }) => n), ui: notes.ui })); return true; }
-  catch (e) { toast('Não foi possível salvar as anotações: armazenamento do navegador cheio.', false); return false; }
+  const out = { v: notes.v, topics: notes.topics, notes: notes.notes.map(({ text, ...n }) => n), ui: notes.ui };
+  if (inCampaign()) store.campaignNotes = out; else activeChar().notes = out;
+  if (persistStore()) return true;
+  toast('Não foi possível salvar as anotações: armazenamento do navegador cheio.', false);
+  return false;
 }
 const topicOf = id => notes.topics.find(t => t.id === id) || notes.topics[0];
 const openNote = () => notes.notes.find(n => n.id === notes.ui.open) || null;
@@ -305,16 +311,8 @@ document.addEventListener('drop', e => {
 document.addEventListener('focusout', e => { if (e.target.id === 'ne-body' || e.target.id === 'ne-title') { if (noteTimer) flushNote(); } });
 document.addEventListener('visibilitychange', () => { if (document.hidden && noteTimer) flushNote(); });
 window.addEventListener('pagehide', () => { if (noteTimer) flushNote(); });
-window.addEventListener('storage', e => {
-  if (e.key !== NOTES_KEY) return;
-  notes = loadNotes(); renderNoteList();
-  if (!document.activeElement?.closest?.('#note-editor')) renderNoteEditor();
-});
 try { document.execCommand('defaultParagraphSeparator', false, 'p'); } catch (e) {}
 
 function initNotes() { renderNoteList(); renderNoteEditor(); }
 
-render();
-renderPassives();
-initNotes();
-setTab(state.ui.tab);
+refreshAll();

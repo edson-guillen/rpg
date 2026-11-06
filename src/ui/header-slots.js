@@ -11,7 +11,7 @@ function renderStats() {
       <div class="hint">${state.temp ? `+${state.temp} temp.` : 'ajustar'}</div></div>
     <div class="stat ${state.fx.innate ? 'boost' : ''}"><div class="lbl">CD Magia</div><div class="val num">${dc()}</div><div class="hint">${state.fx.innate ? 'F. Inata' : 'Carisma'}</div></div>
     <div class="stat ${state.fx.innate ? 'boost' : ''}"><div class="lbl">Ataque</div><div class="val num">${sign(s.atk)}</div><div class="hint">${state.fx.innate ? 'Vantagem' : 'mágico'}</div></div>`;
-  $('#substats').innerHTML = `<span>Iniciativa <b>${sign(s.init)}</b></span><span>Desloc. <b>${s.speed}</b></span><span>BP <b>${sign(s.pb)}</b></span><span>PF <b>${state.res.sp}/${RES.sp.max}</b></span><span>Salv. CON <b>${sign(s.conSave)}</b> <small>(V em conc.)</small></span>`;
+  $('#substats').innerHTML = `<span>Iniciativa <b>${sign(s.init)}</b></span><span>Desloc. <b>${s.speed}</b></span><span>BP <b>${sign(s.pb)}</b></span><span>PF <b>${state.res.sp}/${RES.sp.max}</b></span><span>Salv. CON <b>${sign(s.conSave)}</b>${CHAR.calc.concNote ? ' ' + CHAR.calc.concNote : ''}</span>`;
 }
 
 function renderEffects() {

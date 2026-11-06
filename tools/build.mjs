@@ -9,9 +9,9 @@ const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const src = f => fs.readFileSync(path.join(root, 'src', f), 'utf8');
 
 export const APP_FILES = [
-  'core/state.js', 'core/utils.js', 'core/dice.js',
+  'core/store.js', 'core/state.js', 'core/utils.js', 'core/dice.js',
   'ui/header-slots.js', 'ui/ficha.js', 'ui/grimorio.js', 'ui/recursos-mochila.js',
-  'ui/modais.js', 'ui/acoes.js', 'ui/init.js', 'notes/notes.js',
+  'ui/modais.js', 'ui/acoes.js', 'ui/init.js', 'notes/notes.js', 'ui/personagens.js',
 ];
 
 export function build() {

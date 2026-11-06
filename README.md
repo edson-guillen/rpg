@@ -81,8 +81,14 @@ Ficha de controle de **magias e recursos limitados** para **Søren Frostgaard**,
 - Texto colado entra **sem formatação**, e o conteúdo salvo passa por uma limpeza que só mantém a formatação do editor (nada de scripts ou estilos externos).
 - As anotações ficam num armazenamento separado da ficha: **Restaurar ficha original não as apaga**, e o backup do menu **⋮** as inclui.
 
+### 🧙 Personagens
+- Toque no **nome** no topo para trocar de personagem, criar um novo, duplicar, exportar ou excluir (com **Desfazer**).
+- Cada personagem tem ficha, recursos, inventário e anotações próprios.
+- Por enquanto, um personagem novo começa como Feiticeiro de nível 1 com ficha em branco. A criação guiada e a subida de nível vêm nas próximas etapas.
+
 ### 💾 Persistência
 - Tudo fica salvo automaticamente no **`localStorage`** do navegador e é restaurado ao reabrir a página.
+- Na primeira abertura desta versão, os dados antigos do Søren são copiados para o novo armazenamento (`grimorio-v3`). As chaves antigas continuam intactas como cópia de segurança.
 - **Desfazer** em toda ação (botão no aviso ou `Ctrl+Z`).
 - Menu **⋮** para **exportar/importar backup (.json)**, com ficha e anotações, e para restaurar a ficha original.
 
@@ -129,12 +135,26 @@ O antigo endereço `/beta/` redireciona para a página principal.
 
 ## 🛠️ Personalização
 
-Todos os dados ficam no início do `<script>`, em `index.html`:
+O `index.html` é **gerado**: não o edite direto. O código fica em `src/` e os dados do Søren em `src/data/soren.js`:
 
 - **`CHAR`**: atributos, perícias, ataques, espaços por círculo, recursos, metamagias, traços passivos e o inventário inicial. No inventário, a `key` liga o item às magias.
 - **`SPELLS`**: lista de magias com `time`, `range`, `comp`, `dur`, `conc`, `desc`, as rolagens em `r` (ataque, salvaguarda, dano, ampliação) e o componente rastreado em `mat`.
 
 Ao subir de nível, basta editar esses objetos, por exemplo `slots: { 1: 4, 2: 3, 3: 2 }` no nível 5. Se mudar a estrutura dos dados, troque também `storageKey` para começar com um estado limpo.
+
+---
+
+## 🧰 Desenvolvimento
+
+```bash
+npm install
+npm run build
+npm test
+```
+
+- `npm run build` monta o `index.html` único a partir de `src/`.
+- `npm test` gera o app e testa o resultado em celular e desktop, com e sem GSAP.
+- `npm run extract -- "<pasta dos livros>"` lê os seus PDFs e grava dados em `private/`, para uso pessoal. Essa pasta é ignorada pelo git: **nada dela pode ser publicado**.
 
 ---
 

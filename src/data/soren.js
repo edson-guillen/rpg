@@ -3,10 +3,15 @@
    Textos das magias: resumos parafraseados das regras de D&D 2024.
    "{CD}" nos textos é trocado pela CD atual (14, ou 15 com Feitiçaria Inata).
    ===================================================================== */
-const CHAR = {
-  storageKey: 'soren-frostgaard-nv4',
+const SOREN = {
   stats: { ac: 16, shieldBonus: 5, hpMax: 30, dc: 14, atk: 6, init: 2, speed: '10,5 m', pb: 2, cha: 4, conSave: 4 },
   hitDie: 6, conMod: 2,
+  calc: {
+    ac: '10 + DES 2 + CAR 4 (Resiliência Dracônica)',
+    hp: '8 (nv 1: 6 + CON 2) + 18 (3 × [4 + CON 2]) + 4 (Resiliência Dracônica)',
+    dc: '8 + BP 2 + CAR 4', atk: 'BP 2 + CAR 4',
+    concNote: '<small>(V em conc.)</small>'
+  },
   carry: '120 kg',
   abilities: [
     { k: 'FOR', n: 'Força', s: 8 },
@@ -105,7 +110,7 @@ const SCHOOL_ICON = { 'Abjuração':'i-shield','Adivinhação':'i-target','Encan
    { t:'dmg', d:'2d6', type, label, up:'1d6' (por círculo acima), half, crit, explode, max, orb }
    { t:'note', txt:'…' }
    mat: componente ligado ao inventário (key). required = precisa ter, não consome. */
-const SPELLS = [
+const SOREN_SPELLS = [
   /* ------------------------------ TRUQUES ------------------------------ */
   { id:'mind-sliver', name:'Talho Mental', en:'Mind Sliver', level:0, school:'Encantamento', isNew:true,
     time:'1 Ação', range:'18 m (60 pés)', comp:'V', dur:'1 rodada',

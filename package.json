@@ -10,6 +10,7 @@
     "test": "node tools/build.mjs && node tests/run.mjs"
   },
   "devDependencies": {
+    "gsap": "^3.12.5",
     "pdfjs-dist": "^4.10.38",
     "playwright": "^1.65.0"
   }

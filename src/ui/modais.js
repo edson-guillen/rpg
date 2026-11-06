@@ -22,7 +22,6 @@ const box = (h, body, cls = '') => `<div class="box ${cls}"><h5>${h}</h5>${body}
 
 /* ---------- Magia ---------- */
 let castMeta = new Set();
-const META = Object.fromEntries(CHAR.metamagic.map(m => [m.id, m]));
 const metaCost = () => [...castMeta].reduce((a, id) => a + META[id].cost, 0);
 
 let castMat = true;
@@ -107,7 +106,7 @@ function spellModal(id) {
       ${rollsSection(s)}
       <div class="m-body">${s.desc.map(P).join('')}${s.list ? `<ul>${s.list.map(li => `<li>${fmt(li)}</li>`).join('')}</ul>` : ''}${(s.desc2 || []).map(P).join('')}</div>
       ${s.upgrade ? box('Aprimoramento de Truque', fmt(s.upgrade)) : ''}${s.higher ? box('Em círculos superiores', fmt(s.higher)) : ''}
-      ${s.warn ? box('Atenção', fmt(s.warn), 'warn') : ''}${s.tactic ? box('Tática de Søren', fmt(s.tactic), 'tactic') : ''}
+      ${s.warn ? box('Atenção', fmt(s.warn), 'warn') : ''}${s.tactic ? box(`Tática de ${esc(activeChar().name.split(' ')[0])}`, fmt(s.tactic), 'tactic') : ''}
       ${castSection(s)}</div>`;
   });
 }

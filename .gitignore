@@ -15,6 +15,7 @@ node_modules/
 
 # Backups pessoais exportados pela ficha
 soren-frostgaard-backup-*.json
+grimorio-backup-*.json
 
 # Livros e dados extraídos: nunca versionar (repositório público)
 private/

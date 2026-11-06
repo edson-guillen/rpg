@@ -569,16 +569,31 @@ details.passive ul{padding-left:18px}
 .notes{display:grid;grid-template-columns:minmax(0,1fr);gap:14px}
 .nl,.ne{min-width:0}
 @media (min-width:900px){
-  .notes{grid-template-columns:340px minmax(0,1fr);align-items:start}
-  .nl{position:sticky;top:72px;max-height:calc(100vh - 92px);display:flex;flex-direction:column}
-  .note-list{overflow:auto;margin-right:-6px;padding-right:6px}
+  .notes{grid-template-columns:470px minmax(0,1fr);align-items:start}
+  .nl{position:sticky;top:72px;max-height:calc(100vh - 92px);display:grid;grid-template-columns:132px minmax(0,1fr);grid-template-rows:auto auto auto minmax(0,1fr);column-gap:10px}
+  .nl>.panel-h,.nl>.nscope,.nl>.nsearch{grid-column:1/-1}
+  .nl>.topics{flex-direction:column;flex-wrap:nowrap;align-items:stretch;margin:0;min-height:0;overflow:hidden auto}
+  .topics .filter{flex:none;justify-content:flex-start;text-align:left;border-radius:10px;width:100%;min-width:0;white-space:normal;overflow-wrap:anywhere;height:auto}
+  .note-list{overflow:auto;margin-right:-6px;padding-right:6px;min-height:0}
   .ne-back{display:none!important}
 }
 @media (max-width:899px){ .notes.has-open .nl{display:none} .notes:not(.has-open) .ne{display:none} }
 .nl .panel-h .btn{flex:none}
+.nscope{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
+.nscope .filter{min-height:38px;padding:3px 12px;font-size:14.5px;flex:1 1 auto;justify-content:center}
+.char-name{all:unset;cursor:pointer;display:inline-flex;align-items:center;gap:6px;max-width:100%;border-radius:8px}
+.char-name .ic{width:18px;height:18px;flex:none;transform:rotate(90deg);stroke:var(--gold-l);-webkit-text-fill-color:initial}
+.char-name:focus-visible{outline:2px solid var(--frost);outline-offset:3px}
+#char-name-txt{overflow:hidden;text-overflow:ellipsis}
+.char-list{display:grid;gap:8px}
+.char-row{display:flex;align-items:center;gap:6px;padding:6px;border:1px solid var(--line);border-radius:12px;background:var(--bg2)}
+.char-row.on{border-color:var(--gold-l)}
+.char-pick{all:unset;cursor:pointer;flex:1;min-width:0;display:grid;gap:1px;padding:6px 8px;border-radius:8px}
+.char-pick:focus-visible{outline:2px solid var(--frost)}
+.char-pick b{color:var(--gold-l);font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.char-pick small{color:var(--muted);font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .nsearch input{min-height:44px;font-size:16.5px;border-radius:12px}
-.topics{display:flex;gap:6px;overflow-x:auto;margin:10px -16px 12px;padding:0 16px 4px;scrollbar-width:none;flex:none}
-.topics::-webkit-scrollbar{display:none}
+.topics{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 12px;flex:none}
 .topics .filter{min-height:36px;padding:3px 12px;font-size:14.5px;display:inline-flex;align-items:center;gap:6px;flex:none}
 .topics .filter small{opacity:.7}
 .tdot{display:inline-block;flex:none;width:9px;height:9px;border-radius:50%;background:var(--c);box-shadow:0 0 6px var(--c)}
@@ -745,6 +760,7 @@ body::after{content:"";position:fixed;inset:0;z-index:300;pointer-events:none;op
 <div class="aurora" aria-hidden="true"><i></i><i></i><i></i></div>
 <canvas id="snow" aria-hidden="true"></canvas>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-copy" viewBox="0 0 24 24"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15H4a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v1"/></symbol>
   <symbol id="i-gem" viewBox="0 0 24 24"><path d="M6 3h12l4 6-10 12L2 9z"/><path d="M2 9h20M12 21 8 9l4-6 4 6z"/></symbol>
   <symbol id="i-book" viewBox="0 0 24 24"><path d="M4 4.5A2.5 2.5 0 0 1 6.5 2H20v17H6.5A2.5 2.5 0 0 0 4 21.5z"/><path d="M4 19.5v-15M8 7h8M8 11h6"/></symbol>
   <symbol id="i-flame" viewBox="0 0 24 24"><path d="M12 2c1 4 6 6 6 12a6 6 0 0 1-12 0c0-3 2-5 3-6 0 2 1 3 2 3 0-4 1-6 1-9z"/></symbol>
@@ -794,14 +810,14 @@ body::after{content:"";position:fixed;inset:0;z-index:300;pointer-events:none;op
         </svg>
       </div>
       <div class="hero-id">
-        <p class="eyebrow">D&amp;D 2024 · Grimório Dracônico</p>
-        <h1>Søren Frostgaard</h1>
-        <p class="sub">Golias (Gigante das Nuvens) · Feiticeiro Dracônico · Nível 4</p>
+        <p class="eyebrow" id="char-eyebrow">D&amp;D 2024 · Grimório Dracônico</p>
+        <h1><button class="char-name" data-action="chars" aria-haspopup="dialog" title="Trocar de personagem"><span id="char-name-txt">Søren Frostgaard</span><svg class="ic" aria-hidden="true"><use href="#i-chev"/></svg></button></h1>
+        <p class="sub" id="char-sub">Golias (Gigante das Nuvens) · Feiticeiro Dracônico · Nível 4</p>
       </div>
       <button class="icon-btn" data-action="menu" aria-label="Opções" aria-haspopup="true" aria-expanded="false"><svg class="ic"><use href="#i-dots"/></svg></button>
     </div>
     <div class="menu" id="menu" hidden role="menu">
-      <button role="menuitem" data-action="export"><svg class="ic"><use href="#i-down"/></svg>Exportar backup (.json)</button>
+      <button role="menuitem" data-action="export"><svg class="ic"><use href="#i-down"/></svg>Exportar tudo (.json)</button>
       <button role="menuitem" data-action="import"><svg class="ic"><use href="#i-up"/></svg>Importar backup</button>
       <hr>
       <button role="menuitem" class="danger" data-action="reset"><svg class="ic"><use href="#i-trash"/></svg>Restaurar ficha original</button>
@@ -891,7 +907,7 @@ body::after{content:"";position:fixed;inset:0;z-index:300;pointer-events:none;op
     <!-- ======================= MOCHILA ======================= -->
     <section class="panel-tab" id="tab-mochila" role="tabpanel" aria-labelledby="t-mochila">
       <div class="panel">
-        <div class="panel-h"><h2>Inventário</h2><span class="rule"></span><span class="aside">Carga máx. 120 kg · toque no nome para editar</span></div>
+        <div class="panel-h"><h2>Inventário</h2><span class="rule"></span><span class="aside" id="carry-aside">Carga máx. 120 kg · toque no nome para editar</span></div>
         <div id="items"></div>
         <div class="add-row"><button class="btn block" data-action="item-new"><svg class="ic"><use href="#i-plus"/></svg>Adicionar item</button></div>
       </div>
@@ -902,6 +918,7 @@ body::after{content:"";position:fixed;inset:0;z-index:300;pointer-events:none;op
       <div class="notes" id="notes">
         <aside class="panel nl" aria-label="Lista de anotações">
           <div class="panel-h"><h2>Anotações</h2><span class="rule"></span><button class="btn sm gold" data-action="note-new"><svg class="ic"><use href="#i-plus"/></svg>Nova nota</button></div>
+          <div class="nscope" id="note-scope" role="group" aria-label="De quem são as notas"></div>
           <div class="search nsearch">
             <svg class="ic"><use href="#i-search"/></svg>
             <input id="nq" type="search" placeholder="Buscar no título ou no texto…" autocomplete="off" aria-label="Buscar anotações">
@@ -930,10 +947,15 @@ body::after{content:"";position:fixed;inset:0;z-index:300;pointer-events:none;op
    Textos das magias: resumos parafraseados das regras de D&D 2024.
    "{CD}" nos textos é trocado pela CD atual (14, ou 15 com Feitiçaria Inata).
    ===================================================================== */
-const CHAR = {
-  storageKey: 'soren-frostgaard-nv4',
+const SOREN = {
   stats: { ac: 16, shieldBonus: 5, hpMax: 30, dc: 14, atk: 6, init: 2, speed: '10,5 m', pb: 2, cha: 4, conSave: 4 },
   hitDie: 6, conMod: 2,
+  calc: {
+    ac: '10 + DES 2 + CAR 4 (Resiliência Dracônica)',
+    hp: '8 (nv 1: 6 + CON 2) + 18 (3 × [4 + CON 2]) + 4 (Resiliência Dracônica)',
+    dc: '8 + BP 2 + CAR 4', atk: 'BP 2 + CAR 4',
+    concNote: '<small>(V em conc.)</small>'
+  },
   carry: '120 kg',
   abilities: [
     { k: 'FOR', n: 'Força', s: 8 },
@@ -1032,7 +1054,7 @@ const SCHOOL_ICON = { 'Abjuração':'i-shield','Adivinhação':'i-target','Encan
    { t:'dmg', d:'2d6', type, label, up:'1d6' (por círculo acima), half, crit, explode, max, orb }
    { t:'note', txt:'…' }
    mat: componente ligado ao inventário (key). required = precisa ter, não consome. */
-const SPELLS = [
+const SOREN_SPELLS = [
   /* ------------------------------ TRUQUES ------------------------------ */
   { id:'mind-sliver', name:'Talho Mental', en:'Mind Sliver', level:0, school:'Encantamento', isNew:true,
     time:'1 Ação', range:'18 m (60 pés)', comp:'V', dur:'1 rodada',
@@ -1191,12 +1213,108 @@ const SPELLS = [
 <script>
 'use strict';
 /* =====================================================================
+   BIBLIOTECA DE PERSONAGENS (store v3)
+   Guarda todos os personagens, as notas de campanha e a biblioteca.
+   Na primeira abertura, copia os dados antigos do Søren para cá. As
+   chaves antigas não são alteradas e continuam como cópia de segurança.
+   ===================================================================== */
+const STORE_KEY = 'grimorio-v3';
+const LEGACY_KEY = 'soren-frostgaard-nv4';
+const LEGACY_NOTES_KEY = LEGACY_KEY + '-notas';
+
+const newId = p => p + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+const clone = o => JSON.parse(JSON.stringify(o));
+const readJSON = k => { try { return JSON.parse(localStorage.getItem(k)); } catch (e) { return null; } };
+
+function sorenCharacter(st = null, nt = null) {
+  return {
+    id: 'soren', name: 'Søren Frostgaard', sub: 'Golias (Gigante das Nuvens) · Feiticeiro Dracônico · Nível 4',
+    template: 'soren', classId: 'sorcerer', subclassId: 'draconic', level: 4, state: st, notes: nt
+  };
+}
+
+/** Ficha mínima de Feiticeiro nível 1, usada até existir o assistente de criação. */
+function blankSheet() {
+  const base = clone(SOREN), res = id => base.resources.find(r => r.id === id);
+  return {
+    ...base,
+    stats: { ac: 10, shieldBonus: 5, hpMax: 6, dc: 10, atk: 2, init: 0, speed: '9 m', pb: 2, cha: 0, conSave: 2 },
+    conMod: 0, carry: '',
+    calc: { ac: '10 + DES', hp: '6 + CON', dc: '8 + BP + CAR', atk: 'BP + CAR' },
+    abilities: base.abilities.map(({ k, n, prof }) => ({ k, n, s: 10, ...(prof ? { prof } : {}) })),
+    skills: base.skills.map(([n, a]) => [n, a]),
+    tools: [], attacks: [], slots: { 1: 2 }, createSlotCost: { 1: 2 }, metamagic: [], passives: [], items: [],
+    resources: [
+      { ...res('sp'), max: 0, desc: 'Pontos de Feitiçaria chegam no nível 2 do Feiticeiro.' },
+      { ...res('innate'), desc: '<b>+1 na CD</b> e <b>Vantagem</b> nas jogadas de ataque de magias de Feiticeiro.' },
+      { ...res('hd'), max: 1, desc: 'Cada dado gasto num Descanso Curto cura <b>1d6 + CON</b>. Voltam no Descanso Longo.' }
+    ]
+  };
+}
+
+function newCharacter(name) {
+  return {
+    id: newId('c'), name, sub: 'Feiticeiro · Nível 1', template: 'blank', classId: 'sorcerer', subclassId: null, level: 1,
+    sheet: blankSheet(), spells: [], state: null, notes: null
+  };
+}
+
+function emptyStore() {
+  return { v: 3, characters: [], activeId: null, campaignNotes: null, library: { custom: [], overrides: {}, privateRefs: [] }, settings: { notesScope: 'char' } };
+}
+
+function sanitizeCharacter(c) {
+  if (!c || typeof c !== 'object' || typeof c.name !== 'string') return null;
+  const template = c.template === 'soren' ? 'soren' : 'blank';
+  if (template === 'blank' && (!c.sheet || typeof c.sheet !== 'object')) return null;
+  return { ...c, id: String(c.id || newId('c')), name: c.name.slice(0, 60) || 'Sem nome', sub: String(c.sub || '').slice(0, 120), template, spells: Array.isArray(c.spells) ? c.spells : [] };
+}
+
+function sanitizeStore(raw) {
+  const s = emptyStore();
+  if (!raw || typeof raw !== 'object' || !Array.isArray(raw.characters)) return null;
+  const seen = new Set();
+  s.characters = raw.characters.map(sanitizeCharacter).filter(c => c && !seen.has(c.id) && seen.add(c.id));
+  if (!s.characters.length) return null;
+  s.activeId = seen.has(raw.activeId) ? raw.activeId : s.characters[0].id;
+  s.campaignNotes = raw.campaignNotes || null;
+  s.library = { ...s.library, ...raw.library };
+  s.settings = { ...s.settings, ...raw.settings };
+  return s;
+}
+
+function migrateStore() {
+  const s = emptyStore();
+  s.characters.push(sorenCharacter(readJSON(LEGACY_KEY), readJSON(LEGACY_NOTES_KEY)));
+  s.activeId = 'soren';
+  return s;
+}
+
+function persistStore() {
+  try { localStorage.setItem(STORE_KEY, JSON.stringify(store)); return true; }
+  catch (e) { return false; }
+}
+
+let store = sanitizeStore(readJSON(STORE_KEY));
+if (!store) { store = migrateStore(); persistStore(); }
+
+const activeChar = () => store.characters.find(c => c.id === store.activeId);
+
+/* Valores da ficha ativa. Todo o app lê daqui; trocar de personagem só reaponta estas variáveis. */
+let CHAR, SPELLS, LEVELS, RES, SPELL, META;
+function bindSheet(c) {
+  CHAR = c.template === 'soren' ? SOREN : c.sheet;
+  SPELLS = c.template === 'soren' ? SOREN_SPELLS : c.spells;
+  LEVELS = Object.keys(CHAR.slots).map(Number);
+  RES = Object.fromEntries(CHAR.resources.map(r => [r.id, r]));
+  SPELL = Object.fromEntries(SPELLS.map(s => [s.id, s]));
+  META = Object.fromEntries(CHAR.metamagic.map(m => [m.id, m]));
+}
+bindSheet(activeChar());
+/* =====================================================================
    ESTADO, PERSISTÊNCIA E DESFAZER
    ===================================================================== */
-const LEVELS = Object.keys(CHAR.slots).map(Number);
 const ORD = n => n + 'º';
-const RES = Object.fromEntries(CHAR.resources.map(r => [r.id, r]));
-const SPELL = Object.fromEntries(SPELLS.map(s => [s.id, s]));
 const TABS = ['ficha', 'magia', 'grimorio', 'recursos', 'mochila', 'notas'];
 
 function defaultState() {
@@ -1245,11 +1363,12 @@ function sanitize(raw) {
 }
 
 function load() {
-  try { return sanitize(JSON.parse(localStorage.getItem(CHAR.storageKey))); }
+  try { return sanitize(activeChar().state); }
   catch (e) { return defaultState(); }
 }
 function save() {
-  try { localStorage.setItem(CHAR.storageKey, JSON.stringify(state)); } catch (e) { /* armazenamento indisponível */ }
+  activeChar().state = state;
+  persistStore();
 }
 
 let state = load();
@@ -1392,7 +1511,7 @@ function renderStats() {
       <div class="hint">${state.temp ? `+${state.temp} temp.` : 'ajustar'}</div></div>
     <div class="stat ${state.fx.innate ? 'boost' : ''}"><div class="lbl">CD Magia</div><div class="val num">${dc()}</div><div class="hint">${state.fx.innate ? 'F. Inata' : 'Carisma'}</div></div>
     <div class="stat ${state.fx.innate ? 'boost' : ''}"><div class="lbl">Ataque</div><div class="val num">${sign(s.atk)}</div><div class="hint">${state.fx.innate ? 'Vantagem' : 'mágico'}</div></div>`;
-  $('#substats').innerHTML = `<span>Iniciativa <b>${sign(s.init)}</b></span><span>Desloc. <b>${s.speed}</b></span><span>BP <b>${sign(s.pb)}</b></span><span>PF <b>${state.res.sp}/${RES.sp.max}</b></span><span>Salv. CON <b>${sign(s.conSave)}</b> <small>(V em conc.)</small></span>`;
+  $('#substats').innerHTML = `<span>Iniciativa <b>${sign(s.init)}</b></span><span>Desloc. <b>${s.speed}</b></span><span>BP <b>${sign(s.pb)}</b></span><span>PF <b>${state.res.sp}/${RES.sp.max}</b></span><span>Salv. CON <b>${sign(s.conSave)}</b>${CHAR.calc.concNote ? ' ' + CHAR.calc.concNote : ''}</span>`;
 }
 
 function renderEffects() {
@@ -1531,10 +1650,10 @@ function renderFicha() {
       <div class="atk-c">Acerto: ${w.calc} · ${w.type} · média ${decimal(avgOf(w.dmg))}</div></div>`).join('');
 
   const rows = [
-    ['Classe de Armadura', ac(), `10 + DES 2 + CAR 4 (Resiliência Dracônica)${state.fx.shield ? ' + 5 Escudo Arcano' : ' · 21 com Escudo Arcano'}`, state.fx.shield],
-    ['Pontos de Vida', s.hpMax, '8 (nv 1: 6 + CON 2) + 18 (3 × [4 + CON 2]) + 4 (Resiliência Dracônica)'],
-    ['CD de Magia', dc(), `8 + BP 2 + CAR 4${state.fx.innate ? ' + 1 Feitiçaria Inata' : ' · 15 com Feitiçaria Inata'}`, state.fx.innate],
-    ['Ataque Mágico', sign(s.atk), `BP 2 + CAR 4${state.fx.innate ? ' · com Vantagem' : ' · Vantagem com Feitiçaria Inata'}`, state.fx.innate],
+    ['Classe de Armadura', ac(), `${CHAR.calc.ac}${state.fx.shield ? ` + ${s.shieldBonus} Escudo Arcano` : ` · ${s.ac + s.shieldBonus} com Escudo Arcano`}`, state.fx.shield],
+    ['Pontos de Vida', s.hpMax, CHAR.calc.hp],
+    ['CD de Magia', dc(), `${CHAR.calc.dc}${state.fx.innate ? ' + 1 Feitiçaria Inata' : ` · ${s.dc + 1} com Feitiçaria Inata`}`, state.fx.innate],
+    ['Ataque Mágico', sign(s.atk), `${CHAR.calc.atk}${state.fx.innate ? ' · com Vantagem' : ' · Vantagem com Feitiçaria Inata'}`, state.fx.innate],
     ['Iniciativa', sign(s.init), 'DES 2'],
     ['Percepção Passiva', 10 + modOf(abil('SAB').s), '10 + SAB 0'],
     ['Deslocamento', s.speed, '35 pés · Salto das Nuvens: 9 m'],
@@ -1716,7 +1835,6 @@ const box = (h, body, cls = '') => `<div class="box ${cls}"><h5>${h}</h5>${body}
 
 /* ---------- Magia ---------- */
 let castMeta = new Set();
-const META = Object.fromEntries(CHAR.metamagic.map(m => [m.id, m]));
 const metaCost = () => [...castMeta].reduce((a, id) => a + META[id].cost, 0);
 
 let castMat = true;
@@ -1801,7 +1919,7 @@ function spellModal(id) {
       ${rollsSection(s)}
       <div class="m-body">${s.desc.map(P).join('')}${s.list ? `<ul>${s.list.map(li => `<li>${fmt(li)}</li>`).join('')}</ul>` : ''}${(s.desc2 || []).map(P).join('')}</div>
       ${s.upgrade ? box('Aprimoramento de Truque', fmt(s.upgrade)) : ''}${s.higher ? box('Em círculos superiores', fmt(s.higher)) : ''}
-      ${s.warn ? box('Atenção', fmt(s.warn), 'warn') : ''}${s.tactic ? box('Tática de Søren', fmt(s.tactic), 'tactic') : ''}
+      ${s.warn ? box('Atenção', fmt(s.warn), 'warn') : ''}${s.tactic ? box(`Tática de ${esc(activeChar().name.split(' ')[0])}`, fmt(s.tactic), 'tactic') : ''}
       ${castSection(s)}</div>`;
   });
 }
@@ -1947,12 +2065,8 @@ function toggleMenu(force) {
   m.hidden = !open; $('[data-action="menu"]').setAttribute('aria-expanded', open);
 }
 function exportData() {
-  flushNote();
-  const notesOut = { ...notes, notes: notes.notes.map(({ text, ...n }) => n) };
-  const blob = new Blob([JSON.stringify({ app: CHAR.storageKey, exported: new Date().toISOString(), state, notes: notesOut }, null, 2)], { type: 'application/json' });
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob); a.download = `soren-frostgaard-backup-${new Date().toISOString().slice(0, 10)}.json`;
-  document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+  flushNote(); save();
+  downloadJSON(`grimorio-backup-${today()}.json`, { app: 'grimorio', tipo: 'backup', exported: new Date().toISOString(), store });
   toast('Backup exportado', false);
 }
 const clampRes = (id, v) => Math.min(RES[id].max, Math.max(0, v));
@@ -2107,20 +2221,35 @@ $('#file').addEventListener('change', async e => {
   if (!f) return;
   try {
     const data = JSON.parse(await f.text()), raw = data.state || data;
+    if (data.app === 'grimorio' && data.tipo === 'backup') {
+      const next = sanitizeStore(data.store);
+      if (!next) throw new Error('formato');
+      flushNote(); save();
+      localStorage.setItem(STORE_KEY + '-antes-de-importar', JSON.stringify(store));
+      store = next;
+      activateCharacter(store.activeId);
+      toast('Backup importado', false);
+      return;
+    }
+    if (data.app === 'grimorio' && data.tipo === 'personagem') {
+      const c = sanitizeCharacter(data.character);
+      if (!c) throw new Error('formato');
+      addCharacter({ ...c, id: newId('c') });
+      toast(`${c.name} importado`, false);
+      return;
+    }
     if (typeof raw !== 'object' || !raw.res) throw new Error('formato');
     commit(data.notes ? 'Backup importado (ficha e anotações)' : 'Backup importado', st => { const ui = st.ui; Object.assign(st, sanitize(raw), { ui }); });
     if (data.notes) { notes = sanitizeNotes(data.notes); saveNotes(); initNotes(); }
   } catch (err) { toast('Arquivo de backup inválido', false); }
 });
 document.addEventListener('toggle', e => { if (e.target.classList?.contains('sp-rules')) spRulesOpen = e.target.open; }, true);
-window.addEventListener('storage', e => { if (e.key === CHAR.storageKey) { const ui = state.ui; state = load(); state.ui = ui; render(); } });
 
 /* =====================================================================
    ANOTAÇÕES — editor de texto com tópicos (armazenamento próprio)
    Ficam fora do estado da ficha: não entram no "Desfazer" da ficha nem
    são apagadas ao restaurar a ficha original.
    ===================================================================== */
-const NOTES_KEY = CHAR.storageKey + '-notas';
 const TOPIC_COLORS = ['#d9b46c', '#9fdcff', '#88d8a6', '#ff9d8a', '#c7adff', '#d5dbe3', '#ffd28a', '#7fe0d0'];
 const uid = p => p + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
 
@@ -2192,14 +2321,21 @@ function sanitizeNotes(raw) {
   const ui = { topic: raw.ui?.topic === 'all' || ids.has(raw.ui?.topic) ? raw.ui.topic : 'all', open: notes.some(n => n.id === raw.ui?.open) ? raw.ui.open : null };
   return { v: 1, topics, notes, ui };
 }
+const inCampaign = () => store.settings.notesScope === 'camp';
 function loadNotes() {
-  try { const raw = localStorage.getItem(NOTES_KEY); return raw ? sanitizeNotes(JSON.parse(raw)) : sanitizeNotes(defaultNotes()); }
-  catch (e) { return sanitizeNotes(defaultNotes()); }
+  const raw = inCampaign() ? store.campaignNotes : activeChar().notes;
+  if (raw) return sanitizeNotes(raw);
+  const d = sanitizeNotes(defaultNotes());
+  if (inCampaign()) { d.notes = []; d.ui.open = null; }
+  return d;
 }
 let notes = loadNotes(), noteQuery = '', noteTimer = null, savedRange = null;
 function saveNotes() {
-  try { localStorage.setItem(NOTES_KEY, JSON.stringify({ v: notes.v, topics: notes.topics, notes: notes.notes.map(({ text, ...n }) => n), ui: notes.ui })); return true; }
-  catch (e) { toast('Não foi possível salvar as anotações: armazenamento do navegador cheio.', false); return false; }
+  const out = { v: notes.v, topics: notes.topics, notes: notes.notes.map(({ text, ...n }) => n), ui: notes.ui };
+  if (inCampaign()) store.campaignNotes = out; else activeChar().notes = out;
+  if (persistStore()) return true;
+  toast('Não foi possível salvar as anotações: armazenamento do navegador cheio.', false);
+  return false;
 }
 const topicOf = id => notes.topics.find(t => t.id === id) || notes.topics[0];
 const openNote = () => notes.notes.find(n => n.id === notes.ui.open) || null;
@@ -2422,19 +2558,167 @@ document.addEventListener('drop', e => {
 document.addEventListener('focusout', e => { if (e.target.id === 'ne-body' || e.target.id === 'ne-title') { if (noteTimer) flushNote(); } });
 document.addEventListener('visibilitychange', () => { if (document.hidden && noteTimer) flushNote(); });
 window.addEventListener('pagehide', () => { if (noteTimer) flushNote(); });
-window.addEventListener('storage', e => {
-  if (e.key !== NOTES_KEY) return;
-  notes = loadNotes(); renderNoteList();
-  if (!document.activeElement?.closest?.('#note-editor')) renderNoteEditor();
-});
 try { document.execCommand('defaultParagraphSeparator', false, 'p'); } catch (e) {}
 
 function initNotes() { renderNoteList(); renderNoteEditor(); }
 
-render();
-renderPassives();
-initNotes();
-setTab(state.ui.tab);
+refreshAll();
+/* =====================================================================
+   PERSONAGENS — trocar, criar, duplicar, exportar e excluir
+   ===================================================================== */
+function renderHero() {
+  const c = activeChar();
+  $('#char-name-txt').textContent = c.name;
+  $('#char-sub').textContent = c.sub;
+  $('#char-eyebrow').textContent = `D&D 2024 · Grimório${c.subclassId === 'draconic' ? ' Dracônico' : ''}`;
+  $('#carry-aside').textContent = (CHAR.carry ? `Carga máx. ${CHAR.carry} · ` : '') + 'toque no nome para editar';
+  document.title = `${c.name} · Grimório`;
+}
+
+/** Redesenha tudo depois que o personagem, a store ou o escopo das notas mudam. */
+function refreshAll() {
+  renderHero(); render(); renderPassives(); renderNotesScope(); initNotes(); setTab(state.ui.tab);
+}
+
+function activateCharacter(id) {
+  store.activeId = id;
+  bindSheet(activeChar());
+  state = load();
+  undoStack.length = 0;
+  persistStore();
+  notes = loadNotes();
+  noteQuery = ''; $('#nq').value = '';
+  refreshAll();
+}
+
+function switchCharacter(id) {
+  if (id === store.activeId) return false;
+  flushNote(); save();
+  activateCharacter(id);
+  return true;
+}
+
+function downloadJSON(name, data) {
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob); a.download = name;
+  document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+}
+const today = () => new Date().toISOString().slice(0, 10);
+const fileSlug = s => norm(s).replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'personagem';
+
+function exportCharacter(id) {
+  flushNote(); save();
+  const c = store.characters.find(x => x.id === id);
+  downloadJSON(`${fileSlug(c.name)}-${today()}.json`, { app: 'grimorio', tipo: 'personagem', exported: new Date().toISOString(), character: c });
+  toast(`${c.name} exportado`, false);
+}
+
+function addCharacter(c) {
+  store.characters.push(c);
+  flushNote(); save();
+  activateCharacter(c.id);
+}
+
+function duplicateCharacter(id) {
+  flushNote(); save();
+  // As notas não vão junto: cada personagem começa com as próprias.
+  const copy = { ...clone(store.characters.find(x => x.id === id)), id: newId('c'), notes: null };
+  copy.name = `${copy.name} (cópia)`.slice(0, 60);
+  addCharacter(copy);
+  toast(`${copy.name} criado`, false);
+}
+
+function deleteCharacter(id) {
+  if (store.characters.length < 2) return;
+  flushNote(); save();
+  const i = store.characters.findIndex(x => x.id === id), c = store.characters[i], wasActive = id === store.activeId;
+  store.characters.splice(i, 1);
+  if (wasActive) activateCharacter(store.characters[0].id); else persistStore();
+  toast(`${c.name} excluído`, true, () => {
+    store.characters.splice(i, 0, c);
+    if (wasActive) { flushNote(); save(); activateCharacter(c.id); } else persistStore();
+    if (modalRefresh) modalRefresh();
+  });
+}
+
+function charsModal() {
+  openModal(() => `${mHead('Personagens', 'Trocar de personagem')}
+    <div class="char-list" style="margin-top:14px">${store.characters.map(c => {
+      const on = c.id === store.activeId, id = esc(c.id);
+      return `<div class="char-row ${on ? 'on' : ''}">
+        <button class="char-pick" data-action="char-switch" data-id="${id}" ${on ? 'aria-current="true"' : ''}><b>${esc(c.name)}</b><small>${esc(c.sub)}</small></button>
+        <button class="icon-btn" data-action="char-dup" data-id="${id}" aria-label="Duplicar ${esc(c.name)}" title="Duplicar">${icon('i-copy')}</button>
+        <button class="icon-btn" data-action="char-export" data-id="${id}" aria-label="Exportar ${esc(c.name)}" title="Exportar">${icon('i-down')}</button>
+        ${store.characters.length > 1 ? `<button class="icon-btn" data-action="char-del" data-id="${id}" aria-label="Excluir ${esc(c.name)}" title="Excluir">${icon('i-trash')}</button>` : ''}
+      </div>`;
+    }).join('')}</div>
+    <div class="m-actions"><button class="btn gold" data-action="char-new">${icon('i-plus')}Novo personagem</button></div>`);
+}
+
+function newCharModal() {
+  openModal(() => `${mHead('Personagens', 'Novo personagem')}
+    <form id="char-form" style="margin-top:14px" autocomplete="off">
+      <div class="field"><label for="c-name">Nome</label><input id="c-name" required maxlength="60" autofocus placeholder="Ex.: Lyra Ventoleve"></div>
+      <p class="note">Começa como Feiticeiro de nível 1, com ficha em branco. A criação guiada chega numa próxima etapa.</p>
+      <div class="m-actions"><button type="button" class="btn ghost" data-action="close">Cancelar</button><button class="btn gold">Criar</button></div>
+    </form>`);
+}
+
+function setNotesScope(s) {
+  if (s === store.settings.notesScope) return;
+  flushNote();
+  store.settings.notesScope = s;
+  persistStore();
+  notes = loadNotes();
+  noteQuery = ''; $('#nq').value = '';
+  renderNotesScope(); initNotes();
+}
+
+function renderNotesScope() {
+  const s = store.settings.notesScope;
+  $('#note-scope').innerHTML = [['char', `Notas de ${esc(activeChar().name.split(' ')[0])}`], ['camp', 'Campanha (compartilhadas)']]
+    .map(([id, label]) => `<button class="filter" data-action="note-scope" data-s="${id}" aria-pressed="${s === id}">${label}</button>`).join('');
+}
+
+document.addEventListener('click', e => {
+  const b = e.target.closest('[data-action]');
+  if (!b) return;
+  const id = b.dataset.id;
+  switch (b.dataset.action) {
+    case 'chars': charsModal(); break;
+    case 'char-switch': closeModal(); if (switchCharacter(id)) toast(`Agora com ${activeChar().name}`, false); break;
+    case 'char-dup': closeModal(); duplicateCharacter(id); break;
+    case 'char-export': exportCharacter(id); break;
+    case 'char-del': deleteCharacter(id); break;
+    case 'char-new': newCharModal(); break;
+    case 'note-scope': setNotesScope(b.dataset.s); break;
+  }
+});
+document.addEventListener('submit', e => {
+  if (e.target.id !== 'char-form') return;
+  e.preventDefault();
+  const name = $('#c-name').value.trim();
+  if (!name) return;
+  closeModal();
+  addCharacter(newCharacter(name));
+  toast(`${name} criado`, false);
+});
+
+window.addEventListener('storage', e => {
+  if (e.key !== STORE_KEY) return;
+  const next = sanitizeStore(readJSON(STORE_KEY));
+  if (!next) return;
+  const ui = state.ui, same = next.activeId === store.activeId;
+  store = next;
+  bindSheet(activeChar());
+  state = load();
+  if (same) state.ui = ui;
+  render();
+  renderHero();
+  notes = loadNotes(); renderNotesScope(); renderNoteList();
+  if (!document.activeElement?.closest?.('#note-editor')) renderNoteEditor();
+});
 </script>
 <script>
 /* =====================================================================

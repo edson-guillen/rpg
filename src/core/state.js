@@ -1,11 +1,7 @@
-'use strict';
 /* =====================================================================
    ESTADO, PERSISTÊNCIA E DESFAZER
    ===================================================================== */
-const LEVELS = Object.keys(CHAR.slots).map(Number);
 const ORD = n => n + 'º';
-const RES = Object.fromEntries(CHAR.resources.map(r => [r.id, r]));
-const SPELL = Object.fromEntries(SPELLS.map(s => [s.id, s]));
 const TABS = ['ficha', 'magia', 'grimorio', 'recursos', 'mochila', 'notas'];
 
 function defaultState() {
@@ -54,11 +50,12 @@ function sanitize(raw) {
 }
 
 function load() {
-  try { return sanitize(JSON.parse(localStorage.getItem(CHAR.storageKey))); }
+  try { return sanitize(activeChar().state); }
   catch (e) { return defaultState(); }
 }
 function save() {
-  try { localStorage.setItem(CHAR.storageKey, JSON.stringify(state)); } catch (e) { /* armazenamento indisponível */ }
+  activeChar().state = state;
+  persistStore();
 }
 
 let state = load();

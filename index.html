@@ -6,6 +6,7 @@
 <meta name="theme-color" content="#0b0e14">
 <meta name="color-scheme" content="dark">
 <meta name="description" content="Ficha interativa de magias e recursos de Søren Frostgaard — Feiticeiro Dracônico nível 4 (D&D 2024).">
+<link rel="manifest" href="manifest.webmanifest">
 <title>Søren Frostgaard · Grimório</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cpath d='M32 4 54 32 32 60 10 32Z' fill='%239fdcff' stroke='%23d9b46c' stroke-width='4'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -4115,6 +4116,7 @@ document.addEventListener('change', e => {
 });
 /* Início do app: roda depois de todos os módulos carregados. */
 refreshAll();
+if ('serviceWorker' in navigator && location.protocol === 'https:') navigator.serviceWorker.register('sw.js').catch(() => {});
 </script>
 <script>
 /* =====================================================================

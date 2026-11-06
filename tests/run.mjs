@@ -246,7 +246,7 @@ const cenarios = {
     const bot = await page.locator('.rolls-box .rb').allTextContents();
     ok(bot.join(' ').includes('8d6') && bot.join(' ').includes('9d6'), `Bola de Fogo escala por círculo: ${bot}`);
     await page.evaluate(() => { closeModal(); spellModal('cure-wounds', true); });
-    ok(/2d8s*+s*4/.test(await page.locator('.rolls-box').textContent()), 'cura soma o modificador');
+    ok((await page.locator('.rolls-box').textContent()).replace(/\s/g, '').includes('2d8+4'), 'cura soma o modificador');
     await page.evaluate(() => closeModal());
     await page.waitForFunction(() => document.querySelector('#modal').hidden);
     await aba(page, 'grimorio');

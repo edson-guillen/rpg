@@ -380,9 +380,9 @@
   "ritual": false,
   "r": [],
   "desc": [
-   "Objects animate at your command. Choose a number of nonmagical objects within range that aren't being worn or carried, aren't fixed to a surface, and aren't Gargantuan. The maximum number of objects is equal to your spellcasting ability modifier; for this number, a Medium or smaller target counts as one object, a Large target counts as two, and a Huge target counts as three.",
-   "Each target animates, sprouts legs, and becomes a Construct that uses the Animated Object stat block; this creature is under your control until the spell ends or until it is reduced to 0 Hit Points. Each creature you make with this spell is an ally to you and your allies. In combat, it shares your Initiative count and takes its turn immediately after yours.",
-   "Until the spell ends, you can take a Bonus Action to mentally command any creature you made with this spell if the creature is within 500 feet of you (if you control multiple creatures, you can command any of them at the same time, issuing the same command to each one). If you issue no commands, the creature takes the Dodge action and moves only to avoid harm. When the creature drops to 0 Hit Points, it reverts to its object form, and any remaining damage carries over to that form."
+   "Objetos ganham vida sob o seu comando. Escolha objetos não mágicos dentro do alcance que não estejam sendo vestidos ou carregados, não estejam fixos numa superfície e não sejam Imensos. O máximo é igual ao seu modificador do atributo de conjuração: um alvo Médio ou menor conta como um, um Grande como dois e um Enorme como três.",
+   "Cada alvo ganha vida, cria pernas e se torna um Constructo com o bloco de estatísticas de Objeto Animado, sob seu controle até a magia terminar ou até chegar a 0 Pontos de Vida. As criaturas são aliadas de você e dos seus aliados. Em combate, dividem sua Iniciativa e agem logo depois de você.",
+   "Até a magia terminar, você pode usar uma Ação Bônus para comandar mentalmente qualquer dessas criaturas a até 150 m de você. Se controlar várias, pode dar a mesma ordem a todas. Sem ordens, ela usa a ação Esquivar e só se move para evitar perigo. Ao chegar a 0 Pontos de Vida, volta à forma de objeto, e o dano restante passa para ele."
   ],
   "src": "srd",
   "orig": {
@@ -395,8 +395,8 @@
    "upgrade": "",
    "time": "Action"
   },
-  "ptOk": false,
-  "higher": "The creature's Slam damage increases by 1d4 (Medium or smaller), 1d6 (Large), or 1d12 (Huge) for each spell slot level above 5. Huge or Smaller Construct, Unaligned AC 15 HP 10 (Medium or smaller), 20 (Large), 40 (Huge) Speed 30 ft. MOD SAVE    MOD SAVE    MOD SAVE Str 16 +3 +3 dex 10 +0 +0 con 10 +0 +0 int 3 -4 -4 WiS 3 -4 -4 chA 1 -5 -5 Immunities Poison, Psychic; Charmed, Exhaustion, Frightened, Paralyzed, Poisoned Senses Blindsight 30 ft.; Passive Perception 6 Languages Understands the languages you know CR None (XP 0; PB equals your Proficiency Bonus) Actions     Slam. Melee Attack Roll: Bonus equals your spell attack modifier, reach 5 ft. Hit: Force damage equal to 1d4 + 3 (Medium or smaller), 2d6 + 3 + your spellcasting ability modifier (Large), or 2d12 + 3 + your spellcasting ability modifier (Huge)."
+  "ptOk": true,
+  "higher": "O dano da Pancada aumenta em 1d4 (Médio ou menor), 1d6 (Grande) ou 1d12 (Enorme) para cada círculo do espaço de magia acima do 5º. Constructo: CA 15; PV 10 (Médio ou menor), 20 (Grande) ou 40 (Enorme); Deslocamento 9 m; Percepção às Cegas 9 m. Pancada: bônus igual ao seu ataque mágico, alcance 1,5 m, dano Energético de 1d4 + 3 (Médio ou menor), 2d6 + 3 + seu modificador (Grande) ou 2d12 + 3 + seu modificador (Enorme)."
  },
  {
   "id": "antilife-shell",
@@ -415,8 +415,8 @@
   "ritual": false,
   "r": [],
   "desc": [
-   "An aura extends from you in a 10-foot Emanation for the duration. The aura prevents creatures other than Constructs and Undead from passing or reaching through it. An affected creature can cast spells or make attacks with Ranged or Reach weapons through the barrier.",
-   "If you move so that an affected creature is forced to pass through the barrier, the spell ends."
+   "Uma aura se estende de você numa Emanação de 3 m pela duração. Ela impede que criaturas que não sejam Constructos nem Mortos-Vivos a atravessem ou alcancem através dela. Uma criatura afetada pode conjurar magias e atacar com armas à Distância ou de Alcance através da barreira.",
+   "Se você se mover de modo que uma criatura afetada seja forçada a atravessar a barreira, a magia termina."
   ],
   "src": "srd",
   "orig": {
@@ -428,7 +428,7 @@
    "upgrade": "",
    "time": "Action"
   },
-  "ptOk": false,
+  "ptOk": true,
   "area": {
    "shape": "Emanação",
    "feet": 10,
@@ -588,9 +588,13 @@
    }
   ],
   "desc": [
-   "You create a Large hand of shimmering magical energy in an unoccupied space that you can see within range. The hand lasts for the duration, and it moves at your command, mimicking the movements of your own hand.",
-   "The hand is an object that has AC 20 and Hit Points equal to your Hit Point maximum. If it drops to 0 Hit Points, the spell ends. The hand doesn't occupy its space.",
-   "When you cast the spell and as a Bonus Action on your later turns, you can move the hand up to 60 feet and then cause one of the following effects: Clenched Fist. The hand strikes a target within 5 feet of it. Make a melee spell attack. On a hit, the target takes 5d8 Force damage. Forceful Hand. The hand attempts to push a Huge or smaller creature within 5 feet of it. The target must succeed on a Strength saving throw, or the hand pushes the target up to 5 feet plus a number of feet equal to five times your spellcasting ability modifier. The hand moves with the target, remaining within 5 feet of it. Grasping Hand. The hand attempts to grapple a Huge or smaller creature within 5 feet of it. The target must succeed on a Dexterity saving throw, or the target has the Grappled condition, with an escape DC equal to your spell save DC. While the hand grapples the target, you can take a Bonus Action to cause the hand to crush it, dealing Bludgeoning damage to the target equal to 4d6 plus your spellcasting ability modifier. Interposing Hand. The hand grants you Half Cover against attacks and other effects that originate from its space or that pass through it. In addition, its space counts as Difficult Terrain for your enemies."
+   "Você cria uma mão Grande de energia mágica cintilante num espaço desocupado que possa ver dentro do alcance. Ela dura pela magia e se move ao seu comando, imitando os movimentos da sua mão.",
+   "A mão é um objeto com CA 20 e Pontos de Vida iguais ao seu máximo. Se chegar a 0, a magia termina. Ela não ocupa o espaço onde está.",
+   "Ao conjurar e com uma Ação Bônus nos turnos seguintes, você pode mover a mão até 18 m e causar um destes efeitos:",
+   "<b>Punho Cerrado.</b> A mão golpeia um alvo a até 1,5 m. Faça um ataque corpo a corpo com magia. Se acertar, o alvo sofre 5d8 de dano Energético.",
+   "<b>Mão Vigorosa.</b> A mão tenta empurrar uma criatura Enorme ou menor a até 1,5 m. O alvo precisa ser bem-sucedido numa salvaguarda de Força, ou é empurrado 1,5 m mais 1,5 m por ponto do seu modificador do atributo de conjuração. A mão acompanha o alvo.",
+   "<b>Mão Agarradora.</b> A mão tenta agarrar uma criatura Enorme ou menor a até 1,5 m. O alvo precisa ser bem-sucedido numa salvaguarda de Destreza ou fica com a condição Agarrado, com CD de escape igual à das suas magias. Enquanto o agarrar, você pode usar uma Ação Bônus para esmagá-lo, causando dano Contundente igual a 4d6 mais o seu modificador do atributo de conjuração.",
+   "<b>Mão Interposta.</b> A mão dá a você Meia Cobertura contra ataques e efeitos vindos do espaço dela ou que passem por ele. Além disso, esse espaço é Terreno Difícil para seus inimigos."
   ],
   "src": "srd",
   "orig": {
@@ -603,9 +607,9 @@
    "upgrade": "",
    "time": "Action"
   },
-  "ptOk": false,
-  "material": "an eggshell and a glove",
-  "higher": "The damage of the Clenched Fist increases by 2d8 and the damage of the Grasping Hand increases by 2d6 for each spell slot level above 5.",
+  "ptOk": true,
+  "material": "uma casca de ovo e uma luva",
+  "higher": "O dano do Punho Cerrado aumenta em 2d8 e o da Mão Agarradora em 2d6 para cada círculo do espaço de magia acima do 5º.",
   "dmgChip": "5d8"
  },
  {
@@ -852,8 +856,8 @@
   "ritual": false,
   "r": [],
   "desc": [
-   "You spend the casting time tracing magical pathways within a precious gemstone, and then touch the target. The target must be either a Beast or Plant creature with an Intelligence of 3 or less or a natural plant that isn't a creature. The target gains an Intelligence of 10 and the ability to speak one language you know. If the target is a natural plant, it becomes a Plant creature and gains the ability to move its limbs, roots, vines, creepers, and so forth, and it gains senses similar to a human's. The GM chooses statistics appropriate for the awakened Plant, such as the statistics for the Awakened Shrub or Awakened Tree in \"Monsters.\"",
-   "The awakened target has the Charmed condition for 30 days or until you or your allies deal damage to it. When that condition ends, the awakened creature chooses its attitude toward you."
+   "Você passa o tempo de conjuração traçando caminhos mágicos numa gema preciosa e toca o alvo, que precisa ser uma Fera ou criatura Planta com Inteligência 3 ou menos, ou uma planta natural que não seja criatura. O alvo ganha Inteligência 10 e a capacidade de falar um idioma que você conheça. Uma planta natural vira criatura Planta, podendo mover galhos, raízes e vinhas, e ganha sentidos parecidos com os humanos. O Mestre escolhe as estatísticas adequadas.",
+   "O alvo fica com a condição Enfeitiçado por 30 dias ou até você ou seus aliados causarem dano a ele. Quando a condição acaba, a criatura escolhe sua atitude em relação a você."
   ],
   "src": "srd",
   "orig": {
@@ -865,8 +869,8 @@
    "upgrade": "",
    "time": "8 hours"
   },
-  "ptOk": false,
-  "material": "an agate worth 1,000+ GP, which the spell consumes",
+  "ptOk": true,
+  "material": "uma ágata que valha 1.000 PO ou mais, consumida pela magia",
   "matGp": 1000,
   "matUsed": true
  },
@@ -1928,9 +1932,9 @@
    }
   ],
   "desc": [
-   "You create a 20-foot-radius Sphere of yellow-green fog centered on a point within range. The fog lasts for the duration or until strong wind (such as the one created by Gust of Wind) disperses it, ending the spell. Its area is Heavily Obscured.",
-   "Each creature in the Sphere makes a Constitution saving throw, taking 5d8 Poison damage on a failed save or half as much damage on a successful one. A creature must also make this save when the Sphere moves into its space and when it enters the Sphere or ends its turn there. A creature makes this save only once per turn.",
-   "The Sphere moves 10 feet away from you at the start of each of your turns."
+   "Você cria uma Esfera de neblina amarelo-esverdeada de 6 m de raio, centrada num ponto dentro do alcance. Ela dura pela magia ou até um vento forte, como o de Lufada de Vento, dispersá-la, encerrando a magia. A área tem Escuridão Densa.",
+   "Cada criatura na Esfera faz uma salvaguarda de Constituição. Quem falhar sofre 5d8 de dano de Veneno; quem passar sofre metade. A criatura também faz a salvaguarda quando a Esfera entra no espaço dela, ou quando ela entra na Esfera ou termina o turno ali, no máximo uma vez por turno.",
+   "A Esfera se afasta 3 m de você no início de cada um dos seus turnos."
   ],
   "src": "srd",
   "orig": {
@@ -1943,8 +1947,8 @@
    "upgrade": "",
    "time": "Action"
   },
-  "ptOk": false,
-  "higher": "The damage increases by 1d8 for each spell slot level above 5.",
+  "ptOk": true,
+  "higher": "O dano aumenta em 1d8 para cada círculo do espaço de magia acima do 5º.",
   "dmgChip": "5d8",
   "area": {
    "shape": "Esfera",
@@ -2055,9 +2059,9 @@
   "ritual": true,
   "r": [],
   "desc": [
-   "You contact a deity or a divine proxy and ask up to three questions that can be answered with yes or no. You must ask your questions before the spell ends. You receive a correct answer for each question.",
-   "Divine beings aren't necessarily omniscient, so you might receive \"unclear\" as an answer if a question pertains to information that lies beyond the deity's knowledge. In a case where a one-word answer could be misleading or contrary to the deity's interests, the GM might offer a short phrase as an answer instead.",
-   "If you cast the spell more than once before finishing a Long Rest, there is a cumulative 25 percent chance for each casting after the first that you get no answer."
+   "Você contata uma divindade ou um representante divino e faz até três perguntas de sim ou não, antes de a magia terminar. Você recebe uma resposta correta para cada uma.",
+   "Seres divinos não são necessariamente oniscientes, então a resposta pode ser \"incerto\" se a informação estiver além do que a divindade sabe. Se uma resposta de uma palavra puder enganar ou contrariar os interesses da divindade, o Mestre pode responder com uma frase curta.",
+   "Se você conjurar a magia mais de uma vez antes de terminar um Descanso Longo, há 25% de chance cumulativa, a cada conjuração depois da primeira, de não receber resposta."
   ],
   "src": "srd",
   "orig": {
@@ -2070,8 +2074,8 @@
    "upgrade": "",
    "time": "1 minute"
   },
-  "ptOk": false,
-  "material": "incense"
+  "ptOk": true,
+  "material": "incenso"
  },
  {
   "id": "commune-with-nature",
@@ -2091,8 +2095,8 @@
   "ritual": true,
   "r": [],
   "desc": [
-   "You commune with nature spirits and gain knowledge of the surrounding area. In the outdoors, the spell gives you knowledge of the area within 3 miles of you. In caves and other natural underground settings, the radius is limited to 300 feet. The spell doesn't function where nature has been replaced by construction, such as in castles and settlements.",
-   "Choose three of the following facts; you learn those facts as they pertain to the spell's area: • Locations of settlements • Locations of portals to other planes of existence • Location of one Challenge Rating 10+ creature (GM's choice) that is a Celestial, an Elemental, a Fey, a Fiend, or an Undead • The most prevalent kind of plant, mineral, or Beast (you choose which to learn) • Locations of bodies of water For example, you could determine the location of a powerful monster in the area, the locations of bodies of water, and the locations of any towns."
+   "Você comunga com espíritos da natureza e obtém conhecimento da região. Ao ar livre, a magia cobre uma área de até 4,8 km ao seu redor. Em cavernas e outros subterrâneos naturais, o raio é de 90 m. Ela não funciona onde a natureza foi substituída por construções, como castelos e povoados.",
+   "Escolha três destes fatos sobre a área: localização de povoados; de portais para outros planos; de uma criatura de Nível de Desafio 10 ou maior (à escolha do Mestre) que seja Celestial, Elemental, Fada, Corruptor ou Morto-Vivo; o tipo mais comum de planta, mineral ou Fera (você escolhe qual); e localização de massas de água."
   ],
   "src": "srd",
   "orig": {
@@ -2104,7 +2108,7 @@
    "upgrade": "",
    "time": "1 minute"
   },
-  "ptOk": false
+  "ptOk": true
  },
  {
   "id": "comprehend-languages",
@@ -2208,7 +2212,7 @@
    }
   ],
   "desc": [
-   "You unleash a blast of cold air. Each creature in a 60-foot Cone originating from you makes a Constitution saving throw, taking 8d8 Cold damage on a failed save or half as much damage on a successful one. A creature killed by this spell becomes a frozen statue until it thaws."
+   "Você libera uma rajada de ar gelado. Cada criatura num Cone de 18 m a partir de você faz uma salvaguarda de Constituição. Quem falhar sofre 8d8 de dano de Frio; quem passar sofre metade. Uma criatura morta por esta magia vira uma estátua congelada até derreter."
   ],
   "src": "srd",
   "orig": {
@@ -2219,9 +2223,9 @@
    "upgrade": "",
    "time": "Action"
   },
-  "ptOk": false,
-  "material": "a small crystal or glass cone",
-  "higher": "The damage increases by 1d8 for each spell slot level above 5.",
+  "ptOk": true,
+  "material": "um pequeno cone de cristal ou vidro",
+  "higher": "O dano aumenta em 1d8 para cada círculo do espaço de magia acima do 5º.",
   "dmgChip": "8d8",
   "area": {
    "shape": "Cone",
@@ -2412,8 +2416,8 @@
    }
   ],
   "desc": [
-   "You conjure a Large, intangible spirit from the Elemental Planes that appears in an unoccupied space within range. Choose the spirit's element, which determines its damage type: air (Lightning), earth (Thunder), fire (Fire), or water (Cold). The spirit lasts for the duration.",
-   "Whenever a creature you can see enters the spirit's space or starts its turn within 5 feet of the spirit, you can force that creature to make a Dexterity saving throw if the spirit has no creature Restrained. On failed save, the target takes 8d8 damage of the spirit's type, and the target has the Restrained condition until the spell ends. At the start of each of its turns, the Restrained target repeats the save. On a failed save, the target takes 4d8 damage of the spirit's type. On a successful save, the target isn't Restrained by the spirit."
+   "Você conjura um espírito Grande e intangível dos Planos Elementais, que surge num espaço desocupado dentro do alcance. Escolha o elemento, que define o tipo de dano: ar (Elétrico), terra (Trovejante), fogo (Fogo) ou água (Frio). O espírito dura pela magia.",
+   "Sempre que uma criatura que você possa ver entrar no espaço do espírito ou começar o turno a até 1,5 m dele, você pode forçá-la a fazer uma salvaguarda de Destreza, se o espírito não estiver contendo ninguém. Se falhar, ela sofre 8d8 de dano do tipo do espírito e fica com a condição Contido até a magia terminar. No início de cada turno dela, o alvo Contido repete a salvaguarda: se falhar, sofre 4d8 de dano desse tipo; se passar, deixa de estar Contido pelo espírito."
   ],
   "src": "srd",
   "orig": {
@@ -2425,8 +2429,8 @@
    "upgrade": "",
    "time": "Action"
   },
-  "ptOk": false,
-  "higher": "The damage increases by 1d8 for each spell slot level above 5."
+  "ptOk": true,
+  "higher": "O dano aumenta em 1d8 para cada círculo do espaço de magia acima do 5º."
  },
  {
   "id": "conjure-fey",
@@ -2590,8 +2594,8 @@
    }
   ],
   "desc": [
-   "You mentally contact a demigod, the spirit of a longdead sage, or some other knowledgeable entity from another plane. Contacting this otherworldly intelligence can break your mind. When you cast this spell, make a DC 15 Intelligence saving throw. On a successful save, you can ask the entity up to five questions. You must ask your questions before the spell ends. The GM answers each question with one word, such as \"yes,\" \"no,\" \"maybe,\" \"never,\" \"irrelevant,\" or \"unclear\" (if the entity doesn't know the answer to the question). If a one-word answer would be misleading, the GM might instead offer a short phrase as an answer.",
-   "On a failed save, you take 6d6 Psychic damage and have the Incapacitated condition until you finish a Long Rest. A Greater Restoration spell cast on you ends this effect."
+   "Você contata mentalmente um semideus, o espírito de um sábio morto há muito tempo ou outra entidade sábia de outro plano. Esse contato pode quebrar sua mente. Ao conjurar, faça uma salvaguarda de Inteligência CD 15. Se passar, pode fazer até cinco perguntas antes de a magia terminar. O Mestre responde com uma palavra, como \"sim\", \"não\", \"talvez\", \"nunca\", \"irrelevante\" ou \"incerto\". Se uma palavra puder enganar, o Mestre pode responder com uma frase curta.",
+   "Se falhar, você sofre 6d6 de dano Psíquico e fica com a condição Incapacitado até terminar um Descanso Longo. Uma magia Restauração Maior encerra esse efeito."
   ],
   "src": "srd",
   "orig": {
@@ -2603,7 +2607,7 @@
    "upgrade": "",
    "time": "1 minute"
   },
-  "ptOk": false,
+  "ptOk": true,
   "dmgChip": "6d6"
  },
  {
@@ -2634,9 +2638,9 @@
    }
   ],
   "desc": [
-   "Your touch inflicts a magical contagion. The target must succeed on a Constitution saving throw or take 11d8 Necrotic damage and have the Poisoned condition. Also, choose one ability when you cast the spell. While Poisoned, the target has Disadvantage on saving throws made with the chosen ability.",
-   "The target must repeat the saving throw at the end of each of its turns until it gets three successes or failures. If the target succeeds on three of these saves, the spell ends on the target. If the target fails three of the saves, the spell lasts for 7 days on it.",
-   "Whenever the Poisoned target receives an effect that would end the Poisoned condition, the target must succeed on a Constitution saving throw, or the Poisoned condition doesn't end on it."
+   "Seu toque transmite um contágio mágico. O alvo precisa ser bem-sucedido numa salvaguarda de Constituição ou sofre 11d8 de dano Necrótico e fica com a condição Envenenado. Escolha também um atributo ao conjurar: enquanto Envenenado, o alvo tem Desvantagem nas salvaguardas desse atributo.",
+   "O alvo repete a salvaguarda no fim de cada turno dele até acumular três sucessos ou três falhas. Com três sucessos, a magia termina para ele. Com três falhas, ela dura 7 dias.",
+   "Sempre que um efeito fosse encerrar a condição Envenenado, o alvo precisa passar numa salvaguarda de Constituição, ou a condição não termina."
   ],
   "src": "srd",
   "orig": {
@@ -2649,7 +2653,7 @@
    "upgrade": "",
    "time": "Action"
   },
-  "ptOk": false,
+  "ptOk": true,
   "dmgChip": "11d8"
  },
  {
@@ -2754,22 +2758,11 @@
    }
   ],
   "desc": [
-   "Until the spell ends, you control any water inside an area you choose that is a Cube up to 100 feet on a side, using one of the following effects. As a Magic action on your later turns, you can repeat the same effect or choose a different one.",
-   "Flood. You cause the water level of all standing water in the area to rise by as much as 20 feet. If you choose an area in a large body of water, you instead create a 20-foot tall wave that travels from one side of the area to the other and then crashes. Any Huge or smaller vehicles in the wave's path are carried with it to the other side. Any Huge or smaller vehicles struck by the wave have a 25 percent chance of capsizing.",
-   "The water level remains elevated until the spell ends or you choose a different effect. If this effect produced a wave, the wave repeats on the start of your next turn while the flood effect lasts.",
-   "Part Water. You part water in the area and create a trench. The trench extends across the spell's area, and the separated water forms a wall to either side. The trench remains until the spell ends or you choose a different effect. The water then slowly fills in the trench over the course of the next round until the normal water level is restored. conditions to take effect. Once they do so, you can change the conditions again. When the spell ends, the weather gradually returns to normal.",
-   "When you change the weather conditions, find a current condition on the following tables and change its stage by one, up or down. When changing the wind, you can change its direction. Precipitation Stage | Condition",
-   "1 | Clear | 2 | Light clouds",
-   "3 | Overcast or ground fog | 4 | Rain, hail, or snow",
-   "5 | Torrential rain, driving hail, or blizzard",
-   "Redirect Flow. You cause flowing water in the area to move in a direction you choose, even if the water has to flow over obstacles, up walls, or in other unlikely directions. The water in the area moves as you direct it, but once it moves beyond the spell's area, it resumes its flow based on the terrain. The water continues to move in the direction you chose until the spell ends or you choose a different effect.",
-   "Whirlpool. You cause a whirlpool to form in the center of the area, which must be at least 50 feet. Temperature Stage | Condition",
-   "1 | Heat wave | 2 | Hot",
-   "3 | Warm | 4 | Cool",
-   "5 | Cold | 6 | Freezing Counterspell Wind Stage Condition",
-   "10 | Calm | 2 | Moderate wind",
-   "3 | Strong wind | 4 | Gale",
-   "5 | Storm    square and 25 feet deep. The whirlpool lasts until you choose a different effect or the spell ends. The whirlpool is 5 feet wide at the base, up to 50 feet wide at the top, and 25 feet tall. Any creature in the water and within 25 feet of the whirlpool is pulled 10 feet toward it. When a creature enters the whirl- pool for the first time on a turn or ends its turn there, it makes a Strength saving throw. On a failed save, the creature takes 2d8 Bludgeoning damage. On a successful save, the creature takes half as much damage. A creature can swim away from the whirlpool only if it first takes an action to pull away and succeeds on a Strength (Athletics) check against your spell save DC."
+   "Até a magia terminar, você controla a água dentro de uma área à sua escolha, um Cubo de até 30 m de lado, usando um dos efeitos a seguir. Com uma ação de Magia nos turnos seguintes, pode repetir o efeito ou escolher outro.",
+   "<b>Inundação.</b> O nível de toda a água parada na área sobe até 6 m. Numa grande massa de água, você cria uma onda de 6 m de altura que atravessa a área de um lado a outro e quebra. Veículos Enormes ou menores no caminho são levados com ela, e os atingidos têm 25% de chance de virar. O nível fica alto até a magia terminar ou você escolher outro efeito. Se criou uma onda, ela se repete no início do seu próximo turno.",
+   "<b>Separar Águas.</b> Você abre a água na área e cria uma vala que atravessa toda a área, com a água formando paredes dos dois lados. A vala fica até a magia terminar ou você escolher outro efeito. Depois, a água a preenche aos poucos ao longo da rodada seguinte.",
+   "<b>Redirecionar Fluxo.</b> A água corrente na área passa a fluir na direção que você escolher, mesmo sobre obstáculos ou subindo paredes. Ao sair da área, ela volta a seguir o terreno. O efeito dura até a magia terminar ou você escolher outro.",
+   "<b>Redemoinho.</b> Um redemoinho se forma no centro da área, que precisa ter pelo menos 15 m de lado e 7,5 m de profundidade. Ele dura até você escolher outro efeito ou a magia terminar, com 1,5 m de largura na base, até 15 m no topo e 7,5 m de altura. Qualquer criatura na água a até 7,5 m dele é puxada 3 m na direção dele. Ao entrar no redemoinho pela primeira vez num turno ou terminar o turno nele, a criatura faz uma salvaguarda de Força. Se falhar, sofre 2d8 de dano Contundente; se passar, sofre metade. Só consegue nadar para longe usando antes uma ação para se afastar e passando num teste de Força (Atletismo) contra a CD das suas magias."
   ],
   "src": "srd",
   "orig": {
@@ -2795,8 +2788,8 @@
    "upgrade": "",
    "time": "Action"
   },
-  "ptOk": false,
-  "material": "a mixture of water and dust",
+  "ptOk": true,
+  "material": "uma mistura de água e pó",
   "dmgChip": "2d8"
  },
  {
@@ -3001,8 +2994,8 @@
   "ritual": false,
   "r": [],
   "desc": [
-   "You pull wisps of shadow material from the Shadowfell to create an object within range. It is either an object of vegetable matter (soft goods, rope, wood, and the like) or mineral matter (stone, crystal, metal, and the like). The object must be no larger than a 5-foot Cube, and the object must be of a form and material that you have seen.",
-   "The spell's duration depends on the object's material, as shown in the Materials table. If the object is composed of multiple materials, use the shortest duration. Using any object created by this spell as another spell's Material component causes the other spell to fail. Materials Material    Duration Stone or crystal    12 hours Gems    10 minutes  Adamantine or mithral    1 minute"
+   "Você puxa fiapos de matéria de sombra do Pendor das Sombras para criar um objeto dentro do alcance. Ele pode ser de matéria vegetal (tecidos, corda, madeira) ou mineral (pedra, cristal, metal). Não pode ser maior que um Cubo de 1,5 m e precisa ter forma e material que você já viu.",
+   "A duração depende do material: matéria vegetal, 24 horas; pedra ou cristal, 12 horas; metais preciosos, 1 hora; gemas, 10 minutos; adamante ou mithral, 1 minuto. Com vários materiais, vale a menor duração. Usar um objeto criado assim como componente Material de outra magia faz essa magia falhar."
   ],
   "src": "srd",
   "orig": {
@@ -3014,9 +3007,9 @@
    "upgrade": "",
    "time": "1 minute"
   },
-  "ptOk": false,
-  "material": "a paintbrush",
-  "higher": "The Cube increases by 5 feet for each spell slot level above 5.",
+  "ptOk": true,
+  "material": "um pincel",
+  "higher": "O Cubo aumenta 1,5 m para cada círculo do espaço de magia acima do 5º.",
   "area": {
    "shape": "Cubo",
    "feet": 5,
@@ -3650,9 +3643,9 @@
    }
   ],
   "desc": [
-   "For the duration, Celestials, Elementals, Fey, Fiends, and Undead have Disadvantage on attack rolls against you. You can end the spell early by using either of the following special functions.",
-   "Break Enchantment. As a Magic action, you touch a creature that is possessed by or has the Charmed or Frightened condition from one or more creatures of the types above. The target is no longer possessed, Charmed, or Frightened by such creatures.",
-   "Dismissal. As a Magic action, you target one creature you can see within 5 feet of you that has one of the creature types above. The target must succeed on a Charisma saving throw or be sent back to its home plane if it isn't there already. If they aren't on their home plane, Undead are sent to the Shadowfell, and Fey are sent to the Feywild."
+   "Pela duração, Celestiais, Elementais, Fadas, Corruptores e Mortos-Vivos têm Desvantagem nas jogadas de ataque contra você. Você pode encerrar a magia antes usando uma destas funções:",
+   "<b>Quebrar Encantamento.</b> Com uma ação de Magia, você toca uma criatura possuída ou com as condições Enfeitiçado ou Amedrontado por criaturas desses tipos. O alvo deixa de estar possuído, Enfeitiçado ou Amedrontado por elas.",
+   "<b>Dispensa.</b> Com uma ação de Magia, escolha uma criatura desses tipos que possa ver a até 1,5 m. Ela precisa passar numa salvaguarda de Carisma ou volta ao plano de origem, se não estiver nele. Fora do plano de origem, Mortos-Vivos vão para o Pendor das Sombras e Fadas para a Agrestia das Fadas."
   ],
   "src": "srd",
   "orig": {
@@ -3665,8 +3658,8 @@
    "upgrade": "",
    "time": "Action"
   },
-  "ptOk": false,
-  "material": "powdered silver and iron"
+  "ptOk": true,
+  "material": "prata e ferro em pó"
  },
  {
   "id": "dispel-magic",
@@ -4015,9 +4008,9 @@
    }
   ],
   "desc": [
-   "One Humanoid you can see within range must succeed on a Wisdom saving throw or have the Charmed condition for the duration. The target has Advantage on the save if you or your allies are fighting it. Whenever the target takes damage, it repeats the save, ending the spell on itself on a success.",
-   "You have a telepathic link with the Charmed target while the two of you are on the same plane of existence. On your turn, you can use this link to issue commands to the target (no action required), such as \"Attack that creature,\" \"Move over there,\" or \"Fetch that object.\" The target does its best to obey on its turn. If it completes an order and doesn't receive further direction from you, it acts and moves as it likes, focusing on protecting itself.",
-   "You can command the target to take a Reaction but must take your own Reaction to do so."
+   "Um Humanoide que você possa ver dentro do alcance precisa ser bem-sucedido numa salvaguarda de Sabedoria ou fica com a condição Enfeitiçado pela duração. O alvo tem Vantagem se você ou seus aliados estiverem lutando contra ele. Sempre que sofrer dano, repete a salvaguarda, encerrando a magia em si mesmo se passar.",
+   "Você tem um elo telepático com o alvo Enfeitiçado enquanto estiverem no mesmo plano. No seu turno, pode usar esse elo para dar ordens sem gastar ação, como \"Ataque aquela criatura\", \"Vá até ali\" ou \"Pegue aquele objeto\". O alvo faz o possível para obedecer no turno dele. Se concluir uma ordem e não receber outra, age como quiser, priorizando a própria proteção.",
+   "Você pode ordenar que o alvo use uma Reação, mas precisa gastar a sua Reação para isso."
   ],
   "src": "srd",
   "orig": {
@@ -4030,8 +4023,8 @@
    "upgrade": "",
    "time": "Action"
   },
-  "ptOk": false,
-  "higher": "Your Concentration can last longer with a spell slot of level 6 (up to 10 minutes), 7 (up to 1 hour), or 8+ (up to 8 hours)."
+  "ptOk": true,
+  "higher": "A Concentração dura mais com um espaço de 6º círculo (até 10 minutos), 7º (até 1 hora) ou 8º ou maior (até 8 horas)."
  },
  {
   "id": "dragons-breath",
@@ -4112,10 +4105,10 @@
    }
   ],
   "desc": [
-   "You target a creature you know on the same plane of existence. You or a willing creature you touch enters a trance state to act as a dream messenger. While in the trance, the messenger is Incapacitated and has a Speed of 0.",
-   "If the target is asleep, the messenger appears in the target's dreams and can converse with the target as long as it remains asleep, through the spell's duration. The messenger can also shape the dream's environment, creating landscapes, objects, and other images. The messenger can emerge from the trance at any time, ending the spell. The target recalls the dream perfectly upon waking.",
-   "If the target is awake when you cast the spell, the messenger knows it and can either end the trance (and the spell) or wait for the target to sleep, at which point the messenger enters its dreams.",
-   "You can make the messenger terrifying to the target. If you do so, the messenger can deliver a message of no more than ten words, and then the target makes a Wisdom saving throw. On a failed save, the target gains no benefit from its rest, and it takes 3d6 Psychic damage when it wakes up."
+   "Escolha uma criatura que você conheça no mesmo plano. Você, ou uma criatura voluntária que toque, entra em transe para agir como mensageiro nos sonhos. Em transe, o mensageiro fica Incapacitado e com Deslocamento 0.",
+   "Se o alvo estiver dormindo, o mensageiro surge nos sonhos dele e pode conversar enquanto ele dormir, pela duração. Também pode moldar o ambiente do sonho, criando paisagens, objetos e outras imagens, e sair do transe quando quiser, encerrando a magia. O alvo se lembra perfeitamente do sonho ao acordar.",
+   "Se o alvo estiver acordado, o mensageiro sabe disso e pode encerrar o transe ou esperar que ele durma.",
+   "Você pode fazer o mensageiro aterrorizante. Nesse caso, ele entrega uma mensagem de até dez palavras, e o alvo faz uma salvaguarda de Sabedoria. Se falhar, não recebe benefício do descanso e sofre 3d6 de dano Psíquico ao acordar."
   ],
   "src": "srd",
   "orig": {
@@ -4129,8 +4122,8 @@
    "upgrade": "",
    "time": "1 minute"
   },
-  "ptOk": false,
-  "material": "a handful of sand",
+  "ptOk": true,
+  "material": "um punhado de areia",
   "dmgChip": "3d6"
  },
  {
@@ -5352,7 +5345,7 @@
    }
   ],
   "desc": [
-   "A vertical column of brilliant fire roars down from above. Each creature in a 10-foot-radius, 40-foothigh Cylinder centered on a point within range makes a Dexterity saving throw, taking 5d6 Fire damage and 5d6 Radiant damage on a failed save or half as much damage on a successful one."
+   "Uma coluna vertical de fogo brilhante desce rugindo. Cada criatura num Cilindro de 3 m de raio e 12 m de altura, centrado num ponto dentro do alcance, faz uma salvaguarda de Destreza. Quem falhar sofre 5d6 de dano de Fogo e 5d6 de dano Radiante; quem passar sofre metade."
   ],
   "src": "srd",
   "orig": {
@@ -5363,9 +5356,9 @@
    "upgrade": "",
    "time": "Action"
   },
-  "ptOk": false,
-  "material": "a pinch of sulfur",
-  "higher": "The Fire damage and the Radiant damage increase by 1d6 for each spell slot level above 5.",
+  "ptOk": true,
+  "material": "uma pitada de enxofre",
+  "higher": "O dano de Fogo e o dano Radiante aumentam em 1d6 para cada círculo do espaço de magia acima do 5º.",
   "dmgChip": "5d6"
  },
  {
@@ -5901,10 +5894,10 @@
    }
   ],
   "desc": [
-   "You give a verbal command to a creature that you can see within range, ordering it to carry out some service or refrain from an action or a course of activity as you decide. The target must succeed on a Wisdom saving throw or have the Charmed condition for the duration. The target automatically succeeds if it can't understand your command.",
-   "While Charmed, the creature takes 5d10 Psychic damage if it acts in a manner directly counter to your command. It takes this damage no more than once each day.",
-   "You can issue any command you choose, short of an activity that would result in certain death. Should you issue a suicidal command, the spell ends.",
-   "A Remove Curse, Greater Restoration, or Wish spell ends this spell."
+   "Você dá uma ordem verbal a uma criatura que possa ver dentro do alcance, mandando-a cumprir um serviço ou se abster de uma ação ou conduta. O alvo precisa ser bem-sucedido numa salvaguarda de Sabedoria ou fica com a condição Enfeitiçado pela duração. Ele passa automaticamente se não entender a ordem.",
+   "Enquanto Enfeitiçado, sofre 5d10 de dano Psíquico se agir de forma diretamente contrária à ordem, no máximo uma vez por dia.",
+   "Você pode dar qualquer ordem, exceto algo que resulte em morte certa. Uma ordem suicida encerra a magia.",
+   "Uma magia Remover Maldição, Restauração Maior ou Desejo encerra esta magia."
   ],
   "src": "srd",
   "orig": {
@@ -5918,8 +5911,8 @@
    "upgrade": "",
    "time": "1 minute"
   },
-  "ptOk": false,
-  "higher": "If you use a level 7 or 8 spell slot, the duration is 365 days. If you use a level 9 spell slot, the spell lasts until it is ended by one of the spells mentioned above.",
+  "ptOk": true,
+  "higher": "Com um espaço de 7º ou 8º círculo, a duração é de 365 dias. Com um de 9º círculo, dura até ser encerrada por uma das magias citadas.",
   "dmgChip": "5d10"
  },
  {
@@ -6254,7 +6247,7 @@
   "ritual": false,
   "r": [],
   "desc": [
-   "You touch a creature and magically remove one of the following effects from it: • 1 Exhaustion level • The Charmed or Petrified condition • A curse, including the target's Attunement to a cursed magic item • Any reduction to one of the target's ability scores • Any reduction to the target's Hit Point maximum"
+   "Você toca uma criatura e remove dela magicamente um destes efeitos: 1 nível de Exaustão; a condição Enfeitiçado ou Petrificado; uma maldição, incluindo a Sintonização com um item mágico amaldiçoado; qualquer redução num valor de atributo; ou qualquer redução nos Pontos de Vida máximos."
   ],
   "src": "srd",
   "orig": {
@@ -6265,8 +6258,8 @@
    "upgrade": "",
    "time": "Action"
   },
-  "ptOk": false,
-  "material": "diamond dust worth 100+ GP, which the spell consumes",
+  "ptOk": true,
+  "material": "pó de diamante que valha 100 PO ou mais, consumido pela magia",
   "matGp": 100,
   "matUsed": true
  },
@@ -6489,9 +6482,9 @@
   "ritual": false,
   "r": [],
   "desc": [
-   "You touch a point and infuse an area around it with holy or unholy power. The area can have a radius up to 60 feet, and the spell fails if the radius includes an area already under the effect of Hallow. The affected area has the following effects.",
-   "Hallowed Ward. Choose any of these creature types: Aberration, Celestial, Elemental, Fey, Fiend, or Undead. Creatures of the chosen types can't willingly enter the area, and any creature that is possessed by or that has the Charmed or Frightened condition from such creatures isn't possessed, Charmed, or Frightened by them while in the area.",
-   "Extra Effect. You bind an extra effect to the area from the list below: Courage. Creatures of any types you choose can't gain the Frightened condition while in the area. Darkness. Darkness fills the area. Normal light, as well as magical light created by spells of a level lower than this spell, can't illuminate the area. Daylight. Bright light fills the area. Magical Darkness created by spells of a level lower than this spell can't extinguish the light. Peaceful Rest. Dead bodies interred in the area can't be turned into Undead. Extradimensional Interference. Creatures of any types you choose can't enter or exit the area using teleportation or interplanar travel. Fear. Creatures of any types you choose have the Frightened condition while in the area. Resistance. Creatures of any types you choose have Resistance to one damage type of your choice while in the area. Silence. No sound can emanate from within the area, and no sound can reach into it. Tongues. Creatures of any types you choose can communicate with any other creature in the area even if they don't share a common language. Vulnerability. Creatures of any types you choose have Vulnerability to one damage type of your choice while in the area."
+   "Você toca um ponto e impregna a área ao redor com poder sagrado ou profano. A área pode ter até 18 m de raio, e a magia falha se incluir uma área já sob Consagrar. A área tem os efeitos a seguir.",
+   "<b>Proteção Consagrada.</b> Escolha entre Aberração, Celestial, Elemental, Fada, Corruptor ou Morto-Vivo. Criaturas desses tipos não entram na área por vontade própria, e quem estiver possuído, Enfeitiçado ou Amedrontado por elas fica livre disso enquanto estiver ali.",
+   "<b>Efeito Adicional.</b> Vincule à área um destes efeitos: <b>Coragem</b> (criaturas dos tipos escolhidos não ficam Amedrontadas ali); <b>Escuridão</b> (Escuridão preenche a área, e luz normal ou de magia de círculo menor não a ilumina); <b>Luz do Dia</b> (luz forte preenche a área, e Escuridão mágica de círculo menor não a apaga); <b>Descanso Pacífico</b> (corpos enterrados ali não viram Mortos-Vivos); <b>Interferência Extradimensional</b> (criaturas dos tipos escolhidos não entram nem saem por teleporte ou viagem entre planos); <b>Medo</b> (criaturas dos tipos escolhidos ficam Amedrontadas ali); <b>Resistência</b> (criaturas dos tipos escolhidos têm Resistência a um tipo de dano ali); <b>Silêncio</b> (nenhum som sai da área nem chega a ela); <b>Línguas</b> (criaturas dos tipos escolhidos se comunicam com qualquer outra na área); <b>Vulnerabilidade</b> (criaturas dos tipos escolhidos têm Vulnerabilidade a um tipo de dano ali)."
   ],
   "src": "srd",
   "orig": {
@@ -6504,8 +6497,8 @@
    "upgrade": "",
    "time": "24 hours"
   },
-  "ptOk": false,
-  "material": "incense worth 1,000+ GP, which the spell consumes",
+  "ptOk": true,
+  "material": "incenso que valha 1.000 PO ou mais, consumido pela magia",
   "matGp": 1000,
   "matUsed": true
  },
@@ -6979,7 +6972,7 @@
    }
   ],
   "desc": [
-   "Choose a creature that you can see within range. The target must succeed on a Wisdom saving throw or have the Paralyzed condition for the duration. At the end of each of its turns, the target repeats the save, ending the spell on itself on a success."
+   "Escolha uma criatura que você possa ver dentro do alcance. O alvo precisa ser bem-sucedido numa salvaguarda de Sabedoria ou fica com a condição Paralisado pela duração. No fim de cada turno dele, o alvo repete a salvaguarda, encerrando a magia em si mesmo se passar."
   ],
   "src": "srd",
   "orig": {
@@ -6990,9 +6983,9 @@
    "upgrade": "",
    "time": "Action"
   },
-  "ptOk": false,
-  "material": "a straight piece of iron",
-  "higher": "You can target one additional creature for each spell slot level above 5."
+  "ptOk": true,
+  "material": "uma peça reta de ferro",
+  "higher": "Você pode escolher uma criatura adicional para cada círculo do espaço de magia acima do 5º."
  },
  {
   "id": "hold-person",
@@ -7529,8 +7522,8 @@
    }
   ],
   "desc": [
-   "Swarming locusts fill a 20-foot-radius Sphere centered on a point you choose within range. The Sphere remains for the duration, and its area is Lightly Obscured and Difficult Terrain.",
-   "When the swarm appears, each creature in it makes a Constitution saving throw, taking 4d10 Piercing damage on a failed save or half as much damage on a successful one. A creature also makes this save when it enters the spell's area for the first time on a turn or ends its turn there. A creature makes this save only once per turn."
+   "Gafanhotos em enxame preenchem uma Esfera de 6 m de raio centrada num ponto à sua escolha dentro do alcance. A Esfera dura pela magia, e a área tem Escuridão Leve e é Terreno Difícil.",
+   "Quando o enxame surge, cada criatura nele faz uma salvaguarda de Constituição. Quem falhar sofre 4d10 de dano Perfurante; quem passar sofre metade. A criatura também faz a salvaguarda ao entrar na área pela primeira vez num turno ou terminar o turno ali, no máximo uma vez por turno."
   ],
   "src": "srd",
   "orig": {
@@ -7542,9 +7535,9 @@
    "upgrade": "",
    "time": "Action"
   },
-  "ptOk": false,
-  "material": "a locust",
-  "higher": "The damage increases by 1d10 for each spell slot level above 5.",
+  "ptOk": true,
+  "material": "um gafanhoto",
+  "higher": "O dano aumenta em 1d10 para cada círculo do espaço de magia acima do 5º.",
   "dmgChip": "4d10",
   "area": {
    "shape": "Esfera",
@@ -7758,9 +7751,9 @@
   "ritual": false,
   "r": [],
   "desc": [
-   "Name or describe a famous person, place, or object. The spell brings to your mind a brief summary of the significant lore about that famous thing, as described by the GM.",
-   "The lore might consist of important details, amusing revelations, or even secret lore that has never been widely known. The more information you already know about the thing, the more precise and detailed the information you receive is. That information is accurate but might be couched in figurative language or poetry, as determined by the GM.",
-   "If the famous thing you chose isn't actually famous, you hear sad musical notes played on a trombone, and the spell fails."
+   "Nomeie ou descreva uma pessoa, um lugar ou um objeto famoso. A magia traz à sua mente um breve resumo do que se sabe de importante sobre ele, conforme descrito pelo Mestre.",
+   "Pode haver detalhes importantes, revelações divertidas ou até segredos pouco conhecidos. Quanto mais você já souber, mais precisa e detalhada é a informação. Ela é correta, mas pode vir em linguagem figurada ou poética.",
+   "Se o que você escolheu não for famoso de verdade, você ouve notas tristes de trombone e a magia falha."
   ],
   "src": "srd",
   "orig": {
@@ -7773,8 +7766,8 @@
    "upgrade": "",
    "time": "10 minutes"
   },
-  "ptOk": false,
-  "material": "incense worth 250+ GP, which the spell consumes, and four ivory strips worth 50+ GP each",
+  "ptOk": true,
+  "material": "incenso que valha 250 PO ou mais, consumido pela magia, e quatro lâminas de marfim que valham 50 PO ou mais cada",
   "matGp": 250,
   "matUsed": true
  },
@@ -8492,7 +8485,7 @@
    }
   ],
   "desc": [
-   "A wave of healing energy washes out from a point you can see within range. Choose up to six creatures in a 30-foot-radius Sphere centered on that point. Each target regains Hit Points equal to 5d8 plus your spellcasting ability modifier."
+   "Uma onda de energia curativa se espalha de um ponto que você possa ver dentro do alcance. Escolha até seis criaturas numa Esfera de 9 m de raio centrada nesse ponto. Cada alvo recupera Pontos de Vida iguais a 5d8 mais o seu modificador do atributo de conjuração."
   ],
   "src": "srd",
   "orig": {
@@ -8503,8 +8496,8 @@
    "upgrade": "",
    "time": "Action"
   },
-  "ptOk": false,
-  "higher": "The healing increases by 1d8 for each spell slot level above 5.",
+  "ptOk": true,
+  "higher": "A cura aumenta em 1d8 para cada círculo do espaço de magia acima do 5º.",
   "dmgChip": "5d8",
   "area": {
    "shape": "Esfera",
@@ -9045,9 +9038,9 @@
   "ritual": false,
   "r": [],
   "desc": [
-   "You gain the Invisible condition at the same time that an illusory double of you appears where you are standing. The double lasts for the duration, but the invisibility ends immediately after you make an attack roll, deal damage, or cast a spell.",
-   "As a Magic action, you can move the illusory double up to twice your Speed and make it gesture, speak, and behave in whatever way you choose. It is intangible and invulnerable.",
-   "You can see through its eyes and hear through its ears as if you were located where it is."
+   "Você fica com a condição Invisível ao mesmo tempo em que um duplo ilusório seu surge onde você está. O duplo dura pela magia, mas a invisibilidade termina logo depois de você fazer uma jogada de ataque, causar dano ou conjurar uma magia.",
+   "Com uma ação de Magia, você pode mover o duplo até o dobro do seu Deslocamento e fazê-lo gesticular, falar e agir como quiser. Ele é intangível e invulnerável.",
+   "Você pode ver pelos olhos dele e ouvir pelos ouvidos dele como se estivesse no lugar dele."
   ],
   "src": "srd",
   "orig": {
@@ -9060,7 +9053,7 @@
    "upgrade": "",
    "time": "Action"
   },
-  "ptOk": false
+  "ptOk": true
  },
  {
   "id": "misty-step",
@@ -9117,11 +9110,11 @@
    }
   ],
   "desc": [
-   "You attempt to reshape another creature's memories. One creature that you can see within range makes a Wisdom saving throw. If you are fighting the creature, it has Advantage on the save. On a failed save, the target has the Charmed condition for the duration. While Charmed in this way, the target also has the Incapacitated condition and is unaware of its surroundings, though it can hear you. If it takes any damage or is targeted by another spell, this spell ends, and no memories are modified.",
-   "While this charm lasts, you can affect the target's memory of an event that it experienced within the last 24 hours and that lasted no more than 10 minutes. You can permanently eliminate all memory of the event, allow the target to recall the event with perfect clarity, change its memory of the event's details, or create a memory of some other event.",
-   "You must speak to the target to describe how its memories are affected, and it must be able to understand your language for the modified memories to take root. Its mind fills in any gaps in the details of your description. If the spell ends before you finish describing the modified memories, the creature's memory isn't altered. Otherwise, the modified memories take hold when the spell ends.",
-   "A modified memory doesn't necessarily affect how a creature behaves, particularly if the memory contradicts the creature's natural inclinations, alignment, or beliefs. An illogical modified memory, such as a false memory of how much the creature enjoyed swimming in acid, is dismissed as a bad dream. The GM might deem a modified memory too nonsensical to affect a creature.",
-   "A Remove Curse or Greater Restoration spell cast on the target restores the creature's true memory."
+   "Você tenta remodelar as memórias de outra criatura. Uma criatura que você possa ver dentro do alcance faz uma salvaguarda de Sabedoria, com Vantagem se você estiver lutando contra ela. Se falhar, fica com a condição Enfeitiçado pela duração. Assim Enfeitiçada, também fica Incapacitada e sem noção do que há ao redor, mas consegue ouvir você. Se sofrer dano ou for alvo de outra magia, esta termina sem modificar nada.",
+   "Enquanto durar, você pode afetar a lembrança de um evento vivido nas últimas 24 horas, com até 10 minutos de duração. Pode apagar a lembrança para sempre, permitir que o alvo se lembre com clareza perfeita, mudar detalhes ou criar a memória de outro evento.",
+   "Você precisa falar com o alvo para descrever as mudanças, e ele precisa entender seu idioma. A mente dele preenche as lacunas. Se a magia terminar antes de você concluir, a memória não muda. Caso contrário, as mudanças se fixam quando ela termina.",
+   "Uma memória alterada não muda necessariamente o comportamento, sobretudo se contrariar as inclinações, o alinhamento ou as crenças da criatura. Uma memória ilógica, como o prazer de nadar em ácido, é tomada por um pesadelo. O Mestre pode considerar uma memória absurda demais para ter efeito.",
+   "Uma magia Remover Maldição ou Restauração Maior devolve a memória verdadeira."
   ],
   "src": "srd",
   "orig": {
@@ -9136,8 +9129,8 @@
    "upgrade": "",
    "time": "Action"
   },
-  "ptOk": false,
-  "higher": "You can alter the target's memories of an event that took place up to 7 days ago (level 6 spell slot), 30 days ago (level 7 spell slot), 365 days ago (level 8 spell slot), or any time in the creature's past (level 9 spell slot)."
+  "ptOk": true,
+  "higher": "Você pode alterar memórias de um evento de até 7 dias atrás (6º círculo), 30 dias (7º), 365 dias (8º) ou de qualquer momento (9º)."
  },
  {
   "id": "moonbeam",
@@ -9282,8 +9275,8 @@
   "ritual": false,
   "r": [],
   "desc": [
-   "A passage appears at a point that you can see on a wooden, plaster, or stone surface (such as a wall, ceiling, or floor) within range and lasts for the duration. You choose the opening's dimensions: up to 5 feet wide, 8 feet tall, and 20 feet deep. The passage creates no instability in a structure surrounding it.",
-   "When the opening disappears, any creatures or objects still in the passage created by the spell are safely ejected to an unoccupied space nearest to the surface on which you cast the spell."
+   "Uma passagem surge num ponto que você possa ver numa superfície de madeira, gesso ou pedra (parede, teto ou piso) dentro do alcance e dura pela magia. Você escolhe as dimensões: até 1,5 m de largura, 2,4 m de altura e 6 m de profundidade. A passagem não abala a estrutura ao redor.",
+   "Quando a abertura some, criaturas ou objetos ainda dentro dela são lançados em segurança para o espaço desocupado mais próximo da superfície."
   ],
   "src": "srd",
   "orig": {
@@ -9295,8 +9288,8 @@
    "upgrade": "",
    "time": "Action"
   },
-  "ptOk": false,
-  "material": "a pinch of sesame seeds"
+  "ptOk": true,
+  "material": "uma pitada de sementes de gergelim"
  },
  {
   "id": "pass-without-trace",
@@ -9533,8 +9526,8 @@
    }
   ],
   "desc": [
-   "You attempt to bind a Celestial, an Elemental, a Fey, or a Fiend to your service. The creature must be within range for the entire casting of the spell. (Typically, the creature is first summoned into the center of the inverted version of the Magic Circle spell to trap it while this spell is cast.) At the completion of the casting, the target must succeed on a Charisma saving throw or be bound to serve you for the duration. If the creature was summoned or created by another spell, that spell's duration is extended to match the duration of this spell.",
-   "A bound creature must follow your commands to the best of its ability. You might command the creature to accompany you on an adventure, to guard a location, or to deliver a message. If the creature is Hostile, it strives to twist your commands to achieve its own objectives. If the creature carries out your commands completely before the spell ends, it travels to you to report this fact if you are on the same plane of existence. If you are on a different plane, it returns to the place where you bound it and remains there until the spell ends."
+   "Você tenta obrigar um Celestial, um Elemental, uma Fada ou um Corruptor a servi-lo. A criatura precisa ficar dentro do alcance durante toda a conjuração. Normalmente, ela é antes invocada no centro de um Círculo Mágico invertido, para ficar presa. Ao fim da conjuração, o alvo precisa ser bem-sucedido numa salvaguarda de Carisma ou fica obrigado a servir você pela duração. Se a criatura foi invocada ou criada por outra magia, a duração dessa magia acompanha a desta.",
+   "Uma criatura obrigada segue suas ordens da melhor forma possível. Você pode mandá-la acompanhá-lo numa aventura, vigiar um lugar ou entregar uma mensagem. Se for Hostil, ela tenta distorcer as ordens para seus próprios fins. Se cumprir tudo antes de a magia terminar, vem até você para informar, caso estejam no mesmo plano. Em outro plano, volta ao lugar onde foi obrigada e fica lá até a magia terminar."
   ],
   "src": "srd",
   "orig": {
@@ -9546,11 +9539,11 @@
    "upgrade": "",
    "time": "1 hour"
   },
-  "ptOk": false,
-  "material": "a jewel worth 1,000+ GP, which the spell consumes",
+  "ptOk": true,
+  "material": "uma joia que valha 1.000 PO ou mais, consumida pela magia",
   "matGp": 1000,
   "matUsed": true,
-  "higher": "The duration increases with a spell slot of level 6 (10 days), 7 (30 days), 8 (180 days), and 9 (366 days)."
+  "higher": "A duração aumenta com um espaço de 6º círculo (10 dias), 7º (30 dias), 8º (180 dias) e 9º (366 dias)."
  },
  {
   "id": "plane-shift",
@@ -10369,10 +10362,10 @@
   "ritual": false,
   "r": [],
   "desc": [
-   "With a touch, you revive a dead creature if it has been dead no longer than 10 days and it wasn't Undead when it died.",
-   "The creature returns to life with 1 Hit Point. This spell also neutralizes any poisons that affected the creature at the time of death.",
-   "This spell closes all mortal wounds, but it doesn't restore missing body parts. If the creature is lacking body parts or organs integral for its survivalits head, for instance-the spell automatically fails.",
-   "Coming back from the dead is an ordeal. The target takes a -4 penalty to D20 Tests. Every time the target finishes a Long Rest, the penalty is reduced by 1 until it becomes 0."
+   "Com um toque, você revive uma criatura morta há no máximo 10 dias que não fosse Morto-Vivo ao morrer.",
+   "Ela volta com 1 Ponto de Vida. A magia também neutraliza venenos que a afetavam na hora da morte.",
+   "A magia fecha todos os ferimentos mortais, mas não restaura partes perdidas. Se faltar uma parte essencial à sobrevivência, como a cabeça, ela falha automaticamente.",
+   "Voltar da morte é um suplício. O alvo tem −4 nos Testes de d20, e a penalidade diminui 1 a cada Descanso Longo, até chegar a 0."
   ],
   "src": "srd",
   "orig": {
@@ -10386,8 +10379,8 @@
    "upgrade": "",
    "time": "1 hour"
   },
-  "ptOk": false,
-  "material": "a diamond worth 500+ GP, which, the spell consumes",
+  "ptOk": true,
+  "material": "um diamante que valha 500 PO ou mais, consumido pela magia",
   "matGp": 500,
   "matUsed": true
  },
@@ -10575,9 +10568,8 @@
   "ritual": false,
   "r": [],
   "desc": [
-   "You touch a dead Humanoid or a piece of one. If the creature has been dead no longer than 10 days, the spell forms a new body for it and calls the soul to enter that body. Roll 1d10 and consult the table below to determine the body's species, or the GM chooses another playable species. 1d10 Species 1d10 Species 1 Roll again. 6 Goliath 2 Dragonborn 7 Halfling 3 Dwarf 8 Human 4 Elf 9 Orc 5    Gnome",
-   "10    Tiefling",
-   "The reincarnated creature makes any choices that a species' description offers, and the creature re- calls its former life. It retains the capabilities it had in its original form, except it loses the traits of its previous species and gains the traits of its new one."
+   "Você toca um Humanoide morto ou parte dele. Se a morte ocorreu há até 10 dias, a magia forma um novo corpo e chama a alma para ele. Role 1d10 para definir a espécie do corpo, ou o Mestre escolhe outra espécie jogável: 1 role de novo; 2 Draconato; 3 Anão; 4 Elfo; 5 Gnomo; 6 Golias; 7 Pequenino; 8 Humano; 9 Orc; 10 Tiferino.",
+   "A criatura faz as escolhas que a descrição da espécie oferecer e se lembra da vida anterior. Mantém as capacidades que tinha, mas perde os traços da espécie antiga e ganha os da nova."
   ],
   "src": "srd",
   "orig": {
@@ -10590,8 +10582,8 @@
    "upgrade": "",
    "time": "1 hour"
   },
-  "ptOk": false,
-  "material": "rare oils worth 1,000+ GP, which the spell consumes",
+  "ptOk": true,
+  "material": "óleos raros que valham 1.000 PO ou mais, consumidos pela magia",
   "matGp": 1000,
   "matUsed": true
  },
@@ -10998,10 +10990,12 @@
    }
   ],
   "desc": [
-   "You can see and hear a creature you choose that is on the same plane of existence as you. The target makes a Wisdom saving throw, which is modified (see the tables below) by how well you know the target and the sort of physical connection you have to it. The target doesn't know what it is making the save against, only that it feels uneasy. Your Knowledge of the Target Is ...    Save Modifier Firsthand (met the target)    +0 You Have the Target's ...    Save Modifier Garment or other possession    -4",
-   "On a successful save, the target isn't affected, and you can't use this spell on it again for 24 hours.",
-   "On a failed save, the spell creates an Invisible, intangible sensor within 10 feet of the target. You can see and hear through the sensor as if you were there. The sensor moves with the target, remaining within 10 feet of it for the duration. If something can see the sensor, it appears as a luminous orb about the size of your fist.",
-   "Instead of targeting a creature, you can target a location you have seen. When you do so, the sensor appears at that location and doesn't move."
+   "Você pode ver e ouvir uma criatura à sua escolha no mesmo plano. O alvo faz uma salvaguarda de Sabedoria, modificada pelo quanto você o conhece e pela ligação física que tem com ele. Ele não sabe contra o que está fazendo a salvaguarda, só sente desconforto.",
+   "<b>Conhecimento do alvo:</b> de segunda mão (ouviu falar), +5; de primeira mão (já o encontrou), +0; familiar (conhece bem), −5.",
+   "<b>Ligação:</b> retrato ou imagem, −2; roupa ou outro pertence, −4; parte do corpo, mecha de cabelo ou pedaço de unha, −10.",
+   "Se passar, o alvo não é afetado, e você não pode usar esta magia nele por 24 horas.",
+   "Se falhar, a magia cria um sensor Invisível e intangível a até 3 m do alvo. Você vê e ouve através dele como se estivesse ali. O sensor acompanha o alvo pela duração. Quem puder vê-lo enxerga um orbe luminoso do tamanho do seu punho.",
+   "Em vez de uma criatura, você pode escolher um lugar que já viu. O sensor surge nele e não se move."
   ],
   "src": "srd",
   "orig": {
@@ -11015,8 +11009,8 @@
    "upgrade": "",
    "time": "10 minutes"
   },
-  "ptOk": false,
-  "material": "a focus worth 1,000+ GP, such as, a crystal ball, mirror, or water-filled font",
+  "ptOk": true,
+  "material": "um foco que valha 1.000 PO ou mais, como uma bola de cristal, um espelho ou uma fonte com água",
   "matGp": 1000,
   "matUsed": false
  },
@@ -11157,10 +11151,10 @@
    }
   ],
   "desc": [
-   "You give an illusory appearance to each creature of your choice that you can see within range. An unwilling target can make a Charisma saving throw, and if it succeeds, it is unaffected by this spell.",
-   "You can give the same appearance or different ones to the targets. The spell can change the appearance of the targets' bodies and equipment. You can make each creature seem 1 foot shorter or taller and appear heavier or lighter. A target's new appearance must have the same basic arrangement of limbs as the target, but the extent of the illusion is otherwise up to you. The spell lasts for the duration.",
-   "The changes wrought by this spell fail to hold up to physical inspection. For example, if you use this spell to add a hat to a creature's outfit, objects pass through the hat.",
-   "A creature that takes the Study action to examine a target can make an Intelligence (Investigation) check against your spell save DC. If it succeeds, it becomes aware that the target is disguised."
+   "Você dá uma aparência ilusória a cada criatura à sua escolha que possa ver dentro do alcance. Um alvo não voluntário pode fazer uma salvaguarda de Carisma e, se passar, não é afetado.",
+   "Pode dar a mesma aparência a todos ou aparências diferentes, mudando corpo e equipamento. Cada criatura pode parecer 30 cm mais baixa ou mais alta, mais pesada ou mais leve. A nova aparência precisa ter a mesma disposição básica de membros. O resto fica a seu critério, e a magia dura pela duração.",
+   "As mudanças não resistem a um exame físico. Um chapéu acrescentado, por exemplo, é atravessado por objetos.",
+   "Quem usar a ação Estudar para examinar um alvo pode fazer um teste de Inteligência (Investigação) contra a CD das suas magias. Se tiver sucesso, percebe o disfarce."
   ],
   "src": "srd",
   "orig": {
@@ -11174,7 +11168,7 @@
    "upgrade": "",
    "time": "Action"
   },
-  "ptOk": false
+  "ptOk": true
  },
  {
   "id": "sending",
@@ -12437,8 +12431,8 @@
   "ritual": false,
   "r": [],
   "desc": [
-   "You call forth a Dragon spirit. It manifests in an unoccupied space that you can see within range and uses the Draconic Spirit stat block. The creature disappears when it drops to 0 Hit Points or when the spell ends.",
-   "The creature is an ally to you and your allies. In combat, the creature shares your Initiative count, but it takes its turn immediately after yours. It obeys your verbal commands (no action required by you). If you don't issue any, it takes the Dodge action and uses its movement to avoid danger."
+   "Você chama um espírito de Dragão. Ele surge num espaço desocupado que você possa ver dentro do alcance e usa o bloco de estatísticas de Espírito Dracônico. Desaparece ao chegar a 0 Pontos de Vida ou quando a magia termina.",
+   "Ele é aliado de você e dos seus aliados. Em combate, divide sua Iniciativa, mas age logo depois de você. Obedece às suas ordens verbais, sem você gastar ação. Sem ordens, usa a ação Esquivar e o movimento para evitar perigo."
   ],
   "src": "srd",
   "orig": {
@@ -12450,11 +12444,11 @@
    "upgrade": "",
    "time": "Action"
   },
-  "ptOk": false,
-  "material": "an object with the image of a, dragon engraved on it worth 500+ GP",
+  "ptOk": true,
+  "material": "um objeto com a imagem de um dragão gravada que valha 500 PO ou mais",
   "matGp": 500,
   "matUsed": false,
-  "higher": "Use the spell slot's level for the spell's level in the stat block. Large Dragon, Neutral AC 14 + the spell's level HP 50 + 10 for each spell level above 5 Speed 30 ft., Fly 60 ft., Swim 30 ft. MOD SAVE    MOD SAVE    MOD SAVE Str 19 +4 +4 dex 14 +2 +2 con 17 +3 +3 int  10 +0 +0 WiS 14 +2 +2 chA 14 +2 +2 Resistances Acid, Cold, Fire, Lightning, Poison Immunities Charmed, Frightened, Poisoned Senses Blindsight 30 ft., Darkvision 60 ft.; Passive Perception 12 Languages Draconic, understands the languages you know CR None (XP 0; PB equals your Proficiency Bonus) Traits     Shared Resistances. When you summon the spirit, choose one of its Resistances. You have Resistance to the chosen damage type until the spell ends. Actions     Multiattack. The spirit makes a number of Rend attacks equal to half the spell's level (round down), and it uses Breath Weapon. Rend. Melee Attack Roll: Bonus equals your spell attack modifier, reach 10 feet. Hit: 1d6 + 4 + the spell's level Piercing damage. Breath Weapon. Dexterity Saving Throw: DC equals your spell save DC, each creature in a 30-foot Cone. Failure: 2d6 damage of a type this spirit has Resistance to (your choice when you cast the spell). Success: Half damage."
+  "higher": "Use o círculo do espaço como círculo da magia no bloco. Dragão Grande: CA 14 + círculo; PV 50 + 10 por círculo acima do 5º; Deslocamento 9 m, voo 18 m, natação 9 m; Resistência a Ácido, Frio, Fogo, Elétrico e Veneno. Ao invocar, escolha uma dessas Resistências para você ter até a magia terminar. Faz ataques de Rasgar iguais à metade do círculo e usa a Arma de Sopro. Rasgar: bônus igual ao seu ataque mágico, alcance 3 m, 1d6 + 4 + círculo de dano Perfurante. Sopro: Cone de 9 m, salvaguarda de Destreza contra a CD das suas magias, 2d6 de um tipo ao qual ele resiste (escolhido ao conjurar), metade se passar."
  },
  {
   "id": "sunbeam",
@@ -12668,11 +12662,10 @@
    }
   ],
   "desc": [
-   "You gain the ability to move or manipulate creatures or objects by thought. When you cast the spell and as a Magic action on your later turns before the spell ends, you can exert your will on one creature or object that you can see within range, causing the appropriate effect below. You can affect the same target round after round or choose a new one at any time. If you switch targets, the prior target is no longer affected by the spell.",
-   "Creature. You can try to move a Huge or smaller creature. The target must succeed on a Strength saving throw, or you move it up to 30 feet in any direction within the spell's range. Until the end of your next turn, the creature has the Restrained condition, and if you lift it into the air, it is suspended there. It falls at the end of your next turn unless you use this option on it again and it fails the save.",
-   "Object. You can try to move a Huge or smaller object. If the object isn't being worn or carried, you automatically move it up to 30 feet in any direction within the spell's range.",
-   "If the object is worn or carried by a creature, that creature must succeed on a Strength saving throw, or you pull the object away and move it up to 30 feet in any direction within the spell's range.",
-   "You can exert fine control on objects with your telekinetic grip, such as manipulating a simple tool,"
+   "Você ganha a capacidade de mover ou manipular criaturas e objetos com o pensamento. Ao conjurar e com uma ação de Magia nos turnos seguintes, você impõe sua vontade a uma criatura ou um objeto que possa ver dentro do alcance. Pode afetar o mesmo alvo rodada após rodada ou trocar a qualquer momento. Ao trocar, o alvo anterior deixa de ser afetado.",
+   "<b>Criatura.</b> Você pode tentar mover uma criatura Enorme ou menor. O alvo precisa ser bem-sucedido numa salvaguarda de Força, ou você o move até 9 m em qualquer direção dentro do alcance. Até o fim do seu próximo turno, ele fica com a condição Contido e, se erguido no ar, fica suspenso. Ele cai no fim do seu próximo turno, a menos que você repita a opção e ele falhe na salvaguarda.",
+   "<b>Objeto.</b> Você pode tentar mover um objeto Enorme ou menor. Se não estiver sendo vestido ou carregado, você o move automaticamente até 9 m em qualquer direção dentro do alcance. Se estiver com uma criatura, ela precisa ser bem-sucedida numa salvaguarda de Força, ou você o arranca e o move até 9 m.",
+   "Você tem controle fino sobre objetos, podendo manipular uma ferramenta simples, abrir uma porta ou um recipiente, guardar ou pegar um item de um recipiente aberto ou despejar o conteúdo de um frasco."
   ],
   "src": "srd",
   "orig": {
@@ -12687,7 +12680,7 @@
    "upgrade": "",
    "time": "Action"
   },
-  "ptOk": false
+  "ptOk": true
  },
  {
   "id": "telepathic-bond",
@@ -12707,8 +12700,8 @@
   "ritual": true,
   "r": [],
   "desc": [
-   "You forge a telepathic link among up to eight willing creatures of your choice within range, psychically linking each creature to all the others for the duration. Creatures that can't communicate in any languages aren't affected by this spell.",
-   "Until the spell ends, the targets can communicate telepathically through the bond whether or not they share a language. The communication is possible over any distance, though it can't extend to other planes of existence."
+   "Você cria um elo telepático entre até oito criaturas voluntárias à sua escolha dentro do alcance, ligando cada uma a todas as outras pela duração. Criaturas que não se comunicam em nenhum idioma não são afetadas.",
+   "Até a magia terminar, os alvos se comunicam por telepatia, com ou sem idioma em comum, a qualquer distância, mas não entre planos de existência."
   ],
   "src": "srd",
   "orig": {
@@ -12720,8 +12713,8 @@
    "upgrade": "",
    "time": "Action"
   },
-  "ptOk": false,
-  "material": "two eggs"
+  "ptOk": true,
+  "material": "dois ovos"
  },
  {
   "id": "teleport",
@@ -12796,10 +12789,10 @@
   "ritual": false,
   "r": [],
   "desc": [
-   "As you cast the spell, you draw a 5-foot-radius circle on the ground inscribed with sigils that link your location to a permanent teleportation circle of your choice whose sigil sequence you know and that is on the same plane of existence as you. A shimmering portal opens within the circle you drew and remains open until the end of your next turn. Any creature that enters the portal instantly appears within 5 feet of the destination circle or in the nearest unoccupied space if that space is occupied.",
-   "Many major temples, guildhalls, and other important places have permanent teleportation circles. Each circle includes a unique sigil sequence-a string of runes arranged in a particular pattern.",
-   "When you first gain the ability to cast this spell, you learn the sigil sequences for two destinations on the Material Plane, determined by the GM. You might learn additional sigil sequences during your adventures. You can commit a new sigil sequence to memory after studying it for 1 minute.",
-   "You can create a permanent teleportation circle by casting this spell in the same location every day for 365 days."
+   "Ao conjurar, você desenha no chão um círculo de 1,5 m de raio com sigilos que ligam o local a um círculo de teleporte permanente à sua escolha, cuja sequência de sigilos você conheça e que esteja no mesmo plano. Um portal cintilante se abre no círculo e fica aberto até o fim do seu próximo turno. Qualquer criatura que entre surge na hora a até 1,5 m do círculo de destino, ou no espaço desocupado mais próximo.",
+   "Muitos templos, sedes de guildas e outros lugares importantes têm círculos permanentes. Cada um tem uma sequência única de sigilos, uma série de runas num padrão específico.",
+   "Ao ganhar a capacidade de conjurar esta magia, você aprende as sequências de dois destinos no Plano Material, definidos pelo Mestre. Pode aprender outras nas aventuras, memorizando uma nova em 1 minuto de estudo.",
+   "Você cria um círculo permanente conjurando esta magia no mesmo lugar todo dia por 365 dias."
   ],
   "src": "srd",
   "orig": {
@@ -12813,8 +12806,8 @@
    "upgrade": "",
    "time": "1 minute"
   },
-  "ptOk": false,
-  "material": "rare inks worth 50+ GP, which the, spell consumes",
+  "ptOk": true,
+  "material": "tintas raras que valham 50 PO ou mais, consumidas pela magia",
   "matGp": 50,
   "matUsed": true
  },
@@ -13073,8 +13066,8 @@
   "ritual": false,
   "r": [],
   "desc": [
-   "You gain the ability to enter a tree and move from inside it to inside another tree of the same kind within 500 feet. Both trees must be living and at least the same size as you. You must use 5 feet of movement to enter a tree. You instantly know the location of all other trees of the same kind within 500 feet and, as part of the move used to enter the tree, can either pass into one of those trees or step out of the tree you're in. You appear in a spot of your choice within 5 feet of the destination tree, using another 5 feet of movement. If you have no movement left, you appear within 5 feet of the tree you entered.",
-   "You can use this transportation ability only once on each of your turns. You must end each turn outside a tree."
+   "Você ganha a capacidade de entrar numa árvore e sair de dentro de outra da mesma espécie a até 150 m. As duas precisam estar vivas e ter pelo menos o seu tamanho. Entrar custa 1,5 m de movimento. Você sabe na hora onde estão as outras árvores da mesma espécie a até 150 m e, como parte do movimento de entrada, pode passar para uma delas ou sair da árvore onde está. Você surge num ponto à sua escolha a até 1,5 m da árvore de destino, gastando mais 1,5 m de movimento. Sem movimento restante, surge a até 1,5 m da árvore por onde entrou.",
+   "Você só pode se transportar assim uma vez em cada um dos seus turnos e precisa terminar cada turno fora de uma árvore."
   ],
   "src": "srd",
   "orig": {
@@ -13086,7 +13079,7 @@
    "upgrade": "",
    "time": "Action"
   },
-  "ptOk": false
+  "ptOk": true
  },
  {
   "id": "true-polymorph",
@@ -13556,8 +13549,8 @@
   "ritual": false,
   "r": [],
   "desc": [
-   "An Invisible wall of force springs into existence at a point you choose within range. The wall appears in any orientation you choose, as a horizontal or vertical barrier or at an angle. It can be free floating or resting on a solid surface. You can form it into a hemispherical dome or a globe with a radius of up to 10 feet, or you can shape a flat surface made up of ten 10-foot-by-10-foot panels. Each panel must be contiguous with another panel. In any form, the wall is 1/4 inch thick and lasts for the duration. If the wall cuts through a creature's space when it appears, the creature is pushed to one side of the wall (you choose which side).",
-   "Nothing can physically pass through the wall. It is immune to all damage and can't be dispelled by Dispel Magic. A Disintegrate spell destroys the wall instantly, however. The wall also extends into the Ethereal Plane and blocks ethereal travel through the wall."
+   "Uma parede Invisível de energia surge num ponto à sua escolha dentro do alcance, na orientação que quiser: horizontal, vertical ou inclinada. Pode flutuar ou se apoiar numa superfície sólida. Você pode dar a ela a forma de cúpula ou globo de até 3 m de raio, ou de uma superfície plana com dez painéis de 3 m por 3 m, cada um contíguo a outro. Em qualquer forma, ela tem 6 mm de espessura e dura pela magia. Se cortar o espaço de uma criatura ao surgir, a criatura é empurrada para um dos lados, à sua escolha.",
+   "Nada atravessa fisicamente a parede. Ela é imune a todo dano e Dissipar Magia não a dissipa, mas uma magia Desintegrar a destrói na hora. A parede também se estende ao Plano Etéreo, bloqueando a passagem por lá."
   ],
   "src": "srd",
   "orig": {
@@ -13569,8 +13562,8 @@
    "upgrade": "",
    "time": "Action"
   },
-  "ptOk": false,
-  "material": "a shard of glass"
+  "ptOk": true,
+  "material": "um caco de vidro"
  },
  {
   "id": "wall-of-ice",

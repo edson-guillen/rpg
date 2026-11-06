@@ -272,7 +272,7 @@ function antecedentesPT(fonte, pgs) {
 
 function especiesPT(fonte, pgs) {
   const ls = linhas(pgs, 192, 204).filter(x => x.l);
-  const nomes = linhas(pgs, 183, 193).map(x => x.l).join(' ').match(/ordem alfabética: ([^.]+)\./)?.[1].split(/,| e /).map(n => n.trim()).filter(Boolean) || [];
+  const nomes = linhas(pgs, 183, 193).map(x => x.l).join(' ').match(/espécies são apresentadas[^:]*ordem alfabética: ([^.]+)\./)?.[1].split(/,| e /).map(n => n.trim()).filter(Boolean) || [];
   const inicios = [];
   ls.forEach((x, i) => { if (/^Tipo de Criatura:/.test(x.l)) inicios.push(i); });
   return inicios.map((i, k) => {

@@ -83,8 +83,26 @@ Ficha de controle de **magias e recursos limitados** para **Søren Frostgaard**,
 
 ### 🧙 Personagens
 - Toque no **nome** no topo para trocar de personagem, criar um novo, duplicar, exportar ou excluir (com **Desfazer**).
-- Cada personagem tem ficha, recursos, inventário e anotações próprios.
-- Por enquanto, um personagem novo começa como Feiticeiro de nível 1 com ficha em branco. A criação guiada e a subida de nível vêm nas próximas etapas.
+- Cada personagem tem ficha, recursos, inventário e anotações próprios. As anotações podem ser do personagem ou da campanha, compartilhadas entre todos.
+- **Criação guiada** pelas regras de 2024: espécie, antecedente, atributos (conjunto padrão, compra de pontos ou 4d6), perícias, talento, equipamento, magias e nível inicial.
+- Por enquanto, só a classe **Feiticeiro** está disponível.
+
+### 🎭 Aba Personagem
+- Identidade editável, espécie, antecedente, talentos e linha do tempo das características.
+- **Catálogo de talentos** para planejar a evolução e criar talentos próprios.
+- **Subir de nível:** rolar 1d6, digitar o dado físico ou usar a média; ver o que muda; escolher aumento de atributo, talento, Metamagia e magias; revisar. Dá para **desfazer o último nível**.
+
+### 📚 Biblioteca de magias
+- As **339 magias do SRD 5.2** traduzidas para o português, com botão **Ver original**.
+- Busca em português ou inglês e filtros por círculo, escola, classe, dano, concentração, ritual, tempo e fonte.
+- **Editor de magias:** crie ou altere magias, com linhas de dano, escalonamento por círculo e por nível, tipos à escolha e **consumível vinculado** à mochila.
+- **Biblioteca pessoal:** importe os dados gerados dos seus próprios livros. Eles ficam só neste navegador.
+- As rolagens escalam por círculo, e os truques escalam pelo nível do personagem.
+
+### ✨ Animação por magia
+- Cada magia tem animação própria, com forma, cor do tipo de dano e assinatura gerada pelo nome.
+- Quando a magia deixa escolher o tipo de dano, o app pergunta antes de animar e de rolar, e lembra a última escolha.
+- No menu **⋮**: animações completas, reduzidas ou desligadas.
 
 ### 💾 Persistência
 - Tudo fica salvo automaticamente no **`localStorage`** do navegador e é restaurado ao reabrir a página.
@@ -116,7 +134,7 @@ O antigo endereço `/beta/` redireciona para a página principal.
 
 ## 🚀 Como usar
 
-1. Baixe o arquivo [`index.html`](index.html) e abra no navegador. Funciona offline; as fontes e as animações são opcionais.
+1. Baixe o arquivo [`index.html`](index.html) e abra no navegador. Funciona offline; as fontes e as animações são opcionais. Para ter a Biblioteca, mantenha a pasta `data` junto dele. No site, o app guarda tudo para uso offline.
 2. **No celular:** publique com **GitHub Pages** (*Settings → Pages → Deploy from branch*) e abra o link. Use *"Adicionar à tela inicial"* para abrir como um app.
 
 > ⚠️ O progresso fica salvo **por navegador e por dispositivo**. Para passar de um aparelho para outro, use *Exportar / Importar backup*.
@@ -153,6 +171,7 @@ npm test
 ```
 
 - `npm run build` monta o `index.html` único a partir de `src/`.
+- `npm run srd` normaliza o SRD e gera `data/library.js`, que a Biblioteca carrega sob demanda.
 - `npm test` gera o app e testa o resultado em celular e desktop, com e sem GSAP.
 - `npm run extract -- "<pasta dos livros>"` lê os seus PDFs e grava dados em `private/`, para uso pessoal. Essa pasta é ignorada pelo git: **nada dela pode ser publicado**.
 
@@ -171,6 +190,10 @@ npm test
 ---
 
 ## ⚖️ Aviso legal
+
+This work includes material from the System Reference Document 5.2 ("SRD 5.2") by Wizards of the Coast LLC, available at https://www.dndbeyond.com/srd. The SRD 5.2 is licensed under the Creative Commons Attribution 4.0 International License, available at https://creativecommons.org/licenses/by/4.0/legalcode.
+
+As magias da biblioteca são uma **tradução não oficial** do SRD 5.2, com pés convertidos em metros e pequenas adaptações. Algumas linhas de tabela ausentes no arquivo de origem foram completadas (Palavra Sagrada, Confusão, Rajada Prismática, Muralha Prismática, Vidência, Criação e Controlar o Clima).
 
 Projeto de fã, sem fins lucrativos. *Dungeons & Dragons* e os nomes de magias e regras pertencem à **Wizards of the Coast**. As descrições foram **resumidas e parafraseadas** para uso pessoal em mesa. Consulte o *Livro do Jogador* para o texto oficial.
 

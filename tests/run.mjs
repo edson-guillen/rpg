@@ -236,6 +236,28 @@ const cenarios = {
     await ctx.close();
   },
 
+  async 'as 339 magias estão em português'({ browser, opts }) {
+    const { ctx, page, erros } = await abrir(browser, opts);
+    const r = await page.evaluate(async () => {
+      await ensureLibrary();
+      const ms = libraryAll();
+      const dados = t => [...String(t).matchAll(/\d+d\d+/g)].map(m => m[0]).sort().join(' ');
+      const difDados = ms.filter(s => dados(s.desc.join(' ')) !== dados(s.orig.desc.join(' '))).map(s => s.id);
+      return {
+        total: ms.length, semPt: ms.filter(s => !s.ptOk).map(s => s.id), semNome: ms.filter(s => !s.name).length,
+        ingles: ms.filter(s => /\b(the target|saving throw|you can|spell slot|within range)\b/i.test(s.desc.join(' ') + (s.higher || ''))).map(s => s.id),
+        semSuperior: ms.filter(s => s.orig.higher && !s.higher).map(s => s.id), matIngles: ms.filter(s => /\b(worth|which the spell|a bit of|a pinch)\b/i.test(s.material || '')).map(s => s.id), difDados
+      };
+    });
+    ok(r.total === 339 && !r.semPt.length, `todas traduzidas (faltam ${r.semPt.length}: ${r.semPt.slice(0, 6)})`);
+    ok(!r.ingles.length, `sem inglês no texto: ${r.ingles.slice(0, 6)}`);
+    ok(!r.matIngles.length, `materiais traduzidos: ${r.matIngles.slice(0, 6)}`);
+    ok(!r.semSuperior.length, `círculos superiores traduzidos: ${r.semSuperior.slice(0, 6)}`);
+    ok(r.difDados.length <= 12, `dados conferem com o original (${r.difDados.length}: ${r.difDados.slice(0, 12)})`);
+    ok(!erros.length, `sem erros de JS: ${erros}`);
+    await ctx.close();
+  },
+
   async 'biblioteca: busca, filtros e grimório'({ browser, opts }) {
     const { ctx, page, erros } = await abrir(browser, opts);
     await aba(page, 'grimorio');

@@ -42,6 +42,7 @@ async function abrir(browser, { viewport, comGsap, seed }) {
 }
 const estado = page => page.evaluate(() => ({ used: state.used, extra: state.extra, res: state.res, hp: state.hp, temp: state.temp, items: state.items.map(i => i.name), log: state.spLog.length, tab: state.ui.tab, nome: activeChar().name, n: store.characters.length, notas: notes.notes.map(x => x.title) }));
 const fecharToast = page => page.evaluate(() => document.querySelector('#toast')?.classList.remove('show'));
+const DMG_FOGO = '#ffb347', DMG_FRIO = '#bfeeff';
 const clicar = (page, sel) => page.locator(sel).first().click({ timeout: 4000 });
 const aba = (page, t) => page.evaluate(x => setTab(x), t);
 async function novoPersonagem(page, nome) {
@@ -381,26 +382,102 @@ const cenarios = {
     await ctx.close();
   },
 
-  async 'toda magia tem animação única e sem erros'({ browser, opts }) {
+  async 'toda magia tem cena própria e sem erros'({ browser, opts }) {
     const { ctx, page, erros } = await abrir(browser, opts);
     const r = await page.evaluate(async () => {
       await ensureLibrary();
-      const ms = [...libraryAll(), ...SPELLS], sigs = new Set(libraryAll().map(s => fxSignature(spellRecipe(s)))), formas = new Set(), falhas = [];
+      ensureArt();
+      await new Promise(ok => { const v = () => (window.GRIMORIO_ART ? ok() : setTimeout(v, 30)); v(); });
+      const ms = [...libraryAll(), ...SPELLS], ids = [...new Set(ms.map(s => s.id))], sigs = new Set(), semCena = [], falhas = [], repetidas = [], semArte = [], verbos = new Set(), frases = [];
+      for (const id of ids) {
+        const c = CENAS[id];
+        if (!c) { semCena.push(id); continue; }
+        const sig = JSON.stringify([c[0], c.slice(2)]);
+        if (sigs.has(sig)) repetidas.push(id);
+        sigs.add(sig);
+        if (!c[1]) frases.push(id);
+        for (const [v, o = {}] of c.slice(2)) {
+          verbos.add(v);
+          if (!ATOS[v]) falhas.push(id + ': verbo ' + v);
+          for (const k of ['art', 'de', 'para', 'flor']) if (String(o[k]).startsWith('@') && !GRIMORIO_ART[o[k].slice(1)]) semArte.push(o[k]);
+        }
+      }
       for (const s of ms) {
         try {
-          const rec = fxDryRun(s); formas.add(rec.form);
-          if (!FX_FORMS[rec.form]) falhas.push(s.id);
+          fxDryRun(s);
           (s.choice || []).forEach(t => fxDryRun(s, t));
+          const sp = diceSpec(s, Math.max(s.level, 1), { tipo: s.choice?.[0], modo: 'livre' });
+          fxDryRun(s, s.choice?.[0], resolveLance(completarLance(novoLance(sp))));
         } catch (e) { falhas.push(s.id + ': ' + e.message); }
       }
-      const dano = libraryAll().filter(s => s.r.some(x => x.t === 'dmg' && !x.heal && DMG_COLORS[x.type])).every(s => spellRecipe(s).elemento);
-      return { total: libraryAll().length, unicas: sigs.size, formas: formas.size, falhas: falhas.slice(0, 5), dano, fogo: spellRecipe(libGet('fireball')).palette[0], frio: spellRecipe(libGet('cone-of-cold')).palette[0], todas: FX_FORM_NAMES.length };
+      const fb = libGet('fireball'), rf = (fxRunTeste => fxRunTeste)(null);
+      const cor = t => spellRecipe(libGet('chromatic-orb'), t).palette[0];
+      const baixo = impacto({ temDano: true, total: 12, sorte: 0 }), alto = impacto({ temDano: true, total: 44, sorte: 1 });
+      const dano = libraryAll().filter(s => s.r.some(x => x.t === 'dmg' && !x.heal && !x.depois && DMG_COLORS[x.type])).every(s => spellRecipe(s).elemento);
+      return { total: ids.length, unicas: sigs.size, semCena: semCena.slice(0, 40), nSem: semCena.length, repetidas: repetidas.slice(0, 8), falhas: falhas.slice(0, 5), semArte: [...new Set(semArte)].slice(0, 8), verbos: verbos.size, frases: frases.slice(0, 5), dano, fogo: spellRecipe(fb).palette[0], frio: spellRecipe(libGet('cone-of-cold')).palette[0], corF: cor('Fogo'), corG: cor('Frio'), baixo, alto, nVerbos: Object.keys(ATOS).length };
     });
-    ok(r.total === 339 && r.unicas === 339, `339 assinaturas únicas (${r.unicas})`);
-    ok(!r.falhas.length, `nenhuma falha: ${r.falhas}`);
+    ok(r.total >= 340, `todas as magias entram na conta: ${r.total}`);
+    ok(!r.nSem, `toda magia tem cena escrita à mão: faltam ${r.nSem}: ${r.semCena}`);
+    ok(r.unicas === r.total, `nenhuma cena se repete: ${r.repetidas}`);
+    ok(!r.frases.length, `toda cena tem frase: ${r.frases}`);
+    ok(!r.semArte.length, `toda silhueta existe: ${r.semArte}`);
+    ok(!r.falhas.length, `nenhuma cena quebra: ${r.falhas}`);
+    ok(r.verbos >= 30, `cenas usam verbos variados: ${r.verbos} de ${r.nVerbos}`);
     ok(r.dano, 'toda magia de dano usa a paleta do tipo');
-    ok(r.fogo === DMG.Fogo && r.frio === DMG.Frio, 'fogo e frio têm cores próprias');
-    ok(r.formas >= 18, `formas em uso: ${r.formas} de ${r.todas}`);
+    ok(r.fogo === DMG_FOGO && r.frio === DMG_FRIO, 'cor segue o tipo de dano');
+    ok(r.corF === DMG_FOGO && r.corG === DMG_FRIO, 'cor segue o elemento escolhido');
+    ok(r.alto.tamanho > r.baixo.tamanho * 1.4 && r.alto.forca > r.baixo.forca * 2, 'dano alto gera cena maior e mais forte');
+    ok(!erros.length, `sem erros de JS: ${erros}`);
+    await ctx.close();
+  },
+
+  async 'cena toma a tela, pula com um toque e respeita o menu'({ browser, opts }) {
+    const { ctx, page, erros } = await abrir(browser, opts);
+    await page.evaluate(async () => { await ensureLibrary(); store.settings.anim = 'full'; playSpell(libGet('mage-hand'), null, 0); });
+    await page.waitForFunction(() => +document.querySelector('#spell-fx').style.opacity > .05);
+    ok(await page.evaluate(() => getComputedStyle(document.querySelector('#spell-fx')).pointerEvents) === 'auto', 'cena recebe o toque');
+    await page.evaluate(() => document.querySelector('#spell-fx').dispatchEvent(new PointerEvent('pointerdown')));
+    await page.waitForFunction(() => !fxState.run, null, { timeout: 2000 });
+    ok(await page.evaluate(() => getComputedStyle(document.querySelector('#spell-fx')).pointerEvents) === 'none', 'depois da cena o app volta a responder');
+    await page.evaluate(() => { store.settings.anim = 'reduced'; playSpell(libGet('fireball'), null, 3); });
+    ok(await page.evaluate(() => fxState.run.total) <= 1200, 'modo reduzido é curto');
+    ok(await page.evaluate(() => fxState.run.dados === undefined && fxState.run.reduced), 'modo reduzido sem tremor');
+    await page.evaluate(() => { fxFim(); store.settings.anim = 'off'; });
+    ok(await page.evaluate(() => { const L = completarLance(novoLance(diceSpec(libGet('fireball'), 3))), r = resolveLance(L); lance = L; mesaCtx = { s: libGet('fireball'), lv: 3, ctx: {} }; mostrarResultado(mesaCtx.s, r); return playSpell(mesaCtx.s, null, 3, r) === null && document.querySelector('#roll').classList.contains('show'); }), 'desligada: sem cena, mas com resultado');
+    ok(!erros.length, `sem erros de JS: ${erros}`);
+    await ctx.close();
+  },
+
+  async 'ver efeito e cena das magias criadas'({ browser, opts }) {
+    const { ctx, page, erros } = await abrir(browser, opts);
+    await page.evaluate(async () => { await ensureLibrary(); store.settings.anim = 'full'; spellModal('fireball', true); });
+    ok(await page.locator('[data-action="fx-ver"]').count() === 3, 'magia com dados mostra três forças');
+    const antes = await estado(page);
+    await clicar(page, '[data-action="fx-ver"][data-q="1"]');
+    const forte = await page.evaluate(() => { const r = fxState.run; return { F: r.F, K: r.K, total: r.rec.res.total }; });
+    ok(forte.total === 48, `forte usa o máximo dos dados: ${forte.total}`);
+    await page.evaluate(() => { fxFim(); fxPreview(libGet('fireball'), 0); });
+    const fraco = await page.evaluate(() => { const r = fxState.run; return { F: r.F, K: r.K, total: r.rec.res.total }; });
+    ok(fraco.total === 8 && fraco.K < forte.K && fraco.F < forte.F, 'fraco fica menor que forte');
+    ok(JSON.stringify((await estado(page)).used) === JSON.stringify(antes.used), 'ver efeito não gasta nada');
+    await page.evaluate(() => { fxFim(); closeModal(); spellModal('mage-hand'); });
+    ok(await page.locator('[data-action="fx-ver"]').count() === 1, 'magia sem dados mostra um botão');
+    const s = await page.evaluate(() => {
+      fxFim();
+      const m = (name, desc) => ({ id: 'm-x', name, desc: [desc], r: [], school: 'Evocação', level: 1 });
+      return { gelo: JSON.stringify(cenaDe(m('Lança Boreal', 'Uma lança de gelo atinge o alvo.')).slice(2)) === JSON.stringify(CENAS['cone-of-cold'].slice(2)), neutra: cenaDe(m('Xyz', 'Sem pistas.')).length > 2, escolhida: cenaDe({ ...m('Xyz', ''), cena: 'fireball' }) === CENAS.fireball };
+    });
+    ok(s.gelo, 'magia criada recebe cena pela descrição');
+    ok(s.neutra && s.escolhida, 'editor pode trocar a cena');
+    await page.evaluate(() => { closeModal(); });
+    await page.waitForFunction(() => document.querySelector('#modal').hidden);
+    await page.evaluate(() => openEditor('hex'));
+    await page.waitForSelector('#e-cena');
+    await page.selectOption('#e-cena', 'fireball');
+    await page.locator('#spell-form button.gold').click();
+    const salvo = await page.evaluate(() => { const x = store.library.overrides.hex; return { cena: x.cena, depois: x.r.find(r => r.t === 'dmg').depois }; });
+    ok(salvo.cena === 'fireball', 'cena escolhida fica salva');
+    ok(salvo.depois === true, 'editar não perde as regras da rolagem');
     ok(!erros.length, `sem erros de JS: ${erros}`);
     await ctx.close();
   },

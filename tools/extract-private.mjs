@@ -380,3 +380,4 @@ async function main() {
 }
 
 await main();
+await import('./cenas-pessoais.mjs');

@@ -105,12 +105,17 @@ function typeSection(s) {
   const chips = s.choice.map(t => `<button class="mt" data-action="cast-type" data-t="${esc(t)}" aria-pressed="${castType === t}">${esc(t)}</button>`).join('');
   return `<div class="cast-types"><h4>Escolha o elemento</h4><div class="mt-group" role="group" aria-label="Elemento">${chips}</div></div>`;
 }
+function fxButtons(s) {
+  const dados = s.r?.some(x => (x.t === 'dmg' || x.t === 'aux') && !x.depois);
+  const id = esc(s.id), b = (q, t) => `<button class="btn sm" data-action="fx-ver" data-id="${id}" data-q="${q}">${t}</button>`;
+  return `<div class="m-actions">${dados ? `${b(0, 'Ver efeito: fraco')}${b(.55, 'médio')}${b(1, 'forte')}` : b(.6, 'Ver efeito')}</div>`;
+}
 function spellTools(s) {
-  return `<div class="m-actions"><button class="btn sm ghost" data-action="spell-edit" data-id="${esc(s.id)}">Editar magia</button><button class="btn sm ghost" data-action="lib-remove" data-id="${esc(s.id)}">Remover do grimório</button></div>`;
+  return `${fxButtons(s)}<div class="m-actions"><button class="btn sm ghost" data-action="spell-edit" data-id="${esc(s.id)}">Editar magia</button><button class="btn sm ghost" data-action="lib-remove" data-id="${esc(s.id)}">Remover do grimório</button></div>`;
 }
 function libActions(s) {
   const tem = inGrimoire(s), id = esc(s.id);
-  return `<div class="m-actions">${tem ? `<button class="btn ghost" data-action="lib-remove" data-id="${id}">Remover do grimório</button>` : `<button class="btn gold" data-action="lib-add" data-id="${id}">${icon('i-plus')}Adicionar ao grimório</button>`}
+  return `${fxButtons(s)}<div class="m-actions">${tem ? `<button class="btn ghost" data-action="lib-remove" data-id="${id}">Remover do grimório</button>` : `<button class="btn gold" data-action="lib-add" data-id="${id}">${icon('i-plus')}Adicionar ao grimório</button>`}
     <button class="btn" data-action="spell-copy" data-id="${id}">Duplicar e editar</button><button class="btn" data-action="spell-edit" data-id="${id}">Editar</button></div>`;
 }
 function spellModal(id, fromLib = false) {

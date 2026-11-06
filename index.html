@@ -1010,7 +1010,7 @@ body::after{content:"";position:fixed;inset:0;z-index:300;pointer-events:none;op
     </section>
   </main>
 
-  <footer class="foot" id="foot">Progresso salvo automaticamente neste navegador.<br>Contém material do <a href="https://dndbeyond.com/srd" rel="noopener">System Reference Document 5.2</a>, da Wizards of the Coast, traduzido e adaptado, sob licença <a href="https://creativecommons.org/licenses/by/4.0/legalcode" rel="noopener">CC BY 4.0</a>.</footer>
+  <footer class="foot" id="foot">Progresso salvo automaticamente neste navegador.<br>Silhuetas das animações: <a href="https://game-icons.net" rel="noopener">Game-icons.net</a> (CC BY 3.0).<br>Contém material do <a href="https://dndbeyond.com/srd" rel="noopener">System Reference Document 5.2</a>, da Wizards of the Coast, traduzido e adaptado, sob licença <a href="https://creativecommons.org/licenses/by/4.0/legalcode" rel="noopener">CC BY 4.0</a>.</footer>
 </div>
 
 <div class="modal" id="modal" hidden>
@@ -2381,12 +2381,17 @@ function typeSection(s) {
   const chips = s.choice.map(t => `<button class="mt" data-action="cast-type" data-t="${esc(t)}" aria-pressed="${castType === t}">${esc(t)}</button>`).join('');
   return `<div class="cast-types"><h4>Escolha o elemento</h4><div class="mt-group" role="group" aria-label="Elemento">${chips}</div></div>`;
 }
+function fxButtons(s) {
+  const dados = s.r?.some(x => (x.t === 'dmg' || x.t === 'aux') && !x.depois);
+  const id = esc(s.id), b = (q, t) => `<button class="btn sm" data-action="fx-ver" data-id="${id}" data-q="${q}">${t}</button>`;
+  return `<div class="m-actions">${dados ? `${b(0, 'Ver efeito: fraco')}${b(.55, 'médio')}${b(1, 'forte')}` : b(.6, 'Ver efeito')}</div>`;
+}
 function spellTools(s) {
-  return `<div class="m-actions"><button class="btn sm ghost" data-action="spell-edit" data-id="${esc(s.id)}">Editar magia</button><button class="btn sm ghost" data-action="lib-remove" data-id="${esc(s.id)}">Remover do grimório</button></div>`;
+  return `${fxButtons(s)}<div class="m-actions"><button class="btn sm ghost" data-action="spell-edit" data-id="${esc(s.id)}">Editar magia</button><button class="btn sm ghost" data-action="lib-remove" data-id="${esc(s.id)}">Remover do grimório</button></div>`;
 }
 function libActions(s) {
   const tem = inGrimoire(s), id = esc(s.id);
-  return `<div class="m-actions">${tem ? `<button class="btn ghost" data-action="lib-remove" data-id="${id}">Remover do grimório</button>` : `<button class="btn gold" data-action="lib-add" data-id="${id}">${icon('i-plus')}Adicionar ao grimório</button>`}
+  return `${fxButtons(s)}<div class="m-actions">${tem ? `<button class="btn ghost" data-action="lib-remove" data-id="${id}">Remover do grimório</button>` : `<button class="btn gold" data-action="lib-add" data-id="${id}">${icon('i-plus')}Adicionar ao grimório</button>`}
     <button class="btn" data-action="spell-copy" data-id="${id}">Duplicar e editar</button><button class="btn" data-action="spell-edit" data-id="${id}">Editar</button></div>`;
 }
 function spellModal(id, fromLib = false) {
@@ -2578,6 +2583,7 @@ function handle(a, el) {
     case 'reset-go': commit('Ficha restaurada', st => { const ui = st.ui; Object.assign(st, defaultState(), { ui }); }); closeModal(); break;
     case 'undo': if (toastUndo) { const f = toastUndo; toastUndo = null; $('#toast').classList.remove('show'); f(); } else undo(); break;
     case 'roll': if (ds.mesa) openMesa(spellById(ds.src), +ds.lv, { modo: 'livre', tipo: castType, alt: ds.alt }); else doRoll(ds); break;
+    case 'fx-ver': fxPreview(spellById(ds.id), +ds.q); break;
     case 'roll-hide': el.classList.remove('show'); break;
     case 'mat-toggle': castMat = !castMat; modalRefresh?.(); break;
     case 'mirror-roll': {
@@ -3313,7 +3319,7 @@ function mapPrivate(p) {
     id: 'p-' + p.id, name: p.nome, en: p.nomeEn || '', level: +p.circulo || 0, school: { abjuration: 'Abjuração', conjuration: 'Invocação', divination: 'Adivinhação', enchantment: 'Encantamento', evocation: 'Evocação', illusion: 'Ilusão', necromancy: 'Necromancia', transmutation: 'Transmutação' }[p.escola] || p.escola,
     classes: p.classes || [], time: TIME_PT(p.tempo || ''), range: p.alcance || '', comp: p.comp || '', material: p.material || '', dur: p.duracao || '',
     conc: !!p.concentracao, ritual: !!p.ritual, reaction: /^Reação/.test(p.tempo || ''), desc: ps, ...(higher ? { [trecho]: higher } : {}),
-    r: rollsFromPT(ps.join(' '), p.superior || ''), src: 'pessoal', orig: p.original ? { desc: [p.original.texto], higher: p.original.superior || '' } : null, fonte: p.fonte
+    r: rollsFromPT(ps.join(' '), p.superior || ''), src: 'pessoal', ...(p.cena ? { cena: p.cena } : {}), orig: p.original ? { desc: [p.original.texto], higher: p.original.superior || '' } : null, fonte: p.fonte
   };
 }
 function chipOf(s) {
@@ -3487,6 +3493,9 @@ function renderEditor() {
       <div id="ed-rows">${rows.map(buildRow).join('')}</div>
       <button type="button" class="btn sm" data-action="ed-row-add">${icon('i-plus')}Adicionar linha</button>
       <div class="field" style="margin-top:12px"><label>Escolher o tipo ao conjurar</label><div class="ck-row">${DMG_TYPES.map(t => `<label class="ck"><input type="checkbox" data-choice="${t}" ${draft.choice.includes(t) ? 'checked' : ''}>${t}</label>`).join('')}</div></div>
+      <h4 class="ed-h">Cena</h4>
+      <div class="field"><label for="e-cena">Animação ao conjurar</label><select id="e-cena"><option value="">Automática, pela descrição</option>${libraryAll().filter(x => CENAS[x.id]).sort((a, b) => a.name.localeCompare(b.name, 'pt')).map(x => `<option value="${esc(x.id)}" ${s.cena === x.id ? 'selected' : ''}>${esc(x.name)}</option>`).join('')}</select></div>
+      <button type="button" class="btn sm" data-action="ed-ver">Ver efeito</button>
       <h4 class="ed-h">Consumível vinculado</h4>
       <div class="field-row"><div class="field"><label for="e-mat">Item da mochila</label><select id="e-mat"><option value="">Nenhum</option>${items}</select></div>${F('e-mat-n', 'Quantidade por conjuração', s.mat?.n || 1, 'type="number" min="1" max="99"')}</div>
       <div class="ck-row"><label class="ck"><input type="checkbox" id="e-mat-req" ${s.mat?.required ? 'checked' : ''}>Obrigatório</label><label class="ck"><input type="checkbox" id="e-mat-con" ${s.mat?.required ? (s.mat?.consumed ? 'checked' : '') : 'checked'}>Consumido</label></div>
@@ -3500,10 +3509,12 @@ function readForm() {
   s.desc = v('#e-desc').split(/\n{2,}/).map(x => x.trim()).filter(Boolean);
   if (s.level) { s.higher = v('#e-higher'); delete s.upgrade; } else { s.upgrade = v('#e-higher'); delete s.higher; }
   draft.atk = ck('#e-atk'); draft.saveA = v('#e-save');
+  if (v('#e-cena')) s.cena = v('#e-cena'); else delete s.cena;
   draft.choice = [...document.querySelectorAll('[data-choice]')].filter(x => x.checked).map(x => x.dataset.choice);
-  draft.rows = [...document.querySelectorAll('.ed-row')].map(el => {
+  const antigas = draft.rows;
+  draft.rows = [...document.querySelectorAll('.ed-row')].map((el, i) => {
     const g = k => el.querySelector(`[data-r="${k}"]`), type = g('type').value;
-    return { d: g('d').value.replace(/\s/g, ''), type, heal: type === 'Cura', up: g('up').value.replace(/\s/g, ''), cantrip: g('cantrip').value.replace(/\s/g, ''), half: g('half').checked };
+    return { ...rowExtras(antigas[i]), d: g('d').value.replace(/\s/g, ''), type, heal: type === 'Cura', up: g('up').value.replace(/\s/g, ''), cantrip: g('cantrip').value.replace(/\s/g, ''), half: g('half').checked };
   });
   const key = v('#e-mat');
   if (key) {
@@ -3513,17 +3524,23 @@ function readForm() {
     s.mat = { key, n: Math.max(1, +v('#e-mat-n') || 1), ...(required ? { required: true, consumed: ck('#e-mat-con') } : {}) };
   } else delete s.mat;
 }
+/* Regras que o formulário não mostra, como opção, dano posterior e explosão, ficam guardadas na linha. */
+const ROW_EXTRAS = ['alt', 'depois', 'gate', 'addMod', 'addSlot', 'upMod', 'explode', 'maxMod', 'max', 'missHalf', 'orb', 'acumula', 'tiers', 'table', 'label'];
+const rowExtras = r => Object.fromEntries(ROW_EXTRAS.filter(k => r?.[k] !== undefined).map(k => [k, r[k]]));
+function draftRolls() {
+  const { s } = draft, rolls = (s.r || []).filter(x => x.t === 'note' || x.t === 'aux');
+  if (draft.atk) rolls.unshift({ t: 'atk' });
+  if (draft.saveA) rolls.push({ t: 'save', a: draft.saveA });
+  draft.rows.filter(r => /^\d+d\d+([+-]\d+)?$/.test(r.d)).forEach(r => {
+    rolls.push({ t: 'dmg', d: r.d, type: r.type, ...(r.heal ? { heal: true } : {}), ...(r.half ? { half: true } : {}), ...(r.up ? { up: r.up } : {}), ...(r.cantrip ? { cantrip: r.cantrip } : {}), ...(draft.atk ? { crit: true } : {}), ...rowExtras(r) });
+  });
+  return rolls;
+}
 function saveEditor() {
   readForm();
   const { s, id } = draft;
   if (!s.name) { $('#e-name').focus(); return; }
-  const rolls = (s.r || []).filter(x => x.t === 'note');
-  if (draft.atk) rolls.unshift({ t: 'atk' });
-  if (draft.saveA) rolls.push({ t: 'save', a: draft.saveA });
-  draft.rows.filter(r => /^\d+d\d+([+-]\d+)?$/.test(r.d)).forEach(r => {
-    rolls.push({ t: 'dmg', d: r.d, type: r.type, ...(r.heal ? { heal: true } : {}), ...(r.half ? { half: true } : {}), ...(r.up ? { up: r.up } : {}), ...(r.cantrip ? { cantrip: r.cantrip } : {}), ...(draft.atk ? { crit: true } : {}) });
-  });
-  s.r = rolls;
+  s.r = draftRolls();
   s.dmgChip = chipOf(s) || undefined;
   if (draft.choice.length) s.choice = draft.choice; else delete s.choice;
   delete s._hay;
@@ -3565,6 +3582,7 @@ document.addEventListener('click', e => {
     case 'ed-row-add': readForm(); draft.rows.push(newRow()); renderEditor(); break;
     case 'ed-row-del': readForm(); draft.rows.splice(+b.dataset.i, 1); renderEditor(); break;
     case 'ed-restore': restoreSpell(); break;
+    case 'ed-ver': readForm(); fxPreview({ ...draft.s, id: draft.id || 'previa', name: draft.s.name || 'Magia nova', r: draftRolls(), choice: draft.choice }); break;
   }
 });
 document.addEventListener('submit', e => { if (e.target.id === 'spell-form') { e.preventDefault(); saveEditor(); } });
@@ -3584,60 +3602,59 @@ document.addEventListener('keydown', e => {
 });
 loadPrivate().then(() => { if (privateSpells.length && grimView === 'lib') renderLibrary(); });
 /* =====================================================================
-   ANIMAÇÃO POR MAGIA
-   Cada magia tem uma receita: forma (como atinge), paleta (tipo de dano
-   ou escola), intensidade (círculo) e uma assinatura gerada pelo id,
-   com runa, trajetória, tempos e mistura de partículas próprias.
+   CENA DE MAGIA
+   Toda magia toma a tela, como o amanhecer do Descanso Longo: entra o
+   fundo, os dados pulam, o ato principal acontece, o impacto responde
+   ao dano rolado, aparece o total e a cena sai. A cena de cada magia
+   fica em cenas.js; os verbos que ela usa, em cena-atos.js.
    Desenha num canvas por cima do app; funciona com ou sem GSAP.
    ===================================================================== */
-const FX_MAX_MS = 1500, FX_MAX_PARTICLES = 420;
+const FX_MAX_PARTICLES = 380, FX_ENTRA = 320, FX_DADOS = 900, FX_ATO = 1650, FX_SAI = 420;
 const DMG_COLORS = {
   'Ácido': ['#b8f25a', '#5fd23a', '#e9ff9a'], 'Contundente': ['#d6b48a', '#9c7b55', '#f2dfc2'], 'Cortante': ['#e6edf5', '#9fb2c8', '#ffffff'],
   'Elétrico': ['#9fd8ff', '#5a8dff', '#ffffff'], 'Energético': ['#c9a6ff', '#7b5cff', '#f0e6ff'], 'Fogo': ['#ffb347', '#ff5a1f', '#fff1a8'],
-  'Frio': ['#bfeeff', '#62c4ff', '#ffffff'], 'Necrótico': ['#8fe388', '#3c6b45', '#1b2b20'], 'Perfurante': ['#d9dfe8', '#8796a8', '#ffffff'],
+  'Frio': ['#bfeeff', '#62c4ff', '#ffffff'], 'Necrótico': ['#8fe388', '#3c6b45', '#d8ffd0'], 'Perfurante': ['#d9dfe8', '#8796a8', '#ffffff'],
   'Psíquico': ['#ff8fd8', '#b44cff', '#ffe0f6'], 'Radiante': ['#fff3b0', '#ffd24a', '#ffffff'], 'Trovejante': ['#9fb8ff', '#4d63d6', '#e6ecff'], 'Veneno': ['#a6e36b', '#4f9e3a', '#e5ffc2']
 };
 const SCHOOL_COLORS = {
   'Abjuração': ['#9fdcff', '#4f9de0', '#ffffff'], 'Adivinhação': ['#d8e7ff', '#8fa8ff', '#ffffff'], 'Encantamento': ['#ffb3e6', '#e05cb8', '#fff0fa'], 'Evocação': ['#ffd28a', '#ff8a3c', '#fff4d6'],
-  'Ilusão': ['#d9b8ff', '#9a6cff', '#f5ecff'], 'Invocação': ['#a0f0d0', '#35b58f', '#e6fff6'], 'Necromancia': ['#9fe0a0', '#44705a', '#10201a'], 'Transmutação': ['#ffe08a', '#d4a12e', '#fff8dc']
+  'Ilusão': ['#d9b8ff', '#9a6cff', '#f5ecff'], 'Invocação': ['#a0f0d0', '#35b58f', '#e6fff6'], 'Necromancia': ['#9fe0a0', '#44705a', '#d8ffe0'], 'Transmutação': ['#ffe08a', '#d4a12e', '#fff8dc']
 };
-const FORMS_BY_SHAPE = { Esfera: 'sphere', Cone: 'cone', Linha: 'line', Cubo: 'cube', Cilindro: 'cylinder', 'Emanação': 'emanation', Muralha: 'wall' };
-const FORMS_BY_SCHOOL = { 'Abjuração': 'dome', 'Adivinhação': 'rune', 'Encantamento': 'charm', 'Evocação': 'shockwave', 'Ilusão': 'duplicates', 'Invocação': 'portal', 'Necromancia': 'fear', 'Transmutação': 'light' };
-
-/* Receitas feitas à mão: as 16 magias do Søren e as mais conhecidas do SRD. */
-const FX_RECIPES = {
-  'mind-sliver': { form: 'charm', via: 'ray' }, 'sorcerous-burst': { form: 'sphere', via: 'projectile' }, 'true-strike': { form: 'ray' }, 'minor-illusion': { form: 'duplicates' }, 'mage-hand': { form: 'light' },
-  'ice-knife': { form: 'sphere', via: 'projectile', burst: 'shards' }, shield: { form: 'dome' }, 'disguise-self': { form: 'mist' }, 'chromatic-orb': { form: 'sphere', via: 'projectile' }, command: { form: 'charm' },
-  'mirror-image': { form: 'duplicates' }, web: { form: 'web' }, suggestion: { form: 'charm' }, 'phantasmal-force': { form: 'fear' }, 'alter-self': { form: 'mist' }, 'dragons-breath': { form: 'cone' },
-  fireball: { form: 'sphere', via: 'projectile' }, 'magic-missile': { form: 'projectile', count: 3 }, 'lightning-bolt': { form: 'line' }, 'chain-lightning': { form: 'chain' }, 'burning-hands': { form: 'cone' },
-  'cone-of-cold': { form: 'cone' }, thunderwave: { form: 'shockwave' }, 'ice-storm': { form: 'rain' }, 'meteor-swarm': { form: 'rain', via: 'projectile' }, 'sleet-storm': { form: 'rain' }, 'wall-of-fire': { form: 'wall' },
-  'wall-of-ice': { form: 'wall' }, 'wall-of-force': { form: 'dome' }, 'wall-of-thorns': { form: 'thorns' }, 'spike-growth': { form: 'thorns' }, entangle: { form: 'thorns' }, 'cure-wounds': { form: 'heal' }, 'healing-word': { form: 'heal' },
-  'mass-heal': { form: 'heal' }, heal: { form: 'heal' }, revivify: { form: 'heal', via: 'light' }, 'misty-step': { form: 'teleport' }, teleport: { form: 'teleport' }, 'dimension-door': { form: 'portal' }, gate: { form: 'portal' },
-  'fog-cloud': { form: 'mist' }, cloudkill: { form: 'mist' }, darkness: { form: 'fear' }, light: { form: 'light' }, daylight: { form: 'light' }, sunbeam: { form: 'ray' }, moonbeam: { form: 'cylinder' }, 'flame-strike': { form: 'cylinder' },
-  'charm-person': { form: 'charm' }, fear: { form: 'fear' }, 'hypnotic-pattern': { form: 'charm' }, 'eldritch-blast': { form: 'projectile', count: 1 }, 'fire-bolt': { form: 'projectile' }, 'ray-of-frost': { form: 'ray' }, 'scorching-ray': { form: 'projectile', count: 3 }
+/* Paletas de cena, para o que não tem tipo de dano. */
+const PALETAS = {
+  luz: ['#fff3b0', '#ffd24a', '#ffffff'], ouro: ['#ffe08a', '#d4a12e', '#fff8dc'], lua: ['#dfe9ff', '#8fa8ff', '#ffffff'], prata: ['#e6edf5', '#9fb2c8', '#ffffff'], sombra: ['#9a8cc2', '#3d2f66', '#d9d0f5'],
+  sangue: ['#ff8a8a', '#b3202a', '#ffd6d6'], natureza: ['#a9e87a', '#3f9e4a', '#e9ffc9'], agua: ['#8fd8ff', '#2f7fd6', '#e0f6ff'], terra: ['#d6b48a', '#7d5a3a', '#f2dfc2'], vento: ['#d8f0ee', '#7fb8b8', '#ffffff'],
+  sonho: ['#ffb3e6', '#8f5cff', '#fff0fa'], cura: ['#9df0b4', '#3fbf7a', '#eafff0'], fogo: DMG_COLORS['Fogo'], gelo: DMG_COLORS['Frio'], veneno: DMG_COLORS['Veneno'], arcano: DMG_COLORS['Energético'], morte: ['#b9c9b5', '#3a4a40', '#e6f2e0']
+};
+/* Céu de cada fundo: topo, meio, base e o detalhe que anima. */
+const FUNDOS = {
+  noite: ['#050814', '#0d1630', '#1b2547', 'estrelas'], arcano: ['#0b0620', '#1c1045', '#33205f', 'runas'], amanhecer: ['#1a2348', '#a85a6a', '#ffc27a', 'sol'], tempestade: ['#07090f', '#161c2b', '#2a3142', 'chuva'],
+  floresta: ['#04100a', '#0d2a1a', '#1d4a2a', 'folhas'], cripta: ['#050805', '#101a14', '#1c2a20', 'nevoa'], oceano: ['#02101f', '#0a2f52', '#125a7a', 'bolhas'], ceu: ['#16386e', '#3f74ac', '#8ab6d0', 'nuvens'],
+  vazio: ['#000', '#04030a', '#0a0716', 'estrelas'], fogo: ['#140403', '#3a0d06', '#7a2308', 'brasas'], gelo: ['#07131f', '#16344f', '#3a6a8a', 'neve'], caverna: ['#070605', '#15110d', '#2a2118', 'poeira'],
+  templo: ['#1a1206', '#4a3412', '#8a6a2a', 'poeira'], sonho: ['#10061f', '#3a1450', '#7a2f7a', 'estrelas'], pantano: ['#060a05', '#142012', '#2c3a1a', 'nevoa'], astral: ['#080522', '#1a1a5a', '#3a2f8a', 'estrelas'], lua: ['#04081a', '#101f45', '#27386a', 'lua'], dia: ['#23558e', '#5a94bc', '#a9d0c8', 'sol2']
 };
 
 const fxHash = s => { let h = 2166136261; for (const c of String(s)) { h ^= c.codePointAt(0); h = Math.imul(h, 16777619); } return h >>> 0; };
 function fxRng(seed) { let x = seed || 1; return () => { x ^= x << 13; x ^= x >>> 17; x ^= x << 5; return (x >>> 0) / 4294967296; }; }
+const clamp01 = t => Math.max(0, Math.min(1, t));
+const lerp = (a, b, t) => a + (b - a) * t;
+const ease = t => 1 - Math.pow(1 - t, 3);
+const easeIn = t => t * t * t;
+const easeBack = t => { const s = 1.70158, u = t - 1; return 1 + (s + 1) * u * u * u + s * u * u; };
+const sino = t => Math.sin(clamp01(t) * Math.PI);
+const fadeIO = t => Math.min(1, t * 6, (1 - t) * 6);
 
 /** Monta a receita de uma magia. `tipo` é o elemento escolhido, quando a magia deixa escolher. */
-function spellRecipe(s, tipo, nivel = s.level) {
-  const dano = (s.r || []).find(x => x.t === 'dmg' && !x.heal && DMG_COLORS[x.type]), cura = (s.r || []).some(x => x.heal), hand = FX_RECIPES[s.id] || FX_RECIPES[norm(s.en || '').replace(/[^a-z0-9]+/g, '-')] || {};
-  const elemento = tipo || (dano && DMG_COLORS[dano.type] ? dano.type : null);
-  const form = hand.form || (cura ? 'heal' : s.area && FORMS_BY_SHAPE[s.area.shape]) || ((s.r || []).some(x => x.t === 'atk') ? 'projectile' : dano ? 'ray' : FORMS_BY_SCHOOL[s.school] || 'shockwave');
-  const sig = fxHash(s.id), r = fxRng(sig);
-  const pal = (elemento ? DMG_COLORS[elemento] : SCHOOL_COLORS[s.school]) || SCHOOL_COLORS['Evocação'];
-  return {
-    id: s.id, form, via: hand.via || null, burst: hand.burst || null, count: hand.count || 1, palette: pal, elemento,
-    power: 0.6 + Math.min(nivel || 0, 9) / 9 * 0.9, seed: sig,
-    rune: { sides: 3 + Math.floor(r() * 7), step: 1 + Math.floor(r() * 3), inner: 0.35 + r() * 0.5, spin: (r() < 0.5 ? -1 : 1) * (0.6 + r() * 1.4), marks: 3 + Math.floor(r() * 9) },
-    curve: (r() - 0.5) * 0.9, hue: Math.round((r() - 0.5) * 36), tempo: 0.8 + r() * 0.2, mix: r()
-  };
+function spellRecipe(s, tipo, nivel = s.level, res = null) {
+  const dano = (s.r || []).find(x => x.t === 'dmg' && !x.heal && !x.depois && DMG_COLORS[x.type]);
+  const elemento = DMG_COLORS[tipo] ? tipo : dano ? dano.type : null, cena = cenaDe(s), [fundo, cor] = String(cena[0]).split(':');
+  const palette = (elemento && DMG_COLORS[elemento]) || PALETAS[cor] || DMG_COLORS[cor] || SCHOOL_COLORS[s.school] || SCHOOL_COLORS['Evocação'];
+  return { id: s.id, nome: s.name, cena, fundo: FUNDOS[fundo] ? fundo : 'arcano', palette, elemento, nivel: nivel || 0, res, seed: fxHash(s.id) };
 }
-const fxSignature = c => [c.form, c.via, c.palette[0], c.rune.sides, c.rune.step, c.rune.marks, c.hue, c.seed].join('|');
+const fxSignature = c => JSON.stringify([c.cena[0], c.cena.slice(2)]);
 
 /* ---------- motor ---------- */
-const fxState = { cv: null, ctx: null, runs: [], parts: [], raf: 0 };
+const fxState = { cv: null, ctx: null, run: null, parts: [], raf: 0 };
 const fxMode = () => {
   const m = store.settings.anim || 'full';
   return m === 'full' && matchMedia('(prefers-reduced-motion: reduce)').matches ? 'reduced' : m;
@@ -3646,275 +3663,1182 @@ function fxCanvas() {
   if (fxState.cv) return fxState.cv;
   const c = document.createElement('canvas');
   c.id = 'spell-fx'; c.setAttribute('aria-hidden', 'true');
-  c.style.cssText = 'position:fixed;inset:0;width:100%;height:100%;z-index:9000;pointer-events:none';
+  c.style.cssText = 'position:fixed;inset:0;width:100%;height:100%;z-index:9000;pointer-events:none;opacity:0;touch-action:none';
   document.body.appendChild(c);
+  c.addEventListener('pointerdown', fxPular);
+  addEventListener('keydown', e => { if (e.key === 'Escape' && fxState.run) fxPular(); });
   fxState.cv = c; fxState.ctx = c.getContext('2d');
   return c;
 }
 function fxResize() {
-  const c = fxCanvas(), dpr = Math.min(devicePixelRatio || 1, 2);
+  const c = fxCanvas(), dpr = fxState.leve ? 1 : Math.min(devicePixelRatio || 1, 1.5);
   c.width = innerWidth * dpr; c.height = innerHeight * dpr;
   fxState.ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 }
 function part(o) {
   if (fxState.parts.length >= FX_MAX_PARTICLES) return;
-  fxState.parts.push({ vx: 0, vy: 0, g: 0, drag: 0.98, life: 0, max: 40, size: 3, shape: 'dot', ...o });
+  fxState.parts.push({ vx: 0, vy: 0, g: 0, drag: .985, life: 0, max: 40, size: 3, shape: 'dot', ...o });
 }
 function emit(x, y, n, run, o = {}) {
-  const { rng, rec } = run, k = run.reduced ? 0.25 : 1;
-  for (let i = 0, t = Math.ceil(n * k * rec.power); i < t; i++) {
-    const a = (o.a0 ?? 0) + rng() * (o.arc ?? Math.PI * 2), v = (o.v ?? 3) * (0.3 + rng());
-    part({ x, y, vx: Math.cos(a) * v, vy: Math.sin(a) * v, c: rec.palette[Math.floor(rng() * 3)], size: (o.size ?? 3) * (0.5 + rng()), max: (o.life ?? 40) * (0.6 + rng() * 0.6), g: o.g ?? 0, shape: o.shape || (rec.mix > 0.66 ? 'spark' : rec.mix > 0.33 ? 'dot' : 'diamond') });
+  if (run.reduced) return;
+  const { rng, pal } = run;
+  for (let i = 0, t = Math.ceil(n * (o.fixo ? 1 : .6 + run.F * .9) * (fxState.leve ? .5 : 1)); i < t; i++) {
+    const a = (o.a0 ?? 0) + rng() * (o.arc ?? Math.PI * 2), v = (o.v ?? 3) * (.3 + rng());
+    part({ x, y, vx: Math.cos(a) * v, vy: Math.sin(a) * v, c: o.c || pal[Math.floor(rng() * 3)], size: (o.size ?? 3) * (.5 + rng()), max: (o.life ?? 40) * (.6 + rng() * .6), g: o.g ?? 0, shape: o.shape || 'dot', rot: rng() * 6, art: o.art, txt: o.txt });
   }
 }
-const glow = (ctx, x, y, r, c, a = 1) => {
+function glow(ctx, x, y, r, c, a = 1) {
   const g = ctx.createRadialGradient(x, y, 0, x, y, Math.max(1, r));
   g.addColorStop(0, c); g.addColorStop(1, 'rgba(0,0,0,0)');
-  ctx.globalAlpha = a; ctx.fillStyle = g; ctx.beginPath(); ctx.arc(x, y, Math.max(1, r), 0, 7); ctx.fill(); ctx.globalAlpha = 1;
-};
-const stroke = (ctx, c, w, a = 1) => { ctx.strokeStyle = c; ctx.lineWidth = w; ctx.globalAlpha = a; };
-function drawRune(ctx, x, y, R, rec, t) {
-  const { sides, step, inner, spin, marks } = rec.rune, rot = t * spin * Math.PI;
-  ctx.save(); ctx.translate(x, y); ctx.rotate(rot);
-  stroke(ctx, rec.palette[0], 2, Math.sin(Math.min(1, t * 1.2) * Math.PI));
-  ctx.beginPath(); ctx.arc(0, 0, R, 0, 7); ctx.stroke();
-  ctx.beginPath();
-  for (let i = 0; i <= sides; i++) { const a = i * step * 2 * Math.PI / sides; ctx[i ? 'lineTo' : 'moveTo'](Math.cos(a) * R * 0.92, Math.sin(a) * R * 0.92); }
-  ctx.stroke();
-  ctx.beginPath(); ctx.arc(0, 0, R * inner, 0, 7); ctx.stroke();
-  for (let i = 0; i < marks; i++) { const a = i / marks * 2 * Math.PI; ctx.beginPath(); ctx.moveTo(Math.cos(a) * R, Math.sin(a) * R); ctx.lineTo(Math.cos(a) * R * 1.1, Math.sin(a) * R * 1.1); ctx.stroke(); }
-  ctx.restore(); ctx.globalAlpha = 1;
+  const op = ctx.globalCompositeOperation;
+  ctx.globalCompositeOperation = 'lighter'; ctx.globalAlpha = clamp01(a); ctx.fillStyle = g;
+  ctx.beginPath(); ctx.arc(x, y, Math.max(1, r), 0, 7); ctx.fill();
+  ctx.globalAlpha = 1; ctx.globalCompositeOperation = op;
 }
-const lerp = (a, b, t) => a + (b - a) * t;
-const ease = t => 1 - Math.pow(1 - t, 3);
+const stroke = (ctx, c, w, a = 1) => { ctx.strokeStyle = c; ctx.lineWidth = Math.max(.5, w); ctx.globalAlpha = clamp01(a); ctx.lineCap = 'round'; ctx.lineJoin = 'round'; };
 
-/* Cada forma recebe o andamento t (0 a 1). A = conjurador, B = alvo. */
-const FX_FORMS = {
-  projectile(c, t, run) {
-    const { A, B, rec } = run;
-    for (let i = 0; i < rec.count; i++) {
-      const tt = Math.min(1, t * 1.25 - i * 0.06); if (tt <= 0) continue;
-      const off = (i - (rec.count - 1) / 2) * 46, mx = (A.x + B.x) / 2 + rec.curve * 220 + off, my = (A.y + B.y) / 2;
-      const x = (1 - tt) ** 2 * A.x + 2 * (1 - tt) * tt * mx + tt ** 2 * (B.x + off * .4), y = (1 - tt) ** 2 * A.y + 2 * (1 - tt) * tt * my + tt ** 2 * B.y;
-      if (tt < 1) { glow(c, x, y, 20 * rec.power, rec.palette[0]); emit(x, y, 2, run, { v: 1, life: 22, size: 2.5 }); }
-      else if (!run['hit' + i]) { run['hit' + i] = 1; emit(x, y, 26, run, { v: 5 }); }
-    }
-  },
-  ray(c, t, run) {
-    const { A, B, rec } = run, g = ease(Math.min(1, t * 2.2)), x = lerp(A.x, B.x, g), y = lerp(A.y, B.y, g), f = Math.sin(t * Math.PI);
-    stroke(c, rec.palette[0], 9 * rec.power * f, .45); c.beginPath(); c.moveTo(A.x, A.y); c.lineTo(x, y); c.stroke();
-    stroke(c, rec.palette[2], 3 * f, 1); c.stroke(); c.globalAlpha = 1;
-    emit(x, y, 2, run, { v: 2, life: 20 });
-  },
-  chain(c, t, run) {
-    const { B, rec, rng } = run, pts = [run.A, { x: B.x - 90, y: B.y + 60 }, { x: B.x + 80, y: B.y + 20 }, { x: B.x - 20, y: B.y - 50 }];
-    const shown = Math.min(3, Math.ceil(t * 5));
-    stroke(c, rec.palette[0], 3, 1 - t * .5); c.beginPath();
-    for (let i = 0; i < shown; i++) {
-      const a = pts[i], b = pts[i + 1]; c.moveTo(a.x, a.y);
-      for (let k = 1; k <= 6; k++) c.lineTo(lerp(a.x, b.x, k / 6) + (rng() - .5) * 26, lerp(a.y, b.y, k / 6) + (rng() - .5) * 26);
-      if (i === shown - 1) emit(b.x, b.y, 2, run, { v: 3, life: 16 });
-    }
-    c.stroke(); c.globalAlpha = 1;
-  },
-  cone(c, t, run) {
-    const { A, B, rec } = run, a0 = Math.atan2(B.y - A.y, B.x - A.x), arc = .9, L = Math.hypot(B.x - A.x, B.y - A.y) * 1.1 * ease(t);
-    c.fillStyle = rec.palette[1]; c.globalAlpha = .3 * (1 - t); c.beginPath(); c.moveTo(A.x, A.y); c.arc(A.x, A.y, L, a0 - arc / 2, a0 + arc / 2); c.fill(); c.globalAlpha = 1;
-    if (t < .7) emit(A.x, A.y, 7, run, { a0: a0 - arc / 2, arc, v: 8, life: 38, size: 4 });
-  },
-  sphere(c, t, run) {
-    const { B, rec } = run, R = 150 * rec.power * ease(t);
-    glow(c, B.x, B.y, R, rec.palette[1], .8 * (1 - t)); glow(c, B.x, B.y, R * .55, rec.palette[2], 1 - t);
-    stroke(c, rec.palette[0], 3, 1 - t); c.beginPath(); c.arc(B.x, B.y, R, 0, 7); c.stroke(); c.globalAlpha = 1;
-    if (!run.hit) { run.hit = 1; emit(B.x, B.y, 60, run, { v: rec.burst === 'shards' ? 9 : 6, life: 44, size: 4, shape: rec.burst === 'shards' ? 'diamond' : undefined }); }
-  },
-  line(c, t, run) {
-    const { rec, rng } = run, y = lerp(innerHeight * .62, innerHeight * .34, rec.mix), x = innerWidth * ease(t);
-    stroke(c, rec.palette[1], 14 * rec.power, .4 * (1 - t)); c.beginPath(); c.moveTo(0, y); c.lineTo(x, y + rec.curve * 60); c.stroke();
-    stroke(c, rec.palette[2], 3, 1 - t); c.stroke(); c.globalAlpha = 1;
-    emit(x, y + (rng() - .5) * 14, 3, run, { v: 3, life: 22 });
-  },
-  cube(c, t, run) {
-    const { B, rec } = run, S = 170 * rec.power * ease(Math.min(1, t * 1.6));
-    c.save(); c.translate(B.x, B.y); c.rotate(rec.curve + t * .4);
-    c.fillStyle = rec.palette[1]; c.globalAlpha = .22 * (1 - t); c.fillRect(-S / 2, -S / 2, S, S);
-    stroke(c, rec.palette[0], 3, 1 - t * .7); c.strokeRect(-S / 2, -S / 2, S, S);
-    stroke(c, rec.palette[2], 1.5, .8 * (1 - t)); c.strokeRect(-S / 3, -S / 3, S / 1.5, S / 1.5); c.restore(); c.globalAlpha = 1;
-  },
-  cylinder(c, t, run) {
-    const { B, rec } = run, W = 70 * rec.power, H = innerHeight * ease(Math.min(1, t * 1.8)), f = Math.sin(t * Math.PI);
-    const g = c.createLinearGradient(B.x - W, 0, B.x + W, 0); g.addColorStop(0, 'rgba(0,0,0,0)'); g.addColorStop(.5, rec.palette[0]); g.addColorStop(1, 'rgba(0,0,0,0)');
-    c.fillStyle = g; c.globalAlpha = .85 * f; c.fillRect(B.x - W, 0, W * 2, H); c.globalAlpha = 1;
-    emit(B.x, H, 4, run, { v: 4, life: 26 });
-  },
-  emanation(c, t, run) {
-    const { A, rec } = run;
-    for (let i = 0; i < 3; i++) { const p = (t * 1.3 + i * .22) % 1; stroke(c, rec.palette[i], 3, (1 - p) * .9); c.beginPath(); c.arc(A.x, A.y, 240 * rec.power * p, 0, 7); c.stroke(); }
-    c.globalAlpha = 1; emit(A.x, A.y, 2, run, { v: 4, life: 30 });
-  },
-  shockwave(c, t, run) {
-    const { B, rec } = run;
-    for (let i = 0; i < 2; i++) { const p = ease(Math.max(0, t - i * .15)); stroke(c, rec.palette[i], 7 * (1 - p) + 1, 1 - p); c.beginPath(); c.arc(B.x, B.y, Math.max(innerWidth, innerHeight) * .6 * p * rec.power, 0, 7); c.stroke(); }
-    c.globalAlpha = 1;
-  },
-  rune(c, t, run) { drawRune(c, run.B.x, run.B.y, 110 * run.rec.power, run.rec, t); glow(c, run.B.x, run.B.y, 80, run.rec.palette[0], .5 * (1 - t)); },
-  dome(c, t, run) {
-    const { A, rec } = run, R = 130 * rec.power * ease(Math.min(1, t * 2)), f = 1 - t * t;
-    c.fillStyle = rec.palette[1]; c.globalAlpha = .18 * f; c.beginPath(); c.arc(A.x, A.y, R, Math.PI, 0); c.fill();
-    stroke(c, rec.palette[0], 3, f); c.beginPath(); c.arc(A.x, A.y, R, Math.PI, 0); c.stroke();
-    stroke(c, rec.palette[2], 1, f * .7);
-    for (let i = 1; i < rec.rune.sides; i++) { const a = Math.PI + i / rec.rune.sides * Math.PI; c.beginPath(); c.moveTo(A.x, A.y); c.lineTo(A.x + Math.cos(a) * R, A.y + Math.sin(a) * R); c.stroke(); }
-    c.globalAlpha = 1;
-  },
-  duplicates(c, t, run) {
-    const { B, rec } = run, n = 3 + rec.rune.sides % 3, f = Math.sin(t * Math.PI);
-    for (let i = 0; i < n; i++) {
-      const a = i / n * 7 + rec.curve + t * 1.5, x = B.x + Math.cos(a) * 110 * ease(t), y = B.y + Math.sin(a) * 60 * ease(t);
-      c.fillStyle = rec.palette[i % 3]; c.globalAlpha = .55 * f; c.beginPath(); c.ellipse(x, y - 34, 13, 15, 0, 0, 7); c.fill();
-      c.beginPath(); c.ellipse(x, y + 8, 19, 32, 0, 0, 7); c.fill();
-    }
-    c.globalAlpha = 1;
-  },
-  web(c, t, run) {
-    const { B, rec } = run, g = ease(Math.min(1, t * 1.7)), n = 6 + rec.rune.sides, R = 190 * rec.power * g;
-    stroke(c, rec.palette[2], 1.5, 1 - t * t);
-    for (let i = 0; i < n; i++) { const a = i / n * 2 * Math.PI + rec.curve; c.beginPath(); c.moveTo(B.x, B.y); c.lineTo(B.x + Math.cos(a) * R, B.y + Math.sin(a) * R); c.stroke(); }
-    for (let k = 1; k <= 4; k++) { c.beginPath(); for (let i = 0; i <= n; i++) { const a = i / n * 2 * Math.PI + rec.curve, r = R * k / 4; c[i ? 'lineTo' : 'moveTo'](B.x + Math.cos(a) * r, B.y + Math.sin(a) * r); } c.stroke(); }
-    c.globalAlpha = 1;
-  },
-  portal(c, t, run) {
-    const { B, rec } = run, f = Math.sin(t * Math.PI), W = 80 * rec.power * f;
-    glow(c, B.x, B.y, W * 1.8, rec.palette[1], .6 * f);
-    stroke(c, rec.palette[0], 4, f); c.beginPath(); c.ellipse(B.x, B.y, W, W * 1.6, 0, 0, 7); c.stroke();
-    stroke(c, rec.palette[2], 2, f); c.beginPath(); c.ellipse(B.x, B.y, W * .6, W * 1.25, t * 3, 0, 7); c.stroke(); c.globalAlpha = 1;
-    emit(B.x, B.y, 2, run, { v: 2.4, life: 26 });
-  },
-  heal(c, t, run) {
-    const { A, rng, rec } = run;
-    glow(c, A.x, A.y, 120 * rec.power, DMG_COLORS['Radiante'][0], .4 * (1 - t));
-    for (let i = 0; i < 2; i++) part({ x: A.x + (rng() - .5) * 150, y: A.y + 40, vy: -2.6 - rng() * 2, c: i ? '#9df0b4' : rec.palette[0], size: 7, max: 46, shape: 'plus', drag: 1 });
-  },
-  charm(c, t, run) {
-    const { B, rec, rng } = run, f = Math.sin(t * Math.PI);
-    stroke(c, rec.palette[0], 2.5, f); c.beginPath();
-    for (let a = 0; a < 16; a += .25) { const r = a * 7 * rec.power * ease(t), x = B.x + Math.cos(a + t * 3) * r, y = B.y + Math.sin(a + t * 3) * r; c[a ? 'lineTo' : 'moveTo'](x, y); }
-    c.stroke(); c.globalAlpha = 1;
-    if (rng() < .5) part({ x: B.x + (rng() - .5) * 170, y: B.y + (rng() - .5) * 90, vy: -1.3, c: rec.palette[0], size: 8, max: 40, shape: 'heart', drag: 1 });
-  },
-  fear(c, t, run) {
-    const { B, rec, rng } = run, f = Math.sin(t * Math.PI);
-    glow(c, B.x, B.y, 200 * rec.power, '#05040a', .85 * f);
-    stroke(c, rec.palette[1], 3, f); c.beginPath();
-    for (let i = 0; i < 9; i++) {
-      const a = i / 9 * 7 + rec.curve; c.moveTo(B.x, B.y);
-      for (let k = 1; k <= 5; k++) c.lineTo(B.x + Math.cos(a + k * .3) * k * 34 * ease(t) + (rng() - .5) * 6, B.y + Math.sin(a + k * .3) * k * 34 * ease(t));
-    }
-    c.stroke(); c.globalAlpha = 1;
-  },
-  teleport(c, t, run) {
-    const { A, B, rec } = run, a = t < .5 ? A : B, f = t < .5 ? 1 - t * 2 : (t - .5) * 2;
-    glow(c, a.x, a.y, 70 * f + 10, rec.palette[0], .9);
-    if (t < .5) emit(a.x, a.y, 4, run, { v: 4, life: 22 });
-    else if (!run.hit) { run.hit = 1; emit(a.x, a.y, 30, run, { v: 4 }); }
-  },
-  mist(c, t, run) {
-    const { B, rec, rng } = run, f = Math.sin(t * Math.PI);
-    for (let i = 0; i < 3; i++) glow(c, B.x + (rng() - .5) * 240, B.y + (rng() - .5) * 110, 110 * rec.power, rec.palette[i], .22 * f);
-  },
-  light(c, t, run) {
-    const { B, rec } = run, f = Math.sin(t * Math.PI), n = 8 + rec.rune.sides, R = 260 * rec.power * ease(t);
-    glow(c, B.x, B.y, R * .7, rec.palette[2], .8 * f);
-    stroke(c, rec.palette[0], 3, f);
-    for (let i = 0; i < n; i++) { const a = i / n * 2 * Math.PI + t + rec.curve; c.beginPath(); c.moveTo(B.x + Math.cos(a) * 30, B.y + Math.sin(a) * 30); c.lineTo(B.x + Math.cos(a) * R, B.y + Math.sin(a) * R); c.stroke(); }
-    c.globalAlpha = 1;
-  },
-  rain(c, t, run) {
-    const { B, rec, rng } = run;
-    if (t < .75) for (let i = 0; i < 4; i++) { const x = B.x + (rng() - .5) * innerWidth * .8; part({ x: x + 90, y: -10, vx: -3, vy: 13 + rng() * 6, c: rec.palette[Math.floor(rng() * 3)], size: 3, max: 62, shape: 'streak', drag: 1 }); }
-  },
-  thorns(c, t, run) {
-    const { B, rec } = run, n = 9 + rec.rune.sides, g = ease(Math.min(1, t * 1.8)), f = 1 - t * t;
-    c.fillStyle = rec.palette[1]; c.globalAlpha = f;
-    for (let i = 0; i < n; i++) {
-      const x = B.x + (i - n / 2) * 34, h = (70 + ((i * 37 + rec.rune.marks * 13) % 90)) * g, y = B.y + 90;
-      c.beginPath(); c.moveTo(x - 10, y); c.quadraticCurveTo(x + rec.curve * 30, y - h * .6, x + rec.curve * 20, y - h); c.quadraticCurveTo(x + 4, y - h * .4, x + 10, y); c.fill();
-    }
-    c.globalAlpha = 1;
-  },
-  wall(c, t, run) {
-    const { B, rec, rng } = run, W = Math.min(innerWidth * .8, 520), H = 180 * rec.power * ease(Math.min(1, t * 2)), f = 1 - t * t * t;
-    const g = c.createLinearGradient(0, B.y + 90, 0, B.y + 90 - H); g.addColorStop(0, rec.palette[1]); g.addColorStop(1, 'rgba(0,0,0,0)');
-    c.fillStyle = g; c.globalAlpha = f; c.fillRect(B.x - W / 2, B.y + 90 - H, W, H); c.globalAlpha = 1;
-    emit(B.x + (rng() - .5) * W, B.y + 90, 3, run, { a0: -1.9, arc: .7, v: 4, life: 30 });
+/* Silhuetas: vêm de data/fx-art.js, carregado sob demanda, e viram sprites com brilho. */
+const fxArtes = { path: {}, sprite: new Map(), carregando: false };
+function ensureArt() {
+  if (window.GRIMORIO_ART || fxArtes.carregando) return;
+  fxArtes.carregando = true;
+  const s = document.createElement('script');
+  s.src = 'data/fx-art.js'; s.onerror = () => { fxArtes.carregando = false; };
+  document.head.appendChild(s);
+}
+function artPath(nome) {
+  const n = String(nome).replace(/^@/, ''), d = window.GRIMORIO_ART?.[n];
+  if (!d) return null;
+  return fxArtes.path[n] || (fxArtes.path[n] = new Path2D(d));
+}
+function sprite(nome, cor, tam, brilho = 1) {
+  const q = Math.max(16, Math.ceil(tam / 24) * 24), k = `${nome}|${cor}|${q}|${brilho}`;
+  let s = fxArtes.sprite.get(k);
+  if (s) return s;
+  const p = artPath(nome), m = Math.ceil(q * .3), cv = document.createElement('canvas');
+  cv.width = cv.height = q + m * 2;
+  if (!p) return cv;
+  const c = cv.getContext('2d');
+  c.translate(m, m); c.scale(q / 512, q / 512);
+  if (brilho) { c.shadowColor = cor; c.shadowBlur = q * .16 * brilho; }
+  c.fillStyle = cor; c.fill(p);
+  if (brilho) c.fill(p);
+  if (fxArtes.sprite.size > 90) fxArtes.sprite.clear();
+  fxArtes.sprite.set(k, cv);
+  return cv;
+}
+/** Desenha uma silhueta centrada. o: rot, a, sx, sy, brilho. */
+function desenhaArte(c, nome, x, y, tam, cor, o = {}) {
+  const s = sprite(nome, cor, tam, o.brilho ?? 1), q0 = Math.max(16, Math.ceil(tam / 24) * 24), q = tam * s.width / q0;
+  c.save(); c.translate(x, y); if (o.rot) c.rotate(o.rot); c.scale(o.sx ?? 1, o.sy ?? 1);
+  c.globalAlpha = clamp01(o.a ?? 1); c.drawImage(s, -q / 2, -q / 2, q, q);
+  c.restore();
+}
+
+/* Impacto: o dano rolado decide tremor, clarão e partículas. */
+function impactar(run, x, y, e = 1) {
+  if (run.erro) { emit(x, y, 8, run, { v: 2, life: 24, size: 2.4, fixo: 1 }); run.hit = run.hit || run.now; return; }
+  const { F, K } = run, cura = run.imp.cura;
+  run.shake = Math.max(run.shake, run.reduced || cura ? 0 : (3 + 30 * F) * Math.min(1.4, K) * e);
+  run.flash = Math.max(run.flash, (cura ? .12 : .1 + .55 * F) * e);
+  run.hit = run.hit || run.now;
+  emit(x, y, (30 + 90 * K) * e, run, { v: (3 + 6 * F) * Math.sqrt(K), life: 42, size: 3.4 * Math.sqrt(K) });
+}
+
+function fxMontaDados(run) {
+  const res = run.rec.res;
+  if (!res) return;
+  const lista = [...res.inst.flatMap(x => x.dados), ...res.aux.flatMap(a => a.vals.map(v => ({ v, f: a.f, extra: null })))], n = Math.min(lista.length, 24), r = run.rng;
+  if (!n) return;
+  const tam = n <= 8 ? 40 : n <= 14 ? 32 : 26, por = Math.min(n, Math.floor((run.w - 24) / (tam + 8))), linhas = Math.ceil(n / por);
+  run.dados = lista.slice(0, n).map((q, i) => {
+    const l = Math.floor(i / por), col = i % por, naLinha = l < linhas - 1 ? por : n - por * (linhas - 1);
+    return { ...q, x: run.w / 2 + (col - (naLinha - 1) / 2) * (tam + 8), y: run.h - 34 - (linhas - 1 - l) * (tam + 8), x0: run.w * r(), tam, ini: i * 34 + (q.extra ? 280 : 0), H: (q.extra ? 300 : 190) + r() * 70, gira: (r() < .5 ? -1 : 1) * (5 + r() * 6) };
+  });
+  run.resto = lista.length - n;
+}
+const DIE_LADOS = { 4: 3, 6: 4, 8: 4, 10: 5, 12: 6, 20: 6, 100: 8 };
+const DIE_EXTRA = { up: '#9fd8ff', crit: '#ffd24a', exp: '#ff9a5a', rep: '#ffffff' };
+function desenhaDado(c, q, x, y, rot, run, valor) {
+  const lados = DIE_LADOS[q.f] || 6, R = q.tam * .62, cor = DIE_EXTRA[q.extra] || run.pal[0];
+  c.save(); c.translate(x, y); c.rotate(rot + (q.f === 6 ? Math.PI / 4 : -Math.PI / 2));
+  c.beginPath();
+  for (let i = 0; i < lados; i++) { const a = i / lados * Math.PI * 2; c[i ? 'lineTo' : 'moveTo'](Math.cos(a) * R, Math.sin(a) * R); }
+  c.closePath(); c.fillStyle = 'rgba(12,14,24,.92)'; c.fill();
+  stroke(c, cor, q.extra ? 3 : 2); c.stroke(); c.globalAlpha = 1;
+  c.restore();
+  if (q.extra) glow(c, x, y, q.tam * 1.1, cor, .35);
+  c.fillStyle = '#fff'; c.font = `700 ${Math.round(q.tam * .46)}px system-ui,sans-serif`; c.textAlign = 'center'; c.textBaseline = 'middle';
+  c.fillText(valor, x, y + 1);
+}
+function desenhaDados(c, run, T) {
+  const lim = FX_DADOS - 260;
+  (run.dados || []).forEach(q => {
+    const t = run.fix ? 1 : clamp01((T - q.ini) / Math.max(320, lim - q.ini));
+    if (t <= 0) return;
+    const u = 1 - t, salto = q.H * u * u * Math.abs(Math.cos(t * Math.PI * 2.5));
+    // Os dados a mais continuam pulando depois de pousar, e todos saltam no impacto.
+    const hop = run.fix ? 0 : (q.extra ? Math.abs(Math.sin(T / 150 + q.x)) * 16 : 0) + (run.hit ? Math.max(0, 1 - (run.now - run.hit) / 420) * Math.abs(Math.sin((run.now - run.hit) / 60)) * 24 * run.F : 0);
+    desenhaDado(c, q, lerp(q.x0, q.x, ease(t)), q.y - salto - hop, q.gira * u * u, run, t < .72 ? 1 + Math.floor(run.rng() * q.f) : q.v);
+  });
+  if (run.resto) { c.fillStyle = '#fff'; c.font = '600 14px system-ui,sans-serif'; c.textAlign = 'center'; c.fillText(`+${run.resto} dados`, run.w / 2, run.h - 8); }
+}
+function desenhaFundo(c, run, T) {
+  const { w, h, rec, pal } = run, [a, b, d, det] = FUNDOS[rec.fundo], g = c.createLinearGradient(0, 0, 0, h);
+  g.addColorStop(0, a); g.addColorStop(.6, b); g.addColorStop(1, d);
+  c.fillStyle = g; c.globalAlpha = .96; c.fillRect(-40, -40, w + 80, h + 80); c.globalAlpha = 1;
+  glow(c, run.B.x, run.B.y, Math.max(w, h) * .6, pal[1], .22 + .22 * run.F);
+  const r = run.bgp, tt = T / 1000;
+  switch (det) {
+    case 'estrelas': r.forEach(p => { c.globalAlpha = .3 + .7 * Math.abs(Math.sin(tt * p.v * 2 + p.f)); c.fillStyle = '#fff'; c.fillRect(p.x * w, p.y * h, 1 + p.s, 1 + p.s); }); break;
+    case 'runas': c.font = '16px serif'; c.textAlign = 'center'; r.forEach((p, i) => { c.globalAlpha = .1 + .2 * Math.abs(Math.sin(tt + p.f)); c.fillStyle = pal[0]; c.fillText('ᚠᚢᚦᚨᚱᚲᚷᚹᚺᚾᛁᛃᛇᛈᛉᛊ'[i % 16], p.x * w, ((p.y - tt * .03 * p.v) % 1 + 1) % 1 * h); }); break;
+    case 'chuva': stroke(c, '#9fb8d8', 1, .28); c.beginPath(); r.forEach(p => { const y = ((p.y + tt * p.v * 1.4) % 1) * h, x = p.x * w; c.moveTo(x, y); c.lineTo(x - 4, y + 18); }); c.stroke(); break;
+    case 'folhas': r.forEach(p => { c.globalAlpha = .4; c.fillStyle = '#6fbf62'; c.beginPath(); c.ellipse((p.x + Math.sin(tt + p.f) * .04) * w, ((p.y + tt * .08 * p.v) % 1) * h, 4, 2, tt + p.f, 0, 7); c.fill(); }); break;
+    case 'nevoa': r.slice(0, 6).forEach(p => glow(c, ((p.x + tt * .03 * p.v) % 1) * w, h * (.6 + p.y * .4), 170, '#7f9a88', .08)); break;
+    case 'bolhas': r.forEach(p => { stroke(c, '#bfe8ff', 1, .3); c.beginPath(); c.arc(p.x * w + Math.sin(tt * 2 + p.f) * 6, h - ((p.y + tt * .12 * p.v) % 1) * h, 1.5 + p.s * 2, 0, 7); c.stroke(); }); break;
+    case 'nuvens': r.slice(0, 7).forEach(p => glow(c, ((p.x + tt * .02) % 1) * w, p.y * h * .6, 120, '#ffffff', .14)); break;
+    case 'brasas': r.forEach(p => { c.globalAlpha = .7; c.fillStyle = '#ffb347'; c.fillRect((p.x + Math.sin(tt * 2 + p.f) * .02) * w, h - ((p.y + tt * .16 * p.v) % 1) * h, 2, 2); }); break;
+    case 'neve': r.forEach(p => { c.globalAlpha = .7; c.fillStyle = '#fff'; c.beginPath(); c.arc((p.x + Math.sin(tt + p.f) * .02) * w, ((p.y + tt * .1 * p.v) % 1) * h, 1 + p.s, 0, 7); c.fill(); }); break;
+    case 'poeira': r.forEach(p => { c.globalAlpha = .25; c.fillStyle = '#e8d6a8'; c.fillRect(p.x * w, ((p.y - tt * .03 * p.v) % 1 + 1) % 1 * h, 1.5, 1.5); }); break;
+    case 'sol': { const y = h * (.86 - clamp01(T / 1500) * .14); glow(c, w / 2, y, h * .5, '#ffcf8a', .7); glow(c, w / 2, y, 90, '#fff8e4', 1); break; }
+    case 'sol2': glow(c, w * .78, h * .14, 180, '#fff4c8', .9); break;
+    case 'lua': glow(c, w * .72, h * .16, 120, '#dfe9ff', .55); c.fillStyle = '#eef3ff'; c.globalAlpha = .9; c.beginPath(); c.arc(w * .72, h * .16, 38, 0, 7); c.fill(); r.forEach(p => { c.globalAlpha = .4 + .5 * Math.abs(Math.sin(tt * p.v + p.f)); c.fillStyle = '#fff'; c.fillRect(p.x * w, p.y * h, 1, 1); }); break;
   }
-};
-const FX_FORM_NAMES = Object.keys(FX_FORMS);
-
-function drawPart(c, p) {
+  c.globalAlpha = 1;
+}
+function desenhaTitulo(c, run, T) {
+  const { w, h, rec } = run, a = clamp01((T - 90) / 420), y = h * .085 + 12;
+  c.globalAlpha = a; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillStyle = '#fcebc8';
+  const nome = String(rec.nome).toUpperCase();
+  let px = 21;
+  c.font = `600 ${px}px ${run.fonte}`;
+  while (c.measureText(nome).width > w - 60 && px > 12) { px--; c.font = `600 ${px}px ${run.fonte}`; }
+  c.lineJoin = 'round'; c.strokeStyle = 'rgba(8,8,16,.72)'; c.lineWidth = 4;
+  c.strokeText(nome, w / 2, y); c.fillText(nome, w / 2, y);
+  c.fillStyle = 'rgba(252,235,200,.92)'; c.font = `400 16px ${run.corpo}`; c.lineWidth = 3.5;
+  c.strokeText(rec.cena[1] || '', w / 2, y + 25, w - 30); c.fillText(rec.cena[1] || '', w / 2, y + 25, w - 30);
+  c.globalAlpha = 1;
+}
+function desenhaTotal(c, run) {
+  const { w, h, rec } = run, res = rec.res;
+  if (!res || !run.hit) return;
+  const dt = (run.now - run.hit) / 520, q = run.fix ? 1 : easeBack(clamp01(dt)), base = Math.min(92, 46 + run.K * 26), y = h * .66;
+  const dano = res.temDano ? (res.erro ? 'Errou' : (res.cura ? '+' : '') + res.total) : String(res.aux[0]?.total ?? '');
+  if (!dano) return;
+  c.save(); c.translate(w / 2, y); c.scale(q, q);
+  c.textAlign = 'center'; c.textBaseline = 'middle'; c.font = `700 ${res.erro ? 42 : base}px ${run.fonte}`;
+  c.lineWidth = 6; c.strokeStyle = 'rgba(0,0,0,.65)'; c.lineJoin = 'round'; c.strokeText(dano, 0, 0);
+  c.fillStyle = res.crit ? '#ffd24a' : res.erro ? '#c8ccd6' : run.pal[2]; c.fillText(dano, 0, 0);
+  const sub = res.crit ? 'Crítico!' : res.saltos ? `Saltou ${res.saltos}×` : res.passou ? 'Passou na salvaguarda' : res.temDano && !res.erro ? (rec.elemento || (res.cura ? 'Cura' : '')) : '';
+  if (sub) { c.font = `500 16px ${run.corpo}`; c.lineWidth = 4; c.strokeText(sub, 0, base * .62); c.fillStyle = '#fff'; c.fillText(sub, 0, base * .62); }
+  c.restore();
+}
+function drawPart(c, p, run) {
   const a = Math.max(0, 1 - p.life / p.max);
   c.globalAlpha = a; c.fillStyle = p.c; c.strokeStyle = p.c;
   switch (p.shape) {
     case 'spark': c.lineWidth = Math.max(1, p.size * .5); c.beginPath(); c.moveTo(p.x, p.y); c.lineTo(p.x - p.vx * 2.4, p.y - p.vy * 2.4); c.stroke(); break;
-    case 'streak': c.lineWidth = p.size; c.beginPath(); c.moveTo(p.x, p.y); c.lineTo(p.x - p.vx * 3, p.y - p.vy * 3); c.stroke(); break;
-    case 'diamond': c.beginPath(); c.moveTo(p.x, p.y - p.size); c.lineTo(p.x + p.size * .6, p.y); c.lineTo(p.x, p.y + p.size); c.lineTo(p.x - p.size * .6, p.y); c.fill(); break;
-    case 'plus': c.fillRect(p.x - p.size / 2, p.y - p.size / 6, p.size, p.size / 3); c.fillRect(p.x - p.size / 6, p.y - p.size / 2, p.size / 3, p.size); break;
-    case 'heart': c.beginPath(); c.arc(p.x - p.size / 4, p.y, p.size / 3, 0, 7); c.arc(p.x + p.size / 4, p.y, p.size / 3, 0, 7); c.moveTo(p.x - p.size / 2, p.y + 1); c.lineTo(p.x, p.y + p.size / 1.5); c.lineTo(p.x + p.size / 2, p.y + 1); c.fill(); break;
+    case 'streak': c.lineWidth = p.size; c.beginPath(); c.moveTo(p.x, p.y); c.lineTo(p.x - p.vx * 2.2, p.y - p.vy * 2.2); c.stroke(); break;
+    case 'diamond': c.beginPath(); c.moveTo(p.x, p.y - p.size * 1.4); c.lineTo(p.x + p.size * .7, p.y); c.lineTo(p.x, p.y + p.size * 1.4); c.lineTo(p.x - p.size * .7, p.y); c.fill(); break;
+    case 'estrela': { const s = p.size * (1 - Math.abs(p.life / p.max - .5) * 2); c.beginPath(); c.moveTo(p.x, p.y - s); c.lineTo(p.x + s * .18, p.y - s * .18); c.lineTo(p.x + s, p.y); c.lineTo(p.x + s * .18, p.y + s * .18); c.lineTo(p.x, p.y + s); c.lineTo(p.x - s * .18, p.y + s * .18); c.lineTo(p.x - s, p.y); c.lineTo(p.x - s * .18, p.y - s * .18); c.fill(); break; }
+    case 'folha': c.beginPath(); c.ellipse(p.x, p.y, p.size * 1.4, p.size * .6, p.rot + p.life * .08, 0, 7); c.fill(); break;
+    case 'pena': c.lineWidth = 1.5; c.beginPath(); c.ellipse(p.x, p.y, p.size * .5, p.size * 1.7, Math.sin(p.life * .06) * .8, 0, 7); c.fill(); break;
+    case 'txt': c.font = `600 ${p.size}px ${run?.fonte || 'serif'}`; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText(p.txt, p.x, p.y); break;
+    case 'art': desenhaArte(c, p.art, p.x, p.y, p.size, p.c, { a, rot: p.rot + p.life * (p.gira || 0) }); break;
     default: c.beginPath(); c.arc(p.x, p.y, p.size, 0, 7); c.fill();
   }
   c.globalAlpha = 1;
 }
-function fxFrame(now) {
-  const c = fxState.ctx;
-  c.clearRect(0, 0, innerWidth, innerHeight);
-  c.globalCompositeOperation = 'lighter';
-  fxState.runs = fxState.runs.filter(run => {
-    const t = (now - run.start) / run.ms;
-    if (t < 0) return true;
-    if (t >= 1) return false;
-    drawRune(c, run.A.x, run.A.y, 46 * run.rec.power, run.rec, t);
-    const viaMax = run.rec.via ? .42 : 0;
-    if (run.rec.via && t < viaMax) FX_FORMS[run.rec.via](c, t / viaMax, run);
-    else FX_FORMS[run.rec.form](c, (t - viaMax) / (1 - viaMax), run);
-    return true;
-  });
+function fxPartes(c, run, dt) {
+  run.acum = (run.acum || 0) + dt;
+  const passos = Math.min(4, Math.floor(run.acum / 16.7));
+  run.acum = passos === 4 ? 0 : run.acum - passos * 16.7;
   fxState.parts = fxState.parts.filter(p => {
-    p.x += p.vx; p.y += p.vy; p.vy += p.g; p.vx *= p.drag; p.vy *= p.drag; p.life++;
-    drawPart(c, p);
+    for (let i = 0; i < passos; i++) { p.x += p.vx; p.y += p.vy; p.vy += p.g; p.vx *= p.drag; p.vy *= p.drag; p.life++; }
+    drawPart(c, p, run);
     return p.life < p.max;
   });
-  c.globalCompositeOperation = 'source-over';
-  if (fxState.runs.length || fxState.parts.length) fxState.raf = requestAnimationFrame(fxFrame);
-  else { fxState.raf = 0; c.clearRect(0, 0, innerWidth, innerHeight); }
 }
-/** Toca a animação da magia. Devolve a receita, ou null quando as animações estão desligadas. */
+/** Passa pelos atos da cena no andamento p, de 0 a 1. */
+function fxAtos(c, run, p) {
+  const atos = run.rec.cena.slice(2);
+  for (let i = 0; i < atos.length; i++) {
+    const [verbo, o = {}] = atos[i], [a, b] = o.t || [0, 1];
+    if (p < a) continue;
+    const q = (p - a) / (b - a);
+    if (q > 1) continue;
+    ATOS[verbo](c, clamp01(q), run, o, i);
+  }
+  if (!run.hit && p >= .62 && run.rec.res) impactar(run, run.B.x, run.B.y, .7);
+}
+function novoRun(s, tipo, nivel, res, mode) {
+  const rec = spellRecipe(s, tipo, nivel, res), w = innerWidth, h = innerHeight, imp = impacto(res, nivel || 0), r = fxRng((rec.seed ^ Math.floor(performance.now())) || 1);
+  const css = getComputedStyle(document.documentElement);
+  const run = {
+    rec, pal: rec.palette, rng: r, reduced: mode === 'reduced', w, h, imp, K: imp.tamanho, F: imp.forca, erro: !!imp.erro, U: Math.min(w, h * .62), now: 0, shake: 0, flash: 0, hit: 0, f: {},
+    A: { x: w / 2, y: h * .8 }, B: { x: w / 2, y: h * .36 }, C: { x: w / 2, y: h * .46 }, fonte: css.getPropertyValue('--f-display') || 'serif', corpo: css.getPropertyValue('--f-body') || 'serif',
+    bgp: Array.from({ length: 46 }, () => ({ x: r(), y: r(), v: .4 + r(), f: r() * 6, s: r() * 1.6 }))
+  };
+  fxMontaDados(run);
+  run.dadosMs = run.dados && !run.reduced ? FX_DADOS : 0;
+  run.total = run.reduced ? 1100 : FX_ENTRA + run.dadosMs + FX_ATO + FX_SAI;
+  if (run.reduced) run.fix = .62;
+  return run;
+}
+function fxQuadro(c, run, T) {
+  const dt = T - (run.ultimo ?? T);
+  run.ultimo = T;
+  run.now = run.start + T;
+  c.clearRect(0, 0, run.w, run.h);
+  c.save();
+  if (run.shake > .4) { c.translate((run.rng() - .5) * run.shake, (run.rng() - .5) * run.shake); run.shake *= .9; }
+  desenhaFundo(c, run, T);
+  if (run.fix) fxAtos(c, run, run.fix);
+  else {
+    const p = (T - FX_ENTRA - run.dadosMs) / FX_ATO;
+    if (p >= 0) fxAtos(c, run, Math.min(p, .999));
+  }
+  fxPartes(c, run, dt);
+  desenhaDados(c, run, T);
+  c.restore();
+  desenhaTitulo(c, run, run.fix ? 900 : T);
+  desenhaTotal(c, run);
+  if (run.flash > .01) { c.fillStyle = run.pal[2]; c.globalAlpha = run.flash; c.fillRect(0, 0, run.w, run.h); c.globalAlpha = 1; run.flash *= .86; }
+}
+function fxFrame(now) {
+  const run = fxState.run, cv = fxState.cv;
+  if (!run) return;
+  const T = now - run.start;
+  if (T >= run.total) { fxFim(); return; }
+  // Aparelho lento: baixa a resolução e corta partículas, nesta cena e nas próximas.
+  if (!fxState.leve && run.quadro) { run.qn = (run.qn || 0) + 1; run.qs = (run.qs || 0) + now - run.quadro; if (run.qn === 10) { if (run.qs / 10 > 34) { fxState.leve = true; fxResize(); } run.qn = run.qs = 0; } }
+  run.quadro = now;
+  const sai = run.reduced ? 240 : FX_SAI, entra = run.reduced ? 200 : FX_ENTRA;
+  cv.style.opacity = Math.min(clamp01(T / entra), clamp01((run.total - T) / sai));
+  fxQuadro(fxState.ctx, run, T);
+  fxState.raf = requestAnimationFrame(fxFrame);
+}
+function fxFim() {
+  cancelAnimationFrame(fxState.raf);
+  fxState.raf = 0; fxState.run = null; fxState.parts = [];
+  if (fxState.cv) { fxState.cv.style.opacity = 0; fxState.cv.style.pointerEvents = 'none'; fxState.ctx.clearRect(0, 0, innerWidth, innerHeight); }
+}
+/** Um toque pula para o fim da cena. */
+function fxPular() {
+  const run = fxState.run;
+  if (!run) return;
+  const sai = run.reduced ? 240 : FX_SAI, T = performance.now() - run.start;
+  if (T < run.total - sai) run.start = performance.now() - (run.total - sai);
+}
+/** Toca a cena da magia. Devolve a receita, ou null quando as animações estão desligadas. */
 function playSpell(s, tipo, nivel, res) {
   const mode = fxMode();
   if (mode === 'off') return null;
-  const rec = spellRecipe(s, tipo, nivel);
+  ensureArt();
   fxResize();
-  fxState.runs.push({
-    rec, rng: fxRng(rec.seed ^ performance.now()), start: performance.now(), reduced: mode === 'reduced',
-    ms: Math.min(FX_MAX_MS, (mode === 'reduced' ? 600 : 1500) * rec.tempo),
-    A: { x: innerWidth / 2, y: innerHeight * .78 }, B: { x: innerWidth / 2 + rec.curve * 90, y: innerHeight * .32 }
-  });
+  fxState.parts = [];
+  const run = novoRun(s, tipo, nivel, res, mode);
+  run.start = performance.now();
+  fxState.run = run;
+  fxState.cv.style.pointerEvents = 'auto';
   if (!fxState.raf) fxState.raf = requestAnimationFrame(fxFrame);
-  return rec;
+  return run.rec;
 }
-/** Passa uma receita por todos os quadros sem esperar o relógio. Usada nos testes. */
-function fxDryRun(s, tipo) {
-  const rec = spellRecipe(s, tipo);
-  fxResize();
-  const run = { rec, rng: fxRng(rec.seed), start: 0, ms: 1000, reduced: false, A: { x: 195, y: 600 }, B: { x: 195, y: 250 } }, c = fxState.ctx;
-  fxState.parts.length = 0;
-  for (let i = 0; i <= 12; i++) {
-    const t = i / 12.5;
-    drawRune(c, run.A.x, run.A.y, 40, rec, t);
-    const via = rec.via ? .42 : 0;
-    if (rec.via && t < via) FX_FORMS[rec.via](c, t / via, run); else FX_FORMS[rec.form](c, (t - via) / (1 - via), run);
+/** Mostra a cena sem gastar nada. forca: 0 para o menor resultado, 1 para o maior. */
+function fxPreview(s, forca = .6) {
+  const tipo = castType || s.choice?.[0] || null, sp = diceSpec(s, s.level, { tipo }), L = novoLance(sp);
+  if (!sp.grupos.length) return playSpell(s, tipo, s.level);
+  for (let i = 0; i < sp.inst; i++) {
+    if (sp.atk) L.d20[i] = [15];
+    sp.grupos.forEach(g => { L.dados[cellKey(i, g)] = Array.from({ length: g.n }, (_, j) => Math.max(1, Math.round(1 + forca * (g.f - 1)) - (g.f > 2 && j % 2 && forca < 1 && forca > 0 ? 1 : 0))); });
   }
-  fxState.parts.forEach(p => drawPart(c, p));
-  fxState.parts.length = 0;
-  return rec;
+  return playSpell(s, tipo, s.level, resolveLance(L));
+}
+/** Roda a cena inteira sem esperar o relógio. Usada nos testes e nas folhas de revisão. */
+function fxDryRun(s, tipo, res = null, ate = 1) {
+  fxResize();
+  const run = novoRun(s, tipo, s.level, res, 'full'), c = fxState.ctx, fim = FX_ENTRA + run.dadosMs + FX_ATO * ate;
+  fxState.parts = [];
+  run.start = 0;
+  for (let T = 0; T <= fim; T += 33) fxQuadro(c, run, T);
+  fxState.parts = [];
+  return run.rec;
+}
+/* =====================================================================
+   ATOS — os verbos das cenas. Cada um recebe o andamento q (0 a 1) e
+   as opções da cena. A = conjurador, B = alvo, C = centro da tela.
+   Opções comuns: art (silhueta), em (A, B, C ou [x, y] em frações da
+   tela), s (tamanho relativo), t ([início, fim] dentro do ato).
+   ===================================================================== */
+const posDe = (run, em, def = 'B') => {
+  const e = em ?? def;
+  if (Array.isArray(e)) return { x: run.w * e[0], y: run.h * e[1] };
+  return run[e] || run.B;
+};
+const corDe = (run, o, i = 0) => { const p = PALETAS[o.cor] || DMG_COLORS[o.cor]; return p ? p[i] : o.cor !== undefined ? o.cor : run.pal[i]; };
+const uma = (run, i, nome, fn) => { const k = `${i}:${nome}`; if (!run.f[k]) { run.f[k] = 1; fn(); } };
+const tam = (run, o, def = .4) => (o.s ?? def) * run.U * (o.fixo ? 1 : Math.sqrt(run.K));
+function zigue(c, a, b, passos, amp, rng) {
+  c.moveTo(a.x, a.y);
+  for (let k = 1; k <= passos; k++) {
+    const t = k / passos, j = k === passos ? 0 : amp;
+    c.lineTo(lerp(a.x, b.x, t) + (rng() - .5) * j, lerp(a.y, b.y, t) + (rng() - .5) * j);
+  }
+}
+const ATOS = {
+  /** Uma silhueta entra, respira e sai. giro, s0 (escala inicial), s1 (final), bob. */
+  aparecer(c, q, run, o) {
+    const p = posDe(run, o.em, 'C'), T = tam(run, o), g = lerp(o.s0 ?? .4, o.s1 ?? 1, o.s0 !== undefined ? ease(q) : easeBack(clamp01(q * 3)));
+    glow(c, p.x, p.y, T * .9 * g, corDe(run, o, 1), .5 * fadeIO(q));
+    desenhaArte(c, o.art, p.x, p.y + Math.sin(q * 9) * (o.bob ?? 5), T * g, corDe(run, o), { a: fadeIO(q), rot: (o.giro || 0) * q * 6.28 + (o.rot || 0) });
+  },
+  /** Silhuetas vêm da borda da tela até o ponto, com um leve exagero. de: baixo, cima, esq, dir. n: quantas. */
+  surgir(c, q, run, o) {
+    const p = posDe(run, o.em, 'C'), n = o.n || 1, T = tam(run, o), de = o.de || 'baixo', ab = o.abre ?? .34;
+    for (let i = 0; i < n; i++) {
+      const lado = n > 1 ? (i - (n - 1) / 2) / ((n - 1) / 2 || 1) : 0, d = easeBack(clamp01(q * 2.2 - i * .12)), x = de === 'esq' || de === 'dir' ? p.x : p.x + lado * run.U * ab, y = de === 'esq' || de === 'dir' ? p.y + lado * run.U * ab : p.y;
+      const fora = { baixo: [x, run.h + T], cima: [x, -T], esq: [-T, y], dir: [run.w + T, y] }[de], px = lerp(fora[0], x, d), py = lerp(fora[1], y, d);
+      const rot = { baixo: 0, cima: Math.PI, esq: Math.PI / 2, dir: -Math.PI / 2 }[de] + lado * .3 + (o.rot || 0);
+      glow(c, px, py, T * .8, corDe(run, o, 1), .45 * fadeIO(q));
+      desenhaArte(c, o.art, px, py, T, corDe(run, o, i % 3 === 2 ? 2 : 0), { a: Math.min(1, (1 - q) * 6), rot, sx: i >= n / 2 && o.espelha ? -1 : 1 });
+    }
+  },
+  /** Projétil do conjurador ao alvo. n: número, ou 'inst' para um por dado/ataque. Trata erro e saltos. */
+  lancar(c, q, run, o, i) {
+    const res = run.rec.res, lista = o.n === 'inst' ? res?.inst.filter(x => !x.salto) : null, n = lista?.length || (typeof o.n === 'number' ? o.n : 1);
+    const A = posDe(run, o.de, 'A'), R = (o.s ?? .06) * run.U * Math.sqrt(run.K), voo = o.voo ?? (run.rec.res?.saltos ? .55 : .8);
+    for (let k = 0; k < n; k++) {
+      const tt = clamp01((q - k * .05) / voo), off = (k - (n - 1) / 2) * Math.min(46, run.U * .4 / n), info = lista?.[k], erra = info ? !info.hit : run.erro;
+      const B = { x: run.B.x + off * 1.5 + (erra ? run.w * .45 : 0), y: run.B.y + (erra ? -run.h * .3 : 0) }, mx = (A.x + B.x) / 2 + (o.curva ?? (k % 2 ? 1 : -1)) * run.U * .28, my = (A.y + B.y) / 2;
+      if (tt < 1) {
+        const u = 1 - tt, x = u * u * A.x + 2 * u * tt * mx + tt * tt * B.x, y = u * u * A.y + 2 * u * tt * my + tt * tt * B.y;
+        glow(c, x, y, R * 3.4, corDe(run, o, 1), .85); glow(c, x, y, R * 1.5, corDe(run, o, 2), 1);
+        if (o.art) desenhaArte(c, o.art, x, y, R * 3.4, corDe(run, o), { rot: Math.atan2(B.y - A.y, B.x - A.x) + Math.PI / 2 + (o.artRot ?? 0) + (o.giro ? q * 30 : 0) });
+        emit(x, y, 2, run, { v: 1, life: 20, size: 2.6, fixo: 1 });
+      } else uma(run, i, `h${k}`, () => {
+        if (erra) { emit(B.x, B.y, 8, run, { v: 2, life: 22, fixo: 1 }); return; }
+        impactar(run, B.x, B.y, n > 1 ? .55 : 1);
+        if (info && n > 1) part({ x: B.x, y: B.y - 12, vy: -1.4, c: '#fff', size: 26, max: 70, shape: 'txt', txt: info.total, drag: 1 });
+      });
+    }
+    // Saltos do Orbe: arcos até novos alvos, um por salto.
+    const sal = res?.saltos || 0;
+    if (sal && o.salta) for (let k = 0; k < sal; k++) {
+      const w0 = voo + k * ((1 - voo) / sal), tt = clamp01((q - w0) / ((1 - voo) / sal)), a = k ? { x: run.w * (k % 2 ? .78 : .22), y: run.h * .3 } : run.B, b = { x: run.w * (k % 2 ? .22 : .78), y: run.h * .3 };
+      if (tt <= 0) continue;
+      if (tt < 1) { const x = lerp(a.x, b.x, tt), y = lerp(a.y, b.y, tt) - sino(tt) * run.h * .16; glow(c, x, y, R * 3, corDe(run, o, 1), .9); glow(c, x, y, R * 1.3, corDe(run, o, 2), 1); }
+      else uma(run, i, `s${k}`, () => { run.hitOrb = run.hit = run.now; impactar(run, b.x, b.y, .9); });
+    }
+  },
+  /** Explosão no ponto. art opcional para a forma da explosão. */
+  explodir(c, q, run, o, i) {
+    const p = posDe(run, o.em), R = tam(run, o, .55) * ease(q), f = 1 - q;
+    uma(run, i, 'h', () => impactar(run, p.x, p.y, o.e ?? 1));
+    glow(c, p.x, p.y, R * 1.3, corDe(run, o, 1), .9 * f); glow(c, p.x, p.y, R * .75, corDe(run, o, 2), f);
+    for (let k = 0; k < 2; k++) { const t = ease(clamp01(q * 1.3 - k * .18)); stroke(c, corDe(run, o, k), (7 - 4 * t) * Math.sqrt(run.K), 1 - t); c.beginPath(); c.arc(p.x, p.y, R * t * 1.2, 0, 7); c.stroke(); }
+    c.globalAlpha = 1;
+    if (o.art) desenhaArte(c, o.art, p.x, p.y, R * 1.4, corDe(run, o, 2), { a: f, rot: q * 1.2 });
+  },
+  /** Cone que abre do conjurador. */
+  cone(c, q, run, o) {
+    const A = posDe(run, o.de, 'A'), B = posDe(run, o.em), a0 = Math.atan2(B.y - A.y, B.x - A.x), arc = o.arco ?? .95, L = Math.hypot(B.x - A.x, B.y - A.y) * 1.55 * Math.sqrt(run.K) * ease(clamp01(q * 1.6)), f = fadeIO(q);
+    const g = c.createRadialGradient(A.x, A.y, 0, A.x, A.y, Math.max(1, L));
+    g.addColorStop(0, corDe(run, o, 2)); g.addColorStop(.5, corDe(run, o, 0)); g.addColorStop(1, 'rgba(0,0,0,0)');
+    c.globalCompositeOperation = 'lighter'; c.fillStyle = g; c.globalAlpha = .75 * f;
+    c.beginPath(); c.moveTo(A.x, A.y); c.arc(A.x, A.y, L, a0 - arc / 2, a0 + arc / 2); c.closePath(); c.fill();
+    c.globalAlpha = 1; c.globalCompositeOperation = 'source-over';
+    if (q < .7) emit(A.x, A.y, 8, run, { a0: a0 - arc / 2, arc, v: 12, life: 34, size: 3.6, shape: o.part || 'dot', fixo: 1 });
+  },
+  /** Feixe reto. de: A, cima ou esq. larg: espessura. */
+  feixe(c, q, run, o, i) {
+    const B = posDe(run, o.em), A = o.de === 'cima' ? { x: B.x + (o.dx || 0), y: -20 } : o.de === 'esq' ? { x: -20, y: B.y } : posDe(run, o.de, 'A'), g = ease(clamp01(q * 2.4)), x = lerp(A.x, B.x, g), y = lerp(A.y, B.y, g), f = fadeIO(q), W = (o.larg ?? 14) * Math.sqrt(run.K);
+    c.globalCompositeOperation = 'lighter';
+    stroke(c, corDe(run, o, 1), W * 2.2, .45 * f); c.beginPath(); c.moveTo(A.x, A.y); c.lineTo(x, y); c.stroke();
+    stroke(c, corDe(run, o, 0), W, .8 * f); c.stroke();
+    stroke(c, corDe(run, o, 2), W * .32, f); c.stroke();
+    c.globalAlpha = 1; c.globalCompositeOperation = 'source-over';
+    glow(c, x, y, W * 3.4, corDe(run, o, 2), f);
+    if (g > .98) { uma(run, i, 'h', () => impactar(run, B.x, B.y)); emit(B.x, B.y, 3, run, { v: 4, life: 22, fixo: 1 }); }
+  },
+  /** Relâmpago que cai do céu. n: quantos. */
+  raio(c, q, run, o, i) {
+    const n = o.n || 1;
+    for (let k = 0; k < n; k++) {
+      const tt = clamp01(q * n * .9 - k * .8), B = n > 1 ? { x: run.w * (.2 + .6 * ((k * 37 % n) + .5) / n), y: run.h * (.42 + (k % 2) * .1) } : posDe(run, o.em);
+      if (tt <= 0 || tt >= 1) continue;
+      const a = { x: B.x + (run.rng() - .5) * 120, y: -10 }, f = 1 - tt;
+      c.globalCompositeOperation = 'lighter';
+      stroke(c, corDe(run, o, 1), 12, .5 * f); c.beginPath(); zigue(c, a, B, 11, 62, run.rng); c.stroke();
+      stroke(c, corDe(run, o, 2), 3.4, f); c.stroke();
+      c.globalAlpha = 1; c.globalCompositeOperation = 'source-over';
+      uma(run, i, `h${k}`, () => impactar(run, B.x, B.y, n > 1 ? .6 : 1));
+      glow(c, B.x, B.y, 90, corDe(run, o, 2), f);
+    }
+  },
+  /** Corrente de energia que salta de alvo em alvo. n: elos. */
+  cadeia(c, q, run, o, i) {
+    const n = o.n || 3, pts = [run.A];
+    for (let k = 0; k < n; k++) pts.push({ x: run.w * (k % 2 ? .24 + k * .04 : .76 - k * .04), y: run.h * (.5 - k * .09) });
+    const vis = Math.min(n, Math.ceil(q * (n + 1)));
+    c.globalCompositeOperation = 'lighter';
+    for (let k = 0; k < vis; k++) {
+      stroke(c, corDe(run, o, 1), 9, .55); c.beginPath(); zigue(c, pts[k], pts[k + 1], 9, 44, run.rng); c.stroke();
+      stroke(c, corDe(run, o, 2), 2.8, 1); c.stroke();
+      glow(c, pts[k + 1].x, pts[k + 1].y, 54, corDe(run, o, 2), .8);
+      uma(run, i, `h${k}`, () => impactar(run, pts[k + 1].x, pts[k + 1].y, .7));
+    }
+    c.globalAlpha = 1; c.globalCompositeOperation = 'source-over';
+  },
+  /** Cai do alto: gota, neve, brasa, pena, folha, areia, lamina, pedra, meteoro ou art. */
+  chover(c, q, run, o) {
+    const { rng, w } = run, forma = o.forma || 'gota', d = (o.d ?? 3) * (o.fixo ? 1 : run.K), ang = o.vento ?? -2;
+    if (q > (o.ate ?? .82)) return;
+    for (let k = 0; k < d; k++) {
+      if (rng() > .9) continue;
+      const x = rng() * (w + 120), cor = corDe(run, o, Math.floor(rng() * 3));
+      if (o.art) part({ x, y: -30, vx: ang, vy: o.v ?? 6, c: cor, size: tam(run, o, .1), max: 90, shape: 'art', art: o.art, gira: .03, drag: 1 });
+      else if (forma === 'gota') part({ x, y: -12, vx: ang, vy: 15 + rng() * 6, c: cor, size: 2, max: 62, shape: 'streak', drag: 1 });
+      else if (forma === 'neve') part({ x, y: -8, vx: ang * .5 + (rng() - .5), vy: 2 + rng() * 3, c: cor, size: 2.6, max: 120, drag: 1 });
+      else if (forma === 'brasa') part({ x, y: -8, vx: ang, vy: 5 + rng() * 5, c: cor, size: 3, max: 110, shape: 'spark', drag: 1 });
+      else if (forma === 'pena') part({ x, y: -14, vx: Math.sin(x) * 1.2, vy: 1.6 + rng(), c: cor, size: 8, max: 150, shape: 'pena', drag: 1 });
+      else if (forma === 'folha') part({ x, y: -10, vx: ang * .6 + rng(), vy: 2.6 + rng() * 2, c: cor, size: 6, max: 130, shape: 'folha', drag: 1 });
+      else if (forma === 'areia') part({ x: run.B.x + (rng() - .5) * run.U * .9, y: -6, vy: 4 + rng() * 2, c: cor, size: 1.6, max: 100, drag: 1 });
+      else if (forma === 'lamina') part({ x, y: -10, vx: ang, vy: 16 + rng() * 5, c: cor, size: 5, max: 56, shape: 'diamond', drag: 1 });
+      else if (forma === 'pedra') part({ x, y: -14, vx: ang, vy: 12 + rng() * 6, c: cor, size: 7, max: 60, shape: 'diamond', g: .3, drag: 1 });
+    }
+  },
+  /** Muralha que sobe do chão. estilo: fogo, gelo, pedra, vento, espinho, forca, laminas. */
+  muralha(c, q, run, o) {
+    const est = o.estilo || 'forca', p = posDe(run, o.em, [.5, .62]), W = o.larg ? run.w * o.larg : run.w + 40, H = (o.alto ?? .62) * run.U * Math.sqrt(run.K) * ease(clamp01(q * 2)) + run.h - (p.y + run.U * .12), f = fadeIO(q), base = run.h + 4;
+    const g = c.createLinearGradient(0, base, 0, base - H);
+    g.addColorStop(0, corDe(run, o, 1)); g.addColorStop(.7, corDe(run, o, 0)); g.addColorStop(1, 'rgba(0,0,0,0)');
+    c.fillStyle = g; c.globalAlpha = (est === 'vento' || est === 'forca' ? .42 : .9) * f;
+    c.beginPath(); c.moveTo(p.x - W / 2, base);
+    const n = est === 'espinho' ? 16 : est === 'gelo' ? 12 : est === 'pedra' ? 7 : 20;
+    for (let k = 0; k <= n; k++) {
+      const x = p.x - W / 2 + W * k / n, onda = est === 'fogo' ? Math.sin(k * 1.7 + q * 22) * .24 : est === 'vento' ? Math.sin(k + q * 15) * .1 : (k * 37 % 7) / 7 * .3;
+      c.lineTo(x, base - H * (1 - onda - (est === 'espinho' || est === 'gelo' ? (k % 2) * .34 : 0)));
+    }
+    c.lineTo(p.x + W / 2, base); c.closePath(); c.fill(); c.globalAlpha = 1;
+    if (est === 'fogo') emit(p.x + (run.rng() - .5) * W, base - H * .6, 4, run, { a0: -1.9, arc: .7, v: 5, life: 26, fixo: 1 });
+    if (est === 'vento') { stroke(c, corDe(run, o, 2), 1.5, .6 * f); for (let k = 0; k < 7; k++) { c.beginPath(); const y = base - H * (k + .5) / 7, x0 = p.x - W / 2 + ((q * 3 + k * .3) % 1) * W; c.moveTo(x0, y); c.quadraticCurveTo(x0 + 40, y - 12, x0 + 80, y); c.stroke(); } c.globalAlpha = 1; }
+    if (est === 'laminas') { for (let k = 0; k < 9; k++) { const x = p.x - W / 2 + ((k / 9 + q * 1.6) % 1) * W; desenhaArte(c, o.art || 'spinning-blades', x, base - H * .5 + Math.sin(k + q * 10) * H * .3, 44, corDe(run, o, 2), { rot: q * 30 + k, a: f }); } }
+    if (est === 'forca' || est === 'gelo') { stroke(c, corDe(run, o, 2), 2, .8 * f); c.beginPath(); c.moveTo(p.x - W / 2, base - H); c.lineTo(p.x + W / 2, base - H); c.stroke(); c.globalAlpha = 1; }
+  },
+  /** Cúpula ou esfera protetora. cheia: esfera inteira. */
+  cupula(c, q, run, o) {
+    const p = posDe(run, o.em, 'C'), R = tam(run, o, .42) * easeBack(clamp01(q * 2.2)), f = Math.min(1, (1 - q) * 5), ini = o.cheia ? 0 : Math.PI;
+    glow(c, p.x, p.y, R * 1.3, corDe(run, o, 1), .4 * f);
+    c.fillStyle = corDe(run, o, 1); c.globalAlpha = .2 * f; c.beginPath(); c.arc(p.x, p.y, R, ini, ini + (o.cheia ? 7 : Math.PI)); c.fill();
+    stroke(c, corDe(run, o, 0), 3, f); c.beginPath(); c.arc(p.x, p.y, R, ini, ini + (o.cheia ? 7 : Math.PI)); c.stroke();
+    stroke(c, corDe(run, o, 2), 1.2, .7 * f);
+    for (let k = 1; k < 5; k++) { c.beginPath(); c.ellipse(p.x, p.y, R, R * k / 5, 0, ini, ini + (o.cheia ? 7 : Math.PI)); c.stroke(); c.beginPath(); c.ellipse(p.x, p.y, R * k / 5, R, 0, ini, ini + (o.cheia ? 7 : Math.PI)); c.stroke(); }
+    c.globalAlpha = 1;
+    const a = q * 14; if (q > .1) glow(c, p.x + Math.cos(a) * R, p.y - Math.abs(Math.sin(a)) * R, 26, corDe(run, o, 2), f);
+  },
+  /** Círculo mágico no chão, em perspectiva. */
+  circulo(c, q, run, o) {
+    const p = posDe(run, o.em, [.5, .66]), R = tam(run, o, .46) * ease(clamp01(q * 2.4)), f = fadeIO(q), lados = o.lados || 6, rot = q * 3 * (o.giro ?? 1);
+    c.save(); c.translate(p.x, p.y); c.scale(1, o.plano ?? .38);
+    glow(c, 0, 0, R * 1.3, corDe(run, o, 1), .55 * f);
+    stroke(c, corDe(run, o, 0), 3, f);
+    c.beginPath(); c.arc(0, 0, R, 0, 7); c.stroke(); c.beginPath(); c.arc(0, 0, R * .8, 0, 7); c.stroke();
+    c.rotate(rot); c.beginPath();
+    for (let k = 0; k <= lados; k++) { const a = k * (lados % 2 ? 2 : 1) * 2 * Math.PI / lados; c[k ? 'lineTo' : 'moveTo'](Math.cos(a) * R * .8, Math.sin(a) * R * .8); }
+    c.stroke();
+    c.font = `${R * .16}px serif`; c.textAlign = 'center'; c.fillStyle = corDe(run, o, 2);
+    for (let k = 0; k < 12; k++) { const a = k / 12 * 6.28; c.fillText('ᚠᚢᚦᚨᚱᚲᚷᚹᚺᚾᛁᛃ'[k], Math.cos(a) * R * .9, Math.sin(a) * R * .9); }
+    c.restore(); c.globalAlpha = 1;
+    if (o.art) desenhaArte(c, o.art, p.x, p.y - R * .36, R * .9, corDe(run, o, 2), { a: sino(q) });
+    emit(p.x + (run.rng() - .5) * R * 1.6, p.y, 1, run, { a0: -1.7, arc: .3, v: 3, life: 34, fixo: 1 });
+  },
+  /** Correntes que vêm das bordas e prendem o ponto. */
+  correntes(c, q, run, o) {
+    const p = posDe(run, o.em), n = o.n || 4, g = ease(clamp01(q * 1.8)), f = fadeIO(q);
+    for (let k = 0; k < n; k++) {
+      const a = k / n * 6.28 + .6, ini = { x: p.x + Math.cos(a) * run.U, y: p.y + Math.sin(a) * run.U }, fim = { x: lerp(ini.x, p.x, g), y: lerp(ini.y, p.y, g) }, elos = 12;
+      for (let e = 0; e < elos; e++) {
+        const t = e / elos, x = lerp(ini.x, fim.x, t), y = lerp(ini.y, fim.y, t);
+        stroke(c, corDe(run, o, e % 2 ? 1 : 0), 3, f); c.beginPath(); c.ellipse(x, y, 11, 6, a + (e % 2 ? 1.5 : 0), 0, 7); c.stroke();
+      }
+    }
+    c.globalAlpha = 1;
+    if (o.art) desenhaArte(c, o.art, p.x, p.y, tam(run, o, .24), corDe(run, o, 2), { a: f });
+  },
+  /** Bando que cruza a tela: morcegos, insetos, espíritos. art e n. */
+  revoada(c, q, run, o, i) {
+    const n = o.n || 12, T = tam(run, o, .12);
+    if (!run.f[`rv${i}`]) run.f[`rv${i}`] = Array.from({ length: n }, () => ({ y: run.rng(), a: run.rng() * 6, v: .7 + run.rng() * .6, d: run.rng() * .3 }));
+    run.f[`rv${i}`].forEach(b => {
+      const t = clamp01((q - b.d) / (1 - b.d) * b.v * 1.3), ida = o.dir === -1 ? 1 - t : t, x = lerp(-T, run.w + T, ida), y = run.h * (.18 + b.y * .6) + Math.sin(t * 9 + b.a) * 34;
+      if (t > 0 && t < 1) desenhaArte(c, o.art, x, y, T * (.7 + b.v * .4), corDe(run, o, 0), { sx: o.dir === -1 ? -1 : 1, brilho: .6, a: .95 });
+    });
+  },
+  /** Vinhas que sobem do chão e se enroscam. */
+  vinhas(c, q, run, o) {
+    const n = o.n || 7, g = ease(clamp01(q * 1.8)), f = Math.min(1, (1 - q) * 5), B = posDe(run, o.em, 'C');
+    for (let k = 0; k < n; k++) {
+      const x0 = run.w * (k + .5) / n, cor = corDe(run, o, k % 2 ? 1 : 0);
+      stroke(c, cor, 7 - k % 3, f); c.beginPath(); c.moveTo(x0, run.h + 10);
+      let px = x0, py = run.h;
+      for (let s = 1; s <= 24 * g; s++) {
+        const t = s / 24, nx = lerp(x0, B.x + (k - n / 2) * 12, t * t) + Math.sin(t * 8 + k) * 34, ny = lerp(run.h, B.y, t);
+        c.lineTo(nx, ny);
+        if (s % 5 === 0) { c.stroke(); c.fillStyle = corDe(run, o, 0); c.beginPath(); c.ellipse(nx + 8, ny, 9, 4, k + s, 0, 7); c.fill(); c.beginPath(); c.moveTo(nx, ny); }
+        px = nx; py = ny;
+      }
+      c.stroke();
+      if (o.flor) desenhaArte(c, o.flor, px, py, 26, corDe(run, o, 2), { a: f });
+    }
+    c.globalAlpha = 1;
+  },
+  /** Tentáculos grossos que ondulam. */
+  tentaculos(c, q, run, o) {
+    const n = o.n || 6, g = ease(clamp01(q * 1.7)), f = Math.min(1, (1 - q) * 5), B = posDe(run, o.em, 'C');
+    for (let k = 0; k < n; k++) {
+      const x0 = run.w * (k + .5) / n, passos = 34;
+      for (let s = 0; s < passos * g; s++) {
+        const t = s / passos, x = lerp(x0, B.x, t * .85) + Math.sin(t * 7 + q * 9 + k * 2) * 46 * t, y = lerp(run.h + 20, B.y, t);
+        c.fillStyle = corDe(run, o, s % 7 ? 1 : 0); c.globalAlpha = f; c.beginPath(); c.arc(x, y, (24 - 18 * t) * Math.sqrt(run.K), 0, 7); c.fill();
+      }
+    }
+    c.globalAlpha = 1;
+  },
+  /** Ondas concêntricas: som, pulso, vibração. */
+  ondas(c, q, run, o) {
+    const p = posDe(run, o.em), n = o.n || 4, R = tam(run, o, .9);
+    for (let k = 0; k < n; k++) { const t = (q * 1.4 + k / n) % 1; stroke(c, corDe(run, o, k % 3), 6 * (1 - t) + 1, (1 - t) * fadeIO(q)); c.beginPath(); c.arc(p.x, p.y, R * t, o.ini ?? 0, o.fim ?? 7); c.stroke(); }
+    c.globalAlpha = 1;
+  },
+  /** Onda gigante que varre a tela. */
+  mare(c, q, run, o, i) {
+    const x = lerp(-run.w * .5, run.w * 1.3, ease(q)), topo = run.h * (1 - (o.alto ?? .78)), f = Math.min(1, (1 - q) * 6);
+    c.beginPath(); c.moveTo(-10, run.h);
+    for (let px = -10; px <= x; px += 16) { const crista = Math.exp(-Math.pow((px - x + 70) / 120, 2)); c.lineTo(px, run.h - (run.h - topo) * (.55 + .45 * crista) + Math.sin(px * .03 + q * 14) * 14); }
+    c.lineTo(x + 20, run.h); c.closePath();
+    const g = c.createLinearGradient(0, topo, 0, run.h); g.addColorStop(0, corDe(run, o, 0)); g.addColorStop(1, corDe(run, o, 1));
+    c.fillStyle = g; c.globalAlpha = .92 * f; c.fill(); c.globalAlpha = 1;
+    emit(x, topo + 30, 6, run, { a0: -2.4, arc: 1.4, v: 7, life: 30, c: corDe(run, o, 2), fixo: 1 });
+    if (q > .4) uma(run, i, 'h', () => impactar(run, run.w / 2, run.h * .5));
+  },
+  /** Coluna de vento em espiral. */
+  tornado(c, q, run, o) {
+    const p = posDe(run, o.em, [.5, .78]), H = run.h * .7 * ease(clamp01(q * 1.8)), f = fadeIO(q);
+    for (let k = 0; k < 26; k++) {
+      const t = k / 26, r = (12 + t * run.U * .3) * Math.sqrt(run.K), y = p.y - H * t, a = q * 34 + k * .7;
+      stroke(c, corDe(run, o, k % 3), 3, f * .75); c.beginPath(); c.ellipse(p.x + Math.sin(t * 5 + q * 8) * 18, y, r, r * .26, 0, a, a + 4.2); c.stroke();
+    }
+    c.globalAlpha = 1;
+    emit(p.x + (run.rng() - .5) * 200, p.y - run.rng() * H, 2, run, { v: 6, life: 24, fixo: 1 });
+  },
+  /** Rachaduras que correm pela tela. */
+  fendas(c, q, run, o, i) {
+    const p = posDe(run, o.em, [.5, .7]), n = o.n || 7, g = ease(clamp01(q * 2));
+    if (!run.f[`fd${i}`]) run.f[`fd${i}`] = Array.from({ length: n }, (_, k) => { let a = k / n * 6.28 + run.rng(), x = p.x, y = p.y; const pts = [[x, y]]; for (let s = 0; s < 9; s++) { a += (run.rng() - .5) * .9; const d = run.U * .12 * (.6 + run.rng()); x += Math.cos(a) * d; y += Math.sin(a) * d * .7; pts.push([x, y]); } return pts; });
+    uma(run, i, 'h', () => impactar(run, p.x, p.y, o.e ?? 1));
+    const f = Math.min(1, (1 - q) * 5);
+    run.f[`fd${i}`].forEach(pts => {
+      const vis = Math.ceil(pts.length * g);
+      stroke(c, '#000', 7, f); c.beginPath(); pts.slice(0, vis).forEach((pt, k) => c[k ? 'lineTo' : 'moveTo'](pt[0], pt[1])); c.stroke();
+      stroke(c, corDe(run, o, 0), 2.4, f); c.stroke();
+    });
+    c.globalAlpha = 1;
+  },
+  /** Nuvem que incha. largo: ocupa a tela. */
+  nuvem(c, q, run, o, i) {
+    const p = posDe(run, o.em), S = tam(run, o, .42), f = fadeIO(q), n = o.n || 12;
+    if (!run.f[`nv${i}`]) run.f[`nv${i}`] = Array.from({ length: n }, () => ({ x: (run.rng() - .5) * (o.largo ? run.w * 1.2 : S * 2), y: (run.rng() - .5) * S, r: S * (.5 + run.rng() * .6) }));
+    const op = c.globalCompositeOperation;
+    run.f[`nv${i}`].forEach((b, k) => {
+      const r = b.r * ease(clamp01(q * 1.6 + k * .02)), x = p.x + b.x + Math.sin(q * 5 + k) * 12, y = p.y + b.y;
+      const g = c.createRadialGradient(x, y, 0, x, y, Math.max(1, r)); g.addColorStop(0, corDe(run, o, k % 2)); g.addColorStop(1, 'rgba(0,0,0,0)');
+      c.fillStyle = g; c.globalAlpha = (o.op ?? .42) * f; c.beginPath(); c.arc(x, y, Math.max(1, r), 0, 7); c.fill();
+    });
+    c.globalAlpha = 1; c.globalCompositeOperation = op;
+  },
+  /** Cópias da silhueta que se abrem em leque. */
+  espelhos(c, q, run, o) {
+    const p = posDe(run, o.em, 'C'), n = o.n || 3, T = tam(run, o, .34), g = ease(clamp01(q * 1.8)), f = fadeIO(q);
+    for (let k = n; k >= -n; k--) {
+      const x = p.x + k * T * .55 * g + Math.sin(q * 8 + k) * 5, real = k === 0;
+      desenhaArte(c, o.art, x, p.y, T, corDe(run, o, real ? 2 : k % 2 ? 0 : 1), { a: f * (real ? 1 : .55), sx: k < 0 ? -1 : 1 });
+    }
+  },
+  /** A silhueta se parte em cacos. */
+  quebrar(c, q, run, o, i) {
+    const p = posDe(run, o.em, 'C'), T = tam(run, o, .4);
+    if (q < .4) { const t = sino(q * 2.5 * .4 + .1); desenhaArte(c, o.art, p.x + (run.rng() - .5) * q * 18, p.y, T, corDe(run, o), { a: 1 }); }
+    else uma(run, i, 'h', () => { impactar(run, p.x, p.y, o.e ?? .7); emit(p.x, p.y, 50, run, { v: 8, life: 42, size: 7, shape: 'diamond', g: .16, fixo: 1 }); });
+  },
+  /** Portal oval com redemoinho. */
+  portal(c, q, run, o) {
+    const p = posDe(run, o.em, 'C'), f = sino(q), W = tam(run, o, .24) * f;
+    glow(c, p.x, p.y, W * 2.2, corDe(run, o, 1), .85 * f);
+    for (let k = 0; k < 5; k++) { stroke(c, corDe(run, o, k % 3), 3.4 - k * .4, f); c.beginPath(); c.ellipse(p.x, p.y, W * (1 - k * .16), W * 1.65 * (1 - k * .16), q * 3 * (k % 2 ? 1 : -1), 0, 7); c.stroke(); }
+    c.globalAlpha = 1;
+    if (o.art) desenhaArte(c, o.art, p.x, p.y, W * 1.3, corDe(run, o, 2), { a: f });
+    emit(p.x, p.y, 2, run, { v: 3, life: 26, fixo: 1 });
+  },
+  /** Uma silhueta vira outra. de e para. */
+  transformar(c, q, run, o, i) {
+    const p = posDe(run, o.em, 'C'), T = tam(run, o, .42), meio = .5, t = (q - meio) * 8, a = clamp01(.5 - t), b = clamp01(.5 + t);
+    desenhaArte(c, o.de, p.x, p.y, T * (1 - clamp01(q / meio) * .1), corDe(run, o, 0), { a: a * Math.min(1, q * 6), sx: 1 - clamp01(t + .6) * .6 });
+    desenhaArte(c, o.para, p.x, p.y, T * easeBack(clamp01((q - meio) * 2.4)), corDe(run, o, 2), { a: b * Math.min(1, (1 - q) * 6), sx: 1 });
+    glow(c, p.x, p.y, T * sino(q), corDe(run, o, 2), .8 * Math.exp(-t * t));
+    if (q > meio) uma(run, i, 'p', () => emit(p.x, p.y, 36, run, { v: 6, life: 34, shape: 'spark', fixo: 1 }));
+  },
+  /** Palavra grande na tela. */
+  palavra(c, q, run, o) {
+    const p = posDe(run, o.em, [.5, .44]), t = easeBack(clamp01(q * 3.4)), f = fadeIO(q), px = (o.s ?? .17) * run.U;
+    c.save(); c.translate(p.x + (run.rng() - .5) * (o.treme || 0), p.y); c.scale(t, t);
+    c.font = `700 ${px}px ${run.fonte}`; c.textAlign = 'center'; c.textBaseline = 'middle';
+    c.globalAlpha = f; c.lineWidth = 7; c.strokeStyle = corDe(run, o, 1); c.strokeText(o.txt, 0, 0); c.fillStyle = corDe(run, o, 2); c.fillText(o.txt, 0, 0);
+    c.restore(); c.globalAlpha = 1;
+  },
+  /** Silhuetas ou letras sobem devagar. art ou txt. */
+  subir(c, q, run, o) {
+    const p = posDe(run, o.em, [.5, .7]), { rng } = run;
+    if (q < .8 && rng() < (o.d ?? .4)) {
+      const x = p.x + (rng() - .5) * run.U * (o.l ?? .8), s = (o.tam ?? .1) * run.U * (.7 + rng() * .6), cor = corDe(run, o, Math.floor(rng() * 3));
+      if (o.txt) part({ x, y: p.y, vy: -(o.v ?? 1.6), c: cor, size: s * .8, max: 70, shape: 'txt', txt: o.txt, drag: 1 });
+      else part({ x, y: p.y, vy: -(o.v ?? 1.8), vx: (rng() - .5), c: cor, size: s, max: 72, shape: 'art', art: o.art, gira: .006, drag: 1 });
+    }
+  },
+  /** Silhuetas orbitam o ponto. */
+  orbitar(c, q, run, o) {
+    const p = posDe(run, o.em, 'C'), n = o.n || 5, R = tam(run, o, .36) * ease(clamp01(q * 2)), T = (o.tam ?? .13) * run.U, f = fadeIO(q);
+    for (let k = 0; k < n; k++) { const a = k / n * 6.28 + q * (o.giro ?? 7), z = Math.sin(a); desenhaArte(c, o.art, p.x + Math.cos(a) * R, p.y + z * R * (o.plano ?? .42), T * (.8 + z * .25), corDe(run, o, k % 3), { a: f * (.65 + z * .35), rot: o.gira ? a : 0 }); }
+  },
+  /** Aura que sobe em volta do ponto. */
+  aura(c, q, run, o) {
+    const p = posDe(run, o.em, 'C'), R = tam(run, o, .3), f = sino(q);
+    glow(c, p.x, p.y, R * 1.8, corDe(run, o, 1), .55 * f); glow(c, p.x, p.y, R * .9, corDe(run, o, 2), .5 * f);
+    for (let k = 0; k < 3; k++) { const t = (q * 1.6 + k / 3) % 1; stroke(c, corDe(run, o, k), 2.4, (1 - t) * f); c.beginPath(); c.ellipse(p.x, p.y + R * .9 - t * R * 2, R * (1 - t * .5), R * .28 * (1 - t * .5), 0, 0, 7); c.stroke(); }
+    c.globalAlpha = 1;
+    emit(p.x + (run.rng() - .5) * R * 1.8, p.y + R * .6, 2, run, { a0: -1.7, arc: .3, v: 3.2, life: 34, size: 2.2, fixo: 1 });
+  },
+  /** A escuridão fecha sobre a tela. */
+  trevas(c, q, run, o) {
+    const p = posDe(run, o.em, 'C'), R = Math.max(run.w, run.h) * lerp(1.1, o.ate ?? .16, ease(clamp01(q * 1.5))), f = Math.min(1, (1 - q) * 5), g = c.createRadialGradient(p.x, p.y, R * .3, p.x, p.y, R);
+    g.addColorStop(0, 'rgba(0,0,0,0)'); g.addColorStop(1, `rgba(2,1,6,${(o.op ?? .97) * f})`);
+    c.fillStyle = g; c.fillRect(-40, -40, run.w + 80, run.h + 80);
+  },
+  /** Luz que irrompe, com raios. */
+  clarao(c, q, run, o, i) {
+    const p = posDe(run, o.em, 'C'), f = sino(q), n = o.n || 14, R = Math.max(run.w, run.h) * (o.s ?? .75) * ease(q) * Math.sqrt(run.K);
+    glow(c, p.x, p.y, R * .8, corDe(run, o, 2), .9 * f); glow(c, p.x, p.y, R * .36, '#fff', f);
+    c.globalCompositeOperation = 'lighter';
+    for (let k = 0; k < n; k++) {
+      const a = k / n * 6.28 + q * .7; stroke(c, corDe(run, o, 0), k % 2 ? 7 : 3, .7 * f);
+      c.beginPath(); c.moveTo(p.x + Math.cos(a) * R * .2, p.y + Math.sin(a) * R * .2); c.lineTo(p.x + Math.cos(a) * R, p.y + Math.sin(a) * R); c.stroke();
+    }
+    c.globalAlpha = 1; c.globalCompositeOperation = 'source-over';
+    if (o.bate !== 0) uma(run, i, 'h', () => impactar(run, p.x, p.y, o.e ?? 1));
+  },
+  /** Pontos que cintilam em volta. */
+  brilhos(c, q, run, o) {
+    const p = posDe(run, o.em, 'C'), R = tam(run, o, .5), { rng } = run, n = o.n ?? 2;
+    for (let k = 0; k < n; k++) if (rng() < .7) {
+      const x = p.x + (rng() - .5) * R * 2, y = p.y + (rng() - .5) * R * 2, s = 5 + rng() * 9;
+      part({ x, y, c: corDe(run, o, Math.floor(rng() * 3)), size: s, max: 26, shape: 'estrela', drag: 1 });
+    }
+  },
+  /** Criatura alvo e como ela reage: treme, flutua, cai, dorme, congela, some, encolhe, cresce, foge. */
+  alvo(c, q, run, o) {
+    const p = posDe(run, o.em), T = tam(run, o, .36), r = o.reage || 'treme', cor = o.cor !== undefined ? corDe(run, o) : '#c9ccd6', f = Math.min(1, q * 7, (1 - q) * 7);
+    let x = p.x, y = p.y, rot = 0, esc = 1, a = f;
+    if (r === 'treme') x += Math.sin(q * 70) * 7;
+    if (r === 'flutua') y -= sino(Math.min(1, q * 1.2) * .5) * T * .7 + Math.sin(q * 12) * 5;
+    if (r === 'cai') { rot = ease(clamp01(q * 1.8 - .5)) * 1.5; y += ease(clamp01(q * 1.8 - .5)) * T * .3; }
+    if (r === 'dorme') { rot = ease(clamp01(q * 2 - .3)) * 1.45; y += ease(clamp01(q * 2 - .3)) * T * .3; a *= 1 - clamp01(q - .8) * 3; }
+    if (r === 'some') a *= 1 - clamp01(q * 1.6 - .3);
+    if (r === 'encolhe') esc = lerp(1, .3, ease(clamp01(q * 1.6)));
+    if (r === 'cresce') esc = lerp(.7, 1.7, ease(clamp01(q * 1.6)));
+    if (r === 'foge') x += easeIn(clamp01(q * 1.3)) * run.w * .7;
+    desenhaArte(c, o.art || 'person', x, y, T * esc, cor, { a, rot, brilho: o.brilho ?? .4 });
+    if (r === 'congela') { const g = clamp01(q * 2); c.fillStyle = corDe(run, o, 0); c.globalAlpha = .36 * g * f; c.fillRect(x - T * .4, y + T * .5 - T * g, T * .8, T * g); stroke(c, corDe(run, o, 2), 2, .9 * g * f); c.strokeRect(x - T * .4, y + T * .5 - T * g, T * .8, T * g); c.globalAlpha = 1; }
+  },
+  /** Runas que giram em volta do ponto. */
+  runas(c, q, run, o) {
+    const p = posDe(run, o.em, 'C'), R = tam(run, o, .34) * ease(clamp01(q * 2)), f = fadeIO(q), n = o.n || 9;
+    c.font = `${(o.tam ?? .06) * run.U * 1.2}px serif`; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillStyle = corDe(run, o, 2);
+    for (let k = 0; k < n; k++) { const a = k / n * 6.28 + q * 4; c.globalAlpha = f; c.fillText('ᚠᚢᚦᚨᚱᚲᚷᚹᚺᚾᛁᛃ'[k % 12], p.x + Math.cos(a) * R, p.y + Math.sin(a) * R * (o.plano ?? 1)); }
+    c.globalAlpha = 1;
+    stroke(c, corDe(run, o, 0), 2, f * .7); c.beginPath(); c.ellipse(p.x, p.y, R * .8, R * .8 * (o.plano ?? 1), 0, 0, 7); c.stroke(); c.globalAlpha = 1;
+  },
+  /** Algo pesado cai do céu e bate. art, n. */
+  cair(c, q, run, o, i) {
+    const n = o.n || 1, T = tam(run, o, .3);
+    for (let k = 0; k < n; k++) {
+      const tt = clamp01((q - k * (.6 / n)) / (o.voo ?? .36)), B = n > 1 ? { x: run.w * (.12 + .76 * (((k * 7) % n) + .5) / n), y: run.h * (.4 + ((k * 3) % 4) * .08) } : posDe(run, o.em), de = { x: B.x + (o.dx ?? 130), y: -T };
+      if (tt > 0 && tt < 1) {
+        const t = easeIn(tt), x = lerp(de.x, B.x, t), y = lerp(de.y, B.y, t);
+        glow(c, x, y, T * .9, corDe(run, o, 1), .9); glow(c, x, y, T * .45, corDe(run, o, 2), 1);
+        if (o.art) desenhaArte(c, o.art, x, y, T, corDe(run, o, 0), { rot: o.gira ? q * 12 : 0 });
+        emit(x, y, 3, run, { v: 2, life: 26, size: 3, fixo: 1 });
+      } else if (tt >= 1) {
+        uma(run, i, `h${k}`, () => impactar(run, B.x, B.y, n > 1 ? .65 : 1));
+        const u = clamp01(q - (o.voo ?? .36) - k * (.6 / n)) * 3;
+        if (u < 1) { glow(c, B.x, B.y, T * 1.6 * ease(u), corDe(run, o, 1), 1 - u); stroke(c, corDe(run, o, 2), 4, 1 - u); c.beginPath(); c.arc(B.x, B.y, T * 1.5 * ease(u), 0, 7); c.stroke(); c.globalAlpha = 1; }
+      }
+    }
+  },
+  /** Silhueta girando no lugar: lâminas, serras, moinhos. */
+  girar(c, q, run, o) {
+    const p = posDe(run, o.em, 'C'), T = tam(run, o, .4);
+    desenhaArte(c, o.art, p.x, p.y, T * easeBack(clamp01(q * 2.4)), corDe(run, o), { a: fadeIO(q), rot: q * (o.v ?? 16) });
+    glow(c, p.x, p.y, T * .7, corDe(run, o, 1), .5 * fadeIO(q));
+  },
+  /** Golpes em arco sobre o ponto, com arma opcional. n cortes. */
+  golpe(c, q, run, o, i) {
+    const p = posDe(run, o.em), n = o.n || 1, R = tam(run, o, .5);
+    for (let k = 0; k < n; k++) {
+      const tt = clamp01(q * n * 1.1 - k), a0 = (k % 2 ? 2.4 : .7) + k * .4;
+      if (tt <= 0 || tt >= 1) continue;
+      const a = a0 + tt * 2.4 * (k % 2 ? -1 : 1);
+      if (o.art) desenhaArte(c, o.art, p.x + Math.cos(a) * R * .3, p.y + Math.sin(a) * R * .3, R, corDe(run, o, 0), { rot: a + 1.57, a: 1 - tt * .4 });
+      c.globalCompositeOperation = 'lighter'; stroke(c, corDe(run, o, 2), 9 * (1 - tt), 1 - tt);
+      c.beginPath(); c.arc(p.x, p.y, R * .62, a0, a, !!(k % 2)); c.stroke(); c.globalAlpha = 1; c.globalCompositeOperation = 'source-over';
+      if (tt > .4) uma(run, i, `h${k}`, () => impactar(run, p.x, p.y, n > 1 ? .6 : 1));
+    }
+  },
+  /** Espiral hipnótica. */
+  espiral(c, q, run, o) {
+    const p = posDe(run, o.em, 'C'), f = fadeIO(q), R = tam(run, o, .85);
+    for (let v = 0; v < (o.n || 2); v++) {
+      stroke(c, corDe(run, o, v), 4, f); c.beginPath();
+      for (let a = 0; a < 26; a += .25) { const r = a / 26 * R * ease(clamp01(q * 1.8)), ang = a + q * 12 + v * Math.PI, x = p.x + Math.cos(ang) * r, y = p.y + Math.sin(ang) * r; c[a ? 'lineTo' : 'moveTo'](x, y); }
+      c.stroke();
+    }
+    c.globalAlpha = 1;
+  },
+  /** Grade de barras: jaula, prisão. */
+  grade(c, q, run, o) {
+    const p = posDe(run, o.em, 'C'), L = tam(run, o, .7), g = ease(clamp01(q * 2)), f = fadeIO(q), n = o.n || 7, topo = p.y - L / 2;
+    stroke(c, corDe(run, o, 0), 6, f);
+    for (let k = 0; k <= n; k++) { const x = p.x - L / 2 + L * k / n; c.beginPath(); c.moveTo(x, topo); c.lineTo(x, topo + L * g); c.stroke(); }
+    stroke(c, corDe(run, o, 2), 7, f); c.beginPath(); c.moveTo(p.x - L / 2, topo); c.lineTo(p.x + L / 2, topo); c.moveTo(p.x - L / 2, topo + L * g); c.lineTo(p.x + L / 2, topo + L * g); c.stroke(); c.globalAlpha = 1;
+  },
+  /** Desfaz no ponto A e refaz em B. */
+  teleporte(c, q, run, o, i) {
+    const A = posDe(run, o.de, 'A'), B = posDe(run, o.em), T = tam(run, o, .3), ida = q < .5, p = ida ? A : B, t = ida ? 1 - q * 2 : (q - .5) * 2;
+    desenhaArte(c, o.art || 'person', p.x, p.y, T, corDe(run, o, 2), { a: t, sx: t, brilho: 1.4 });
+    glow(c, p.x, p.y, T * .9 * (1.2 - t), corDe(run, o, 1), .9);
+    if (ida) emit(p.x, p.y, 4, run, { v: 5, life: 22, fixo: 1 }); else uma(run, i, 'p', () => emit(p.x, p.y, 40, run, { v: 6, life: 30, fixo: 1 }));
+  },
+  /** Olho que abre e fita. */
+  olho(c, q, run, o) {
+    const p = posDe(run, o.em, 'C'), W = tam(run, o, .5), ab = sino(q) * W * .34, f = Math.min(1, q * 6, (1 - q) * 6);
+    c.beginPath(); c.moveTo(p.x - W, p.y); c.quadraticCurveTo(p.x, p.y - ab * 2, p.x + W, p.y); c.quadraticCurveTo(p.x, p.y + ab * 2, p.x - W, p.y); c.closePath();
+    c.fillStyle = 'rgba(245,245,255,.92)'; c.globalAlpha = f; c.fill();
+    c.save(); c.clip();
+    const px = Math.sin(q * 7) * W * .18;
+    c.fillStyle = corDe(run, o, 1); c.beginPath(); c.arc(p.x + px, p.y, W * .3, 0, 7); c.fill();
+    c.fillStyle = '#000'; c.beginPath(); c.arc(p.x + px, p.y, W * .14, 0, 7); c.fill();
+    c.fillStyle = '#fff'; c.beginPath(); c.arc(p.x + px + W * .07, p.y - W * .07, W * .05, 0, 7); c.fill();
+    c.restore();
+    stroke(c, corDe(run, o, 0), 3, f); c.stroke(); c.globalAlpha = 1;
+  },
+  /** Mão fechando no centro (agarrar). */
+  fechar(c, q, run, o, i) {
+    const p = posDe(run, o.em), g = ease(clamp01(q * 1.9)), T = tam(run, o, .34), L = run.U * .55 * (1 - g);
+    [-1, 1].forEach(l => desenhaArte(c, o.art, p.x + l * (T * .34 + L), p.y, T, corDe(run, o), { a: fadeIO(q), sx: l }));
+    if (g > .96) uma(run, i, 'h', () => impactar(run, p.x, p.y, o.e ?? .8));
+  },
+  /** Fica parado. Para silhuetas de apoio no fundo da cena. */
+  fixo(c, q, run, o) {
+    const p = posDe(run, o.em, 'C');
+    desenhaArte(c, o.art, p.x, p.y, tam(run, o, .3), corDe(run, o, o.tom ?? 1), { a: (o.a ?? .7) * fadeIO(q), brilho: .5, sx: o.sx, rot: o.rot });
+  }
+};
+/* =====================================================================
+   CENAS — uma por magia, escritas à mão a partir do efeito de cada uma.
+   Formato: 'id': ['fundo:paleta', 'frase', ['verbo', {opções}], ...]
+   Verbos em cena-atos.js. Nomes com @ são silhuetas do Game-icons.net.
+   ===================================================================== */
+const CENAS = {
+  /* ---------------- truques ---------------- */
+  'acid-splash': ['pantano', 'Uma bolha de ácido estoura no alvo', ['lancar', { art: '@acid-blob', s: .09, voo: .5 }], ['explodir', { art: '@splash', t: [.5, 1] }], ['chover', { forma: 'brasa', d: 2, t: [.55, 1] }]],
+  'chill-touch': ['cripta:morte', 'Uma mão espectral sobe do túmulo', ['surgir', { art: '@skeletal-hand', em: 'B', s: .46, abre: 0 }], ['aura', { em: 'B', s: .24, t: [.4, 1] }]],
+  'dancing-lights': ['noite:luz', 'Quatro luzes dançam no ar', ['orbitar', { art: '@lantern-flame', n: 4, s: .44, giro: 9, plano: .7 }], ['brilhos', { s: .6, n: 1 }]],
+  druidcraft: ['floresta:natureza', 'A natureza responde a um gesto', ['aparecer', { art: '@sprout', s0: .1, s1: 1, s: .4, bob: 0 }], ['subir', { art: '@falling-leaf', d: .3 }]],
+  'eldritch-blast': ['vazio:arcano', 'Um feixe crepitante rasga o escuro', ['ondas', { em: 'A', s: .3, t: [0, .5] }], ['lancar', { n: 'inst', s: .05, curva: 0, art: '@energy-arrow' }]],
+  elementalism: ['arcano:prata', 'Os quatro elementos obedecem', ['aparecer', { art: '@fire', em: [.3, .32], s: .26, cor: 'fogo' }], ['aparecer', { art: '@water-drop', em: [.7, .32], s: .26, cor: 'agua' }], ['aparecer', { art: '@whirlwind', em: [.3, .58], s: .26, cor: 'vento' }], ['aparecer', { art: '@stone-pile', em: [.7, .58], s: .26, cor: 'terra' }]],
+  'fire-bolt': ['fogo', 'Um dardo de fogo risca o ar', ['lancar', { art: '@fire-dash', s: .08, voo: .55, curva: .2 }], ['explodir', { t: [.55, 1], s: .4 }]],
+  guidance: ['templo:luz', 'Uma mão divina aponta o caminho', ['surgir', { art: '@hand-of-god', de: 'cima', em: [.5, .34], s: .5 }], ['aura', { em: 'A', s: .2 }]],
+  light: ['noite:luz', 'Um objeto passa a brilhar', ['clarao', { t: [.15, .95], bate: 0, em: 'C', n: 10, s: .32 }], ['aparecer', { art: '@lantern-flame', s: .3, bob: 0, cor: '#3a2a10' }]],
+  mending: ['arcano:ouro', 'Os cacos voltam a ser um só', ['transformar', { de: '@broken-pottery', para: '@porcelain-vase' }], ['brilhos', { s: .34, t: [.5, 1] }]],
+  message: ['arcano:prata', 'Um sussurro atravessa a distância', ['lancar', { art: '@chat-bubble', s: .07, voo: .9, curva: .6, n: 2 }], ['ondas', { em: 'B', s: .3, n: 3, t: [.6, 1] }]],
+  'minor-illusion': ['sonho:sonho', 'Parece real até alguém tocar', ['aparecer', { art: '@cardboard-box-closed', s: .36 }], ['subir', { art: '@musical-notes', d: .2, em: [.5, .55] }], ['brilhos', { s: .4 }]],
+  'poison-spray': ['pantano:veneno', 'Um jato de gás venenoso', ['lancar', { s: .05, voo: .5 }], ['nuvem', { t: [.45, 1], s: .36, op: .55 }], ['fixo', { art: '@poison-cloud', em: 'B', s: .3, tom: 2, t: [.45, 1] }]],
+  prestidigitation: ['arcano:ouro', 'Um truque de aprendiz', ['aparecer', { art: '@magick-trick', s: .44 }], ['brilhos', { s: .5, n: 3 }]],
+  'produce-flame': ['noite:fogo', 'Uma chama brota da palma', ['surgir', { art: '@open-palm', em: [.5, .58], s: .42, cor: 'prata' }], ['aparecer', { art: '@fluffy-flame', em: [.5, .36], s0: .2, s1: 1, s: .3, t: [.15, 1] }]],
+  'ray-of-frost': ['gelo', 'Um raio gélido congela o passo', ['alvo', { em: 'B', reage: 'congela', t: [.25, 1] }], ['feixe', { larg: 9, t: [0, .55] }], ['chover', { forma: 'neve', d: 2 }]],
+  resistance: ['arcano:prata', 'Uma proteção envolve o aliado', ['alvo', { em: 'C', reage: 'flutua', s: .3, cor: 'prata' }], ['cupula', { em: 'C', cheia: 1, s: .3 }], ['fixo', { art: '@shield', em: [.5, .62], s: .14, tom: 2 }]],
+  'sacred-flame': ['templo:luz', 'Fogo sagrado desce sobre o alvo', ['alvo', { em: [.5, .46], reage: 'treme', s: .28 }], ['feixe', { de: 'cima', em: [.5, .5], larg: 30, t: [.1, .75] }], ['subir', { art: '@flame', d: .5, em: [.5, .56], l: .3 }]],
+  shillelagh: ['floresta:natureza', 'O cajado desperta', ['transformar', { de: '@wood-stick', para: '@wizard-staff' }], ['vinhas', { n: 3, t: [.5, 1] }]],
+  'shocking-grasp': ['tempestade', 'Um toque carregado de raios', ['alvo', { em: 'B', reage: 'treme', t: [.25, 1], s: .3 }], ['surgir', { art: '@thor-fist', em: [.5, .5], s: .34, cor: 'Elétrico', t: [0, .5] }], ['cadeia', { n: 2, t: [.3, .9] }]],
+  'sorcerous-burst': ['arcano', 'Pura feitiçaria arremessada', ['lancar', { art: '@unstable-orb', s: .09, voo: .5, curva: .3 }], ['explodir', { art: '@bright-explosion', t: [.5, 1] }]],
+  'spare-the-dying': ['cripta:cura', 'A vida não vai embora agora', ['alvo', { em: 'C', art: '@chalk-outline-murder', s: .44, reage: 'nada' }], ['aparecer', { art: '@heart-beats', em: [.5, .34], s: .24, t: [.2, 1] }], ['aura', { em: 'C', s: .3, t: [.3, 1] }]],
+  'starry-wisp': ['noite:lua', 'Um fio de estrela revela o alvo', ['lancar', { art: '@star-swirl', s: .08, voo: .55, curva: .5 }], ['brilhos', { em: 'B', s: .3, t: [.5, 1], n: 3 }], ['explodir', { t: [.5, .9], s: .3 }]],
+  thaumaturgy: ['templo:prata', 'Um pequeno prodígio divino', ['ondas', { em: 'A', s: .9, n: 3 }], ['aparecer', { art: '@sun-priest', s: .4 }], ['subir', { txt: '✦', d: .3 }]],
+  'true-strike': ['dia:luz', 'Por um instante, você vê a brecha', ['aparecer', { art: '@bullseye', em: 'B', s: .34, t: [0, .7], bob: 0 }], ['golpe', { art: '@pointy-sword', t: [.4, .9], s: .6 }]],
+  'vicious-mockery': ['sonho:sonho', 'Uma ofensa que dói de verdade', ['alvo', { em: [.5, .52], reage: 'treme', s: .28, t: [.2, 1] }], ['palavra', { txt: 'Rá!', em: [.5, .3], treme: 4, t: [.1, .75] }], ['subir', { art: '@imp-laugh', d: .25, em: [.5, .6], tam: .08 }]],
+  'mind-sliver': ['sonho:sonho', 'Uma lasca de energia na mente', ['aparecer', { art: '@brain', em: 'B', s: .32, t: [0, .9], bob: 2 }], ['feixe', { larg: 6, t: [.1, .6] }], ['fendas', { em: 'B', n: 5, t: [.45, 1], e: .7 }]],
+
+  /* ---------------- 1º círculo ---------------- */
+  alarm: ['noite:ouro', 'Se alguém passar, você vai saber', ['circulo', { lados: 5 }], ['aparecer', { art: '@ringing-alarm', em: 'B', s: .32, t: [.2, 1] }], ['ondas', { em: 'B', n: 3, s: .6, t: [.3, 1] }]],
+  'animal-friendship': ['floresta:natureza', 'O animal baixa a guarda', ['aparecer', { art: '@sitting-dog', s: .4 }], ['subir', { art: '@paw-heart', d: .25, em: [.5, .55], tam: .07 }]],
+  bane: ['cripta:sombra', 'Uma sombra pesa sobre os inimigos', ['aparecer', { art: '@cursed-star', em: 'B', s: .3 }], ['chover', { forma: 'brasa', d: 2 }], ['alvo', { em: [.3, .6], art: '@person', s: .22, reage: 'treme', t: [.2, 1] }], ['alvo', { em: [.7, .6], art: '@person', s: .22, reage: 'treme', t: [.2, 1] }]],
+  bless: ['templo:luz', 'Uma bênção desce sobre o grupo', ['surgir', { art: '@angel-wings', de: 'cima', em: [.5, .3], s: .5 }], ['chover', { forma: 'pena', d: 1.2, fixo: 1 }], ['aura', { em: [.5, .6], s: .3 }]],
+  'burning-hands': ['fogo', 'Um leque de chamas sai dos dedos', ['surgir', { art: '@flaming-claw', em: [.5, .74], s: .3, t: [0, .5] }], ['cone', { t: [.1, .95], arco: 1.25, part: 'spark' }]],
+  'charm-person': ['sonho:sonho', 'Agora você parece um velho amigo', ['alvo', { em: 'C', s: .34, reage: 'nada', cor: 'sonho' }], ['subir', { art: '@hearts', d: .35, em: [.5, .6], tam: .08 }], ['espiral', { em: 'C', s: .4, t: [0, .7] }]],
+  'chromatic-orb': ['arcano', 'Um orbe da cor que você escolheu', ['lancar', { s: .1, voo: .5, salta: 1, curva: .35, art: '@orbital' }], ['explodir', { t: [.42, .8], s: .55 }]],
+  'color-spray': ['sonho', 'Um jorro de cores ofusca', ['cone', { cor: 'sonho', arco: 1.1 }], ['cone', { cor: 'luz', arco: .7, t: [.1, .9] }], ['cone', { cor: 'agua', arco: .4, t: [.2, 1] }]],
+  command: ['arcano:ouro', 'Uma palavra, e o corpo obedece', ['palavra', { txt: 'Largue!', treme: 2, t: [0, .8] }], ['ondas', { em: 'A', s: 1, n: 3 }], ['alvo', { em: [.5, .62], reage: 'cai', s: .26 }]],
+  'comprehend-languages': ['arcano:prata', 'As letras se abrem em sentido', ['transformar', { de: '@stone-tablet', para: '@open-book' }], ['runas', { em: 'C', s: .4, n: 12 }]],
+  'create-or-destroy-water': ['oceano:agua', 'Água surge do nada, ou some', ['surgir', { art: '@water-flask', de: 'cima', em: [.5, .26], s: .22, rot: 2.6 }], ['chover', { forma: 'gota', d: 4 }], ['aparecer', { art: '@water-splash', em: [.5, .66], s: .34, t: [.3, 1] }]],
+  'cure-wounds': ['amanhecer:cura', 'A ferida se fecha sob o toque', ['aparecer', { art: '@healing', s: .4 }], ['subir', { txt: '+', d: .6, l: .6 }], ['aura', { em: 'C', s: .3 }]],
+  'detect-evil-and-good': ['arcano:luz', 'Céu e abismo ficam visíveis', ['aparecer', { art: '@angel-wings', em: [.3, .4], s: .3, cor: 'luz' }], ['aparecer', { art: '@evil-wings', em: [.7, .4], s: .3, cor: 'sangue' }], ['ondas', { em: 'A', s: 1.1, n: 3 }]],
+  'detect-magic': ['arcano', 'A magia ao redor começa a brilhar', ['ondas', { em: 'A', s: 1.1, n: 3 }], ['fixo', { art: '@crystal-wand', em: [.3, .44], s: .16, tom: 0 }], ['fixo', { art: '@ring', em: [.68, .36], s: .14, tom: 0 }], ['fixo', { art: '@magic-potion', em: [.56, .56], s: .14, tom: 0 }], ['brilhos', { s: .6 }]],
+  'detect-poison-and-disease': ['pantano:veneno', 'A doença se denuncia', ['ondas', { em: 'A', s: 1.1, n: 3 }], ['aparecer', { art: '@biohazard', s: .32, t: [.15, 1] }], ['aparecer', { art: '@poison-bottle', em: [.74, .36], s: .16, t: [.3, 1] }]],
+  'disguise-self': ['sonho', 'Outro rosto, a mesma pessoa', ['transformar', { de: '@person', para: '@hooded-figure' }], ['nuvem', { em: 'C', s: .3, op: .25 }]],
+  'dissonant-whispers': ['sonho:sonho', 'Uma melodia que só o alvo ouve', ['alvo', { em: 'C', reage: 'foge', s: .3, t: [.25, 1] }], ['subir', { art: '@screaming', d: .2, tam: .08 }], ['ondas', { em: 'C', s: .46, n: 5 }]],
+  'divine-favor': ['templo:luz', 'A arma arde com luz divina', ['aparecer', { art: '@shining-sword', s: .46, bob: 2 }], ['chover', { forma: 'brasa', d: 1.5, t: [.1, 1] }]],
+  'divine-smite': ['templo', 'A fé desce junto com a lâmina', ['feixe', { de: 'cima', larg: 26, em: 'B', t: [0, .6] }], ['golpe', { art: '@broadsword', s: .7, t: [.25, .8] }], ['explodir', { art: '@sun', t: [.45, 1] }]],
+  'ensnaring-strike': ['floresta:natureza', 'Espinhos brotam do golpe', ['golpe', { art: '@sword-brandish', s: .5, t: [0, .4] }], ['alvo', { em: 'B', reage: 'treme', s: .28, t: [.2, 1] }], ['vinhas', { em: 'B', n: 5, t: [.3, 1], flor: '@thorny-vine' }]],
+  entangle: ['floresta:natureza', 'As plantas agarram o que passar', ['vinhas', { n: 9, em: [.5, .5], flor: '@vine-leaf' }], ['alvo', { em: [.5, .58], reage: 'treme', s: .24 }]],
+  'expeditious-retreat': ['ceu:vento', 'Passos mais rápidos que o medo', ['surgir', { art: '@sprint', de: 'esq', em: [.5, .55], s: .4, t: [0, .8] }], ['revoada', { art: '@boot-prints', n: 6, s: .08 }]],
+  'faerie-fire': ['noite:sonho', 'Tudo na área passa a brilhar', ['alvo', { em: 'C', s: .34, cor: 'sonho', reage: 'nada' }], ['brilhos', { em: 'C', s: .4, n: 4 }], ['aparecer', { art: '@fairy', em: [.74, .3], s: .16 }]],
+  'false-life': ['cripta:morte', 'Uma vitalidade emprestada', ['aparecer', { art: '@heart-organ', s: .34 }], ['aura', { em: 'C', s: .28 }], ['surgir', { art: '@life-tap', em: [.5, .7], s: .2 }]],
+  'feather-fall': ['ceu:prata', 'A queda vira um pouso macio', ['chover', { forma: 'pena', d: 1.4, fixo: 1 }], ['alvo', { em: [.5, .42], s: .24, reage: 'flutua', cor: 'prata' }]],
+  'find-familiar': ['noite:ouro', 'Um espírito atende em forma animal', ['circulo', { lados: 3, art: '@owl' }], ['brilhos', { em: [.5, .5], s: .4 }]],
+  'floating-disk': ['arcano:prata', 'Um disco flutua à sua espera', ['aparecer', { art: '@metal-disc', em: [.5, .55], s: .46, bob: 8 }], ['fixo', { art: '@cargo-crate', em: [.5, .46], s: .16, tom: 0 }]],
+  'fog-cloud': ['pantano:prata', 'Uma névoa espessa toma tudo', ['nuvem', { largo: 1, em: 'C', n: 16, s: .5, op: .5 }]],
+  goodberry: ['floresta:natureza', 'Frutas que nutrem e curam', ['aparecer', { art: '@berries-bowl', s: .42 }], ['subir', { txt: '+', d: .3, l: .5, cor: 'cura' }], ['brilhos', { s: .3 }]],
+  grease: ['caverna:ouro', 'O chão vira uma armadilha lisa', ['aparecer', { art: '@spill', em: [.5, .68], s: .5, bob: 0 }], ['alvo', { em: [.5, .54], s: .26, reage: 'cai' }]],
+  'guiding-bolt': ['noite:luz', 'Um clarão marca o alvo', ['lancar', { art: '@sun-spear', s: .08, voo: .5 }], ['explodir', { t: [.5, 1], s: .5 }], ['brilhos', { em: 'B', s: .24, t: [.55, 1] }]],
+  'healing-word': ['amanhecer:cura', 'Uma palavra basta para curar', ['ondas', { em: 'A', s: .9, n: 3, cor: 'cura' }], ['palavra', { txt: 'Viva', s: .15, em: [.5, .4] }], ['subir', { art: '@heart-plus', d: .3, tam: .07 }]],
+  'hellish-rebuke': ['fogo', 'Quem feriu você arde', ['nuvem', { em: [.5, .7], s: .3, cor: 'fogo', op: .5 }], ['surgir', { art: '@devil-mask', de: 'baixo', em: [.5, .6], s: .36, t: [0, .55] }], ['feixe', { larg: 18, t: [.25, .8] }], ['explodir', { t: [.55, 1], s: .42 }]],
+  heroism: ['amanhecer:ouro', 'O medo some, a coragem cresce', ['aparecer', { art: '@muscle-up', s: .42 }], ['aura', { em: 'C', s: .34 }], ['subir', { art: '@laurels', d: .15, tam: .07 }]],
+  hex: ['sonho:sombra', 'Uma maldição gruda no alvo', ['alvo', { em: 'C', s: .3, reage: 'treme' }], ['surgir', { art: '@witch-flight', de: 'dir', em: [.6, .26], s: .22, t: [0, .6] }], ['runas', { em: 'C', s: .3, plano: .4 }]],
+  'hideous-laughter': ['sonho', 'O alvo cai de tanto rir', ['alvo', { em: [.5, .54], s: .3, reage: 'cai' }], ['subir', { txt: 'HA', d: .5, em: [.5, .5], tam: .12 }]],
+  'hunters-mark': ['floresta:sangue', 'A presa não vai escapar', ['aparecer', { art: '@convergence-target', em: 'B', s: .46, giro: .2, bob: 0 }], ['alvo', { em: 'B', s: .2, reage: 'treme' }]],
+  'ice-knife': ['gelo', 'Uma lâmina de gelo que estoura', ['lancar', { art: '@ice-spear', s: .1, voo: .5, curva: .15 }], ['quebrar', { art: '@crystal-growth', em: 'B', t: [.45, .75], s: .2 }], ['explodir', { t: [.52, 1], s: .4 }]],
+  identify: ['arcano:prata', 'O objeto revela o que é', ['aparecer', { art: '@ring', em: [.5, .5], s: .26, bob: 2 }], ['aparecer', { art: '@magnifying-glass', em: [.5, .36], s: .4, t: [.1, 1], cor: 'ouro' }], ['runas', { em: [.5, .5], s: .3, plano: .5 }]],
+  'illusory-script': ['sonho:ouro', 'Só quem você escolher poderá ler', ['aparecer', { art: '@scroll-unfurled', s: .46, bob: 2 }], ['subir', { txt: 'ᚠ', d: .4, em: [.5, .56], l: .4 }]],
+  'inflict-wounds': ['cripta:morte', 'Um toque que rói a carne', ['surgir', { art: '@evil-hand', em: [.5, .5], s: .36, t: [0, .55] }], ['alvo', { em: 'B', s: .28, reage: 'treme', t: [.25, 1] }], ['explodir', { t: [.45, 1], s: .4, art: '@internal-injury' }]],
+  jump: ['ceu:vento', 'Um salto que desafia o chão', ['alvo', { em: [.5, .64], art: '@acrobatic', s: .34, reage: 'flutua', cor: 'vento' }], ['ondas', { em: [.5, .8], n: 2, s: .4 }]],
+  longstrider: ['dia:vento', 'Cada passo vale por mais', ['surgir', { art: '@walking-boot', de: 'esq', em: [.5, .55], s: .34 }], ['revoada', { art: '@footsteps', n: 7, s: .08 }]],
+  'mage-armor': ['arcano', 'Uma armadura de força invisível', ['alvo', { em: 'C', s: .36, reage: 'nada', cor: 'arcano' }], ['aparecer', { art: '@breastplate', em: 'C', s: .36, t: [.2, 1] }], ['ondas', { em: 'C', s: .42, n: 2 }]],
+  'mage-hand': ['arcano', 'Uma mão espectral se estende', ['surgir', { art: '@hand', n: 2, em: [.5, .52], s: .52, espelha: 1, abre: .24 }], ['brilhos', { em: [.5, .44], s: .34 }]],
+  'magic-missile': ['arcano:arcano', 'Dardos que nunca erram', ['lancar', { n: 'inst', s: .05, art: '@fast-arrow', voo: .7 }]],
+  'protection-from-evil-and-good': ['templo:prata', 'Um círculo que o mal não cruza', ['circulo', { lados: 6, s: .5 }], ['alvo', { em: [.5, .5], s: .3, reage: 'nada', cor: 'prata' }], ['aura', { em: [.5, .5], s: .3 }]],
+  'purify-food-and-drink': ['amanhecer:cura', 'O veneno some da mesa', ['transformar', { de: '@poison-bottle', para: '@jeweled-chalice' }], ['brilhos', { s: .34, t: [.5, 1] }]],
+  'ray-of-sickness': ['pantano:veneno', 'Um raio que embrulha o estômago', ['feixe', { larg: 11, t: [0, .6] }], ['alvo', { em: 'B', art: '@vomiting', s: .28, reage: 'treme', t: [.3, 1] }]],
+  sanctuary: ['templo:luz', 'Ninguém consegue atacar o protegido', ['alvo', { em: 'C', s: .3, reage: 'nada', cor: 'luz' }], ['cupula', { em: 'C', cheia: 1, s: .36 }], ['aparecer', { art: '@interdiction', em: [.5, .22], s: .13, bob: 2 }]],
+  'searing-smite': ['fogo', 'A lâmina acende ao golpear', ['golpe', { art: '@flaming-trident', s: .64, t: [0, .6] }], ['explodir', { art: '@flame', t: [.3, .9], s: .4 }], ['subir', { art: '@flame', d: .4, em: 'B', l: .4 }]],
+  shield: ['arcano', 'Uma barreira invisível se ergue', ['cupula', { em: 'A', s: .5 }], ['aparecer', { art: '@magic-shield', em: [.5, .5], s: .42, bob: 0 }], ['lancar', { art: '@plain-arrow', de: 'B', em: 'A', n: 2, s: .05, voo: .4, t: [.05, .5] }]],
+  'shield-of-faith': ['templo:luz', 'A fé vira escudo', ['aparecer', { art: '@templar-shield', s: .42 }], ['aura', { em: 'C', s: .34 }], ['ondas', { em: 'C', s: .5, n: 2 }]],
+  'silent-image': ['sonho', 'Uma imagem sem som nem cheiro', ['aparecer', { art: '@griffin-symbol', s: .46, bob: 8 }], ['espelhos', { art: '@griffin-symbol', n: 1, s: .4, t: [.4, 1] }]],
+  sleep: ['noite:sonho', 'Os olhos pesam, o corpo cede', ['chover', { forma: 'areia', d: 4, fixo: 1 }], ['alvo', { em: [.5, .56], reage: 'dorme', s: .3 }], ['subir', { txt: 'Z', d: .28, em: [.5, .46], l: .4, tam: .09 }]],
+  'speak-with-animals': ['floresta:natureza', 'Os bichos finalmente respondem', ['aparecer', { art: '@fox-head', em: [.3, .4], s: .26 }], ['aparecer', { art: '@owl', em: [.7, .4], s: .26 }], ['subir', { art: '@chat-bubble', d: .25, em: [.5, .5], tam: .08 }]],
+  thunderwave: ['tempestade:arcano', 'Um trovão empurra tudo para longe', ['ondas', { em: 'A', s: 1.4, n: 5, e: 1 }], ['explodir', { em: 'A', s: .3, t: [0, .4] }], ['alvo', { em: [.5, .34], s: .24, reage: 'foge', t: [.1, .9] }]],
+  'unseen-servant': ['arcano:prata', 'Quem carrega isso? Ninguém visível', ['aparecer', { art: '@broom', s: .4, giro: .1, bob: 12 }], ['aparecer', { art: '@bowl-of-rice', em: [.66, .38], s: .16, bob: 10 }]],
+
+  /* ---------------- 2º círculo ---------------- */
+  'acid-arrow': ['pantano', 'Uma flecha verde estoura em ácido', ['lancar', { art: '@chemical-arrow', s: .1, voo: .5, curva: .2 }], ['explodir', { art: '@gooey-impact', t: [.5, 1], s: .46 }], ['chover', { forma: 'brasa', d: 2, t: [.55, 1] }]],
+  aid: ['amanhecer:ouro', 'Três aliados ganham fôlego', ['alvo', { em: [.25, .54], s: .24, reage: 'nada', cor: 'ouro' }], ['alvo', { em: [.5, .48], s: .24, reage: 'nada', cor: 'ouro' }], ['alvo', { em: [.75, .54], s: .24, reage: 'nada', cor: 'ouro' }], ['subir', { art: '@heart-plus', d: .4, em: [.5, .5], tam: .07 }]],
+  'alter-self': ['sonho', 'Seu corpo muda de forma', ['transformar', { de: '@person', para: '@lizardman' }], ['aura', { em: 'C', s: .3 }]],
+  'animal-messenger': ['ceu:natureza', 'Um bichinho leva o recado', ['surgir', { art: '@sparrow', de: 'esq', em: 'B', s: .24, t: [0, .9] }], ['aparecer', { art: '@envelope', em: [.5, .5], s: .16, t: [.2, 1] }]],
+  'arcane-lock': ['arcano:ouro', 'Esta porta só abre para você', ['aparecer', { art: '@locked-door', s: .5, bob: 0 }], ['correntes', { em: 'C', n: 4, t: [.1, .95] }], ['aparecer', { art: '@padlock', em: 'C', s: .18, t: [.4, 1], bob: 0 }]],
+  'arcanists-magic-aura': ['arcano:prata', 'A aura que você quiser mostrar', ['transformar', { de: '@crystal-wand', para: '@wooden-sign' }], ['aura', { em: 'C', s: .36 }]],
+  augury: ['noite:ouro', 'Bom presságio ou mau presságio', ['orbitar', { art: '@crossed-bones', n: 3, s: .3, tam: .1 }], ['transformar', { de: '@crystal-ball', para: '@yin-yang', s: .34 }]],
+  barkskin: ['floresta:terra', 'A pele endurece como casca', ['alvo', { em: 'C', s: .36, reage: 'nada', cor: 'natureza' }], ['aparecer', { art: '@tree-face', em: 'C', s: .36, s0: .3, s1: 1, t: [.2, 1], bob: 0 }]],
+  'blindness-deafness': ['vazio:sombra', 'Olhos ou ouvidos se apagam', ['alvo', { em: [.5, .5], s: .3, reage: 'treme' }], ['trevas', { ate: .2, em: [.5, .46] }], ['aparecer', { art: '@sight-disabled', em: [.5, .3], s: .2 }]],
+  blur: ['sonho:prata', 'Seu contorno treme no ar', ['espelhos', { art: '@person', n: 2, s: .4 }], ['nuvem', { em: 'C', s: .26, op: .2 }]],
+  'calm-emotions': ['amanhecer:lua', 'A raiva se desfaz', ['transformar', { de: '@enrage', para: '@meditation' }], ['ondas', { em: 'C', s: .8, n: 3, t: [.45, 1] }]],
+  'continual-flame': ['noite:fogo', 'Uma chama que nunca se apaga', ['aparecer', { art: '@primitive-torch', s: .5, bob: 0 }], ['aparecer', { art: '@infinity', em: [.5, .7], s: .14, cor: 'ouro', t: [.3, 1], bob: 0 }], ['brilhos', { s: .3, em: [.5, .36] }]],
+  darkness: ['vazio:sombra', 'Nem a visão no escuro atravessa', ['aura', { em: 'C', s: .2 }], ['trevas', { ate: .05, em: 'C', op: 1 }]],
+  darkvision: ['noite:natureza', 'O escuro fica cinza e nítido', ['aparecer', { art: '@night-vision', s: .46 }], ['ondas', { em: 'C', s: 1, n: 3 }], ['brilhos', { s: .6, n: 1 }]],
+  'detect-thoughts': ['sonho:sonho', 'Os pensamentos ficam audíveis', ['aparecer', { art: '@telepathy', em: [.5, .58], s: .4 }], ['subir', { art: '@thought-bubble', d: .25, em: [.5, .48], tam: .08 }]],
+  'dragons-breath': ['fogo', 'O sopro de um dragão em você', ['aparecer', { art: '@dragon-head', em: [.5, .7], s: .34, bob: 0 }], ['cone', { t: [.18, 1], arco: 1, part: 'spark' }]],
+  'enhance-ability': ['amanhecer:ouro', 'Corpo e mente se superam', ['aparecer', { art: '@biceps', s: .3, em: [.3, .42] }], ['aparecer', { art: '@brain', s: .3, em: [.7, .42] }], ['aura', { em: [.5, .6], s: .3 }]],
+  'enlarge-reduce': ['dia:ouro', 'Maior ou menor, você decide', ['alvo', { em: [.3, .56], reage: 'cresce', s: .24, cor: 'ouro' }], ['alvo', { em: [.72, .56], reage: 'encolhe', s: .28, cor: 'prata' }]],
+  enthrall: ['arcano:sonho', 'Todos param para ouvir', ['aparecer', { art: '@public-speaker', em: [.5, .38], s: .34 }], ['ondas', { em: [.5, .34], s: .9, n: 4 }], ['alvo', { em: [.28, .66], s: .18, reage: 'nada' }], ['alvo', { em: [.72, .66], s: .18, reage: 'nada' }]],
+  'find-steed': ['amanhecer:ouro', 'Uma montaria leal atende', ['circulo', { lados: 5, art: '@horse-head', s: .54 }], ['brilhos', { s: .4, em: [.5, .5] }]],
+  'find-traps': ['caverna:sangue', 'O perigo fica à vista', ['ondas', { em: 'A', s: 1.1, n: 3 }], ['aparecer', { art: '@wolf-trap', s: .42, t: [.15, 1] }], ['aparecer', { art: '@hazard-sign', em: [.7, .3], s: .15, t: [.3, 1] }]],
+  'flame-blade': ['fogo', 'Uma lâmina feita de chama', ['aparecer', { art: '@fire-ring', em: [.5, .6], s: .3, t: [0, .35] }], ['golpe', { art: '@energy-sword', s: .7, n: 2, t: [.2, .95] }]],
+  'flaming-sphere': ['fogo', 'Uma bola de fogo rola pelo campo', ['lancar', { art: '@fireball', de: [.1, .7], em: 'B', s: .13, voo: .9, curva: .1, giro: 1 }], ['fendas', { em: [.5, .7], n: 3, t: [.5, 1], e: .5 }]],
+  'gentle-repose': ['cripta:prata', 'O tempo não toca este corpo', ['aparecer', { art: '@coffin', s: .5, bob: 0 }], ['circulo', { lados: 4, em: [.5, .68] }], ['aparecer', { art: '@sands-of-time', em: [.76, .32], s: .13 }]],
+  'gust-of-wind': ['ceu:vento', 'Uma ventania empurra tudo', ['muralha', { estilo: 'vento', alto: 1.1, em: [.5, .7] }], ['revoada', { art: '@wind-slap', n: 8, s: .14 }], ['alvo', { em: [.34, .58], s: .22, reage: 'foge' }]],
+  'heat-metal': ['fogo', 'O metal queima quem o segura', ['aparecer', { art: '@breastplate', s: .44, bob: 2 }], ['ondas', { em: 'C', s: .46, n: 3, cor: 'fogo' }], ['subir', { art: '@heat-haze', d: .3, tam: .07 }]],
+  'hold-person': ['arcano:prata', 'O corpo para no meio do gesto', ['alvo', { em: 'C', s: .4, reage: 'nada' }], ['correntes', { em: 'C', n: 5 }]],
+  invisibility: ['noite:prata', 'Agora ninguém vê você', ['alvo', { em: 'C', s: .4, reage: 'some', cor: 'prata' }], ['brilhos', { s: .34, t: [.3, 1] }]],
+  knock: ['caverna:ouro', 'Um estalo, e tudo se abre', ['transformar', { de: '@padlock', para: '@padlock-open' }], ['ondas', { em: 'C', s: 1.2, n: 2, t: [.45, 1] }], ['palavra', { txt: 'TOC!', s: .13, em: [.5, .22], t: [.42, .9] }]],
+  'lesser-restoration': ['amanhecer:cura', 'A doença deixa o corpo', ['transformar', { de: '@virus', para: '@heart-plus' }], ['aura', { em: 'C', s: .3, t: [.4, 1] }]],
+  levitate: ['ceu:prata', 'O alvo sobe sem apoio', ['alvo', { em: [.5, .6], reage: 'flutua', s: .3, cor: 'prata' }], ['ondas', { em: [.5, .78], s: .3, n: 3 }]],
+  'locate-animals-or-plants': ['floresta:natureza', 'A mata aponta o caminho', ['aparecer', { art: '@oak-leaf', em: [.5, .4], s: .3, giro: .3 }], ['revoada', { art: '@falling-leaf', n: 7, s: .08 }], ['aparecer', { art: '@deer-track', em: [.5, .66], s: .2 }]],
+  'locate-object': ['arcano:ouro', 'Você sente para onde ir', ['aparecer', { art: '@treasure-map', s: .46, bob: 2 }], ['aparecer', { art: '@compass', em: [.66, .36], s: .18, giro: .5, bob: 0 }]],
+  'magic-mouth': ['arcano:sonho', 'Uma boca guarda o seu recado', ['aparecer', { art: '@lips', s: .4 }], ['ondas', { em: 'C', s: .6, n: 3, t: [.3, 1] }], ['subir', { art: '@chat-bubble', d: .15, tam: .06, em: [.5, .46] }]],
+  'magic-weapon': ['arcano:ouro', 'A arma comum passa a ser mágica', ['aparecer', { art: '@rune-sword', s: .48, bob: 3 }], ['runas', { em: 'C', s: .34, plano: .5 }]],
+  'mind-spike': ['sonho', 'Uma ponta atravessa o pensamento', ['aparecer', { art: '@brain', em: 'B', s: .3, bob: 2 }], ['cair', { art: '@striking-splinter', em: 'B', s: .2, dx: 0, voo: .5 }], ['fendas', { em: 'B', n: 4, t: [.5, 1], e: .6 }]],
+  'mirror-image': ['sonho:prata', 'Três cópias, nenhuma certeza', ['espelhos', { art: '@cloak-dagger', n: 3, s: .34 }]],
+  'misty-step': ['noite:prata', 'Um passo, e você já está ali', ['nuvem', { em: 'A', s: .24, op: .4, t: [0, .55] }], ['teleporte', { em: [.5, .42] }], ['nuvem', { em: [.5, .42], s: .24, op: .4, t: [.45, 1] }]],
+  moonbeam: ['lua', 'Um pilar de luar queima o alvo', ['feixe', { de: 'cima', dx: -40, em: [.5, .66], larg: 46 }], ['alvo', { em: [.5, .58], s: .26, reage: 'treme', t: [.3, 1] }], ['subir', { txt: '☾', d: .25, em: [.5, .66], l: .3 }]],
+  'pass-without-trace': ['floresta:sombra', 'Nenhum rastro fica para trás', ['revoada', { art: '@footprint', n: 6, s: .08 }], ['nuvem', { em: [.5, .7], s: .4, op: .3 }], ['aparecer', { art: '@hood', em: [.5, .36], s: .24 }]],
+  'phantasmal-force': ['sonho:sombra', 'Só o alvo vê o horror', ['alvo', { em: [.5, .6], s: .28, reage: 'treme' }], ['surgir', { art: '@spectre', de: 'cima', em: [.5, .32], s: .4 }]],
+  'prayer-of-healing': ['templo:cura', 'Uma prece demorada cura o grupo', ['aparecer', { art: '@prayer', em: [.5, .36], s: .3 }], ['subir', { art: '@heart-plus', d: .4, tam: .07 }], ['circulo', { lados: 6, em: [.5, .7] }]],
+  'protection-from-poison': ['pantano:cura', 'O veneno perde a força', ['quebrar', { art: '@poison-bottle', em: 'B', s: .3, t: [0, .6] }], ['cupula', { em: 'C', s: .36, cheia: 1, t: [.3, 1] }], ['alvo', { em: 'C', s: .26, reage: 'nada', cor: 'cura', t: [.3, 1] }]],
+  'ray-of-enfeeblement': ['cripta:sombra', 'A força escorre do corpo', ['feixe', { larg: 9, t: [0, .6] }], ['alvo', { em: 'B', art: '@weight-lifting-down', s: .32, reage: 'encolhe', t: [.3, 1] }]],
+  'rope-trick': ['noite:ouro', 'A corda sobe e some no ar', ['aparecer', { art: '@rope-coil', em: [.5, .7], s: .22 }], ['feixe', { de: [.5, .68], em: [.5, .3], larg: 3, cor: 'terra' }], ['portal', { em: [.5, .26], s: .2, t: [.3, 1] }]],
+  'scorching-ray': ['fogo', 'Um raio ardente para cada alvo', ['lancar', { n: 'inst', art: '@fire-ray', s: .07, voo: .62 }], ['chover', { forma: 'brasa', d: 1.4 }]],
+  'see-invisibility': ['arcano:prata', 'O que estava oculto aparece', ['olho', { em: [.5, .32], s: .46 }], ['alvo', { em: [.5, .62], s: .28, art: '@invisible', reage: 'nada', cor: 'prata' }], ['brilhos', { em: [.5, .62], s: .3 }]],
+  shatter: ['caverna', 'Um som que parte a pedra', ['ondas', { em: 'B', s: .7, n: 4, t: [0, .6] }], ['quebrar', { art: '@stone-block', em: 'B', s: .34, t: [.1, .7], e: 1 }], ['fendas', { em: 'B', n: 8, t: [.4, 1], e: .4 }]],
+  'shining-smite': ['templo', 'A luz não deixa o alvo se esconder', ['golpe', { art: '@sparkling-sabre', s: .66, t: [0, .55] }], ['alvo', { em: 'B', s: .26, reage: 'treme', cor: 'luz', t: [.25, 1] }], ['aura', { em: 'B', s: .24, t: [.3, 1] }]],
+  silence: ['vazio:prata', 'Nenhum som existe aqui', ['cupula', { em: 'C', cheia: 1, s: .5 }], ['aparecer', { art: '@silenced', s: .3, bob: 0 }]],
+  'spider-climb': ['caverna:prata', 'Paredes e teto viram chão', ['aparecer', { art: '@hanging-spider', em: [.74, .3], s: .2, bob: 12 }], ['alvo', { em: [.14, .5], art: '@mountain-climbing', s: .3, reage: 'nada', cor: 'prata' }]],
+  'spike-growth': ['floresta:terra', 'O chão vira uma lâmina', ['muralha', { estilo: 'espinho', alto: .34, em: [.5, .74] }], ['aparecer', { art: '@caltrops', em: [.5, .46], s: .2 }]],
+  'spiritual-weapon': ['templo', 'Uma arma espectral luta por você', ['aparecer', { art: '@warhammer', em: 'B', s: .4, t: [0, .5], giro: .4 }], ['golpe', { art: '@warhammer', s: .7, t: [.35, .9] }]],
+  suggestion: ['sonho', 'Parece tão razoável', ['espiral', { em: 'C', s: .7 }], ['palavra', { txt: 'Venha...', s: .13, em: [.5, .3] }], ['alvo', { em: [.5, .56], s: .24, reage: 'nada', cor: 'sonho' }]],
+  'warding-bond': ['templo:ouro', 'Um laço divide a dor', ['alvo', { em: [.28, .5], s: .28, reage: 'nada', cor: 'ouro' }], ['alvo', { em: [.72, .5], s: .28, reage: 'nada', cor: 'ouro' }], ['feixe', { de: [.32, .46], em: [.68, .46], larg: 5 }], ['aparecer', { art: '@linked-rings', em: [.5, .34], s: .16, bob: 2 }]],
+  web: ['caverna:prata', 'Teias grudentas tomam o espaço', ['aparecer', { art: '@spider-web', s: 1, s0: .3, s1: 1, bob: 0 }], ['alvo', { em: [.5, .5], s: .22, reage: 'treme' }]],
+  'zone-of-truth': ['templo:prata', 'Aqui ninguém consegue mentir', ['circulo', { lados: 4, s: .55 }], ['aparecer', { art: '@scales', em: [.5, .36], s: .34 }]],
+
+  /* ---------------- 3º círculo ---------------- */
+  'animate-dead': ['cripta:morte', 'Ossos se levantam do chão', ['surgir', { art: '@raise-skeleton', em: [.5, .54], s: .5 }], ['fendas', { em: [.5, .76], n: 4, e: .2, t: [0, .4] }], ['nuvem', { em: [.5, .78], s: .3, op: .3 }]],
+  'beacon-of-hope': ['amanhecer:luz', 'A esperança acende no grupo', ['aparecer', { art: '@lighthouse', em: [.5, .42], s: .46, bob: 0 }], ['clarao', { em: [.5, .24], t: [.1, 1], bate: 0, n: 8 }]],
+  'bestow-curse': ['cripta:sombra', 'Uma maldição toca o alvo', ['alvo', { em: 'C', s: .3, reage: 'treme' }], ['aparecer', { art: '@cursed-star', em: [.5, .28], s: .2 }], ['surgir', { art: '@evil-hand', em: [.5, .6], s: .22 }], ['runas', { em: 'C', s: .26 }]],
+  blink: ['astral:prata', 'Você pisca entre dois planos', ['teleporte', { em: [.72, .42], de: [.28, .6] }], ['portal', { em: [.28, .6], s: .1, t: [0, .5] }], ['portal', { em: [.72, .42], s: .1, t: [.5, 1] }]],
+  'call-lightning': ['tempestade', 'A nuvem obedece e cai um raio', ['nuvem', { largo: 1, em: [.5, .16], n: 12, s: .3, op: .5, cor: 'prata' }], ['raio', { em: [.5, .62], t: [.3, .9] }]],
+  clairvoyance: ['arcano:prata', 'Um olho vê o que está longe', ['aparecer', { art: '@crystal-ball', em: [.5, .58], s: .3 }], ['olho', { em: [.5, .3], s: .4 }]],
+  'conjure-animals': ['floresta:natureza', 'Espíritos de bichos atacam em matilha', ['revoada', { art: '@wolf-head', n: 8, s: .15 }], ['golpe', { em: 'C', n: 3, s: .6, t: [.3, .95] }]],
+  counterspell: ['arcano:prata', 'A magia se desfaz no ar', ['quebrar', { art: '@spell-book', em: 'B', s: .34, t: [0, .55] }], ['aparecer', { art: '@cancel', em: 'B', s: .46, t: [.3, 1], bob: 0, cor: 'sangue' }]],
+  'create-food-and-water': ['amanhecer:ouro', 'Comida e água para todos', ['aparecer', { art: '@meal', em: [.34, .46], s: .3 }], ['aparecer', { art: '@water-flask', em: [.68, .46], s: .26, cor: 'agua' }], ['chover', { forma: 'gota', d: 1, cor: 'agua' }]],
+  daylight: ['dia:luz', 'A noite vira dia ao redor', ['clarao', { em: [.5, .3], bate: 0, n: 16 }], ['aparecer', { art: '@sun', em: [.5, .3], s: .3, giro: .1, bob: 0 }]],
+  'dispel-magic': ['arcano:prata', 'O encanto é desfeito', ['aparecer', { art: '@magic-swirl', s: .44, t: [0, .6], giro: .5 }], ['clarao', { t: [.4, .9], n: 8, bate: 0 }], ['brilhos', { s: .5, t: [.45, 1] }]],
+  fear: ['cripta:sombra', 'O pavor faz todos correrem', ['surgir', { art: '@dread-skull', de: 'cima', em: 'B', s: .46 }], ['ondas', { em: 'B', s: 1, n: 3 }], ['alvo', { em: [.5, .66], s: .24, art: '@run', reage: 'foge' }]],
+  fireball: ['fogo', 'Uma centelha, e o mundo arde', ['lancar', { s: .05, voo: .42, curva: .15, de: 'A' }], ['explodir', { t: [.42, 1], s: .78, art: '@bright-explosion' }], ['chover', { forma: 'brasa', d: 3, t: [.5, 1] }]],
+  fly: ['ceu:prata', 'Seus pés deixam o chão', ['alvo', { em: [.5, .62], art: '@icarus', s: .4, reage: 'flutua', cor: 'prata' }], ['chover', { forma: 'pena', d: .6, fixo: 1 }]],
+  'gaseous-form': ['pantano:prata', 'Você vira uma névoa', ['alvo', { em: 'C', s: .34, reage: 'some', cor: 'prata' }], ['nuvem', { em: 'C', s: .34, op: .55, t: [.25, 1] }]],
+  'glyph-of-warding': ['arcano:ouro', 'Uma runa espera o momento', ['circulo', { lados: 5, s: .5, em: [.5, .6], t: [0, .55] }], ['aparecer', { art: '@rune-stone', em: [.5, .5], s: .2, t: [0, .5], bob: 0 }], ['explodir', { em: [.5, .56], t: [.5, 1], s: .6 }]],
+  haste: ['dia:ouro', 'O tempo passa devagar para os outros', ['alvo', { em: 'C', art: '@sprint', s: .4, reage: 'treme', cor: 'ouro' }], ['espelhos', { art: '@sprint', em: 'C', n: 2, s: .34 }], ['aparecer', { art: '@stopwatch', em: [.5, .24], s: .14, giro: 1, bob: 0 }]],
+  'hypnotic-pattern': ['sonho', 'Cores giram, e ninguém desvia o olhar', ['espiral', { em: 'C', s: .9, n: 3, cor: 'sonho' }], ['espiral', { em: 'C', s: .6, cor: 'agua' }], ['alvo', { em: [.5, .7], s: .18, reage: 'nada' }]],
+  'lightning-bolt': ['tempestade', 'Um relâmpago cruza a tela inteira', ['feixe', { de: 'esq', em: [1.05, .46], larg: 10, t: [.05, .7] }], ['cadeia', { n: 2, t: [.15, .75] }], ['explodir', { em: [.72, .46], t: [.45, 1], s: .3 }]],
+  'magic-circle': ['cripta:prata', 'Um círculo que prende ou protege', ['circulo', { lados: 7, s: .6, plano: .5 }], ['muralha', { estilo: 'forca', em: [.5, .6], alto: .7, t: [.2, 1] }]],
+  'major-image': ['sonho', 'Uma ilusão com som, cheiro e calor', ['aparecer', { art: '@dragon-spiral', s: .6, bob: 9 }], ['subir', { art: '@flame', d: .2, tam: .06 }], ['ondas', { em: 'C', s: .5, n: 2 }]],
+  'mass-healing-word': ['amanhecer:cura', 'Uma palavra, e todos respiram', ['palavra', { txt: 'Curem-se', s: .11, em: [.5, .3] }], ['ondas', { em: 'A', s: 1.2, n: 4 }], ['subir', { art: '@heart-plus', d: .55, tam: .06, l: 1 }]],
+  'meld-into-stone': ['caverna:terra', 'Você entra na pedra', ['aparecer', { art: '@stone-wall', s: .7, bob: 0 }], ['alvo', { em: 'C', s: .3, reage: 'some', cor: 'terra' }]],
+  nondetection: ['noite:sombra', 'Nenhuma adivinhação acha você', ['alvo', { em: 'C', s: .3, art: '@cloaked-figure-on-horseback', reage: 'nada' }], ['trevas', { ate: .4, op: .7 }], ['aparecer', { art: '@sight-disabled', em: [.5, .24], s: .13 }]],
+  'phantom-steed': ['noite:prata', 'Um corcel de sombra surge', ['surgir', { art: '@cavalry', de: 'dir', em: 'C', s: .56 }], ['nuvem', { em: [.5, .7], s: .3, op: .3 }]],
+  'plant-growth': ['floresta:natureza', 'A mata cresce de uma vez', ['vinhas', { n: 11, em: [.5, .2], flor: '@flower-star' }], ['surgir', { art: '@tree-growth', em: [.5, .55], s: .6 }]],
+  'protection-from-energy': ['arcano:prata', 'Fogo e raio passam sem ferir', ['alvo', { em: 'C', s: .3, reage: 'nada', cor: 'prata' }], ['cupula', { em: 'C', cheia: 1, s: .4 }], ['lancar', { de: 'B', em: 'C', voo: .5, s: .05, n: 2 }]],
+  'remove-curse': ['templo:luz', 'A maldição se solta', ['transformar', { de: '@cursed-star', para: '@holy-symbol' }], ['correntes', { em: 'C', n: 4, t: [0, .45] }]],
+  revivify: ['amanhecer:cura', 'A vida volta ao corpo', ['alvo', { em: [.5, .54], art: '@person-in-bed', s: .46, reage: 'nada', cor: 'prata' }], ['feixe', { de: 'cima', em: [.5, .52], larg: 22, t: [.1, .8], cor: 'luz' }], ['aparecer', { art: '@heart-organ', em: [.5, .34], s: .2, t: [.4, 1] }]],
+  sending: ['astral:prata', 'Vinte e cinco palavras para longe', ['lancar', { art: '@paper-plane', s: .08, voo: .85, curva: .7 }], ['subir', { txt: '...', d: .2, em: [.5, .7] }]],
+  'sleet-storm': ['tempestade:gelo', 'Chuva gelada e chão de vidro', ['chover', { forma: 'gota', d: 5, vento: -5, cor: 'gelo' }], ['chover', { forma: 'neve', d: 4, cor: 'gelo' }], ['alvo', { em: [.5, .62], s: .24, reage: 'cai' }]],
+  slow: ['arcano:prata', 'O tempo pesa nas pernas', ['alvo', { em: [.34, .56], s: .24, reage: 'treme' }], ['alvo', { em: [.68, .56], s: .24, reage: 'treme' }], ['aparecer', { art: '@snail', em: [.5, .32], s: .26, bob: 1 }]],
+  'speak-with-dead': ['cripta:morte', 'O crânio responde cinco perguntas', ['aparecer', { art: '@skull-crack', s: .44, bob: 3 }], ['subir', { art: '@chat-bubble', d: .2, em: [.5, .36], tam: .07 }]],
+  'speak-with-plants': ['floresta:natureza', 'As árvores têm o que contar', ['aparecer', { art: '@ent-mouth', s: .5 }], ['subir', { art: '@falling-leaf', d: .2 }], ['ondas', { em: 'C', s: .46, n: 2 }]],
+  'spirit-guardians': ['templo', 'Espíritos giram e ferem ao redor', ['orbitar', { art: '@spectre', n: 6, em: [.5, .54], s: .5, tam: .17 }], ['alvo', { em: [.5, .54], s: .22, reage: 'nada', cor: 'luz' }]],
+  'stinking-cloud': ['pantano:veneno', 'Um fedor de embrulhar o estômago', ['nuvem', { em: 'C', s: .5, op: .55, n: 15 }], ['alvo', { em: [.5, .6], art: '@vomiting', s: .22, reage: 'treme' }]],
+  'tiny-hut': ['noite:ouro', 'Uma cúpula para dormir em paz', ['cupula', { em: [.5, .66], s: .56 }], ['aparecer', { art: '@camping-tent', em: [.5, .56], s: .24, bob: 0 }], ['chover', { forma: 'gota', d: 2, cor: 'prata' }]],
+  tongues: ['arcano:ouro', 'Toda língua faz sentido', ['aparecer', { art: '@tongue', em: [.5, .5], s: .3 }], ['subir', { art: '@conversation', d: .3, tam: .08 }], ['orbitar', { art: '@globe', n: 1, s: .3, tam: .1 }]],
+  'vampiric-touch': ['cripta', 'Sua mão bebe a vida do alvo', ['alvo', { em: 'B', s: .28, reage: 'treme' }], ['surgir', { art: '@vampire-dracula', em: [.5, .66], s: .3 }], ['feixe', { de: 'B', em: [.5, .64], larg: 7, t: [.25, .9] }]],
+  'water-breathing': ['oceano:agua', 'Respirar debaixo d\'água', ['alvo', { em: 'C', s: .3, reage: 'flutua', cor: 'agua' }], ['subir', { art: '@bubbles', d: .4, tam: .05, l: .5 }]],
+  'water-walk': ['oceano:prata', 'A água vira chão', ['alvo', { em: [.5, .58], art: '@walk', s: .3, reage: 'nada', cor: 'prata' }], ['ondas', { em: [.5, .74], s: .5, n: 3 }]],
+  'wind-wall': ['ceu:vento', 'Uma parede de vento desvia flechas', ['muralha', { estilo: 'vento', alto: 1, em: [.5, .6] }], ['lancar', { art: '@plain-arrow', de: 'B', em: [.9, .1], s: .05, n: 2, voo: .6 }]],
+
+  /* ---------------- 4º círculo ---------------- */
+  'arcane-eye': ['arcano:prata', 'Um olho invisível vai na frente', ['olho', { em: [.5, .4], s: .34 }], ['ondas', { em: [.5, .4], s: .6, n: 2 }], ['subir', { art: '@winged-emblem', d: .08, em: [.5, .5], tam: .08 }]],
+  'aura-of-life': ['amanhecer:cura', 'A morte recua de perto de você', ['aura', { em: 'C', s: .46 }], ['aparecer', { art: '@ankh', s: .4 }], ['ondas', { em: 'C', s: .8, n: 2 }]],
+  banishment: ['astral:prata', 'O alvo é mandado embora', ['portal', { em: 'B', s: .3 }], ['alvo', { em: 'B', s: .3, reage: 'encolhe', t: [.1, .85] }], ['espiral', { em: 'B', s: .4 }]],
+  'black-tentacles': ['caverna:sombra', 'Tentáculos negros brotam do chão', ['tentaculos', { n: 7, em: [.5, .36], cor: 'sombra' }], ['alvo', { em: [.5, .5], s: .22, reage: 'treme' }]],
+  blight: ['cripta:Necrótico', 'A vida seca por dentro', ['surgir', { art: '@dead-wood', em: [.5, .54], s: .5 }], ['ondas', { em: 'B', s: .5, n: 3 }], ['chover', { forma: 'folha', d: 2, cor: 'morte' }]],
+  'charm-monster': ['sonho', 'Até a fera se encanta', ['aparecer', { art: '@ogre', em: 'C', s: .46, cor: 'sonho' }], ['subir', { art: '@heart-wings', d: .3, em: [.5, .52], tam: .09 }], ['espiral', { em: 'C', s: .5 }]],
+  compulsion: ['sonho:sonho', 'As pernas andam sem permissão', ['aparecer', { art: '@puppet', s: .5, bob: 7 }], ['alvo', { em: [.5, .7], art: '@walk', s: .2, reage: 'foge' }]],
+  confusion: ['sonho', 'Ninguém sabe mais o que faz', ['espiral', { em: 'B', s: .46 }], ['aparecer', { art: '@spiral-thrust', em: 'B', s: .24, giro: 1 }], ['alvo', { em: [.3, .62], art: '@dodging', s: .22, reage: 'treme' }], ['alvo', { em: [.7, .62], art: '@dodge', s: .22, reage: 'treme' }]],
+  'conjure-minor-elementals': ['arcano:prata', 'Pequenos elementais se agitam', ['orbitar', { art: '@ifrit', n: 4, em: [.5, .52], tam: .13 }], ['alvo', { em: [.5, .52], s: .2, reage: 'nada', cor: 'prata' }]],
+  'conjure-woodland-beings': ['floresta:natureza', 'Espíritos da mata cercam você', ['orbitar', { art: '@fairy', n: 6, em: [.5, .52], tam: .12 }], ['subir', { art: '@falling-leaf', d: .3 }]],
+  'control-water': ['oceano:agua', 'A água obedece ao gesto', ['tornado', { em: [.5, .84], cor: 'agua' }], ['mare', { alto: .4, t: [.2, 1] }]],
+  'death-ward': ['templo:luz', 'A morte terá que esperar', ['aparecer', { art: '@broken-skull', em: [.5, .32], s: .24, cor: 'morte' }], ['cupula', { em: [.5, .6], cheia: 1, s: .32 }], ['alvo', { em: [.5, .6], s: .24, reage: 'nada', cor: 'luz' }]],
+  'dimension-door': ['astral', 'Uma porta entre dois lugares', ['portal', { em: [.28, .6], s: .17 }], ['portal', { em: [.72, .36], s: .17 }], ['teleporte', { de: [.28, .6], em: [.72, .36] }]],
+  divination: ['noite:ouro', 'Uma resposta vinda de cima', ['aparecer', { art: '@tarot-17-the-star', s: .5, bob: 3 }], ['feixe', { de: 'cima', em: [.5, .3], larg: 6 }]],
+  'dominate-beast': ['floresta:sangue', 'A fera agora é sua', ['aparecer', { art: '@bear-head', s: .46 }], ['correntes', { em: 'C', n: 3 }], ['espiral', { em: 'C', s: .24 }]],
+  fabricate: ['caverna:ouro', 'A matéria bruta vira obra pronta', ['transformar', { de: '@wood-pile', para: '@wooden-chair' }], ['brilhos', { s: .4, t: [.4, 1] }]],
+  'faithful-hound': ['noite:lua', 'Um cão invisível vigia a porta', ['aparecer', { art: '@hound', s: .44, cor: 'lua', bob: 2 }], ['ondas', { em: 'C', s: .5, n: 2 }]],
+  'fire-shield': ['fogo', 'Chamas ou geada envolvem você', ['alvo', { em: 'C', s: .3, reage: 'nada', cor: '#ffffff' }], ['orbitar', { art: '@flame', n: 8, s: .36, tam: .1, giro: 10 }], ['aura', { em: 'C', s: .3 }]],
+  'freedom-of-movement': ['ceu:vento', 'Nada segura seus passos', ['alvo', { em: 'C', art: '@acrobatic', s: .36, reage: 'nada', cor: 'vento' }], ['aparecer', { art: '@breaking-chain', em: [.5, .7], s: .3, cor: 'prata' }]],
+  'giant-insect': ['caverna:natureza', 'Um inseto do tamanho de um cavalo', ['surgir', { art: '@long-legged-spider', de: 'cima', em: [.5, .38], s: .62 }], ['alvo', { em: [.5, .72], s: .16, reage: 'treme' }]],
+  'greater-invisibility': ['noite:lua', 'Invisível, mesmo atacando', ['alvo', { em: 'C', s: .4, reage: 'some', cor: 'lua', t: [0, .6] }], ['golpe', { em: 'C', n: 2, s: .5, t: [.5, 1] }], ['brilhos', { s: .34 }]],
+  'guardian-of-faith': ['templo', 'Um guardião enorme toma posição', ['surgir', { art: '@spartan-helmet', de: 'cima', em: [.5, .36], s: .56 }], ['ondas', { em: [.5, .36], s: .6, n: 2 }]],
+  'hallucinatory-terrain': ['sonho:natureza', 'A paisagem mente', ['transformar', { de: '@swamp', para: '@mountains', s: .6 }]],
+  'ice-storm': ['tempestade:gelo', 'Pedras de gelo martelam o chão', ['nuvem', { largo: 1, em: [.5, .14], n: 12, s: .3, cor: 'prata', op: .5 }], ['chover', { forma: 'pedra', d: 3.2, vento: -3 }], ['chover', { forma: 'neve', d: 3 }], ['fendas', { n: 4, em: [.5, .72], t: [.4, 1], e: .8 }]],
+  'locate-creature': ['floresta:sangue', 'Você sente onde ela está', ['aparecer', { art: '@radar-sweep', s: .54, giro: 1, bob: 0 }], ['alvo', { em: [.66, .38], s: .13, reage: 'nada', cor: 'sangue' }]],
+  'phantasmal-killer': ['sonho:sombra', 'O pior medo do alvo ganha forma', ['surgir', { art: '@grim-reaper', de: 'cima', em: [.5, .34], s: .54 }], ['alvo', { em: [.5, .66], s: .24, reage: 'treme' }]],
+  polymorph: ['sonho:natureza', 'Outro corpo, outra criatura', ['transformar', { de: '@person', para: '@sheep' }], ['nuvem', { em: 'C', s: .24, op: .3, t: [.35, .75] }]],
+  'private-sanctum': ['arcano:prata', 'Ninguém entra, ninguém espia', ['muralha', { estilo: 'forca', em: [.5, .56], alto: .9 }], ['aparecer', { art: '@locked-fortress', s: .4 }]],
+  'resilient-sphere': ['arcano', 'Uma esfera que nada atravessa', ['cupula', { em: 'C', cheia: 1, s: .46 }], ['alvo', { em: 'C', s: .24, reage: 'flutua' }]],
+  'secret-chest': ['astral:ouro', 'O baú some para outro plano', ['aparecer', { art: '@locked-chest', s: .4, t: [0, .75] }], ['portal', { em: 'C', s: .26, t: [.45, 1] }]],
+  'stone-shape': ['caverna:terra', 'A pedra amassa como barro', ['transformar', { de: '@stone-block', para: '@stone-bridge', s: .5 }]],
+  stoneskin: ['caverna:terra', 'A pele vira rocha', ['alvo', { em: 'C', s: .36, reage: 'nada', cor: 'terra' }], ['aparecer', { art: '@rock-golem', em: 'C', s: .38, s0: .4, s1: 1, t: [.3, 1], bob: 0 }]],
+  'vitriolic-sphere': ['pantano', 'Uma esfera de ácido esmeralda', ['lancar', { art: '@potion-ball', s: .13, voo: .5, curva: .3 }], ['explodir', { art: '@goo-explosion', t: [.5, 1], s: .6 }], ['chover', { forma: 'gota', d: 3, t: [.5, 1] }]],
+  'wall-of-fire': ['fogo', 'Uma parede de chamas se levanta', ['muralha', { estilo: 'fogo', alto: .85 }], ['chover', { forma: 'brasa', d: 2 }]],
+
+  /* ---------------- 5º círculo ---------------- */
+  'animate-objects': ['arcano:ouro', 'As coisas ganham vida', ['orbitar', { art: '@wooden-chair', n: 3, s: .34, tam: .15, gira: 1 }], ['orbitar', { art: '@sword-brandish', n: 3, s: .22, tam: .12, giro: -9 }]],
+  'antilife-shell': ['templo:prata', 'Nada vivo atravessa a barreira', ['cupula', { em: 'A', s: .9 }], ['alvo', { em: [.5, .22], art: '@brute', s: .24, reage: 'treme' }]],
+  'arcane-hand': ['arcano', 'Uma mão gigante de força', ['surgir', { art: '@mailed-fist', de: 'baixo', em: 'B', s: .62, t: [0, .62] }], ['explodir', { t: [.45, 1], s: .4 }]],
+  awaken: ['floresta:natureza', 'Árvore e bicho passam a pensar', ['aparecer', { art: '@tree-face', s: .5 }], ['subir', { art: '@light-bulb', d: .15, em: [.5, .34], tam: .08 }], ['brilhos', { s: .4 }]],
+  cloudkill: ['pantano:veneno', 'Uma nuvem verde que mata', ['nuvem', { largo: 1, em: [.5, .56], n: 18, s: .5, op: .62 }], ['aparecer', { art: '@poison-gas', em: [.5, .4], s: .24 }], ['fixo', { art: '@skull-crossed-bones', em: [.5, .62], s: .2, tom: 0 }]],
+  commune: ['templo:luz', 'Três perguntas ao seu deus', ['feixe', { de: 'cima', em: [.5, .7], larg: 26 }], ['aparecer', { art: '@kneeling', em: [.5, .66], s: .3 }], ['subir', { txt: '?', d: .15, em: [.5, .5], l: .3 }]],
+  'commune-with-nature': ['floresta:natureza', 'A terra conta tudo o que sabe', ['aparecer', { art: '@holy-oak', s: .56, bob: 0 }], ['ondas', { em: [.5, .76], s: 1.1, n: 3 }]],
+  'cone-of-cold': ['gelo', 'Um sopro de inverno absoluto', ['cone', { arco: 1.1 }], ['alvo', { em: [.34, .3], s: .18, reage: 'congela', t: [.2, 1] }], ['alvo', { em: [.66, .3], s: .18, reage: 'congela', t: [.2, 1] }], ['chover', { forma: 'neve', d: 3 }]],
+  'conjure-elemental': ['arcano:prata', 'Um elemental maior atende', ['circulo', { lados: 4, s: .6, t: [0, .6] }], ['surgir', { art: '@ifrit', em: [.5, .46], s: .66, t: [.2, 1] }]],
+  'contact-other-plane': ['astral:sonho', 'Uma mente vasta demais', ['aparecer', { art: '@overmind', s: .6, bob: 2 }], ['ondas', { em: 'C', s: .8, n: 4 }], ['alvo', { em: [.5, .74], s: .16, reage: 'treme' }]],
+  contagion: ['cripta:Veneno', 'Uma doença sai do seu toque', ['surgir', { art: '@evil-hand', em: [.5, .56], s: .32, t: [0, .5] }], ['revoada', { art: '@virus', n: 10, s: .08 }], ['alvo', { em: 'B', art: '@half-dead', s: .28, reage: 'treme', t: [.3, 1] }]],
+  creation: ['astral:ouro', 'Algo surge a partir de nada', ['brilhos', { s: .4, n: 3 }], ['aparecer', { art: '@cubeforce', s: .4, s0: .05, s1: 1, giro: .2 }]],
+  'dispel-evil-and-good': ['templo:luz', 'As criaturas de fora voltam para casa', ['aparecer', { art: '@horned-skull', em: 'B', s: .3, t: [0, .6], cor: 'sangue' }], ['feixe', { de: 'A', larg: 16, t: [.2, .8] }], ['portal', { em: 'B', s: .18, t: [.4, 1] }]],
+  'dominate-person': ['sonho:sonho', 'Os olhos dele agora são seus', ['aparecer', { art: '@puppet', em: [.5, .32], s: .3 }], ['alvo', { em: [.5, .6], s: .3, reage: 'nada', cor: 'sonho' }], ['correntes', { em: [.5, .6], n: 3 }], ['espiral', { em: [.5, .6], s: .2 }]],
+  dream: ['sonho', 'Você entra no sono de alguém', ['alvo', { em: [.5, .62], art: '@night-sleep', s: .34, reage: 'nada', cor: 'lua' }], ['subir', { art: '@thought-bubble', d: .15, em: [.5, .5], l: .2, tam: .1 }], ['aparecer', { art: '@dream-catcher', em: [.5, .28], s: .24 }]],
+  'flame-strike': ['templo:fogo', 'Fogo divino desce em coluna', ['feixe', { de: 'cima', em: [.5, .56], larg: 72, t: [.05, .75] }], ['explodir', { em: [.5, .6], t: [.3, 1], s: .55, cor: 'luz' }], ['subir', { art: '@flame', d: .6, em: [.5, .64], l: .6 }]],
+  geas: ['templo:sangue', 'Uma ordem gravada a fogo', ['alvo', { em: [.5, .62], s: .28, reage: 'nada' }], ['palavra', { txt: 'Obedeça', s: .12, em: [.5, .3] }], ['correntes', { em: [.5, .62], n: 4 }]],
+  'greater-restoration': ['amanhecer:cura', 'Toda aflição se vai', ['transformar', { de: '@bandaged', para: '@healing' }], ['clarao', { n: 10, t: [.4, 1], bate: 0, cor: 'cura' }]],
+  hallow: ['templo:luz', 'Este chão agora é sagrado', ['circulo', { lados: 8, s: .7, plano: .4 }], ['aparecer', { art: '@greek-temple', em: [.5, .4], s: .42, bob: 0 }]],
+  'hold-monster': ['arcano:prata', 'Até o monstro congela no gesto', ['alvo', { em: 'C', art: '@troll', s: .5, reage: 'nada' }], ['correntes', { em: 'C', n: 6 }]],
+  'insect-plague': ['pantano', 'Gafanhotos devoram tudo', ['revoada', { art: '@ant', n: 26, s: .05 }], ['revoada', { art: '@fly', n: 20, s: .05, dir: -1 }], ['chover', { art: '@flying-beetle', d: .5, fixo: 1, s: .05 }]],
+  'legend-lore': ['arcano:ouro', 'O que as lendas guardam', ['aparecer', { art: '@book-pile', em: [.5, .6], s: .3 }], ['aparecer', { art: '@secret-book', em: [.5, .34], s: .3 }], ['runas', { em: [.5, .34], s: .3, n: 12 }]],
+  'mass-cure-wounds': ['amanhecer:cura', 'Uma onda de cura varre o grupo', ['ondas', { em: 'C', s: 1.2, n: 5 }], ['subir', { art: '@health-increase', d: .5, tam: .07, l: 1 }]],
+  mislead: ['sonho:prata', 'Você some, e seu duplo fica', ['alvo', { em: [.34, .56], s: .3, reage: 'some', cor: 'prata' }], ['alvo', { em: [.68, .56], s: .3, reage: 'nada', cor: 'sonho' }]],
+  'modify-memory': ['sonho', 'Aquilo nunca aconteceu', ['aparecer', { art: '@brain', em: 'C', s: .36 }], ['subir', { art: '@film-strip', d: .2, tam: .08, em: [.5, .46] }], ['espiral', { em: 'C', s: .3 }]],
+  passwall: ['caverna:terra', 'A parede abre passagem', ['aparecer', { art: '@brick-wall', s: .8, t: [0, .55], bob: 0 }], ['transformar', { de: '@brick-wall', para: '@doorway', s: .7, t: [.1, 1] }]],
+  'planar-binding': ['astral:sangue', 'Um ser de outro plano fica preso', ['circulo', { lados: 7, s: .6 }], ['aparecer', { art: '@oni', em: [.5, .46], s: .36 }], ['correntes', { em: [.5, .46], n: 5 }]],
+  'raise-dead': ['amanhecer:luz', 'Quem partiu há pouco volta', ['aparecer', { art: '@tombstone', em: [.5, .6], s: .34, bob: 0 }], ['feixe', { de: 'cima', em: [.5, .56], larg: 28, t: [.2, .9] }], ['subir', { art: '@soul', d: .2, tam: .1, l: .1, em: [.5, .54] }]],
+  reincarnate: ['floresta:natureza', 'A alma ganha um corpo novo', ['transformar', { de: '@soul', para: '@elf-ear' }], ['vinhas', { n: 5, t: [.2, 1], em: 'C' }]],
+  scrying: ['noite:agua', 'Um espelho d\'água mostra o alvo', ['aparecer', { art: '@water-fountain', em: [.5, .64], s: .36 }], ['olho', { em: [.5, .34], s: .36 }]],
+  seeming: ['sonho', 'Todo mundo com outra cara', ['aparecer', { art: '@drama-masks', s: .44 }], ['orbitar', { art: '@carnival-mask', n: 4, tam: .1 }]],
+  'summon-dragon': ['fogo:sangue', 'Um dragão responde', ['circulo', { lados: 5, s: .7, t: [0, .5] }], ['surgir', { art: '@spiked-dragon-head', de: 'cima', em: [.5, .4], s: .72 }], ['cone', { de: [.5, .46], em: [.5, 1], t: [.55, 1], arco: .8 }]],
+  telekinesis: ['arcano', 'Sua mente ergue o que quiser', ['aparecer', { art: '@psychic-waves', em: [.5, .7], s: .3 }], ['aparecer', { art: '@boulder-dash', em: [.5, .34], s: .4, bob: 14 }], ['ondas', { em: [.5, .7], s: .6, n: 3 }]],
+  'telepathic-bond': ['astral:sonho', 'Oito mentes conversam sem falar', ['orbitar', { art: '@brain', n: 8, s: .44, tam: .09, plano: 1 }], ['aparecer', { art: '@mesh-network', s: .34, bob: 0 }]],
+  'teleportation-circle': ['astral', 'Um círculo liga dois lugares', ['circulo', { lados: 9, s: .66, plano: .42 }], ['teleporte', { de: [.5, .6], em: [.5, .3] }]],
+  'tree-stride': ['floresta:natureza', 'Entra numa árvore, sai em outra', ['aparecer', { art: '@oak', em: [.25, .46], s: .36, bob: 0 }], ['aparecer', { art: '@pine-tree', em: [.75, .46], s: .36, bob: 0 }], ['teleporte', { de: [.25, .56], em: [.75, .56], s: .2 }]],
+  'wall-of-force': ['arcano', 'Uma parede invisível e indestrutível', ['muralha', { estilo: 'forca', alto: 1 }], ['alvo', { em: [.5, .36], s: .2, reage: 'treme' }]],
+  'wall-of-stone': ['caverna:terra', 'Pedra brota e fecha o caminho', ['muralha', { estilo: 'pedra', alto: .95 }], ['fendas', { em: [.5, .8], n: 4, e: .5, t: [0, .5] }]],
+
+  /* ---------------- 6º círculo ---------------- */
+  'blade-barrier': ['arcano:prata', 'Uma muralha de lâminas giratórias', ['muralha', { estilo: 'laminas', art: '@spinning-blades', alto: .8 }], ['ondas', { em: [.5, .5], s: .5, n: 2 }]],
+  'chain-lightning': ['tempestade', 'O raio salta de alvo em alvo', ['cadeia', { n: 4 }], ['raio', { em: [.76, .5], t: [0, .3] }]],
+  'circle-of-death': ['cripta', 'Um anel negro apaga a vida', ['ondas', { em: 'C', s: 1.3, n: 3, cor: 'sombra' }], ['aparecer', { art: '@death-skull', s: .46 }], ['explodir', { em: 'C', t: [.3, 1], s: .8 }]],
+  'conjure-fey': ['floresta:sonho', 'Um espírito feérico golpeia', ['surgir', { art: '@fairy-wings', em: 'B', s: .5, t: [0, .6] }], ['golpe', { n: 2, s: .5, t: [.4, 1] }]],
+  contingency: ['arcano:ouro', 'Uma magia guardada para depois', ['aparecer', { art: '@time-trap', s: .44, bob: 0 }], ['orbitar', { art: '@spell-book', n: 2, tam: .1 }]],
+  'create-undead': ['cripta:morte', 'A noite cria seus servos', ['surgir', { art: '@shambling-zombie', n: 3, em: [.5, .58], s: .36, abre: .32 }], ['fendas', { em: [.5, .8], n: 5, e: .2, t: [0, .5] }]],
+  disintegrate: ['vazio:arcano', 'Um raio fino, e sobra pó', ['feixe', { larg: 8, t: [0, .6] }], ['alvo', { em: 'B', s: .3, reage: 'some', t: [.25, 1] }], ['quebrar', { art: '@disintegrate', em: 'B', s: .3, t: [.5, 1], e: 1 }]],
+  eyebite: ['cripta:sangue', 'Um olhar que derruba', ['olho', { em: [.5, .32], s: .46 }], ['feixe', { de: [.5, .34], em: [.5, .7], larg: 7, t: [.25, .9] }], ['alvo', { em: [.5, .68], s: .22, reage: 'dorme', t: [.3, 1] }]],
+  'find-the-path': ['arcano:ouro', 'O caminho certo acende', ['aparecer', { art: '@path-distance', s: .5 }], ['aparecer', { art: '@compass', em: [.5, .26], s: .16, giro: .5, bob: 0 }]],
+  'flesh-to-stone': ['caverna:terra', 'Carne vira pedra', ['alvo', { em: 'C', s: .36, reage: 'nada', cor: 'terra' }], ['transformar', { de: '@person', para: '@stone-bust', s: .44 }]],
+  forbiddance: ['templo:prata', 'Ninguém entra aqui por magia', ['circulo', { lados: 8, s: .7 }], ['aparecer', { art: '@interdiction', s: .46, bob: 0 }]],
+  'freezing-sphere': ['gelo', 'Um globo que congela tudo', ['lancar', { art: '@frozen-orb', s: .13, voo: .5 }], ['explodir', { t: [.5, 1], s: .7 }], ['chover', { forma: 'neve', d: 4, t: [.5, 1] }]],
+  'globe-of-invulnerability': ['arcano:ouro', 'Magia fraca não entra', ['cupula', { em: 'C', cheia: 1, s: .56 }], ['lancar', { de: [.1, .1], em: 'C', s: .05, voo: .46, n: 2 }]],
+  'guards-and-wards': ['arcano:prata', 'A casa inteira se defende', ['aparecer', { art: '@castle', s: .52, bob: 0 }], ['circulo', { lados: 8, em: [.5, .72], s: .7 }], ['aparecer', { art: '@locked-door', em: [.2, .3], s: .14 }], ['nuvem', { em: [.74, .3], s: .16, op: .4 }]],
+  harm: ['cripta:Necrótico', 'Uma doença arrasadora', ['alvo', { em: 'B', art: '@half-dead', s: .34, reage: 'treme' }], ['feixe', { de: 'A', larg: 11, t: [.05, .55] }], ['explodir', { t: [.4, 1], s: .46 }]],
+  heal: ['amanhecer:cura', 'Energia pura de vida', ['feixe', { de: 'cima', em: 'C', larg: 40, t: [0, .7] }], ['aparecer', { art: '@caduceus', s: .46, t: [.2, 1] }], ['subir', { txt: '+', d: .7, l: 1 }]],
+  'heroes-feast': ['templo:ouro', 'Um banquete que muda quem come', ['aparecer', { art: '@round-table', em: [.5, .6], s: .46 }], ['aparecer', { art: '@jeweled-chalice', em: [.5, .36], s: .2 }], ['orbitar', { art: '@roast-chicken', n: 3, s: .34, tam: .09, em: [.5, .46] }]],
+  'instant-summons': ['astral:ouro', 'O objeto marcado vem à sua mão', ['portal', { em: 'B', s: .16 }], ['lancar', { art: '@saphir', de: 'B', em: 'A', s: .1, voo: .8, curva: .4 }], ['surgir', { art: '@open-palm', em: [.5, .74], s: .3 }]],
+  'irresistible-dance': ['sonho', 'Não há como parar de dançar', ['alvo', { em: [.5, .54], art: '@contortionist', s: .36, reage: 'treme', cor: 'sonho' }], ['subir', { art: '@musical-notes', d: .4, em: [.5, .62], tam: .08 }]],
+  'magic-jar': ['cripta:sonho', 'Sua alma entra no recipiente', ['aparecer', { art: '@soul-vessel', em: [.5, .62], s: .34 }], ['lancar', { art: '@soul', de: [.5, .3], em: [.5, .6], s: .1, voo: .9, curva: .4 }]],
+  'mass-suggestion': ['sonho', 'Doze pessoas, uma mesma ideia', ['espiral', { em: 'C', s: .8 }], ['palavra', { txt: 'Sigam', s: .13, em: [.5, .28] }], ['surgir', { art: '@meeple-group', em: [.5, .62], s: .44 }]],
+  'move-earth': ['caverna:terra', 'A paisagem muda de lugar', ['surgir', { art: '@peaks', em: [.5, .56], s: .8, t: [0, .9] }], ['fendas', { em: [.5, .8], n: 6, e: .5, t: [.1, .7] }]],
+  'planar-ally': ['templo:luz', 'Seu deus manda um enviado', ['portal', { em: 'B', s: .32 }], ['surgir', { art: '@angel-outfit', de: 'cima', em: 'B', s: .46, t: [.2, 1] }]],
+  'programmed-illusion': ['sonho:ouro', 'A cena espera o gatilho', ['aparecer', { art: '@hourglass', em: [.5, .3], s: .22 }], ['aparecer', { art: '@clapperboard', em: [.5, .6], s: .36 }]],
+  sunbeam: ['dia:Radiante', 'Um raio de sol concentrado', ['feixe', { de: 'A', larg: 34 }], ['alvo', { em: 'B', s: .24, reage: 'treme', art: '@screaming', t: [.2, 1] }], ['aparecer', { art: '@sun', em: [.5, .84], s: .16, giro: .2, bob: 0 }]],
+  'transport-via-plants': ['floresta:natureza', 'Uma planta leva a outra, longe', ['portal', { em: 'C', s: .28, cor: 'natureza' }], ['vinhas', { n: 8, em: 'C' }], ['aparecer', { art: '@carnivorous-plant', em: [.5, .7], s: .24 }]],
+  'true-seeing': ['arcano:prata', 'Você vê como as coisas são', ['aparecer', { art: '@third-eye', s: .5 }], ['ondas', { em: 'C', s: 1.1, n: 3 }]],
+  'wall-of-ice': ['gelo', 'Uma muralha de gelo sólido', ['muralha', { estilo: 'gelo', alto: 1 }], ['chover', { forma: 'neve', d: 3, t: [.2, 1] }]],
+  'wall-of-thorns': ['floresta:natureza', 'Um emaranhado de espinhos', ['muralha', { estilo: 'espinho', alto: .85, cor: 'natureza' }], ['vinhas', { n: 7, em: [.5, .46], t: [.1, .95], cor: 'natureza' }]],
+  'wind-walk': ['ceu:vento', 'Seu grupo vira vento e parte', ['nuvem', { em: [.5, .56], s: .34, op: .45 }], ['alvo', { em: [.34, .56], s: .22, reage: 'some', cor: 'vento' }], ['alvo', { em: [.66, .56], s: .22, reage: 'some', cor: 'vento' }], ['revoada', { art: '@swirl-string', n: 7, s: .14, t: [.3, 1] }]],
+  'word-of-recall': ['templo:ouro', 'Uma palavra, e todos estão em casa', ['palavra', { txt: 'Lar', s: .2, em: [.5, .26] }], ['teleporte', { de: [.5, .66], em: [.5, .5] }], ['aparecer', { art: '@greek-temple', em: [.5, .5], s: .34, t: [.5, 1], bob: 0 }]],
+
+  /* ---------------- 7º círculo ---------------- */
+  'arcane-sword': ['arcano', 'Uma espada de força luta sozinha', ['aparecer', { art: '@energy-sword', em: 'B', s: .46, t: [0, .5], giro: .5 }], ['golpe', { art: '@energy-sword', s: .8, n: 2, t: [.3, 1] }]],
+  'conjure-celestial': ['templo', 'Um anjo desce em coluna de luz', ['feixe', { de: 'cima', em: [.5, .66], larg: 60 }], ['surgir', { art: '@angel-outfit', de: 'cima', em: [.5, .4], s: .6, t: [.1, 1] }], ['chover', { forma: 'pena', d: 1, fixo: 1 }]],
+  'delayed-blast-fireball': ['fogo', 'A pedra brilha, e a espera aumenta o estrago', ['aparecer', { art: '@fire-gem', em: 'B', s: .24, t: [0, .45], bob: 3 }], ['aparecer', { art: '@time-bomb', em: [.5, .6], s: .16, t: [0, .45], giro: .5 }], ['explodir', { t: [.42, 1], s: .95, art: '@bright-explosion' }]],
+  'divine-word': ['templo', 'Uma palavra do alto fere os inimigos', ['palavra', { txt: 'CAIAM', s: .17, treme: 6 }], ['clarao', { em: [.5, .44], t: [.1, .9], e: 1 }], ['alvo', { em: [.5, .68], s: .22, reage: 'cai' }]],
+  etherealness: ['astral:prata', 'Você entra no plano etéreo', ['alvo', { em: 'C', s: .4, reage: 'some', cor: 'prata' }], ['nuvem', { em: 'C', s: .4, op: .24 }], ['aparecer', { art: '@ghost', em: [.5, .34], s: .24, t: [.4, 1] }]],
+  'finger-of-death': ['cripta', 'Um dedo aponta, e a vida para', ['surgir', { art: '@pointing', em: [.5, .7], s: .34, t: [0, .55] }], ['feixe', { larg: 7, t: [.15, .65] }], ['alvo', { em: 'B', s: .3, reage: 'cai', t: [.3, 1] }], ['surgir', { art: '@raise-zombie', em: [.5, .34], s: .24, t: [.72, 1] }]],
+  'fire-storm': ['fogo', 'Fogo em toda parte, de uma vez', ['muralha', { estilo: 'fogo', alto: 1.3, em: [.5, .72] }], ['tornado', { em: [.26, .8] }], ['tornado', { em: [.74, .8] }], ['chover', { forma: 'brasa', d: 4 }]],
+  forcecage: ['arcano', 'Barras de pura força', ['grade', { em: 'C', s: .8 }], ['alvo', { em: 'C', s: .3, reage: 'treme' }]],
+  'magnificent-mansion': ['astral:ouro', 'Uma porta para uma casa enorme', ['portal', { em: 'C', s: .3, t: [0, .55] }], ['aparecer', { art: '@indian-palace', s: .66, t: [.4, 1], bob: 0 }]],
+  'mirage-arcane': ['sonho:natureza', 'Toda a região parece outra', ['transformar', { de: '@desert', para: '@forest', s: .7 }], ['ondas', { em: 'C', s: 1, n: 2 }]],
+  'plane-shift': ['astral', 'Você pisa em outro plano', ['portal', { em: 'C', s: .4 }], ['alvo', { em: 'C', s: .3, reage: 'encolhe', cor: 'prata' }], ['aparecer', { art: '@solar-system', em: [.5, .26], s: .22, giro: .1 }]],
+  'prismatic-spray': ['vazio', 'Oito raios de cores diferentes', ['cone', { cor: 'sangue', arco: 1.6 }], ['cone', { cor: 'fogo', arco: 1.3, t: [.06, 1] }], ['cone', { cor: 'luz', arco: 1, t: [.12, 1] }], ['cone', { cor: 'natureza', arco: .75, t: [.18, 1] }], ['cone', { cor: 'agua', arco: .5, t: [.24, 1] }], ['cone', { cor: 'sonho', arco: .3, t: [.3, 1] }]],
+  'project-image': ['astral:prata', 'Sua cópia age por você', ['alvo', { em: [.3, .6], s: .28, reage: 'nada', cor: 'prata' }], ['feixe', { de: [.34, .56], em: [.68, .4], larg: 3 }], ['alvo', { em: [.7, .4], s: .3, reage: 'flutua', cor: 'sonho' }]],
+  regenerate: ['amanhecer:cura', 'Até o membro perdido volta', ['alvo', { em: 'C', art: '@vitruvian-man', s: .5, reage: 'nada', cor: 'cura' }], ['aura', { em: 'C', s: .4 }], ['subir', { txt: '+', d: .4, l: .7 }]],
+  resurrection: ['templo:luz', 'A morte devolve quem levou', ['aparecer', { art: '@coffin', em: [.5, .66], s: .34, bob: 0 }], ['feixe', { de: 'cima', em: [.5, .62], larg: 40, t: [.15, .9] }], ['surgir', { art: '@angel-wings', de: 'cima', em: [.5, .3], s: .5, t: [.3, 1] }]],
+  'reverse-gravity': ['caverna', 'O chão vira céu', ['alvo', { em: [.3, .7], s: .2, reage: 'flutua', t: [0, .9] }], ['alvo', { em: [.7, .7], s: .2, reage: 'flutua', t: [0, .9] }], ['subir', { art: '@stone-pile', d: .55, em: [.5, .92], l: 1, tam: .07, v: 6 }], ['ondas', { em: [.5, .9], s: 1, n: 3, ini: Math.PI, fim: 6.28 }]],
+  sequester: ['cripta:sombra', 'Escondido até do tempo', ['aparecer', { art: '@sarcophagus', s: .5, bob: 0 }], ['trevas', { ate: .3, t: [.3, 1], op: .9 }]],
+  simulacrum: ['gelo', 'Uma cópia feita de neve', ['alvo', { em: [.3, .54], s: .3, reage: 'nada', cor: 'prata' }], ['aparecer', { art: '@ice-golem', em: [.72, .54], s: .36, s0: .1, s1: 1, cor: 'gelo' }]],
+  symbol: ['cripta', 'Quem olhar para o sinal sofre', ['circulo', { lados: 5, s: .54, plano: 1, em: [.5, .42], t: [0, .9] }], ['fixo', { art: '@pentacle', em: [.5, .42], s: .34, tom: 2 }], ['alvo', { em: [.5, .72], s: .2, reage: 'cai' }]],
+  teleport: ['astral', 'Daqui para lá, num instante', ['teleporte', { de: 'A', em: [.5, .3], s: .34 }], ['ondas', { em: 'A', s: .5, n: 2, t: [0, .5] }], ['ondas', { em: [.5, .3], s: .5, n: 2, t: [.5, 1] }]],
+
+  /* ---------------- 8º círculo ---------------- */
+  'animal-shapes': ['floresta:natureza', 'O grupo vira bicho', ['transformar', { de: '@meeple-group', para: '@direwolf', s: .54 }], ['subir', { art: '@paw-print', d: .25, tam: .07 }]],
+  'antimagic-field': ['vazio:prata', 'Aqui a magia morre', ['cupula', { em: 'C', cheia: 1, s: .6 }], ['aparecer', { art: '@interdiction', em: 'C', s: .3, bob: 0, cor: 'sangue' }], ['quebrar', { art: '@crystal-wand', em: [.5, .22], s: .16, t: [.2, .7] }]],
+  'antipathy-sympathy': ['sonho:sangue', 'Atrai ou repele sem explicação', ['aparecer', { art: '@magnet', s: .4, bob: 2 }], ['ondas', { em: 'C', s: .9, n: 4 }], ['alvo', { em: [.22, .62], s: .2, reage: 'foge' }]],
+  befuddlement: ['sonho', 'A mente se desfaz em névoa', ['aparecer', { art: '@brain-dump', s: .46 }], ['espiral', { em: 'C', s: .5 }], ['fendas', { em: [.5, .46], n: 6, t: [.4, 1], e: .9 }]],
+  clone: ['arcano:cura', 'Um corpo reserva cresce no vidro', ['aparecer', { art: '@test-tubes', em: [.5, .4], s: .5, bob: 0 }], ['alvo', { em: [.5, .5], art: '@embryo', s: .18, reage: 'cresce', cor: 'cura' }]],
+  'control-weather': ['tempestade:prata', 'O céu muda ao seu comando', ['nuvem', { largo: 1, em: [.5, .16], s: .3, op: .55, n: 12 }], ['raio', { n: 2, t: [.2, .8] }], ['aparecer', { art: '@sun-cloud', em: [.5, .44], s: .34, cor: 'ouro' }]],
+  demiplane: ['astral', 'Uma sala fora do mundo', ['portal', { em: 'C', s: .34 }], ['aparecer', { art: '@door', em: 'C', s: .3, bob: 0 }], ['muralha', { estilo: 'forca', em: [.5, .56], alto: .9, t: [.3, 1] }]],
+  'dominate-monster': ['sonho:sangue', 'Qualquer criatura se dobra', ['aparecer', { art: '@hydra', em: [.5, .34], s: .46 }], ['correntes', { em: [.5, .34], n: 6 }], ['espiral', { em: [.5, .34], s: .24 }]],
+  earthquake: ['caverna:terra', 'O chão se abre', ['fendas', { em: [.5, .64], n: 11, e: 1.2 }], ['fendas', { em: [.24, .4], n: 5, t: [.2, 1], e: .6 }], ['chover', { forma: 'pedra', d: 2 }], ['alvo', { em: [.5, .5], s: .2, reage: 'cai' }]],
+  glibness: ['templo:ouro', 'Ninguém desconfia de você', ['aparecer', { art: '@lips', em: [.5, .4], s: .3 }], ['subir', { art: '@star-medal', d: .2, tam: .07 }], ['palavra', { txt: 'Confie', s: .12, em: [.5, .64] }]],
+  'holy-aura': ['templo:luz', 'Luz divina cobre seus aliados', ['aura', { em: 'C', s: .6 }], ['cupula', { em: 'C', s: .5, cheia: 1 }], ['surgir', { art: '@spiked-halo', de: 'cima', em: [.5, .24], s: .3 }]],
+  'incendiary-cloud': ['fogo', 'Uma nuvem de brasas avança', ['nuvem', { largo: 1, em: [.5, .5], n: 18, s: .5, op: .6 }], ['chover', { forma: 'brasa', d: 5 }], ['explodir', { em: [.5, .5], t: [.3, 1], s: .5, e: .7 }]],
+  maze: ['arcano:ouro', 'O alvo some num labirinto', ['aparecer', { art: '@maze', s: .8, bob: 0, giro: .05 }], ['alvo', { em: 'C', s: .14, reage: 'treme' }]],
+  'mind-blank': ['vazio:prata', 'Nada lê nem toca sua mente', ['aparecer', { art: '@brain', s: .36, bob: 2 }], ['cupula', { em: 'C', cheia: 1, s: .32 }], ['nuvem', { em: 'C', s: .2, op: .25 }]],
+  'power-word-stun': ['vazio', 'Uma palavra, e o corpo trava', ['palavra', { txt: 'PARE', s: .2, treme: 7 }], ['alvo', { em: [.5, .68], art: '@knockout', s: .28, reage: 'treme', t: [.2, 1] }]],
+  sunburst: ['dia:Radiante', 'A luz do sol explode', ['clarao', { n: 22, em: 'B', e: 1.2 }], ['aparecer', { art: '@sun-radiations', em: 'B', s: .4, giro: .2, bob: 0 }]],
+  tsunami: ['oceano:agua', 'Uma parede de água toma tudo', ['mare', { alto: .92, cor: 'agua' }], ['chover', { forma: 'gota', d: 3 }]],
+
+  /* ---------------- 9º círculo ---------------- */
+  'astral-projection': ['astral', 'Seu espírito sai do corpo', ['alvo', { em: [.5, .7], art: '@person-in-bed', s: .3, reage: 'nada', cor: 'prata' }], ['surgir', { art: '@spark-spirit', em: [.5, .36], s: .36 }], ['feixe', { de: [.5, .66], em: [.5, .4], larg: 2.4 }]],
+  foresight: ['astral:ouro', 'Você enxerga o próximo instante', ['aparecer', { art: '@third-eye', em: [.5, .32], s: .4 }], ['aparecer', { art: '@sands-of-time', em: [.5, .64], s: .28 }], ['ondas', { em: [.5, .32], s: .7, n: 3 }]],
+  gate: ['astral:sangue', 'Um portal enorme entre mundos', ['portal', { em: 'C', s: .54 }], ['surgir', { art: '@spiked-dragon-head', em: 'C', s: .4, t: [.3, 1] }], ['clarao', { em: 'C', t: [.1, .9], n: 12, bate: 0 }]],
+  imprisonment: ['cripta:sombra', 'Uma prisão para sempre', ['correntes', { em: 'C', n: 8 }], ['grade', { em: 'C', s: .7, t: [.2, 1] }], ['alvo', { em: 'C', s: .24, reage: 'encolhe' }]],
+  'mass-heal': ['amanhecer:cura', 'Uma enxurrada de vida', ['clarao', { em: 'C', n: 18, bate: 0 }], ['ondas', { em: 'C', s: 1.3, n: 5 }], ['subir', { art: '@heart-plus', d: .8, tam: .08, l: 1.1 }]],
+  'meteor-swarm': ['vazio:fogo', 'Quatro meteoros caem do céu', ['cair', { art: '@burning-meteor', n: 4, s: .3, voo: .34, gira: 1 }], ['chover', { forma: 'brasa', d: 4, t: [.3, 1] }], ['fendas', { em: [.5, .7], n: 9, t: [.55, 1], e: 1 }]],
+  'power-word-heal': ['templo:cura', 'Uma palavra devolve tudo', ['palavra', { txt: 'CURE-SE', s: .15 }], ['clarao', { em: [.5, .44], bate: 0, n: 12, t: [.1, .9] }], ['aura', { em: [.5, .7], s: .3 }]],
+  'power-word-kill': ['vazio:sangue', 'Uma palavra, e acabou', ['trevas', { ate: .3, op: 1 }], ['palavra', { txt: 'MORRA', s: .2, treme: 4, cor: 'sangue' }], ['alvo', { em: [.5, .7], s: .26, reage: 'cai', t: [.35, 1] }]],
+  'prismatic-wall': ['vazio', 'Sete cores, sete perigos', ['muralha', { estilo: 'forca', cor: 'sangue', alto: 1.25, larg: .18, em: [.1, .7], t: [0, 1] }], ['muralha', { estilo: 'forca', cor: 'fogo', alto: 1.25, larg: .18, em: [.3, .7], t: [.05, 1] }], ['muralha', { estilo: 'forca', cor: 'luz', alto: 1.25, larg: .18, em: [.5, .7], t: [.1, 1] }], ['muralha', { estilo: 'forca', cor: 'natureza', alto: 1.25, larg: .18, em: [.7, .7], t: [.15, 1] }], ['muralha', { estilo: 'forca', cor: 'agua', alto: 1.25, larg: .18, em: [.9, .7], t: [.2, 1] }]],
+  shapechange: ['sonho', 'Forma após forma, à vontade', ['transformar', { de: '@person', para: '@dragon-head', t: [0, .4], s: .46 }], ['transformar', { de: '@dragon-head', para: '@giant', t: [.3, .7], s: .46 }], ['transformar', { de: '@giant', para: '@kraken-tentacle', t: [.6, 1], s: .46 }]],
+  'storm-of-vengeance': ['tempestade', 'A tempestade da ira dos deuses', ['nuvem', { largo: 1, em: [.5, .15], n: 16, s: .34, op: .6, cor: 'sombra' }], ['raio', { n: 6 }], ['chover', { forma: 'gota', d: 6, vento: -6 }], ['tornado', { em: [.5, .86], t: [.4, 1] }]],
+  'time-stop': ['astral:ouro', 'Só você continua se movendo', ['aparecer', { art: '@empty-hourglass', em: [.5, .36], s: .4, bob: 0 }], ['ondas', { em: [.5, .36], s: 1, n: 2 }], ['alvo', { em: [.5, .7], s: .22, reage: 'nada', cor: 'prata' }]],
+  'true-polymorph': ['sonho:ouro', 'E a mudança é para sempre', ['transformar', { de: '@person', para: '@griffin-symbol', s: .5 }], ['clarao', { em: 'C', t: [.4, .8], n: 8, bate: 0 }]],
+  'true-resurrection': ['templo:luz', 'De volta, mesmo sem corpo', ['clarao', { em: [.5, .3], n: 20, bate: 0 }], ['surgir', { art: '@soul', de: 'cima', em: [.5, .46], s: .3 }], ['alvo', { em: [.5, .66], s: .3, reage: 'cresce', cor: 'luz', t: [.3, 1] }]],
+  weird: ['sonho:sombra', 'Cada um vê o próprio pior pesadelo', ['surgir', { art: '@spectre', n: 3, de: 'cima', em: [.5, .3], s: .3, abre: .34 }], ['alvo', { em: [.28, .68], s: .2, reage: 'treme' }], ['alvo', { em: [.72, .68], s: .2, reage: 'treme' }], ['aparecer', { art: '@tentacles-skull', s: .3, em: [.5, .56] }]],
+  wish: ['astral:ouro', 'O que você pedir', ['aparecer', { art: '@falling-star', em: [.5, .3], s: .3, giro: .1 }], ['clarao', { em: [.5, .3], t: [.2, .75], n: 14, bate: 0 }], ['aparecer', { art: '@magic-lamp', em: [.5, .66], s: .3 }], ['brilhos', { s: .6, n: 3 }]]
+};
+
+/* Sem cena escrita (magias criadas por você): escolhe a que mais combina com o texto. */
+const CENA_PISTAS = [
+  [/meteor/, 'meteor-swarm'], [/terremoto|earthquake|tremor/, 'earthquake'], [/explo|fireball|bola de fogo/, 'fireball'], [/rel[aâ]mpago|el[eé]tric|lightning/, 'lightning-bolt'], [/trov[aã]o|thunder|estrondo/, 'thunderwave'],
+  [/gelo|frio|neve|ice|cold|frost/, 'cone-of-cold'], [/veneno|poison|t[oó]xic/, 'stinking-cloud'], [/[aá]cido|acid/, 'acid-splash'], [/teleport|dimens|portal/, 'misty-step'], [/m[aã]os?\b|hand/, 'mage-hand'],
+  [/escudo|shield|barreira|prote[cç]/, 'shield'], [/invis[ií]vel|invisib/, 'invisibility'], [/ilus[aã]o|illus/, 'minor-illusion'], [/medo|pavor|fear/, 'fear'], [/encant|charm|fascin/, 'charm-person'], [/sono|sleep|dormir/, 'sleep'],
+  [/nuvem|n[eé]voa|fog|cloud/, 'fog-cloud'], [/muralha|parede|wall/, 'wall-of-stone'], [/planta|vinha|raiz|vine|root/, 'entangle'], [/corrente|preso|paralis|chain|hold/, 'hold-person'], [/espada|l[aâ]mina|sword|blade/, 'spiritual-weapon'],
+  [/flecha|arrow/, 'acid-arrow'], [/invoc|conjur|summon/, 'find-familiar'], [/[aá]gua|water|onda/, 'control-water'], [/escurid|sombra|dark|shadow/, 'darkness'], [/luz|sol|radian|light/, 'daylight'], [/morte|necr|morto|death/, 'inflict-wounds'], [/fogo|chama|fire|flame/, 'fire-bolt']
+];
+function cenaSugerida(s) {
+  const cura = (s.r || []).some(x => x.heal && x.t === 'dmg'), dano = (s.r || []).some(x => x.t === 'dmg' && !x.heal), ataque = (s.r || []).some(x => x.t === 'atk');
+  if (cura && !dano) return ['amanhecer:cura', '', ...CENAS['cure-wounds'].slice(2)];
+  const texto = norm(`${s.name} ${s.en || ''} ${(s.desc || []).join(' ')}`), pista = CENA_PISTAS.find(([re]) => re.test(texto) || re.test(`${s.name} ${(s.desc || []).join(' ')}`.toLowerCase()));
+  if (pista) return [CENAS[pista[1]][0], '', ...CENAS[pista[1]].slice(2)];
+  if (dano && ataque) return ['arcano', '', ['lancar', { s: .09, voo: .55 }], ['explodir', { t: [.55, 1] }]];
+  if (dano) return ['arcano', '', ['explodir', { t: [.3, 1] }], ['ondas', { em: 'B', s: .8 }]];
+  return ['arcano', '', ['runas', { em: 'C', s: .4 }], ['aura', { em: 'C', s: .3 }]];
+}
+const cenaSlug = s => norm(s.en || '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+function cenaDe(s) {
+  if (Array.isArray(s.cena)) return s.cena;
+  return CENAS[s.cena] || CENAS[s.id] || CENAS[cenaSlug(s)] || cenaSugerida(s);
 }
 /* =====================================================================
    MESA DE DADOS — valores físicos, com os limites de cada magia.
@@ -4464,6 +5388,8 @@ document.addEventListener('change', e => {
 /* Início do app: roda depois de todos os módulos carregados. */
 refreshAll();
 if ('serviceWorker' in navigator && location.protocol === 'https:') navigator.serviceWorker.register('sw.js').catch(() => {});
+
+setTimeout(() => ensureArt(), 1200);
 </script>
 <script>
 /* =====================================================================

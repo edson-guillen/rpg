@@ -198,3 +198,14 @@ As magias da biblioteca são uma **tradução não oficial** do SRD 5.2, com pé
 Projeto de fã, sem fins lucrativos. *Dungeons & Dragons* e os nomes de magias e regras pertencem à **Wizards of the Coast**. As descrições foram **resumidas e parafraseadas** para uso pessoal em mesa. Consulte o *Livro do Jogador* para o texto oficial.
 
 Código sob a licença [MIT](LICENSE).
+
+## Cenas de magia e mesa de dados
+
+Ao conjurar, a mesa de dados recebe os valores físicos dentro dos limites da magia: quantidade pelo círculo e pelo nível, ataques múltiplos, crítico, salvaguarda, dados que explodem e saltos do Orbe Cromático. Casa vazia é rolada pelo app.
+
+Depois, a cena da magia toma a tela. As 355 cenas do SRD e do Søren foram escritas à mão em `src/fx/cenas.js`, com os verbos de `src/fx/cena-atos.js`. O tamanho vem do dano total e a força vem da sorte na rolagem. Um toque pula a cena.
+
+- `npm run build` gera `data/fx-art.js` só com as silhuetas usadas pelas cenas.
+- `npm run cenas` junta `private/cenas-pessoais.json` à biblioteca pessoal. Depois disso, importe o arquivo de novo no app.
+
+As silhuetas das animações são do [Game-icons.net](https://game-icons.net), de Lorc, Delapouite e colaboradores, sob licença [CC BY 3.0](https://creativecommons.org/licenses/by/3.0/).

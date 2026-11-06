@@ -1,58 +1,57 @@
 /* =====================================================================
-   ANIMAÇÃO POR MAGIA
-   Cada magia tem uma receita: forma (como atinge), paleta (tipo de dano
-   ou escola), intensidade (círculo) e uma assinatura gerada pelo id,
-   com runa, trajetória, tempos e mistura de partículas próprias.
+   CENA DE MAGIA
+   Toda magia toma a tela, como o amanhecer do Descanso Longo: entra o
+   fundo, os dados pulam, o ato principal acontece, o impacto responde
+   ao dano rolado, aparece o total e a cena sai. A cena de cada magia
+   fica em cenas.js; os verbos que ela usa, em cena-atos.js.
    Desenha num canvas por cima do app; funciona com ou sem GSAP.
    ===================================================================== */
-const FX_MAX_MS = 1500, FX_MAX_PARTICLES = 420;
+const FX_MAX_PARTICLES = 380, FX_ENTRA = 320, FX_DADOS = 900, FX_ATO = 1650, FX_SAI = 420;
 const DMG_COLORS = {
   'Ácido': ['#b8f25a', '#5fd23a', '#e9ff9a'], 'Contundente': ['#d6b48a', '#9c7b55', '#f2dfc2'], 'Cortante': ['#e6edf5', '#9fb2c8', '#ffffff'],
   'Elétrico': ['#9fd8ff', '#5a8dff', '#ffffff'], 'Energético': ['#c9a6ff', '#7b5cff', '#f0e6ff'], 'Fogo': ['#ffb347', '#ff5a1f', '#fff1a8'],
-  'Frio': ['#bfeeff', '#62c4ff', '#ffffff'], 'Necrótico': ['#8fe388', '#3c6b45', '#1b2b20'], 'Perfurante': ['#d9dfe8', '#8796a8', '#ffffff'],
+  'Frio': ['#bfeeff', '#62c4ff', '#ffffff'], 'Necrótico': ['#8fe388', '#3c6b45', '#d8ffd0'], 'Perfurante': ['#d9dfe8', '#8796a8', '#ffffff'],
   'Psíquico': ['#ff8fd8', '#b44cff', '#ffe0f6'], 'Radiante': ['#fff3b0', '#ffd24a', '#ffffff'], 'Trovejante': ['#9fb8ff', '#4d63d6', '#e6ecff'], 'Veneno': ['#a6e36b', '#4f9e3a', '#e5ffc2']
 };
 const SCHOOL_COLORS = {
   'Abjuração': ['#9fdcff', '#4f9de0', '#ffffff'], 'Adivinhação': ['#d8e7ff', '#8fa8ff', '#ffffff'], 'Encantamento': ['#ffb3e6', '#e05cb8', '#fff0fa'], 'Evocação': ['#ffd28a', '#ff8a3c', '#fff4d6'],
-  'Ilusão': ['#d9b8ff', '#9a6cff', '#f5ecff'], 'Invocação': ['#a0f0d0', '#35b58f', '#e6fff6'], 'Necromancia': ['#9fe0a0', '#44705a', '#10201a'], 'Transmutação': ['#ffe08a', '#d4a12e', '#fff8dc']
+  'Ilusão': ['#d9b8ff', '#9a6cff', '#f5ecff'], 'Invocação': ['#a0f0d0', '#35b58f', '#e6fff6'], 'Necromancia': ['#9fe0a0', '#44705a', '#d8ffe0'], 'Transmutação': ['#ffe08a', '#d4a12e', '#fff8dc']
 };
-const FORMS_BY_SHAPE = { Esfera: 'sphere', Cone: 'cone', Linha: 'line', Cubo: 'cube', Cilindro: 'cylinder', 'Emanação': 'emanation', Muralha: 'wall' };
-const FORMS_BY_SCHOOL = { 'Abjuração': 'dome', 'Adivinhação': 'rune', 'Encantamento': 'charm', 'Evocação': 'shockwave', 'Ilusão': 'duplicates', 'Invocação': 'portal', 'Necromancia': 'fear', 'Transmutação': 'light' };
-
-/* Receitas feitas à mão: as 16 magias do Søren e as mais conhecidas do SRD. */
-const FX_RECIPES = {
-  'mind-sliver': { form: 'charm', via: 'ray' }, 'sorcerous-burst': { form: 'sphere', via: 'projectile' }, 'true-strike': { form: 'ray' }, 'minor-illusion': { form: 'duplicates' }, 'mage-hand': { form: 'light' },
-  'ice-knife': { form: 'sphere', via: 'projectile', burst: 'shards' }, shield: { form: 'dome' }, 'disguise-self': { form: 'mist' }, 'chromatic-orb': { form: 'sphere', via: 'projectile' }, command: { form: 'charm' },
-  'mirror-image': { form: 'duplicates' }, web: { form: 'web' }, suggestion: { form: 'charm' }, 'phantasmal-force': { form: 'fear' }, 'alter-self': { form: 'mist' }, 'dragons-breath': { form: 'cone' },
-  fireball: { form: 'sphere', via: 'projectile' }, 'magic-missile': { form: 'projectile', count: 3 }, 'lightning-bolt': { form: 'line' }, 'chain-lightning': { form: 'chain' }, 'burning-hands': { form: 'cone' },
-  'cone-of-cold': { form: 'cone' }, thunderwave: { form: 'shockwave' }, 'ice-storm': { form: 'rain' }, 'meteor-swarm': { form: 'rain', via: 'projectile' }, 'sleet-storm': { form: 'rain' }, 'wall-of-fire': { form: 'wall' },
-  'wall-of-ice': { form: 'wall' }, 'wall-of-force': { form: 'dome' }, 'wall-of-thorns': { form: 'thorns' }, 'spike-growth': { form: 'thorns' }, entangle: { form: 'thorns' }, 'cure-wounds': { form: 'heal' }, 'healing-word': { form: 'heal' },
-  'mass-heal': { form: 'heal' }, heal: { form: 'heal' }, revivify: { form: 'heal', via: 'light' }, 'misty-step': { form: 'teleport' }, teleport: { form: 'teleport' }, 'dimension-door': { form: 'portal' }, gate: { form: 'portal' },
-  'fog-cloud': { form: 'mist' }, cloudkill: { form: 'mist' }, darkness: { form: 'fear' }, light: { form: 'light' }, daylight: { form: 'light' }, sunbeam: { form: 'ray' }, moonbeam: { form: 'cylinder' }, 'flame-strike': { form: 'cylinder' },
-  'charm-person': { form: 'charm' }, fear: { form: 'fear' }, 'hypnotic-pattern': { form: 'charm' }, 'eldritch-blast': { form: 'projectile', count: 1 }, 'fire-bolt': { form: 'projectile' }, 'ray-of-frost': { form: 'ray' }, 'scorching-ray': { form: 'projectile', count: 3 }
+/* Paletas de cena, para o que não tem tipo de dano. */
+const PALETAS = {
+  luz: ['#fff3b0', '#ffd24a', '#ffffff'], ouro: ['#ffe08a', '#d4a12e', '#fff8dc'], lua: ['#dfe9ff', '#8fa8ff', '#ffffff'], prata: ['#e6edf5', '#9fb2c8', '#ffffff'], sombra: ['#9a8cc2', '#3d2f66', '#d9d0f5'],
+  sangue: ['#ff8a8a', '#b3202a', '#ffd6d6'], natureza: ['#a9e87a', '#3f9e4a', '#e9ffc9'], agua: ['#8fd8ff', '#2f7fd6', '#e0f6ff'], terra: ['#d6b48a', '#7d5a3a', '#f2dfc2'], vento: ['#d8f0ee', '#7fb8b8', '#ffffff'],
+  sonho: ['#ffb3e6', '#8f5cff', '#fff0fa'], cura: ['#9df0b4', '#3fbf7a', '#eafff0'], fogo: DMG_COLORS['Fogo'], gelo: DMG_COLORS['Frio'], veneno: DMG_COLORS['Veneno'], arcano: DMG_COLORS['Energético'], morte: ['#b9c9b5', '#3a4a40', '#e6f2e0']
+};
+/* Céu de cada fundo: topo, meio, base e o detalhe que anima. */
+const FUNDOS = {
+  noite: ['#050814', '#0d1630', '#1b2547', 'estrelas'], arcano: ['#0b0620', '#1c1045', '#33205f', 'runas'], amanhecer: ['#1a2348', '#a85a6a', '#ffc27a', 'sol'], tempestade: ['#07090f', '#161c2b', '#2a3142', 'chuva'],
+  floresta: ['#04100a', '#0d2a1a', '#1d4a2a', 'folhas'], cripta: ['#050805', '#101a14', '#1c2a20', 'nevoa'], oceano: ['#02101f', '#0a2f52', '#125a7a', 'bolhas'], ceu: ['#16386e', '#3f74ac', '#8ab6d0', 'nuvens'],
+  vazio: ['#000', '#04030a', '#0a0716', 'estrelas'], fogo: ['#140403', '#3a0d06', '#7a2308', 'brasas'], gelo: ['#07131f', '#16344f', '#3a6a8a', 'neve'], caverna: ['#070605', '#15110d', '#2a2118', 'poeira'],
+  templo: ['#1a1206', '#4a3412', '#8a6a2a', 'poeira'], sonho: ['#10061f', '#3a1450', '#7a2f7a', 'estrelas'], pantano: ['#060a05', '#142012', '#2c3a1a', 'nevoa'], astral: ['#080522', '#1a1a5a', '#3a2f8a', 'estrelas'], lua: ['#04081a', '#101f45', '#27386a', 'lua'], dia: ['#23558e', '#5a94bc', '#a9d0c8', 'sol2']
 };
 
 const fxHash = s => { let h = 2166136261; for (const c of String(s)) { h ^= c.codePointAt(0); h = Math.imul(h, 16777619); } return h >>> 0; };
 function fxRng(seed) { let x = seed || 1; return () => { x ^= x << 13; x ^= x >>> 17; x ^= x << 5; return (x >>> 0) / 4294967296; }; }
+const clamp01 = t => Math.max(0, Math.min(1, t));
+const lerp = (a, b, t) => a + (b - a) * t;
+const ease = t => 1 - Math.pow(1 - t, 3);
+const easeIn = t => t * t * t;
+const easeBack = t => { const s = 1.70158, u = t - 1; return 1 + (s + 1) * u * u * u + s * u * u; };
+const sino = t => Math.sin(clamp01(t) * Math.PI);
+const fadeIO = t => Math.min(1, t * 6, (1 - t) * 6);
 
 /** Monta a receita de uma magia. `tipo` é o elemento escolhido, quando a magia deixa escolher. */
-function spellRecipe(s, tipo, nivel = s.level) {
-  const dano = (s.r || []).find(x => x.t === 'dmg' && !x.heal && DMG_COLORS[x.type]), cura = (s.r || []).some(x => x.heal), hand = FX_RECIPES[s.id] || FX_RECIPES[norm(s.en || '').replace(/[^a-z0-9]+/g, '-')] || {};
-  const elemento = tipo || (dano && DMG_COLORS[dano.type] ? dano.type : null);
-  const form = hand.form || (cura ? 'heal' : s.area && FORMS_BY_SHAPE[s.area.shape]) || ((s.r || []).some(x => x.t === 'atk') ? 'projectile' : dano ? 'ray' : FORMS_BY_SCHOOL[s.school] || 'shockwave');
-  const sig = fxHash(s.id), r = fxRng(sig);
-  const pal = (elemento ? DMG_COLORS[elemento] : SCHOOL_COLORS[s.school]) || SCHOOL_COLORS['Evocação'];
-  return {
-    id: s.id, form, via: hand.via || null, burst: hand.burst || null, count: hand.count || 1, palette: pal, elemento,
-    power: 0.6 + Math.min(nivel || 0, 9) / 9 * 0.9, seed: sig,
-    rune: { sides: 3 + Math.floor(r() * 7), step: 1 + Math.floor(r() * 3), inner: 0.35 + r() * 0.5, spin: (r() < 0.5 ? -1 : 1) * (0.6 + r() * 1.4), marks: 3 + Math.floor(r() * 9) },
-    curve: (r() - 0.5) * 0.9, hue: Math.round((r() - 0.5) * 36), tempo: 0.8 + r() * 0.2, mix: r()
-  };
+function spellRecipe(s, tipo, nivel = s.level, res = null) {
+  const dano = (s.r || []).find(x => x.t === 'dmg' && !x.heal && !x.depois && DMG_COLORS[x.type]);
+  const elemento = DMG_COLORS[tipo] ? tipo : dano ? dano.type : null, cena = cenaDe(s), [fundo, cor] = String(cena[0]).split(':');
+  const palette = (elemento && DMG_COLORS[elemento]) || PALETAS[cor] || DMG_COLORS[cor] || SCHOOL_COLORS[s.school] || SCHOOL_COLORS['Evocação'];
+  return { id: s.id, nome: s.name, cena, fundo: FUNDOS[fundo] ? fundo : 'arcano', palette, elemento, nivel: nivel || 0, res, seed: fxHash(s.id) };
 }
-const fxSignature = c => [c.form, c.via, c.palette[0], c.rune.sides, c.rune.step, c.rune.marks, c.hue, c.seed].join('|');
+const fxSignature = c => JSON.stringify([c.cena[0], c.cena.slice(2)]);
 
 /* ---------- motor ---------- */
-const fxState = { cv: null, ctx: null, runs: [], parts: [], raf: 0 };
+const fxState = { cv: null, ctx: null, run: null, parts: [], raf: 0 };
 const fxMode = () => {
   const m = store.settings.anim || 'full';
   return m === 'full' && matchMedia('(prefers-reduced-motion: reduce)').matches ? 'reduced' : m;
@@ -61,273 +60,304 @@ function fxCanvas() {
   if (fxState.cv) return fxState.cv;
   const c = document.createElement('canvas');
   c.id = 'spell-fx'; c.setAttribute('aria-hidden', 'true');
-  c.style.cssText = 'position:fixed;inset:0;width:100%;height:100%;z-index:9000;pointer-events:none';
+  c.style.cssText = 'position:fixed;inset:0;width:100%;height:100%;z-index:9000;pointer-events:none;opacity:0;touch-action:none';
   document.body.appendChild(c);
+  c.addEventListener('pointerdown', fxPular);
+  addEventListener('keydown', e => { if (e.key === 'Escape' && fxState.run) fxPular(); });
   fxState.cv = c; fxState.ctx = c.getContext('2d');
   return c;
 }
 function fxResize() {
-  const c = fxCanvas(), dpr = Math.min(devicePixelRatio || 1, 2);
+  const c = fxCanvas(), dpr = fxState.leve ? 1 : Math.min(devicePixelRatio || 1, 1.5);
   c.width = innerWidth * dpr; c.height = innerHeight * dpr;
   fxState.ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 }
 function part(o) {
   if (fxState.parts.length >= FX_MAX_PARTICLES) return;
-  fxState.parts.push({ vx: 0, vy: 0, g: 0, drag: 0.98, life: 0, max: 40, size: 3, shape: 'dot', ...o });
+  fxState.parts.push({ vx: 0, vy: 0, g: 0, drag: .985, life: 0, max: 40, size: 3, shape: 'dot', ...o });
 }
 function emit(x, y, n, run, o = {}) {
-  const { rng, rec } = run, k = run.reduced ? 0.25 : 1;
-  for (let i = 0, t = Math.ceil(n * k * rec.power); i < t; i++) {
-    const a = (o.a0 ?? 0) + rng() * (o.arc ?? Math.PI * 2), v = (o.v ?? 3) * (0.3 + rng());
-    part({ x, y, vx: Math.cos(a) * v, vy: Math.sin(a) * v, c: rec.palette[Math.floor(rng() * 3)], size: (o.size ?? 3) * (0.5 + rng()), max: (o.life ?? 40) * (0.6 + rng() * 0.6), g: o.g ?? 0, shape: o.shape || (rec.mix > 0.66 ? 'spark' : rec.mix > 0.33 ? 'dot' : 'diamond') });
+  if (run.reduced) return;
+  const { rng, pal } = run;
+  for (let i = 0, t = Math.ceil(n * (o.fixo ? 1 : .6 + run.F * .9) * (fxState.leve ? .5 : 1)); i < t; i++) {
+    const a = (o.a0 ?? 0) + rng() * (o.arc ?? Math.PI * 2), v = (o.v ?? 3) * (.3 + rng());
+    part({ x, y, vx: Math.cos(a) * v, vy: Math.sin(a) * v, c: o.c || pal[Math.floor(rng() * 3)], size: (o.size ?? 3) * (.5 + rng()), max: (o.life ?? 40) * (.6 + rng() * .6), g: o.g ?? 0, shape: o.shape || 'dot', rot: rng() * 6, art: o.art, txt: o.txt });
   }
 }
-const glow = (ctx, x, y, r, c, a = 1) => {
+function glow(ctx, x, y, r, c, a = 1) {
   const g = ctx.createRadialGradient(x, y, 0, x, y, Math.max(1, r));
   g.addColorStop(0, c); g.addColorStop(1, 'rgba(0,0,0,0)');
-  ctx.globalAlpha = a; ctx.fillStyle = g; ctx.beginPath(); ctx.arc(x, y, Math.max(1, r), 0, 7); ctx.fill(); ctx.globalAlpha = 1;
-};
-const stroke = (ctx, c, w, a = 1) => { ctx.strokeStyle = c; ctx.lineWidth = w; ctx.globalAlpha = a; };
-function drawRune(ctx, x, y, R, rec, t) {
-  const { sides, step, inner, spin, marks } = rec.rune, rot = t * spin * Math.PI;
-  ctx.save(); ctx.translate(x, y); ctx.rotate(rot);
-  stroke(ctx, rec.palette[0], 2, Math.sin(Math.min(1, t * 1.2) * Math.PI));
-  ctx.beginPath(); ctx.arc(0, 0, R, 0, 7); ctx.stroke();
-  ctx.beginPath();
-  for (let i = 0; i <= sides; i++) { const a = i * step * 2 * Math.PI / sides; ctx[i ? 'lineTo' : 'moveTo'](Math.cos(a) * R * 0.92, Math.sin(a) * R * 0.92); }
-  ctx.stroke();
-  ctx.beginPath(); ctx.arc(0, 0, R * inner, 0, 7); ctx.stroke();
-  for (let i = 0; i < marks; i++) { const a = i / marks * 2 * Math.PI; ctx.beginPath(); ctx.moveTo(Math.cos(a) * R, Math.sin(a) * R); ctx.lineTo(Math.cos(a) * R * 1.1, Math.sin(a) * R * 1.1); ctx.stroke(); }
-  ctx.restore(); ctx.globalAlpha = 1;
+  const op = ctx.globalCompositeOperation;
+  ctx.globalCompositeOperation = 'lighter'; ctx.globalAlpha = clamp01(a); ctx.fillStyle = g;
+  ctx.beginPath(); ctx.arc(x, y, Math.max(1, r), 0, 7); ctx.fill();
+  ctx.globalAlpha = 1; ctx.globalCompositeOperation = op;
 }
-const lerp = (a, b, t) => a + (b - a) * t;
-const ease = t => 1 - Math.pow(1 - t, 3);
+const stroke = (ctx, c, w, a = 1) => { ctx.strokeStyle = c; ctx.lineWidth = Math.max(.5, w); ctx.globalAlpha = clamp01(a); ctx.lineCap = 'round'; ctx.lineJoin = 'round'; };
 
-/* Cada forma recebe o andamento t (0 a 1). A = conjurador, B = alvo. */
-const FX_FORMS = {
-  projectile(c, t, run) {
-    const { A, B, rec } = run;
-    for (let i = 0; i < rec.count; i++) {
-      const tt = Math.min(1, t * 1.25 - i * 0.06); if (tt <= 0) continue;
-      const off = (i - (rec.count - 1) / 2) * 46, mx = (A.x + B.x) / 2 + rec.curve * 220 + off, my = (A.y + B.y) / 2;
-      const x = (1 - tt) ** 2 * A.x + 2 * (1 - tt) * tt * mx + tt ** 2 * (B.x + off * .4), y = (1 - tt) ** 2 * A.y + 2 * (1 - tt) * tt * my + tt ** 2 * B.y;
-      if (tt < 1) { glow(c, x, y, 20 * rec.power, rec.palette[0]); emit(x, y, 2, run, { v: 1, life: 22, size: 2.5 }); }
-      else if (!run['hit' + i]) { run['hit' + i] = 1; emit(x, y, 26, run, { v: 5 }); }
-    }
-  },
-  ray(c, t, run) {
-    const { A, B, rec } = run, g = ease(Math.min(1, t * 2.2)), x = lerp(A.x, B.x, g), y = lerp(A.y, B.y, g), f = Math.sin(t * Math.PI);
-    stroke(c, rec.palette[0], 9 * rec.power * f, .45); c.beginPath(); c.moveTo(A.x, A.y); c.lineTo(x, y); c.stroke();
-    stroke(c, rec.palette[2], 3 * f, 1); c.stroke(); c.globalAlpha = 1;
-    emit(x, y, 2, run, { v: 2, life: 20 });
-  },
-  chain(c, t, run) {
-    const { B, rec, rng } = run, pts = [run.A, { x: B.x - 90, y: B.y + 60 }, { x: B.x + 80, y: B.y + 20 }, { x: B.x - 20, y: B.y - 50 }];
-    const shown = Math.min(3, Math.ceil(t * 5));
-    stroke(c, rec.palette[0], 3, 1 - t * .5); c.beginPath();
-    for (let i = 0; i < shown; i++) {
-      const a = pts[i], b = pts[i + 1]; c.moveTo(a.x, a.y);
-      for (let k = 1; k <= 6; k++) c.lineTo(lerp(a.x, b.x, k / 6) + (rng() - .5) * 26, lerp(a.y, b.y, k / 6) + (rng() - .5) * 26);
-      if (i === shown - 1) emit(b.x, b.y, 2, run, { v: 3, life: 16 });
-    }
-    c.stroke(); c.globalAlpha = 1;
-  },
-  cone(c, t, run) {
-    const { A, B, rec } = run, a0 = Math.atan2(B.y - A.y, B.x - A.x), arc = .9, L = Math.hypot(B.x - A.x, B.y - A.y) * 1.1 * ease(t);
-    c.fillStyle = rec.palette[1]; c.globalAlpha = .3 * (1 - t); c.beginPath(); c.moveTo(A.x, A.y); c.arc(A.x, A.y, L, a0 - arc / 2, a0 + arc / 2); c.fill(); c.globalAlpha = 1;
-    if (t < .7) emit(A.x, A.y, 7, run, { a0: a0 - arc / 2, arc, v: 8, life: 38, size: 4 });
-  },
-  sphere(c, t, run) {
-    const { B, rec } = run, R = 150 * rec.power * ease(t);
-    glow(c, B.x, B.y, R, rec.palette[1], .8 * (1 - t)); glow(c, B.x, B.y, R * .55, rec.palette[2], 1 - t);
-    stroke(c, rec.palette[0], 3, 1 - t); c.beginPath(); c.arc(B.x, B.y, R, 0, 7); c.stroke(); c.globalAlpha = 1;
-    if (!run.hit) { run.hit = 1; emit(B.x, B.y, 60, run, { v: rec.burst === 'shards' ? 9 : 6, life: 44, size: 4, shape: rec.burst === 'shards' ? 'diamond' : undefined }); }
-  },
-  line(c, t, run) {
-    const { rec, rng } = run, y = lerp(innerHeight * .62, innerHeight * .34, rec.mix), x = innerWidth * ease(t);
-    stroke(c, rec.palette[1], 14 * rec.power, .4 * (1 - t)); c.beginPath(); c.moveTo(0, y); c.lineTo(x, y + rec.curve * 60); c.stroke();
-    stroke(c, rec.palette[2], 3, 1 - t); c.stroke(); c.globalAlpha = 1;
-    emit(x, y + (rng() - .5) * 14, 3, run, { v: 3, life: 22 });
-  },
-  cube(c, t, run) {
-    const { B, rec } = run, S = 170 * rec.power * ease(Math.min(1, t * 1.6));
-    c.save(); c.translate(B.x, B.y); c.rotate(rec.curve + t * .4);
-    c.fillStyle = rec.palette[1]; c.globalAlpha = .22 * (1 - t); c.fillRect(-S / 2, -S / 2, S, S);
-    stroke(c, rec.palette[0], 3, 1 - t * .7); c.strokeRect(-S / 2, -S / 2, S, S);
-    stroke(c, rec.palette[2], 1.5, .8 * (1 - t)); c.strokeRect(-S / 3, -S / 3, S / 1.5, S / 1.5); c.restore(); c.globalAlpha = 1;
-  },
-  cylinder(c, t, run) {
-    const { B, rec } = run, W = 70 * rec.power, H = innerHeight * ease(Math.min(1, t * 1.8)), f = Math.sin(t * Math.PI);
-    const g = c.createLinearGradient(B.x - W, 0, B.x + W, 0); g.addColorStop(0, 'rgba(0,0,0,0)'); g.addColorStop(.5, rec.palette[0]); g.addColorStop(1, 'rgba(0,0,0,0)');
-    c.fillStyle = g; c.globalAlpha = .85 * f; c.fillRect(B.x - W, 0, W * 2, H); c.globalAlpha = 1;
-    emit(B.x, H, 4, run, { v: 4, life: 26 });
-  },
-  emanation(c, t, run) {
-    const { A, rec } = run;
-    for (let i = 0; i < 3; i++) { const p = (t * 1.3 + i * .22) % 1; stroke(c, rec.palette[i], 3, (1 - p) * .9); c.beginPath(); c.arc(A.x, A.y, 240 * rec.power * p, 0, 7); c.stroke(); }
-    c.globalAlpha = 1; emit(A.x, A.y, 2, run, { v: 4, life: 30 });
-  },
-  shockwave(c, t, run) {
-    const { B, rec } = run;
-    for (let i = 0; i < 2; i++) { const p = ease(Math.max(0, t - i * .15)); stroke(c, rec.palette[i], 7 * (1 - p) + 1, 1 - p); c.beginPath(); c.arc(B.x, B.y, Math.max(innerWidth, innerHeight) * .6 * p * rec.power, 0, 7); c.stroke(); }
-    c.globalAlpha = 1;
-  },
-  rune(c, t, run) { drawRune(c, run.B.x, run.B.y, 110 * run.rec.power, run.rec, t); glow(c, run.B.x, run.B.y, 80, run.rec.palette[0], .5 * (1 - t)); },
-  dome(c, t, run) {
-    const { A, rec } = run, R = 130 * rec.power * ease(Math.min(1, t * 2)), f = 1 - t * t;
-    c.fillStyle = rec.palette[1]; c.globalAlpha = .18 * f; c.beginPath(); c.arc(A.x, A.y, R, Math.PI, 0); c.fill();
-    stroke(c, rec.palette[0], 3, f); c.beginPath(); c.arc(A.x, A.y, R, Math.PI, 0); c.stroke();
-    stroke(c, rec.palette[2], 1, f * .7);
-    for (let i = 1; i < rec.rune.sides; i++) { const a = Math.PI + i / rec.rune.sides * Math.PI; c.beginPath(); c.moveTo(A.x, A.y); c.lineTo(A.x + Math.cos(a) * R, A.y + Math.sin(a) * R); c.stroke(); }
-    c.globalAlpha = 1;
-  },
-  duplicates(c, t, run) {
-    const { B, rec } = run, n = 3 + rec.rune.sides % 3, f = Math.sin(t * Math.PI);
-    for (let i = 0; i < n; i++) {
-      const a = i / n * 7 + rec.curve + t * 1.5, x = B.x + Math.cos(a) * 110 * ease(t), y = B.y + Math.sin(a) * 60 * ease(t);
-      c.fillStyle = rec.palette[i % 3]; c.globalAlpha = .55 * f; c.beginPath(); c.ellipse(x, y - 34, 13, 15, 0, 0, 7); c.fill();
-      c.beginPath(); c.ellipse(x, y + 8, 19, 32, 0, 0, 7); c.fill();
-    }
-    c.globalAlpha = 1;
-  },
-  web(c, t, run) {
-    const { B, rec } = run, g = ease(Math.min(1, t * 1.7)), n = 6 + rec.rune.sides, R = 190 * rec.power * g;
-    stroke(c, rec.palette[2], 1.5, 1 - t * t);
-    for (let i = 0; i < n; i++) { const a = i / n * 2 * Math.PI + rec.curve; c.beginPath(); c.moveTo(B.x, B.y); c.lineTo(B.x + Math.cos(a) * R, B.y + Math.sin(a) * R); c.stroke(); }
-    for (let k = 1; k <= 4; k++) { c.beginPath(); for (let i = 0; i <= n; i++) { const a = i / n * 2 * Math.PI + rec.curve, r = R * k / 4; c[i ? 'lineTo' : 'moveTo'](B.x + Math.cos(a) * r, B.y + Math.sin(a) * r); } c.stroke(); }
-    c.globalAlpha = 1;
-  },
-  portal(c, t, run) {
-    const { B, rec } = run, f = Math.sin(t * Math.PI), W = 80 * rec.power * f;
-    glow(c, B.x, B.y, W * 1.8, rec.palette[1], .6 * f);
-    stroke(c, rec.palette[0], 4, f); c.beginPath(); c.ellipse(B.x, B.y, W, W * 1.6, 0, 0, 7); c.stroke();
-    stroke(c, rec.palette[2], 2, f); c.beginPath(); c.ellipse(B.x, B.y, W * .6, W * 1.25, t * 3, 0, 7); c.stroke(); c.globalAlpha = 1;
-    emit(B.x, B.y, 2, run, { v: 2.4, life: 26 });
-  },
-  heal(c, t, run) {
-    const { A, rng, rec } = run;
-    glow(c, A.x, A.y, 120 * rec.power, DMG_COLORS['Radiante'][0], .4 * (1 - t));
-    for (let i = 0; i < 2; i++) part({ x: A.x + (rng() - .5) * 150, y: A.y + 40, vy: -2.6 - rng() * 2, c: i ? '#9df0b4' : rec.palette[0], size: 7, max: 46, shape: 'plus', drag: 1 });
-  },
-  charm(c, t, run) {
-    const { B, rec, rng } = run, f = Math.sin(t * Math.PI);
-    stroke(c, rec.palette[0], 2.5, f); c.beginPath();
-    for (let a = 0; a < 16; a += .25) { const r = a * 7 * rec.power * ease(t), x = B.x + Math.cos(a + t * 3) * r, y = B.y + Math.sin(a + t * 3) * r; c[a ? 'lineTo' : 'moveTo'](x, y); }
-    c.stroke(); c.globalAlpha = 1;
-    if (rng() < .5) part({ x: B.x + (rng() - .5) * 170, y: B.y + (rng() - .5) * 90, vy: -1.3, c: rec.palette[0], size: 8, max: 40, shape: 'heart', drag: 1 });
-  },
-  fear(c, t, run) {
-    const { B, rec, rng } = run, f = Math.sin(t * Math.PI);
-    glow(c, B.x, B.y, 200 * rec.power, '#05040a', .85 * f);
-    stroke(c, rec.palette[1], 3, f); c.beginPath();
-    for (let i = 0; i < 9; i++) {
-      const a = i / 9 * 7 + rec.curve; c.moveTo(B.x, B.y);
-      for (let k = 1; k <= 5; k++) c.lineTo(B.x + Math.cos(a + k * .3) * k * 34 * ease(t) + (rng() - .5) * 6, B.y + Math.sin(a + k * .3) * k * 34 * ease(t));
-    }
-    c.stroke(); c.globalAlpha = 1;
-  },
-  teleport(c, t, run) {
-    const { A, B, rec } = run, a = t < .5 ? A : B, f = t < .5 ? 1 - t * 2 : (t - .5) * 2;
-    glow(c, a.x, a.y, 70 * f + 10, rec.palette[0], .9);
-    if (t < .5) emit(a.x, a.y, 4, run, { v: 4, life: 22 });
-    else if (!run.hit) { run.hit = 1; emit(a.x, a.y, 30, run, { v: 4 }); }
-  },
-  mist(c, t, run) {
-    const { B, rec, rng } = run, f = Math.sin(t * Math.PI);
-    for (let i = 0; i < 3; i++) glow(c, B.x + (rng() - .5) * 240, B.y + (rng() - .5) * 110, 110 * rec.power, rec.palette[i], .22 * f);
-  },
-  light(c, t, run) {
-    const { B, rec } = run, f = Math.sin(t * Math.PI), n = 8 + rec.rune.sides, R = 260 * rec.power * ease(t);
-    glow(c, B.x, B.y, R * .7, rec.palette[2], .8 * f);
-    stroke(c, rec.palette[0], 3, f);
-    for (let i = 0; i < n; i++) { const a = i / n * 2 * Math.PI + t + rec.curve; c.beginPath(); c.moveTo(B.x + Math.cos(a) * 30, B.y + Math.sin(a) * 30); c.lineTo(B.x + Math.cos(a) * R, B.y + Math.sin(a) * R); c.stroke(); }
-    c.globalAlpha = 1;
-  },
-  rain(c, t, run) {
-    const { B, rec, rng } = run;
-    if (t < .75) for (let i = 0; i < 4; i++) { const x = B.x + (rng() - .5) * innerWidth * .8; part({ x: x + 90, y: -10, vx: -3, vy: 13 + rng() * 6, c: rec.palette[Math.floor(rng() * 3)], size: 3, max: 62, shape: 'streak', drag: 1 }); }
-  },
-  thorns(c, t, run) {
-    const { B, rec } = run, n = 9 + rec.rune.sides, g = ease(Math.min(1, t * 1.8)), f = 1 - t * t;
-    c.fillStyle = rec.palette[1]; c.globalAlpha = f;
-    for (let i = 0; i < n; i++) {
-      const x = B.x + (i - n / 2) * 34, h = (70 + ((i * 37 + rec.rune.marks * 13) % 90)) * g, y = B.y + 90;
-      c.beginPath(); c.moveTo(x - 10, y); c.quadraticCurveTo(x + rec.curve * 30, y - h * .6, x + rec.curve * 20, y - h); c.quadraticCurveTo(x + 4, y - h * .4, x + 10, y); c.fill();
-    }
-    c.globalAlpha = 1;
-  },
-  wall(c, t, run) {
-    const { B, rec, rng } = run, W = Math.min(innerWidth * .8, 520), H = 180 * rec.power * ease(Math.min(1, t * 2)), f = 1 - t * t * t;
-    const g = c.createLinearGradient(0, B.y + 90, 0, B.y + 90 - H); g.addColorStop(0, rec.palette[1]); g.addColorStop(1, 'rgba(0,0,0,0)');
-    c.fillStyle = g; c.globalAlpha = f; c.fillRect(B.x - W / 2, B.y + 90 - H, W, H); c.globalAlpha = 1;
-    emit(B.x + (rng() - .5) * W, B.y + 90, 3, run, { a0: -1.9, arc: .7, v: 4, life: 30 });
+/* Silhuetas: vêm de data/fx-art.js, carregado sob demanda, e viram sprites com brilho. */
+const fxArtes = { path: {}, sprite: new Map(), carregando: false };
+function ensureArt() {
+  if (window.GRIMORIO_ART || fxArtes.carregando) return;
+  fxArtes.carregando = true;
+  const s = document.createElement('script');
+  s.src = 'data/fx-art.js'; s.onerror = () => { fxArtes.carregando = false; };
+  document.head.appendChild(s);
+}
+function artPath(nome) {
+  const n = String(nome).replace(/^@/, ''), d = window.GRIMORIO_ART?.[n];
+  if (!d) return null;
+  return fxArtes.path[n] || (fxArtes.path[n] = new Path2D(d));
+}
+function sprite(nome, cor, tam, brilho = 1) {
+  const q = Math.max(16, Math.ceil(tam / 24) * 24), k = `${nome}|${cor}|${q}|${brilho}`;
+  let s = fxArtes.sprite.get(k);
+  if (s) return s;
+  const p = artPath(nome), m = Math.ceil(q * .3), cv = document.createElement('canvas');
+  cv.width = cv.height = q + m * 2;
+  if (!p) return cv;
+  const c = cv.getContext('2d');
+  c.translate(m, m); c.scale(q / 512, q / 512);
+  if (brilho) { c.shadowColor = cor; c.shadowBlur = q * .16 * brilho; }
+  c.fillStyle = cor; c.fill(p);
+  if (brilho) c.fill(p);
+  if (fxArtes.sprite.size > 90) fxArtes.sprite.clear();
+  fxArtes.sprite.set(k, cv);
+  return cv;
+}
+/** Desenha uma silhueta centrada. o: rot, a, sx, sy, brilho. */
+function desenhaArte(c, nome, x, y, tam, cor, o = {}) {
+  const s = sprite(nome, cor, tam, o.brilho ?? 1), q0 = Math.max(16, Math.ceil(tam / 24) * 24), q = tam * s.width / q0;
+  c.save(); c.translate(x, y); if (o.rot) c.rotate(o.rot); c.scale(o.sx ?? 1, o.sy ?? 1);
+  c.globalAlpha = clamp01(o.a ?? 1); c.drawImage(s, -q / 2, -q / 2, q, q);
+  c.restore();
+}
+
+/* Impacto: o dano rolado decide tremor, clarão e partículas. */
+function impactar(run, x, y, e = 1) {
+  if (run.erro) { emit(x, y, 8, run, { v: 2, life: 24, size: 2.4, fixo: 1 }); run.hit = run.hit || run.now; return; }
+  const { F, K } = run, cura = run.imp.cura;
+  run.shake = Math.max(run.shake, run.reduced || cura ? 0 : (3 + 30 * F) * Math.min(1.4, K) * e);
+  run.flash = Math.max(run.flash, (cura ? .12 : .1 + .55 * F) * e);
+  run.hit = run.hit || run.now;
+  emit(x, y, (30 + 90 * K) * e, run, { v: (3 + 6 * F) * Math.sqrt(K), life: 42, size: 3.4 * Math.sqrt(K) });
+}
+
+function fxMontaDados(run) {
+  const res = run.rec.res;
+  if (!res) return;
+  const lista = [...res.inst.flatMap(x => x.dados), ...res.aux.flatMap(a => a.vals.map(v => ({ v, f: a.f, extra: null })))], n = Math.min(lista.length, 24), r = run.rng;
+  if (!n) return;
+  const tam = n <= 8 ? 40 : n <= 14 ? 32 : 26, por = Math.min(n, Math.floor((run.w - 24) / (tam + 8))), linhas = Math.ceil(n / por);
+  run.dados = lista.slice(0, n).map((q, i) => {
+    const l = Math.floor(i / por), col = i % por, naLinha = l < linhas - 1 ? por : n - por * (linhas - 1);
+    return { ...q, x: run.w / 2 + (col - (naLinha - 1) / 2) * (tam + 8), y: run.h - 34 - (linhas - 1 - l) * (tam + 8), x0: run.w * r(), tam, ini: i * 34 + (q.extra ? 280 : 0), H: (q.extra ? 300 : 190) + r() * 70, gira: (r() < .5 ? -1 : 1) * (5 + r() * 6) };
+  });
+  run.resto = lista.length - n;
+}
+const DIE_LADOS = { 4: 3, 6: 4, 8: 4, 10: 5, 12: 6, 20: 6, 100: 8 };
+const DIE_EXTRA = { up: '#9fd8ff', crit: '#ffd24a', exp: '#ff9a5a', rep: '#ffffff' };
+function desenhaDado(c, q, x, y, rot, run, valor) {
+  const lados = DIE_LADOS[q.f] || 6, R = q.tam * .62, cor = DIE_EXTRA[q.extra] || run.pal[0];
+  c.save(); c.translate(x, y); c.rotate(rot + (q.f === 6 ? Math.PI / 4 : -Math.PI / 2));
+  c.beginPath();
+  for (let i = 0; i < lados; i++) { const a = i / lados * Math.PI * 2; c[i ? 'lineTo' : 'moveTo'](Math.cos(a) * R, Math.sin(a) * R); }
+  c.closePath(); c.fillStyle = 'rgba(12,14,24,.92)'; c.fill();
+  stroke(c, cor, q.extra ? 3 : 2); c.stroke(); c.globalAlpha = 1;
+  c.restore();
+  if (q.extra) glow(c, x, y, q.tam * 1.1, cor, .35);
+  c.fillStyle = '#fff'; c.font = `700 ${Math.round(q.tam * .46)}px system-ui,sans-serif`; c.textAlign = 'center'; c.textBaseline = 'middle';
+  c.fillText(valor, x, y + 1);
+}
+function desenhaDados(c, run, T) {
+  const lim = FX_DADOS - 260;
+  (run.dados || []).forEach(q => {
+    const t = run.fix ? 1 : clamp01((T - q.ini) / Math.max(320, lim - q.ini));
+    if (t <= 0) return;
+    const u = 1 - t, salto = q.H * u * u * Math.abs(Math.cos(t * Math.PI * 2.5));
+    // Os dados a mais continuam pulando depois de pousar, e todos saltam no impacto.
+    const hop = run.fix ? 0 : (q.extra ? Math.abs(Math.sin(T / 150 + q.x)) * 16 : 0) + (run.hit ? Math.max(0, 1 - (run.now - run.hit) / 420) * Math.abs(Math.sin((run.now - run.hit) / 60)) * 24 * run.F : 0);
+    desenhaDado(c, q, lerp(q.x0, q.x, ease(t)), q.y - salto - hop, q.gira * u * u, run, t < .72 ? 1 + Math.floor(run.rng() * q.f) : q.v);
+  });
+  if (run.resto) { c.fillStyle = '#fff'; c.font = '600 14px system-ui,sans-serif'; c.textAlign = 'center'; c.fillText(`+${run.resto} dados`, run.w / 2, run.h - 8); }
+}
+function desenhaFundo(c, run, T) {
+  const { w, h, rec, pal } = run, [a, b, d, det] = FUNDOS[rec.fundo], g = c.createLinearGradient(0, 0, 0, h);
+  g.addColorStop(0, a); g.addColorStop(.6, b); g.addColorStop(1, d);
+  c.fillStyle = g; c.globalAlpha = .96; c.fillRect(-40, -40, w + 80, h + 80); c.globalAlpha = 1;
+  glow(c, run.B.x, run.B.y, Math.max(w, h) * .6, pal[1], .22 + .22 * run.F);
+  const r = run.bgp, tt = T / 1000;
+  switch (det) {
+    case 'estrelas': r.forEach(p => { c.globalAlpha = .3 + .7 * Math.abs(Math.sin(tt * p.v * 2 + p.f)); c.fillStyle = '#fff'; c.fillRect(p.x * w, p.y * h, 1 + p.s, 1 + p.s); }); break;
+    case 'runas': c.font = '16px serif'; c.textAlign = 'center'; r.forEach((p, i) => { c.globalAlpha = .1 + .2 * Math.abs(Math.sin(tt + p.f)); c.fillStyle = pal[0]; c.fillText('ᚠᚢᚦᚨᚱᚲᚷᚹᚺᚾᛁᛃᛇᛈᛉᛊ'[i % 16], p.x * w, ((p.y - tt * .03 * p.v) % 1 + 1) % 1 * h); }); break;
+    case 'chuva': stroke(c, '#9fb8d8', 1, .28); c.beginPath(); r.forEach(p => { const y = ((p.y + tt * p.v * 1.4) % 1) * h, x = p.x * w; c.moveTo(x, y); c.lineTo(x - 4, y + 18); }); c.stroke(); break;
+    case 'folhas': r.forEach(p => { c.globalAlpha = .4; c.fillStyle = '#6fbf62'; c.beginPath(); c.ellipse((p.x + Math.sin(tt + p.f) * .04) * w, ((p.y + tt * .08 * p.v) % 1) * h, 4, 2, tt + p.f, 0, 7); c.fill(); }); break;
+    case 'nevoa': r.slice(0, 6).forEach(p => glow(c, ((p.x + tt * .03 * p.v) % 1) * w, h * (.6 + p.y * .4), 170, '#7f9a88', .08)); break;
+    case 'bolhas': r.forEach(p => { stroke(c, '#bfe8ff', 1, .3); c.beginPath(); c.arc(p.x * w + Math.sin(tt * 2 + p.f) * 6, h - ((p.y + tt * .12 * p.v) % 1) * h, 1.5 + p.s * 2, 0, 7); c.stroke(); }); break;
+    case 'nuvens': r.slice(0, 7).forEach(p => glow(c, ((p.x + tt * .02) % 1) * w, p.y * h * .6, 120, '#ffffff', .14)); break;
+    case 'brasas': r.forEach(p => { c.globalAlpha = .7; c.fillStyle = '#ffb347'; c.fillRect((p.x + Math.sin(tt * 2 + p.f) * .02) * w, h - ((p.y + tt * .16 * p.v) % 1) * h, 2, 2); }); break;
+    case 'neve': r.forEach(p => { c.globalAlpha = .7; c.fillStyle = '#fff'; c.beginPath(); c.arc((p.x + Math.sin(tt + p.f) * .02) * w, ((p.y + tt * .1 * p.v) % 1) * h, 1 + p.s, 0, 7); c.fill(); }); break;
+    case 'poeira': r.forEach(p => { c.globalAlpha = .25; c.fillStyle = '#e8d6a8'; c.fillRect(p.x * w, ((p.y - tt * .03 * p.v) % 1 + 1) % 1 * h, 1.5, 1.5); }); break;
+    case 'sol': { const y = h * (.86 - clamp01(T / 1500) * .14); glow(c, w / 2, y, h * .5, '#ffcf8a', .7); glow(c, w / 2, y, 90, '#fff8e4', 1); break; }
+    case 'sol2': glow(c, w * .78, h * .14, 180, '#fff4c8', .9); break;
+    case 'lua': glow(c, w * .72, h * .16, 120, '#dfe9ff', .55); c.fillStyle = '#eef3ff'; c.globalAlpha = .9; c.beginPath(); c.arc(w * .72, h * .16, 38, 0, 7); c.fill(); r.forEach(p => { c.globalAlpha = .4 + .5 * Math.abs(Math.sin(tt * p.v + p.f)); c.fillStyle = '#fff'; c.fillRect(p.x * w, p.y * h, 1, 1); }); break;
   }
-};
-const FX_FORM_NAMES = Object.keys(FX_FORMS);
-
-function drawPart(c, p) {
+  c.globalAlpha = 1;
+}
+function desenhaTitulo(c, run, T) {
+  const { w, h, rec } = run, a = clamp01((T - 90) / 420), y = h * .085 + 12;
+  c.globalAlpha = a; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillStyle = '#fcebc8';
+  const nome = String(rec.nome).toUpperCase();
+  let px = 21;
+  c.font = `600 ${px}px ${run.fonte}`;
+  while (c.measureText(nome).width > w - 60 && px > 12) { px--; c.font = `600 ${px}px ${run.fonte}`; }
+  c.lineJoin = 'round'; c.strokeStyle = 'rgba(8,8,16,.72)'; c.lineWidth = 4;
+  c.strokeText(nome, w / 2, y); c.fillText(nome, w / 2, y);
+  c.fillStyle = 'rgba(252,235,200,.92)'; c.font = `400 16px ${run.corpo}`; c.lineWidth = 3.5;
+  c.strokeText(rec.cena[1] || '', w / 2, y + 25, w - 30); c.fillText(rec.cena[1] || '', w / 2, y + 25, w - 30);
+  c.globalAlpha = 1;
+}
+function desenhaTotal(c, run) {
+  const { w, h, rec } = run, res = rec.res;
+  if (!res || !run.hit) return;
+  const dt = (run.now - run.hit) / 520, q = run.fix ? 1 : easeBack(clamp01(dt)), base = Math.min(92, 46 + run.K * 26), y = h * .66;
+  const dano = res.temDano ? (res.erro ? 'Errou' : (res.cura ? '+' : '') + res.total) : String(res.aux[0]?.total ?? '');
+  if (!dano) return;
+  c.save(); c.translate(w / 2, y); c.scale(q, q);
+  c.textAlign = 'center'; c.textBaseline = 'middle'; c.font = `700 ${res.erro ? 42 : base}px ${run.fonte}`;
+  c.lineWidth = 6; c.strokeStyle = 'rgba(0,0,0,.65)'; c.lineJoin = 'round'; c.strokeText(dano, 0, 0);
+  c.fillStyle = res.crit ? '#ffd24a' : res.erro ? '#c8ccd6' : run.pal[2]; c.fillText(dano, 0, 0);
+  const sub = res.crit ? 'Crítico!' : res.saltos ? `Saltou ${res.saltos}×` : res.passou ? 'Passou na salvaguarda' : res.temDano && !res.erro ? (rec.elemento || (res.cura ? 'Cura' : '')) : '';
+  if (sub) { c.font = `500 16px ${run.corpo}`; c.lineWidth = 4; c.strokeText(sub, 0, base * .62); c.fillStyle = '#fff'; c.fillText(sub, 0, base * .62); }
+  c.restore();
+}
+function drawPart(c, p, run) {
   const a = Math.max(0, 1 - p.life / p.max);
   c.globalAlpha = a; c.fillStyle = p.c; c.strokeStyle = p.c;
   switch (p.shape) {
     case 'spark': c.lineWidth = Math.max(1, p.size * .5); c.beginPath(); c.moveTo(p.x, p.y); c.lineTo(p.x - p.vx * 2.4, p.y - p.vy * 2.4); c.stroke(); break;
-    case 'streak': c.lineWidth = p.size; c.beginPath(); c.moveTo(p.x, p.y); c.lineTo(p.x - p.vx * 3, p.y - p.vy * 3); c.stroke(); break;
-    case 'diamond': c.beginPath(); c.moveTo(p.x, p.y - p.size); c.lineTo(p.x + p.size * .6, p.y); c.lineTo(p.x, p.y + p.size); c.lineTo(p.x - p.size * .6, p.y); c.fill(); break;
-    case 'plus': c.fillRect(p.x - p.size / 2, p.y - p.size / 6, p.size, p.size / 3); c.fillRect(p.x - p.size / 6, p.y - p.size / 2, p.size / 3, p.size); break;
-    case 'heart': c.beginPath(); c.arc(p.x - p.size / 4, p.y, p.size / 3, 0, 7); c.arc(p.x + p.size / 4, p.y, p.size / 3, 0, 7); c.moveTo(p.x - p.size / 2, p.y + 1); c.lineTo(p.x, p.y + p.size / 1.5); c.lineTo(p.x + p.size / 2, p.y + 1); c.fill(); break;
+    case 'streak': c.lineWidth = p.size; c.beginPath(); c.moveTo(p.x, p.y); c.lineTo(p.x - p.vx * 2.2, p.y - p.vy * 2.2); c.stroke(); break;
+    case 'diamond': c.beginPath(); c.moveTo(p.x, p.y - p.size * 1.4); c.lineTo(p.x + p.size * .7, p.y); c.lineTo(p.x, p.y + p.size * 1.4); c.lineTo(p.x - p.size * .7, p.y); c.fill(); break;
+    case 'estrela': { const s = p.size * (1 - Math.abs(p.life / p.max - .5) * 2); c.beginPath(); c.moveTo(p.x, p.y - s); c.lineTo(p.x + s * .18, p.y - s * .18); c.lineTo(p.x + s, p.y); c.lineTo(p.x + s * .18, p.y + s * .18); c.lineTo(p.x, p.y + s); c.lineTo(p.x - s * .18, p.y + s * .18); c.lineTo(p.x - s, p.y); c.lineTo(p.x - s * .18, p.y - s * .18); c.fill(); break; }
+    case 'folha': c.beginPath(); c.ellipse(p.x, p.y, p.size * 1.4, p.size * .6, p.rot + p.life * .08, 0, 7); c.fill(); break;
+    case 'pena': c.lineWidth = 1.5; c.beginPath(); c.ellipse(p.x, p.y, p.size * .5, p.size * 1.7, Math.sin(p.life * .06) * .8, 0, 7); c.fill(); break;
+    case 'txt': c.font = `600 ${p.size}px ${run?.fonte || 'serif'}`; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText(p.txt, p.x, p.y); break;
+    case 'art': desenhaArte(c, p.art, p.x, p.y, p.size, p.c, { a, rot: p.rot + p.life * (p.gira || 0) }); break;
     default: c.beginPath(); c.arc(p.x, p.y, p.size, 0, 7); c.fill();
   }
   c.globalAlpha = 1;
 }
-function fxFrame(now) {
-  const c = fxState.ctx;
-  c.clearRect(0, 0, innerWidth, innerHeight);
-  c.globalCompositeOperation = 'lighter';
-  fxState.runs = fxState.runs.filter(run => {
-    const t = (now - run.start) / run.ms;
-    if (t < 0) return true;
-    if (t >= 1) return false;
-    drawRune(c, run.A.x, run.A.y, 46 * run.rec.power, run.rec, t);
-    const viaMax = run.rec.via ? .42 : 0;
-    if (run.rec.via && t < viaMax) FX_FORMS[run.rec.via](c, t / viaMax, run);
-    else FX_FORMS[run.rec.form](c, (t - viaMax) / (1 - viaMax), run);
-    return true;
-  });
+function fxPartes(c, run, dt) {
+  run.acum = (run.acum || 0) + dt;
+  const passos = Math.min(4, Math.floor(run.acum / 16.7));
+  run.acum = passos === 4 ? 0 : run.acum - passos * 16.7;
   fxState.parts = fxState.parts.filter(p => {
-    p.x += p.vx; p.y += p.vy; p.vy += p.g; p.vx *= p.drag; p.vy *= p.drag; p.life++;
-    drawPart(c, p);
+    for (let i = 0; i < passos; i++) { p.x += p.vx; p.y += p.vy; p.vy += p.g; p.vx *= p.drag; p.vy *= p.drag; p.life++; }
+    drawPart(c, p, run);
     return p.life < p.max;
   });
-  c.globalCompositeOperation = 'source-over';
-  if (fxState.runs.length || fxState.parts.length) fxState.raf = requestAnimationFrame(fxFrame);
-  else { fxState.raf = 0; c.clearRect(0, 0, innerWidth, innerHeight); }
 }
-/** Toca a animação da magia. Devolve a receita, ou null quando as animações estão desligadas. */
+/** Passa pelos atos da cena no andamento p, de 0 a 1. */
+function fxAtos(c, run, p) {
+  const atos = run.rec.cena.slice(2);
+  for (let i = 0; i < atos.length; i++) {
+    const [verbo, o = {}] = atos[i], [a, b] = o.t || [0, 1];
+    if (p < a) continue;
+    const q = (p - a) / (b - a);
+    if (q > 1) continue;
+    ATOS[verbo](c, clamp01(q), run, o, i);
+  }
+  if (!run.hit && p >= .62 && run.rec.res) impactar(run, run.B.x, run.B.y, .7);
+}
+function novoRun(s, tipo, nivel, res, mode) {
+  const rec = spellRecipe(s, tipo, nivel, res), w = innerWidth, h = innerHeight, imp = impacto(res, nivel || 0), r = fxRng((rec.seed ^ Math.floor(performance.now())) || 1);
+  const css = getComputedStyle(document.documentElement);
+  const run = {
+    rec, pal: rec.palette, rng: r, reduced: mode === 'reduced', w, h, imp, K: imp.tamanho, F: imp.forca, erro: !!imp.erro, U: Math.min(w, h * .62), now: 0, shake: 0, flash: 0, hit: 0, f: {},
+    A: { x: w / 2, y: h * .8 }, B: { x: w / 2, y: h * .36 }, C: { x: w / 2, y: h * .46 }, fonte: css.getPropertyValue('--f-display') || 'serif', corpo: css.getPropertyValue('--f-body') || 'serif',
+    bgp: Array.from({ length: 46 }, () => ({ x: r(), y: r(), v: .4 + r(), f: r() * 6, s: r() * 1.6 }))
+  };
+  fxMontaDados(run);
+  run.dadosMs = run.dados && !run.reduced ? FX_DADOS : 0;
+  run.total = run.reduced ? 1100 : FX_ENTRA + run.dadosMs + FX_ATO + FX_SAI;
+  if (run.reduced) run.fix = .62;
+  return run;
+}
+function fxQuadro(c, run, T) {
+  const dt = T - (run.ultimo ?? T);
+  run.ultimo = T;
+  run.now = run.start + T;
+  c.clearRect(0, 0, run.w, run.h);
+  c.save();
+  if (run.shake > .4) { c.translate((run.rng() - .5) * run.shake, (run.rng() - .5) * run.shake); run.shake *= .9; }
+  desenhaFundo(c, run, T);
+  if (run.fix) fxAtos(c, run, run.fix);
+  else {
+    const p = (T - FX_ENTRA - run.dadosMs) / FX_ATO;
+    if (p >= 0) fxAtos(c, run, Math.min(p, .999));
+  }
+  fxPartes(c, run, dt);
+  desenhaDados(c, run, T);
+  c.restore();
+  desenhaTitulo(c, run, run.fix ? 900 : T);
+  desenhaTotal(c, run);
+  if (run.flash > .01) { c.fillStyle = run.pal[2]; c.globalAlpha = run.flash; c.fillRect(0, 0, run.w, run.h); c.globalAlpha = 1; run.flash *= .86; }
+}
+function fxFrame(now) {
+  const run = fxState.run, cv = fxState.cv;
+  if (!run) return;
+  const T = now - run.start;
+  if (T >= run.total) { fxFim(); return; }
+  // Aparelho lento: baixa a resolução e corta partículas, nesta cena e nas próximas.
+  if (!fxState.leve && run.quadro) { run.qn = (run.qn || 0) + 1; run.qs = (run.qs || 0) + now - run.quadro; if (run.qn === 10) { if (run.qs / 10 > 34) { fxState.leve = true; fxResize(); } run.qn = run.qs = 0; } }
+  run.quadro = now;
+  const sai = run.reduced ? 240 : FX_SAI, entra = run.reduced ? 200 : FX_ENTRA;
+  cv.style.opacity = Math.min(clamp01(T / entra), clamp01((run.total - T) / sai));
+  fxQuadro(fxState.ctx, run, T);
+  fxState.raf = requestAnimationFrame(fxFrame);
+}
+function fxFim() {
+  cancelAnimationFrame(fxState.raf);
+  fxState.raf = 0; fxState.run = null; fxState.parts = [];
+  if (fxState.cv) { fxState.cv.style.opacity = 0; fxState.cv.style.pointerEvents = 'none'; fxState.ctx.clearRect(0, 0, innerWidth, innerHeight); }
+}
+/** Um toque pula para o fim da cena. */
+function fxPular() {
+  const run = fxState.run;
+  if (!run) return;
+  const sai = run.reduced ? 240 : FX_SAI, T = performance.now() - run.start;
+  if (T < run.total - sai) run.start = performance.now() - (run.total - sai);
+}
+/** Toca a cena da magia. Devolve a receita, ou null quando as animações estão desligadas. */
 function playSpell(s, tipo, nivel, res) {
   const mode = fxMode();
   if (mode === 'off') return null;
-  const rec = spellRecipe(s, tipo, nivel);
+  ensureArt();
   fxResize();
-  fxState.runs.push({
-    rec, rng: fxRng(rec.seed ^ performance.now()), start: performance.now(), reduced: mode === 'reduced',
-    ms: Math.min(FX_MAX_MS, (mode === 'reduced' ? 600 : 1500) * rec.tempo),
-    A: { x: innerWidth / 2, y: innerHeight * .78 }, B: { x: innerWidth / 2 + rec.curve * 90, y: innerHeight * .32 }
-  });
+  fxState.parts = [];
+  const run = novoRun(s, tipo, nivel, res, mode);
+  run.start = performance.now();
+  fxState.run = run;
+  fxState.cv.style.pointerEvents = 'auto';
   if (!fxState.raf) fxState.raf = requestAnimationFrame(fxFrame);
-  return rec;
+  return run.rec;
 }
-/** Passa uma receita por todos os quadros sem esperar o relógio. Usada nos testes. */
-function fxDryRun(s, tipo) {
-  const rec = spellRecipe(s, tipo);
-  fxResize();
-  const run = { rec, rng: fxRng(rec.seed), start: 0, ms: 1000, reduced: false, A: { x: 195, y: 600 }, B: { x: 195, y: 250 } }, c = fxState.ctx;
-  fxState.parts.length = 0;
-  for (let i = 0; i <= 12; i++) {
-    const t = i / 12.5;
-    drawRune(c, run.A.x, run.A.y, 40, rec, t);
-    const via = rec.via ? .42 : 0;
-    if (rec.via && t < via) FX_FORMS[rec.via](c, t / via, run); else FX_FORMS[rec.form](c, (t - via) / (1 - via), run);
+/** Mostra a cena sem gastar nada. forca: 0 para o menor resultado, 1 para o maior. */
+function fxPreview(s, forca = .6) {
+  const tipo = castType || s.choice?.[0] || null, sp = diceSpec(s, s.level, { tipo }), L = novoLance(sp);
+  if (!sp.grupos.length) return playSpell(s, tipo, s.level);
+  for (let i = 0; i < sp.inst; i++) {
+    if (sp.atk) L.d20[i] = [15];
+    sp.grupos.forEach(g => { L.dados[cellKey(i, g)] = Array.from({ length: g.n }, (_, j) => Math.max(1, Math.round(1 + forca * (g.f - 1)) - (g.f > 2 && j % 2 && forca < 1 && forca > 0 ? 1 : 0))); });
   }
-  fxState.parts.forEach(p => drawPart(c, p));
-  fxState.parts.length = 0;
-  return rec;
+  return playSpell(s, tipo, s.level, resolveLance(L));
+}
+/** Roda a cena inteira sem esperar o relógio. Usada nos testes e nas folhas de revisão. */
+function fxDryRun(s, tipo, res = null, ate = 1) {
+  fxResize();
+  const run = novoRun(s, tipo, s.level, res, 'full'), c = fxState.ctx, fim = FX_ENTRA + run.dadosMs + FX_ATO * ate;
+  fxState.parts = [];
+  run.start = 0;
+  for (let T = 0; T <= fim; T += 33) fxQuadro(c, run, T);
+  fxState.parts = [];
+  return run.rec;
 }

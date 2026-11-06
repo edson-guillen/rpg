@@ -1,6 +1,6 @@
 // Guarda o app para uso offline. Rede primeiro: com internet, sempre a versão mais nova.
-const CACHE = 'grimorio-v1';
-const ARQUIVOS = ['./', 'index.html', 'data/library.js', 'manifest.webmanifest'];
+const CACHE = 'grimorio-v2';
+const ARQUIVOS = ['./', 'index.html', 'data/library.js', 'data/fx-art.js', 'manifest.webmanifest'];
 
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(ARQUIVOS)).then(() => self.skipWaiting()));

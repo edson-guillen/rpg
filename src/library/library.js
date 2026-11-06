@@ -88,7 +88,7 @@ function mapPrivate(p) {
     id: 'p-' + p.id, name: p.nome, en: p.nomeEn || '', level: +p.circulo || 0, school: { abjuration: 'Abjuração', conjuration: 'Invocação', divination: 'Adivinhação', enchantment: 'Encantamento', evocation: 'Evocação', illusion: 'Ilusão', necromancy: 'Necromancia', transmutation: 'Transmutação' }[p.escola] || p.escola,
     classes: p.classes || [], time: TIME_PT(p.tempo || ''), range: p.alcance || '', comp: p.comp || '', material: p.material || '', dur: p.duracao || '',
     conc: !!p.concentracao, ritual: !!p.ritual, reaction: /^Reação/.test(p.tempo || ''), desc: ps, ...(higher ? { [trecho]: higher } : {}),
-    r: rollsFromPT(ps.join(' '), p.superior || ''), src: 'pessoal', orig: p.original ? { desc: [p.original.texto], higher: p.original.superior || '' } : null, fonte: p.fonte
+    r: rollsFromPT(ps.join(' '), p.superior || ''), src: 'pessoal', ...(p.cena ? { cena: p.cena } : {}), orig: p.original ? { desc: [p.original.texto], higher: p.original.superior || '' } : null, fonte: p.fonte
   };
 }
 function chipOf(s) {
@@ -262,6 +262,9 @@ function renderEditor() {
       <div id="ed-rows">${rows.map(buildRow).join('')}</div>
       <button type="button" class="btn sm" data-action="ed-row-add">${icon('i-plus')}Adicionar linha</button>
       <div class="field" style="margin-top:12px"><label>Escolher o tipo ao conjurar</label><div class="ck-row">${DMG_TYPES.map(t => `<label class="ck"><input type="checkbox" data-choice="${t}" ${draft.choice.includes(t) ? 'checked' : ''}>${t}</label>`).join('')}</div></div>
+      <h4 class="ed-h">Cena</h4>
+      <div class="field"><label for="e-cena">Animação ao conjurar</label><select id="e-cena"><option value="">Automática, pela descrição</option>${libraryAll().filter(x => CENAS[x.id]).sort((a, b) => a.name.localeCompare(b.name, 'pt')).map(x => `<option value="${esc(x.id)}" ${s.cena === x.id ? 'selected' : ''}>${esc(x.name)}</option>`).join('')}</select></div>
+      <button type="button" class="btn sm" data-action="ed-ver">Ver efeito</button>
       <h4 class="ed-h">Consumível vinculado</h4>
       <div class="field-row"><div class="field"><label for="e-mat">Item da mochila</label><select id="e-mat"><option value="">Nenhum</option>${items}</select></div>${F('e-mat-n', 'Quantidade por conjuração', s.mat?.n || 1, 'type="number" min="1" max="99"')}</div>
       <div class="ck-row"><label class="ck"><input type="checkbox" id="e-mat-req" ${s.mat?.required ? 'checked' : ''}>Obrigatório</label><label class="ck"><input type="checkbox" id="e-mat-con" ${s.mat?.required ? (s.mat?.consumed ? 'checked' : '') : 'checked'}>Consumido</label></div>
@@ -275,10 +278,12 @@ function readForm() {
   s.desc = v('#e-desc').split(/\n{2,}/).map(x => x.trim()).filter(Boolean);
   if (s.level) { s.higher = v('#e-higher'); delete s.upgrade; } else { s.upgrade = v('#e-higher'); delete s.higher; }
   draft.atk = ck('#e-atk'); draft.saveA = v('#e-save');
+  if (v('#e-cena')) s.cena = v('#e-cena'); else delete s.cena;
   draft.choice = [...document.querySelectorAll('[data-choice]')].filter(x => x.checked).map(x => x.dataset.choice);
-  draft.rows = [...document.querySelectorAll('.ed-row')].map(el => {
+  const antigas = draft.rows;
+  draft.rows = [...document.querySelectorAll('.ed-row')].map((el, i) => {
     const g = k => el.querySelector(`[data-r="${k}"]`), type = g('type').value;
-    return { d: g('d').value.replace(/\s/g, ''), type, heal: type === 'Cura', up: g('up').value.replace(/\s/g, ''), cantrip: g('cantrip').value.replace(/\s/g, ''), half: g('half').checked };
+    return { ...rowExtras(antigas[i]), d: g('d').value.replace(/\s/g, ''), type, heal: type === 'Cura', up: g('up').value.replace(/\s/g, ''), cantrip: g('cantrip').value.replace(/\s/g, ''), half: g('half').checked };
   });
   const key = v('#e-mat');
   if (key) {
@@ -288,17 +293,23 @@ function readForm() {
     s.mat = { key, n: Math.max(1, +v('#e-mat-n') || 1), ...(required ? { required: true, consumed: ck('#e-mat-con') } : {}) };
   } else delete s.mat;
 }
+/* Regras que o formulário não mostra, como opção, dano posterior e explosão, ficam guardadas na linha. */
+const ROW_EXTRAS = ['alt', 'depois', 'gate', 'addMod', 'addSlot', 'upMod', 'explode', 'maxMod', 'max', 'missHalf', 'orb', 'acumula', 'tiers', 'table', 'label'];
+const rowExtras = r => Object.fromEntries(ROW_EXTRAS.filter(k => r?.[k] !== undefined).map(k => [k, r[k]]));
+function draftRolls() {
+  const { s } = draft, rolls = (s.r || []).filter(x => x.t === 'note' || x.t === 'aux');
+  if (draft.atk) rolls.unshift({ t: 'atk' });
+  if (draft.saveA) rolls.push({ t: 'save', a: draft.saveA });
+  draft.rows.filter(r => /^\d+d\d+([+-]\d+)?$/.test(r.d)).forEach(r => {
+    rolls.push({ t: 'dmg', d: r.d, type: r.type, ...(r.heal ? { heal: true } : {}), ...(r.half ? { half: true } : {}), ...(r.up ? { up: r.up } : {}), ...(r.cantrip ? { cantrip: r.cantrip } : {}), ...(draft.atk ? { crit: true } : {}), ...rowExtras(r) });
+  });
+  return rolls;
+}
 function saveEditor() {
   readForm();
   const { s, id } = draft;
   if (!s.name) { $('#e-name').focus(); return; }
-  const rolls = (s.r || []).filter(x => x.t === 'note');
-  if (draft.atk) rolls.unshift({ t: 'atk' });
-  if (draft.saveA) rolls.push({ t: 'save', a: draft.saveA });
-  draft.rows.filter(r => /^\d+d\d+([+-]\d+)?$/.test(r.d)).forEach(r => {
-    rolls.push({ t: 'dmg', d: r.d, type: r.type, ...(r.heal ? { heal: true } : {}), ...(r.half ? { half: true } : {}), ...(r.up ? { up: r.up } : {}), ...(r.cantrip ? { cantrip: r.cantrip } : {}), ...(draft.atk ? { crit: true } : {}) });
-  });
-  s.r = rolls;
+  s.r = draftRolls();
   s.dmgChip = chipOf(s) || undefined;
   if (draft.choice.length) s.choice = draft.choice; else delete s.choice;
   delete s._hay;
@@ -340,6 +351,7 @@ document.addEventListener('click', e => {
     case 'ed-row-add': readForm(); draft.rows.push(newRow()); renderEditor(); break;
     case 'ed-row-del': readForm(); draft.rows.splice(+b.dataset.i, 1); renderEditor(); break;
     case 'ed-restore': restoreSpell(); break;
+    case 'ed-ver': readForm(); fxPreview({ ...draft.s, id: draft.id || 'previa', name: draft.s.name || 'Magia nova', r: draftRolls(), choice: draft.choice }); break;
   }
 });
 document.addEventListener('submit', e => { if (e.target.id === 'spell-form') { e.preventDefault(); saveEditor(); } });

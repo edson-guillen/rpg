@@ -47,9 +47,10 @@ function rollsSection(s) {
     const base = baseDice(x), variants = [[base, s.level]];
     if (x.table) LEVELS.filter(l => l > s.level && x.table[l]).forEach(l => variants.push([x.table[l] + modExpr(x), l]));
     else if (x.up) LEVELS.filter(l => l > s.level).forEach(l => variants.push([addDice(base, x.up, l - s.level), l]));
-    const btns = variants.map(([e, l]) => rollBtn({ kind: 'dmg', expr: e, src: s.id, crit: x.crit, explode: x.explode, max: x.max, half: x.half, orb: x.orb, type: x.type,
+    const btns = variants.map(([e, l]) => rollBtn({ kind: 'dmg', expr: e, src: s.id, crit: x.crit, explode: x.explode, max: x.max, half: x.half, orb: x.orb, type: s.choice?.length && castType && !x.heal ? castType : x.type,
       label: s.name + (l > s.level ? ` (${ORD(l)} círc.)` : '') }, `${icon('i-die')}<b class="num">${showDice(e)}</b>${l > s.level ? `<small>${ORD(l)}</small>` : ''}`)).join('');
-    return `<div class="rr"><span class="rk dmg">${x.heal ? 'CURA' : 'DANO'}</span><div class="rt"><b>${showDice(base)} ${x.type}</b>
+    const tipo = s.choice?.length && castType && !x.heal ? castType : x.type;
+    return `<div class="rr"><span class="rk dmg">${x.heal ? 'CURA' : 'DANO'}</span><div class="rt"><b>${showDice(base)} ${tipo}</b>
       <span>${x.label ? x.label + ' · ' : ''}média ${decimal(avgOf(base))}${x.half ? ' · metade se passar' : ''}${x.up ? ` · +${x.up} por círculo acima` : ''}${x.cantrip ? ' · cresce nos níveis 5, 11 e 17' : ''}</span></div><div class="rbs">${btns}</div></div>`;
   }).join('');
   return `<div class="rolls-box"><h4>Números e rolagens</h4>${rows}</div>`;
@@ -91,12 +92,19 @@ function castSection(s) {
   if (castMeta.has('quick')) notes.push('<b>Acelerada:</b> conjurada como Ação Bônus. Neste turno, sua Ação só pode lançar <b>truques</b>.');
   if (s.conc && state.conc && state.conc !== s.id) notes.push(`⚠ Conjurar encerra a concentração em <b>${esc(SPELL[state.conc].name)}</b>.`);
   if (s.level && !blk && !LEVELS.some(l => l >= s.level && totalAvail(l))) notes.push('Sem espaços disponíveis. Use a <b>Fonte de Magia</b> para criar um ou faça um Descanso Longo.');
-  return `<div class="cast"><h4>Conjurar</h4><div class="mt-group" role="group" aria-label="Metamagia">${metas}
+  if (s.choice?.length && !castType) notes.unshift('Escolha o elemento acima antes de conjurar.');
+  return `${typeSection(s)}<div class="cast"><h4>Conjurar</h4><div class="mt-group" role="group" aria-label="Metamagia">${metas}
       <p class="note">Metamagia: uma por magia · você tem <b>${state.res.sp} PF</b></p></div>${matBtn ? `<div class="meta-toggles">${matBtn}</div>` : ''}
     <div class="cast-row">${btns}</div>${matNote}${notes.map(n => `<p class="note" style="margin-top:8px">${n}</p>`).join('')}</div>`;
 }
 
-let showOriginal = false;
+let showOriginal = false, castType = null;
+const chosenFor = s => activeChar().choices?.[s.id] || null;
+function typeSection(s) {
+  if (!s.choice?.length) return '';
+  const chips = s.choice.map(t => `<button class="mt" data-action="cast-type" data-t="${esc(t)}" aria-pressed="${castType === t}">${esc(t)}</button>`).join('');
+  return `<div class="cast-types"><h4>Escolha o elemento</h4><div class="mt-group" role="group" aria-label="Elemento">${chips}</div></div>`;
+}
 function spellTools(s) {
   return `<div class="m-actions"><button class="btn sm ghost" data-action="spell-edit" data-id="${esc(s.id)}">Editar magia</button><button class="btn sm ghost" data-action="lib-remove" data-id="${esc(s.id)}">Remover do grimório</button></div>`;
 }
@@ -106,7 +114,7 @@ function libActions(s) {
     <button class="btn" data-action="spell-copy" data-id="${id}">Duplicar e editar</button><button class="btn" data-action="spell-edit" data-id="${id}">Editar</button></div>`;
 }
 function spellModal(id, fromLib = false) {
-  const s = fromLib ? libGet(id) : SPELL[id]; castMeta = new Set(); castMat = true; showOriginal = false;
+  const s = fromLib ? libGet(id) : SPELL[id]; castMeta = new Set(); castMat = true; showOriginal = false; castType = s ? chosenFor(s) : null;
   openModal(() => {
     const tags = [`<span class="tag">${esc(s.school)}</span>`];
     if (s.conc) tags.push('<span class="tag conc">Concentração</span>');
@@ -131,6 +139,7 @@ function spellModal(id, fromLib = false) {
 
 function doCast(id, lv) {
   const s = SPELL[id], cost = metaCost(), prev = state.conc;
+  if (s.choice?.length && !castType) { toast('Escolha o elemento antes de conjurar', false); return; }
   if (blocked(s)) { toast(`${s.name} bloqueada: falta ${matItem(s.mat.key)?.name || 'componente'}`, false); return; }
   const gasta = s.mat && (!s.mat.required || s.mat.consumed);
   const it = gasta ? matItem(s.mat.key) : null, n = s.mat?.n || 1;
@@ -152,7 +161,12 @@ function doCast(id, lv) {
     if (s.effect === 'shield') st.fx.shield = true;
     if (s.effect === 'mirror') st.fx.mirror = 3;
   });
-  if (ok) closeModal(); else toast('Recursos insuficientes', false);
+  if (ok) {
+    const c = activeChar();
+    if (castType) { c.choices = { ...c.choices, [s.id]: castType }; c.lastElement = castType; persistStore(); }
+    closeModal();
+    playSpell(s, castType, lv || s.level);
+  } else toast('Recursos insuficientes', false);
 }
 
 /* ---------- Descansos ---------- */

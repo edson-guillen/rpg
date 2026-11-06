@@ -457,3 +457,5 @@ footer.foot{margin-top:28px;text-align:center;color:var(--faint);font-size:14px}
 .ck{display:inline-flex;align-items:center;gap:6px;font-size:15px;color:var(--text)}
 .foot a{color:inherit}
 .field select,.field textarea{width:100%}
+.cast-types{margin-bottom:10px}
+.cast-types h4{margin-bottom:6px}

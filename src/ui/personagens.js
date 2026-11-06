@@ -1,6 +1,7 @@
 /* =====================================================================
    PERSONAGENS — trocar, criar, duplicar, exportar e excluir
    ===================================================================== */
+const ANIM_LABEL = { full: 'completas', reduced: 'reduzidas', off: 'desligadas' };
 function renderHero() {
   const c = activeChar();
   $('#char-name-txt').textContent = c.name;
@@ -8,6 +9,7 @@ function renderHero() {
   $('#char-eyebrow').textContent = `D&D 2024 · Grimório${c.subclassId === 'draconic' ? ' Dracônico' : ''}`;
   $('#carry-aside').textContent = (CHAR.carry ? `Carga máx. ${CHAR.carry} · ` : '') + 'toque no nome para editar';
   document.title = `${c.name} · Grimório`;
+  $('#anim-label').textContent = `Animações: ${ANIM_LABEL[store.settings.anim || 'full']}`;
 }
 
 /** Redesenha tudo depois que o personagem, a store ou o escopo das notas mudam. */
@@ -122,6 +124,13 @@ document.addEventListener('click', e => {
   const id = b.dataset.id;
   switch (b.dataset.action) {
     case 'chars': charsModal(); break;
+    case 'anim-cycle': {
+      const seq = ['full', 'reduced', 'off'];
+      store.settings.anim = seq[(seq.indexOf(store.settings.anim || 'full') + 1) % 3];
+      persistStore(); renderHero(); toggleMenu(false);
+      toast(`Animações ${ANIM_LABEL[store.settings.anim]}`, false);
+      break;
+    }
     case 'char-switch': closeModal(); if (switchCharacter(id)) toast(`Agora com ${activeChar().name}`, false); break;
     case 'char-dup': closeModal(); duplicateCharacter(id); break;
     case 'char-export': exportCharacter(id); break;

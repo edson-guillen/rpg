@@ -11,7 +11,7 @@ const src = f => fs.readFileSync(path.join(root, 'src', f), 'utf8');
 export const APP_FILES = [
   'core/store.js', 'core/state.js', 'core/utils.js', 'core/dice.js',
   'ui/header-slots.js', 'ui/ficha.js', 'ui/grimorio.js', 'ui/recursos-mochila.js',
-  'ui/modais.js', 'ui/acoes.js', 'ui/init.js', 'notes/notes.js', 'ui/personagens.js', 'library/library.js', 'ui/boot.js',
+  'ui/modais.js', 'ui/acoes.js', 'ui/init.js', 'notes/notes.js', 'ui/personagens.js', 'library/library.js', 'fx/spellfx.js', 'ui/boot.js',
 ];
 
 export function build() {

@@ -21,6 +21,7 @@ const OLD_NOTES = {
   ui: { topic: 'all', open: null }
 };
 
+const DMG = { Fogo: '#ffb347', Frio: '#bfeeff' };
 const VIEWPORTS = { celular: { width: 390, height: 844 }, desktop: { width: 1280, height: 800 } };
 let falhas = 0, total = 0;
 const ok = (cond, msg) => { total++; if (!cond) { falhas++; console.log(`    FALHOU: ${msg}`); } };
@@ -310,6 +311,52 @@ const cenarios = {
     ok(!r.armazenado, 'texto pessoal fica fora do localStorage');
     await page.reload();
     await page.waitForFunction(() => privateSpells.length === 2);
+    ok(!erros.length, `sem erros de JS: ${erros}`);
+    await ctx.close();
+  },
+
+  async 'toda magia tem animação única e sem erros'({ browser, opts }) {
+    const { ctx, page, erros } = await abrir(browser, opts);
+    const r = await page.evaluate(async () => {
+      await ensureLibrary();
+      const ms = [...libraryAll(), ...SPELLS], sigs = new Set(libraryAll().map(s => fxSignature(spellRecipe(s)))), formas = new Set(), falhas = [];
+      for (const s of ms) {
+        try {
+          const rec = fxDryRun(s); formas.add(rec.form);
+          if (!FX_FORMS[rec.form]) falhas.push(s.id);
+          (s.choice || []).forEach(t => fxDryRun(s, t));
+        } catch (e) { falhas.push(s.id + ': ' + e.message); }
+      }
+      const dano = libraryAll().filter(s => s.r.some(x => x.t === 'dmg' && !x.heal && DMG_COLORS[x.type])).every(s => spellRecipe(s).elemento);
+      return { total: libraryAll().length, unicas: sigs.size, formas: formas.size, falhas: falhas.slice(0, 5), dano, fogo: spellRecipe(libGet('fireball')).palette[0], frio: spellRecipe(libGet('cone-of-cold')).palette[0], todas: FX_FORM_NAMES.length };
+    });
+    ok(r.total === 339 && r.unicas === 339, `339 assinaturas únicas (${r.unicas})`);
+    ok(!r.falhas.length, `nenhuma falha: ${r.falhas}`);
+    ok(r.dano, 'toda magia de dano usa a paleta do tipo');
+    ok(r.fogo === DMG.Fogo && r.frio === DMG.Frio, 'fogo e frio têm cores próprias');
+    ok(r.formas >= 18, `formas em uso: ${r.formas} de ${r.todas}`);
+    ok(!erros.length, `sem erros de JS: ${erros}`);
+    await ctx.close();
+  },
+
+  async 'escolha de elemento antes de animar e rolar'({ browser, opts }) {
+    const { ctx, page, erros } = await abrir(browser, opts);
+    await aba(page, 'grimorio');
+    await page.evaluate(() => spellModal('sorcerous-burst'));
+    await clicar(page, '[data-action="cast"]');
+    ok(await page.evaluate(() => !document.querySelector('#modal').hidden), 'sem elemento não conjura');
+    await clicar(page, '[data-action="cast-type"][data-t="Fogo"]');
+    ok((await page.locator('.rolls-box').textContent()).includes('Fogo'), 'rolagem mostra o elemento');
+    const antes = await page.evaluate(() => { window.__fx = null; const p = playSpell; playSpell = (...a) => { window.__fx = a[1]; return p(...a); }; return 1; });
+    await clicar(page, '[data-action="cast"]');
+    await page.waitForFunction(() => activeChar().choices?.['sorcerous-burst'] === 'Fogo');
+    ok(await page.evaluate(() => window.__fx) === 'Fogo', 'animação recebe o elemento');
+    ok(await page.evaluate(() => activeChar().lastElement) === 'Fogo', 'última escolha guardada');
+    await page.waitForFunction(() => document.querySelector('#modal').hidden);
+    await page.evaluate(() => spellModal('sorcerous-burst'));
+    ok(await page.locator('[data-action="cast-type"][data-t="Fogo"]').getAttribute('aria-pressed') === 'true', 'lembra a última escolha');
+    await page.evaluate(() => { closeModal(); store.settings.anim = 'off'; });
+    ok(await page.evaluate(() => playSpell(SPELLS[0])) === null, 'animações desligadas não tocam');
     ok(!erros.length, `sem erros de JS: ${erros}`);
     await ctx.close();
   },

@@ -1,0 +1,6 @@
+{
+  "chromatic-orb": { "choice": ["Ácido", "Frio", "Fogo", "Elétrico", "Veneno", "Trovejante"], "r": [{ "t": "atk" }, { "t": "dmg", "d": "3d8", "type": "Elemento escolhido", "crit": true, "up": "1d8", "orb": true }] },
+  "magic-missile": { "r": [{ "t": "dmg", "d": "1d4+1", "type": "Energético", "label": "Por dardo · 3 dardos, +1 por círculo acima" }] },
+  "protection-from-energy": { "choice": ["Ácido", "Frio", "Fogo", "Elétrico", "Trovejante"] },
+  "dragons-breath": { "choice": ["Ácido", "Frio", "Fogo", "Elétrico", "Veneno"] }
+}

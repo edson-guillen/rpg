@@ -30,7 +30,7 @@ function blankSheet() {
     calc: { ac: '10 + DES', hp: '6 + CON', dc: '8 + BP + CAR', atk: 'BP + CAR' },
     abilities: base.abilities.map(({ k, n, prof }) => ({ k, n, s: 10, ...(prof ? { prof } : {}) })),
     skills: base.skills.map(([n, a]) => [n, a]),
-    tools: [], attacks: [], slots: { 1: 2 }, createSlotCost: { 1: 2 }, metamagic: [], passives: [], items: [],
+    tools: [], attacks: [], slots: { 1: 2 }, createSlotCost: { 1: 2 }, metamagic: [], passives: [], items: [], limits: { cantrips: 4, prepared: 2 },
     resources: [
       { ...res('sp'), max: 0, desc: 'Pontos de Feitiçaria chegam no nível 2 do Feiticeiro.' },
       { ...res('innate'), desc: '<b>+1 na CD</b> e <b>Vantagem</b> nas jogadas de ataque de magias de Feiticeiro.' },
@@ -87,11 +87,18 @@ if (!store) { store = migrateStore(); persistStore(); }
 
 const activeChar = () => store.characters.find(c => c.id === store.activeId);
 
+/** Magias do personagem: as da ficha, mais as adicionadas, menos as removidas, com as alterações do usuário. */
+function composeSpells(c) {
+  const g = c.grimoire || { added: [], removed: [] }, ov = store.library.overrides;
+  const base = (c.template === 'soren' ? SOREN_SPELLS : c.spells).filter(s => !g.removed.includes(s.id));
+  return [...base, ...g.added.filter(s => !base.some(b => b.id === s.id))].map(s => (ov[s.id] ? { ...s, ...ov[s.id] } : s));
+}
+
 /* Valores da ficha ativa. Todo o app lê daqui; trocar de personagem só reaponta estas variáveis. */
 let CHAR, SPELLS, LEVELS, RES, SPELL, META;
 function bindSheet(c) {
   CHAR = c.template === 'soren' ? SOREN : c.sheet;
-  SPELLS = c.template === 'soren' ? SOREN_SPELLS : c.spells;
+  SPELLS = composeSpells(c);
   LEVELS = Object.keys(CHAR.slots).map(Number);
   RES = Object.fromEntries(CHAR.resources.map(r => [r.id, r]));
   SPELL = Object.fromEntries(SPELLS.map(s => [s.id, s]));

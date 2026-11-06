@@ -147,7 +147,11 @@
 
     <!-- ======================= GRIMÓRIO ======================= -->
     <section class="panel-tab" id="tab-grimorio" role="tabpanel" aria-labelledby="t-grimorio">
-      <div class="toolbar">
+      <div class="nscope" role="group" aria-label="Grimório ou biblioteca">
+        <button class="filter" data-action="grim-view" data-v="meu" aria-pressed="true">Meu grimório</button>
+        <button class="filter" data-action="grim-view" data-v="lib" aria-pressed="false">Biblioteca</button>
+      </div>
+      <div id="grim-view"><div class="toolbar">
         <div class="search">
           <svg class="ic"><use href="#i-search"/></svg>
           <input id="q" type="search" placeholder="Buscar magia, efeito, dano…" autocomplete="off" aria-label="Buscar magia">
@@ -155,7 +159,9 @@
         </div>
         <div class="filters" id="filters" role="group" aria-label="Filtrar magias"></div>
       </div>
-      <div id="grim"></div>
+      <div id="grim"></div></div>
+      <div id="lib-view" hidden></div>
+      <input type="file" id="lib-file" accept="application/json,.json" hidden>
     </section>
 
     <!-- ======================= RECURSOS ======================= -->
@@ -197,7 +203,7 @@
     </section>
   </main>
 
-  <footer class="foot">Progresso salvo automaticamente neste navegador.</footer>
+  <footer class="foot">Progresso salvo automaticamente neste navegador.<br>Contém material do <a href="https://dndbeyond.com/srd" rel="noopener">System Reference Document 5.2</a>, da Wizards of the Coast, sob licença <a href="https://creativecommons.org/licenses/by/4.0/legalcode" rel="noopener">CC BY 4.0</a>.</footer>
 </div>
 
 <div class="modal" id="modal" hidden>

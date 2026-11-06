@@ -659,6 +659,25 @@ details.passive ul{padding-left:18px}
 footer.foot a{color:var(--frost)}
 footer.foot{margin-top:28px;text-align:center;color:var(--faint);font-size:14px}
 @media (prefers-reduced-motion:reduce){ *,*::before,*::after{animation:none!important;transition:none!important} html{scroll-behavior:auto} }
+.lib-bar{display:grid;gap:10px;margin-bottom:14px}
+.lib-filters{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+@media (min-width:760px){ .lib-filters{grid-template-columns:repeat(4,1fr)} }
+.lf{display:grid;gap:2px;font-size:13px;color:var(--muted);min-width:0}
+.lf select{min-height:40px;width:100%;border-radius:10px;border:1px solid var(--line);background:var(--bg2);color:var(--text);padding:4px 8px;font-size:15px}
+.lf select option{background:#141b27}
+.lib-actions{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
+.lib-actions .note{flex:1 1 100%;margin:0}
+.lib-card{cursor:pointer;padding:12px;border:1px solid var(--line);border-radius:14px;background:var(--bg2)}
+.lib-card:hover,.lib-card:focus-visible{border-color:var(--frost);outline:none}
+.lib-card b{display:block;color:var(--gold-l);font-size:17px}
+.lib-card small{color:var(--muted);font-size:14px}
+.s-tags{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px}
+.ed-row{display:grid;grid-template-columns:1fr 1fr;gap:0 10px;padding:10px;border:1px solid var(--line);border-radius:12px;margin-bottom:8px}
+.ed-h{margin:14px 0 8px;color:var(--gold-l);font-size:15px}
+.ck-row{display:flex;flex-wrap:wrap;gap:6px 14px;margin-bottom:10px}
+.ck{display:inline-flex;align-items:center;gap:6px;font-size:15px;color:var(--text)}
+.foot a{color:inherit}
+.field select,.field textarea{width:100%}
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <style id="fx-css">
@@ -881,7 +900,11 @@ body::after{content:"";position:fixed;inset:0;z-index:300;pointer-events:none;op
 
     <!-- ======================= GRIMÓRIO ======================= -->
     <section class="panel-tab" id="tab-grimorio" role="tabpanel" aria-labelledby="t-grimorio">
-      <div class="toolbar">
+      <div class="nscope" role="group" aria-label="Grimório ou biblioteca">
+        <button class="filter" data-action="grim-view" data-v="meu" aria-pressed="true">Meu grimório</button>
+        <button class="filter" data-action="grim-view" data-v="lib" aria-pressed="false">Biblioteca</button>
+      </div>
+      <div id="grim-view"><div class="toolbar">
         <div class="search">
           <svg class="ic"><use href="#i-search"/></svg>
           <input id="q" type="search" placeholder="Buscar magia, efeito, dano…" autocomplete="off" aria-label="Buscar magia">
@@ -889,7 +912,9 @@ body::after{content:"";position:fixed;inset:0;z-index:300;pointer-events:none;op
         </div>
         <div class="filters" id="filters" role="group" aria-label="Filtrar magias"></div>
       </div>
-      <div id="grim"></div>
+      <div id="grim"></div></div>
+      <div id="lib-view" hidden></div>
+      <input type="file" id="lib-file" accept="application/json,.json" hidden>
     </section>
 
     <!-- ======================= RECURSOS ======================= -->
@@ -931,7 +956,7 @@ body::after{content:"";position:fixed;inset:0;z-index:300;pointer-events:none;op
     </section>
   </main>
 
-  <footer class="foot">Progresso salvo automaticamente neste navegador.</footer>
+  <footer class="foot">Progresso salvo automaticamente neste navegador.<br>Contém material do <a href="https://dndbeyond.com/srd" rel="noopener">System Reference Document 5.2</a>, da Wizards of the Coast, sob licença <a href="https://creativecommons.org/licenses/by/4.0/legalcode" rel="noopener">CC BY 4.0</a>.</footer>
 </div>
 
 <div class="modal" id="modal" hidden>
@@ -950,6 +975,7 @@ body::after{content:"";position:fixed;inset:0;z-index:300;pointer-events:none;op
 const SOREN = {
   stats: { ac: 16, shieldBonus: 5, hpMax: 30, dc: 14, atk: 6, init: 2, speed: '10,5 m', pb: 2, cha: 4, conSave: 4 },
   hitDie: 6, conMod: 2,
+  limits: { cantrips: 5, prepared: 7 },
   calc: {
     ac: '10 + DES 2 + CAR 4 (Resiliência Dracônica)',
     hp: '8 (nv 1: 6 + CON 2) + 18 (3 × [4 + CON 2]) + 4 (Resiliência Dracônica)',
@@ -1243,7 +1269,7 @@ function blankSheet() {
     calc: { ac: '10 + DES', hp: '6 + CON', dc: '8 + BP + CAR', atk: 'BP + CAR' },
     abilities: base.abilities.map(({ k, n, prof }) => ({ k, n, s: 10, ...(prof ? { prof } : {}) })),
     skills: base.skills.map(([n, a]) => [n, a]),
-    tools: [], attacks: [], slots: { 1: 2 }, createSlotCost: { 1: 2 }, metamagic: [], passives: [], items: [],
+    tools: [], attacks: [], slots: { 1: 2 }, createSlotCost: { 1: 2 }, metamagic: [], passives: [], items: [], limits: { cantrips: 4, prepared: 2 },
     resources: [
       { ...res('sp'), max: 0, desc: 'Pontos de Feitiçaria chegam no nível 2 do Feiticeiro.' },
       { ...res('innate'), desc: '<b>+1 na CD</b> e <b>Vantagem</b> nas jogadas de ataque de magias de Feiticeiro.' },
@@ -1300,11 +1326,18 @@ if (!store) { store = migrateStore(); persistStore(); }
 
 const activeChar = () => store.characters.find(c => c.id === store.activeId);
 
+/** Magias do personagem: as da ficha, mais as adicionadas, menos as removidas, com as alterações do usuário. */
+function composeSpells(c) {
+  const g = c.grimoire || { added: [], removed: [] }, ov = store.library.overrides;
+  const base = (c.template === 'soren' ? SOREN_SPELLS : c.spells).filter(s => !g.removed.includes(s.id));
+  return [...base, ...g.added.filter(s => !base.some(b => b.id === s.id))].map(s => (ov[s.id] ? { ...s, ...ov[s.id] } : s));
+}
+
 /* Valores da ficha ativa. Todo o app lê daqui; trocar de personagem só reaponta estas variáveis. */
 let CHAR, SPELLS, LEVELS, RES, SPELL, META;
 function bindSheet(c) {
   CHAR = c.template === 'soren' ? SOREN : c.sheet;
-  SPELLS = c.template === 'soren' ? SOREN_SPELLS : c.spells;
+  SPELLS = composeSpells(c);
   LEVELS = Object.keys(CHAR.slots).map(Number);
   RES = Object.fromEntries(CHAR.resources.map(r => [r.id, r]));
   SPELL = Object.fromEntries(SPELLS.map(s => [s.id, s]));
@@ -1421,7 +1454,7 @@ const decimal = n => String(Math.round(n * 10) / 10).replace('.', ',');
 const SAVE_NAME = { FOR: 'Força', DES: 'Destreza', CON: 'Constituição', INT: 'Inteligência', SAB: 'Sabedoria', CAR: 'Carisma' };
 const matItem = key => state.items.find(i => i.key === key);
 const matQty = key => matItem(key)?.qty ?? 0;
-const blocked = s => !!(s.mat?.required && matQty(s.mat.key) < 1);
+const blocked = s => !!(s.mat?.required && matQty(s.mat.key) < (s.mat.n || 1));
 
 /* =====================================================================
    DADOS (rolagens)
@@ -1673,11 +1706,13 @@ function renderFicha() {
 /* =====================================================================
    ABA GRIMÓRIO
    ===================================================================== */
-const FILTERS = [
-  { id: 'all', label: 'Todas' }, { id: '0', label: 'Truques' }, { id: '1', label: '1º Círculo' }, { id: '2', label: '2º Círculo' },
-  { id: 'conc', label: 'Concentração' }, { id: 'noconc', label: 'Sem concentração' }, { id: 'drac', label: 'Dracônicas' }
+const filterList = () => [
+  { id: 'all', label: 'Todas' }, ...(SPELLS.some(s => !s.level) ? [{ id: '0', label: 'Truques' }] : []),
+  ...[...new Set(SPELLS.filter(s => s.level).map(s => s.level))].sort((a, b) => a - b).map(l => ({ id: String(l), label: ORD(l) + ' Círculo' })),
+  { id: 'conc', label: 'Concentração' }, { id: 'noconc', label: 'Sem concentração' },
+  ...(SPELLS.some(s => s.draconic) ? [{ id: 'drac', label: 'Dracônicas' }] : [])
 ];
-const GROUP_NAME = { 0: 'Truques', 1: '1º Círculo', 2: '2º Círculo' };
+const GROUP_NAME = { 0: 'Truques' };
 let query = '';
 
 function highlight(text, q) {
@@ -1695,18 +1730,19 @@ function matchFilter(s, f) {
   return String(s.level) === f;
 }
 function spellHaystack(s) {
-  return s._hay || (s._hay = norm([s.name, s.en, s.school, s.sum, s.time, s.range, s.dur, ...(s.desc || []), ...(s.list || []), ...(s.desc2 || []), s.conc ? 'concentracao' : '', s.draconic ? 'draconica' : ''].map(strip).join(' ')));
+  return s._hay || (s._hay = norm([s.name, s.en, s.school, s.sum, s.time, s.range, s.dur, ...(s.desc || []), ...(s.orig?.desc || []), ...(s.list || []), ...(s.desc2 || []), s.conc ? 'concentracao' : '', s.draconic ? 'draconica' : ''].map(strip).join(' ')));
 }
 
 function renderFilters() {
-  $('#filters').innerHTML = FILTERS.map(f => `<button class="filter" data-action="filter" data-f="${f.id}" aria-pressed="${state.ui.filter === f.id}">${f.label}</button>`).join('');
+  $('#filters').innerHTML = filterList().map(f => `<button class="filter" data-action="filter" data-f="${f.id}" aria-pressed="${state.ui.filter === f.id}">${f.label}</button>`).join('');
 }
 
 function spellCard(s, q) {
   const tags = [], rr = s.r || [], atk = rr.find(x => x.t === 'atk');
   if (atk) tags.push(`<span class="tag atk">ATQ ${sign(atk.bonus ?? CHAR.stats.atk)}</span>`);
   rr.filter(x => x.t === 'save').forEach(x => tags.push(`<span class="tag save">CD ${dc()} · ${x.a}</span>`));
-  if (s.dmgChip) tags.push(`<span class="tag dmg">${esc(s.dmgChip)}</span>`);
+  const dano = (s.r || []).find(x => x.t === 'dmg');
+  if (s.dmgChip) tags.push(`<span class="tag dmg">${esc(dano?.cantrip ? baseDice(dano) : s.dmgChip)}</span>`);
   if (blocked(s)) tags.push('<span class="tag block">Bloqueada</span>');
   if (s.time !== '1 Ação') tags.push(`<span class="tag ${s.reaction ? 'react' : ''}">${s.reaction ? 'Reação' : esc(s.time)}</span>`);
   tags.push(`<span class="tag">${esc(s.range.replace(/ \(.*\)/, ''))}</span>`);
@@ -1838,24 +1874,32 @@ let castMeta = new Set();
 const metaCost = () => [...castMeta].reduce((a, id) => a + META[id].cost, 0);
 
 let castMat = true;
+/** Dados de uma linha, já com o escalonamento de truque pelo nível e o modificador de conjuração. */
+const cantripTier = () => { const n = activeChar().level; return n >= 17 ? 4 : n >= 11 ? 3 : n >= 5 ? 2 : 1; };
+const modExpr = x => (x.addMod ? sign(CHAR.stats.cha).replace('−', '-') : '');
+function baseDice(x) {
+  const d = x.cantrip ? addDice(x.d, x.cantrip, cantripTier() - 1) : x.d;
+  return x.addMod ? d + modExpr(x) : d;
+}
 function rollsSection(s) {
   if (!s.r || !s.r.length) return '';
   const rows = s.r.map(x => {
     if (x.t === 'atk') {
       const bonus = x.bonus ?? CHAR.stats.atk, spell = x.spell !== false, adv = spell && state.fx.innate;
       return `<div class="rr"><span class="rk atk">ATQ</span><div class="rt"><b>${x.label || 'Ataque mágico'} ${sign(bonus)}</b>
-        <span>d20 + ${bonus} (BP 2 + CAR 4)${adv ? ' · <b>Vantagem</b> (Feitiçaria Inata)' : ''}</span></div>
+        <span>d20 + ${bonus} (${CHAR.calc.atk})${adv ? ' · <b>Vantagem</b> (Feitiçaria Inata)' : ''}</span></div>
         ${rollBtn({ kind: 'd20', bonus, atk: 1, src: s.id, adv: spell ? 'spell' : null, label: `${s.name} · ataque` }, `${icon('i-d20')}<b class="num">${sign(bonus)}</b>`)}</div>`;
     }
     if (x.t === 'save') return `<div class="rr"><span class="rk save">CD ${dc()}</span><div class="rt"><b>Salvaguarda de ${SAVE_NAME[x.a]}</b><span>${x.txt || 'O alvo rola contra a sua CD'}</span></div></div>`;
     if (x.t === 'dc') return `<div class="rr"><span class="rk save">CD ${dc()}</span><div class="rt"><b>${x.txt}</b></div></div>`;
     if (x.t === 'note') return `<div class="rr"><span class="rk note">NOTA</span><div class="rt"><span>${x.txt}</span></div></div>`;
-    const variants = [[x.d, s.level]];
-    if (x.up) LEVELS.filter(l => l > s.level).forEach(l => variants.push([addDice(x.d, x.up, l - s.level), l]));
+    const base = baseDice(x), variants = [[base, s.level]];
+    if (x.table) LEVELS.filter(l => l > s.level && x.table[l]).forEach(l => variants.push([x.table[l] + modExpr(x), l]));
+    else if (x.up) LEVELS.filter(l => l > s.level).forEach(l => variants.push([addDice(base, x.up, l - s.level), l]));
     const btns = variants.map(([e, l]) => rollBtn({ kind: 'dmg', expr: e, src: s.id, crit: x.crit, explode: x.explode, max: x.max, half: x.half, orb: x.orb, type: x.type,
       label: s.name + (l > s.level ? ` (${ORD(l)} círc.)` : '') }, `${icon('i-die')}<b class="num">${showDice(e)}</b>${l > s.level ? `<small>${ORD(l)}</small>` : ''}`)).join('');
-    return `<div class="rr"><span class="rk dmg">DANO</span><div class="rt"><b>${showDice(x.d)} ${x.type}</b>
-      <span>${x.label ? x.label + ' · ' : ''}média ${decimal(avgOf(x.d))}${x.half ? ' · metade se passar' : ''}${x.up ? ` · +${x.up} por círculo acima` : ''}</span></div><div class="rbs">${btns}</div></div>`;
+    return `<div class="rr"><span class="rk dmg">${x.heal ? 'CURA' : 'DANO'}</span><div class="rt"><b>${showDice(base)} ${x.type}</b>
+      <span>${x.label ? x.label + ' · ' : ''}média ${decimal(avgOf(base))}${x.half ? ' · metade se passar' : ''}${x.up ? ` · +${x.up} por círculo acima` : ''}${x.cantrip ? ' · cresce nos níveis 5, 11 e 17' : ''}</span></div><div class="rbs">${btns}</div></div>`;
   }).join('');
   return `<div class="rolls-box"><h4>Números e rolagens</h4>${rows}</div>`;
 }
@@ -1875,7 +1919,7 @@ function castSection(s) {
       if (subtle && !blk) matNote = `<p class="mat-line">${icon('i-gem')}Magia Sutil não dispensa o ${esc(name)} (tem custo em PO).</p>`;
       else matNote = blk
         ? box('Bloqueada', `Requer <b>${esc(name)}</b> e você tem <b>0</b>. Quando conseguir um, ajuste a quantidade na Mochila.`, 'warn')
-        : `<p class="mat-line">${icon('i-gem')}${esc(name)}: <b>${q}</b> no inventário — necessário, não é consumido.</p>`;
+        : `<p class="mat-line">${icon('i-gem')}${esc(name)}: <b>${q}</b> no inventário — ${s.mat.consumed ? `necessário, gasta ${n} por conjuração` : 'necessário, não é consumido'}.</p>`;
     } else if (subtle) {
       matNote = `<p class="mat-line">${icon('i-hush')}Magia Sutil: sem componentes — o estoque de <b>${esc(name)}</b> não é usado.</p>`;
     } else {
@@ -1901,8 +1945,17 @@ function castSection(s) {
     <div class="cast-row">${btns}</div>${matNote}${notes.map(n => `<p class="note" style="margin-top:8px">${n}</p>`).join('')}</div>`;
 }
 
-function spellModal(id) {
-  const s = SPELL[id]; castMeta = new Set(); castMat = true;
+let showOriginal = false;
+function spellTools(s) {
+  return `<div class="m-actions"><button class="btn sm ghost" data-action="spell-edit" data-id="${esc(s.id)}">Editar magia</button><button class="btn sm ghost" data-action="lib-remove" data-id="${esc(s.id)}">Remover do grimório</button></div>`;
+}
+function libActions(s) {
+  const tem = inGrimoire(s), id = esc(s.id);
+  return `<div class="m-actions">${tem ? `<button class="btn ghost" data-action="lib-remove" data-id="${id}">Remover do grimório</button>` : `<button class="btn gold" data-action="lib-add" data-id="${id}">${icon('i-plus')}Adicionar ao grimório</button>`}
+    <button class="btn" data-action="spell-copy" data-id="${id}">Duplicar e editar</button><button class="btn" data-action="spell-edit" data-id="${id}">Editar</button></div>`;
+}
+function spellModal(id, fromLib = false) {
+  const s = fromLib ? libGet(id) : SPELL[id]; castMeta = new Set(); castMat = true; showOriginal = false;
   openModal(() => {
     const tags = [`<span class="tag">${esc(s.school)}</span>`];
     if (s.conc) tags.push('<span class="tag conc">Concentração</span>');
@@ -1915,20 +1968,22 @@ function spellModal(id) {
     const P = t => `<p>${fmt(t)}</p>`;
     return `<div class="${lvClass(s.level)}">${mHead(s.level ? `${ORD(s.level)} Círculo · ${s.school}` : `Truque · ${s.school}`, esc(s.name), esc(s.en))}
       <div class="m-tags">${tags.join('')}</div>
-      <dl class="props">${prop('Tempo de Conjuração', s.time)}${prop('Alcance', s.range)}${prop('Componentes', s.comp)}${prop('Duração', s.dur)}</dl>
+      <dl class="props">${prop('Tempo de Conjuração', s.time)}${prop('Alcance', s.range)}${prop('Componentes', s.comp + (s.material ? ` (${s.material})` : ''))}${prop('Duração', s.dur)}${s.area ? prop('Área', s.area.text) : ''}${s.ritual ? prop('Ritual', 'Pode ser conjurada como ritual') : ''}</dl>
       ${rollsSection(s)}
-      <div class="m-body">${s.desc.map(P).join('')}${s.list ? `<ul>${s.list.map(li => `<li>${fmt(li)}</li>`).join('')}</ul>` : ''}${(s.desc2 || []).map(P).join('')}</div>
-      ${s.upgrade ? box('Aprimoramento de Truque', fmt(s.upgrade)) : ''}${s.higher ? box('Em círculos superiores', fmt(s.higher)) : ''}
+      ${s.orig ? `<div class="m-tags"><button class="btn sm ghost" data-action="spell-orig" aria-pressed="${showOriginal}">${showOriginal ? 'Ver em português' : 'Ver original'}</button></div>` : ''}
+      ${showOriginal && s.orig ? `<div class="m-body" lang="en">${s.orig.desc.map(P).join('')}</div>${s.orig.upgrade ? box('Cantrip Upgrade', fmt(s.orig.upgrade)) : ''}${s.orig.higher ? box('Using a Higher-Level Spell Slot', fmt(s.orig.higher)) : ''}` : `<div class="m-body">${s.desc.map(P).join('')}${s.list ? `<ul>${s.list.map(li => `<li>${fmt(li)}</li>`).join('')}</ul>` : ''}${(s.desc2 || []).map(P).join('')}</div>
+      ${s.upgrade ? box('Aprimoramento de Truque', fmt(s.upgrade)) : ''}${s.higher ? box('Em círculos superiores', fmt(s.higher)) : ''}`}
       ${s.warn ? box('Atenção', fmt(s.warn), 'warn') : ''}${s.tactic ? box(`Tática de ${esc(activeChar().name.split(' ')[0])}`, fmt(s.tactic), 'tactic') : ''}
-      ${castSection(s)}</div>`;
+      ${fromLib ? libActions(s) : castSection(s) + spellTools(s)}</div>`;
   });
 }
 
 function doCast(id, lv) {
   const s = SPELL[id], cost = metaCost(), prev = state.conc;
   if (blocked(s)) { toast(`${s.name} bloqueada: falta ${matItem(s.mat.key)?.name || 'componente'}`, false); return; }
-  const it = s.mat && !s.mat.required ? matItem(s.mat.key) : null, n = s.mat?.n || 1;
-  const useMat = !!(it && castMat && !castMeta.has('subtle') && (it.qty ?? 0) >= n);
+  const gasta = s.mat && (!s.mat.required || s.mat.consumed);
+  const it = gasta ? matItem(s.mat.key) : null, n = s.mat?.n || 1;
+  const useMat = !!(it && (s.mat.required || (castMat && !castMeta.has('subtle'))) && (it.qty ?? 0) >= n);
   const metaTxt = [...castMeta].map(m => META[m].name).join(' + ');
   let label = `${s.name} conjurada${lv ? ` (${ORD(lv)})` : ''}${metaTxt ? ` · ${metaTxt} (−${cost} PF)` : ''}`;
   if (useMat) label += ` · −${n}${it.unit === 'cm' ? ' cm' : ''} ${it.name} (resta ${it.qty - n})`;
@@ -2161,6 +2216,7 @@ function handle(a, el) {
     case 'filter': setUI('filter', ds.f); renderFilters(); renderGrim(); break;
     case 'clear-q': query = ''; $('#q').value = ''; syncClear(); renderGrim(); $('#q').focus(); break;
     case 'spell': spellModal(ds.id); break;
+    case 'spell-orig': showOriginal = !showOriginal; if (modalRefresh) modalRefresh(); break;
     case 'meta-toggle': { const on = castMeta.has(ds.id); castMeta.clear(); if (!on) castMeta.add(ds.id); modalRefresh?.(); break; }
     case 'goto-sp': setTab('magia'); setTimeout(() => $('#sp-hub').scrollIntoView({ block: 'start', behavior: 'smooth' }), 40); break;
     case 'cast': doCast(ds.id, +ds.lv); break;
@@ -2562,7 +2618,6 @@ try { document.execCommand('defaultParagraphSeparator', false, 'p'); } catch (e)
 
 function initNotes() { renderNoteList(); renderNoteEditor(); }
 
-refreshAll();
 /* =====================================================================
    PERSONAGENS — trocar, criar, duplicar, exportar e excluir
    ===================================================================== */
@@ -2719,6 +2774,356 @@ window.addEventListener('storage', e => {
   notes = loadNotes(); renderNotesScope(); renderNoteList();
   if (!document.activeElement?.closest?.('#note-editor')) renderNoteEditor();
 });
+/* =====================================================================
+   BIBLIOTECA DE MAGIAS
+   Junta o SRD (público, carregado sob demanda), a biblioteca pessoal
+   (importada pelo usuário e guardada só no IndexedDB deste navegador)
+   e as magias criadas ou alteradas na aba.
+   ===================================================================== */
+const LIB_FILTERS_DEFAULT = { q: '', level: '', school: '', cls: 'sorcerer', dmg: '', conc: '', ritual: '', time: '', src: '' };
+const LIB_PAGE = 40;
+const ABIL_KEYS = Object.keys(SAVE_NAME);
+const DMG_TYPES = ['Ácido', 'Contundente', 'Cortante', 'Elétrico', 'Energético', 'Fogo', 'Frio', 'Necrótico', 'Perfurante', 'Psíquico', 'Radiante', 'Trovejante', 'Veneno'];
+const SCHOOLS = ['Abjuração', 'Adivinhação', 'Encantamento', 'Evocação', 'Ilusão', 'Invocação', 'Necromancia', 'Transmutação'];
+const CLASS_NAMES = { artificer: 'Artífice', barbarian: 'Bárbaro', bard: 'Bardo', cleric: 'Clérigo', druid: 'Druida', fighter: 'Guerreiro', monk: 'Monge', paladin: 'Paladino', ranger: 'Patrulheiro', rogue: 'Ladino', sorcerer: 'Feiticeiro', warlock: 'Bruxo', wizard: 'Mago' };
+
+let libFilters = { ...LIB_FILTERS_DEFAULT }, libLimit = LIB_PAGE, libStatus = 'idle', grimView = 'meu', privateSpells = [];
+
+/* ---------- carregamento sob demanda ---------- */
+function ensureLibrary() {
+  if (window.GRIMORIO_LIBRARY) { libStatus = 'ok'; return Promise.resolve(true); }
+  if (libStatus === 'loading') return libLoading;
+  libStatus = 'loading';
+  // Script em vez de fetch: assim a biblioteca também abre por file://.
+  libLoading = new Promise(res => {
+    const s = document.createElement('script');
+    s.src = 'data/library.js';
+    s.onload = () => { libStatus = 'ok'; res(true); };
+    s.onerror = () => { libStatus = 'erro'; res(false); };
+    document.head.appendChild(s);
+  });
+  return libLoading;
+}
+let libLoading = null;
+
+/* ---------- biblioteca pessoal (IndexedDB) ---------- */
+function idb() {
+  return new Promise((res, rej) => {
+    const r = indexedDB.open('grimorio', 1);
+    r.onupgradeneeded = () => r.result.createObjectStore('biblioteca');
+    r.onsuccess = () => res(r.result);
+    r.onerror = () => rej(r.error);
+  });
+}
+async function idbGet(k) {
+  const db = await idb();
+  return new Promise(res => { const q = db.transaction('biblioteca').objectStore('biblioteca').get(k); q.onsuccess = () => res(q.result); q.onerror = () => res(null); });
+}
+async function idbSet(k, v) {
+  const db = await idb();
+  return new Promise((res, rej) => { const t = db.transaction('biblioteca', 'readwrite'); if (v === null) t.objectStore('biblioteca').delete(k); else t.objectStore('biblioteca').put(v, k); t.oncomplete = () => res(true); t.onerror = () => rej(t.error); });
+}
+async function loadPrivate() {
+  try { privateSpells = ((await idbGet('pessoal'))?.magias || []).map(mapPrivate); } catch (e) { privateSpells = []; }
+}
+
+const TIME_PT = t => /^Ação Bônus/.test(t) ? '1 Ação Bônus' : /^Ação/.test(t) ? '1 Ação' : /^Reação/.test(t) ? 'Reação' : t;
+function rollsFromPT(text, higher) {
+  const r = [], t = text.replace(/<[^>]+>/g, ' ');
+  if (/jogada de ataque/i.test(t)) r.push({ t: 'atk' });
+  const nomes = { Força: 'FOR', Destreza: 'DES', Constituição: 'CON', Inteligência: 'INT', Sabedoria: 'SAB', Carisma: 'CAR' };
+  [...new Set([...t.matchAll(/salvaguarda de (Força|Destreza|Constituição|Inteligência|Sabedoria|Carisma)/g)].map(m => nomes[m[1]]))].forEach(a => r.push({ t: 'save', a }));
+  const metade = /metade/i.test(t), up = higher.match(/aumenta em (\d+d\d+)/)?.[1], vistos = new Set();
+  for (const m of t.matchAll(/(\d+d\d+(?:\s*\+\s*\d+)?) de dano (\p{L}+)/gu)) {
+    const d = m[1].replace(/\s/g, '');
+    if (vistos.has(d + m[2])) continue;
+    vistos.add(d + m[2]);
+    r.push({ t: 'dmg', d, type: m[2], ...(metade ? { half: true } : {}) });
+  }
+  const dano = r.find(x => x.t === 'dmg');
+  if (dano && up) dano.up = up;
+  if (dano) r.filter(x => x.t === 'atk').length && (dano.crit = true);
+  return r;
+}
+function mapPrivate(p) {
+  const ps = String(p.texto || '').split(/\n+/).filter(Boolean), higher = String(p.superior || '').replace(/^[^.]*\.\s*/, '');
+  const trecho = /^Aprimoramento/.test(p.superior || '') ? 'upgrade' : 'higher';
+  return {
+    id: 'p-' + p.id, name: p.nome, en: p.nomeEn || '', level: +p.circulo || 0, school: { abjuration: 'Abjuração', conjuration: 'Invocação', divination: 'Adivinhação', enchantment: 'Encantamento', evocation: 'Evocação', illusion: 'Ilusão', necromancy: 'Necromancia', transmutation: 'Transmutação' }[p.escola] || p.escola,
+    classes: p.classes || [], time: TIME_PT(p.tempo || ''), range: p.alcance || '', comp: p.comp || '', material: p.material || '', dur: p.duracao || '',
+    conc: !!p.concentracao, ritual: !!p.ritual, reaction: /^Reação/.test(p.tempo || ''), desc: ps, ...(higher ? { [trecho]: higher } : {}),
+    r: rollsFromPT(ps.join(' '), p.superior || ''), src: 'pessoal', orig: p.original ? { desc: [p.original.texto], higher: p.original.superior || '' } : null, fonte: p.fonte
+  };
+}
+function chipOf(s) {
+  const d = (s.r || []).find(x => x.t === 'dmg');
+  return d ? d.d : '';
+}
+
+/** Todas as magias, sem repetir: a versão pessoal completa a do SRD; alterações do usuário vêm por último. */
+function libraryAll() {
+  const map = new Map();
+  for (const s of window.GRIMORIO_LIBRARY?.magias || []) map.set(s.id, s);
+  const porEn = new Map([...map.values()].map(s => [norm(s.en), s.id]));
+  for (const p of privateSpells) {
+    const id = p.en ? porEn.get(norm(p.en)) : null;
+    if (id) {
+      const b = map.get(id);
+      map.set(id, { ...b, name: p.name, desc: p.desc, higher: p.higher ?? b.higher, upgrade: p.upgrade ?? b.upgrade, material: p.material || b.material, src: 'srd+pessoal', fonte: p.fonte });
+    } else map.set(p.id, p);
+  }
+  for (const c of store.library.custom) map.set(c.id, c);
+  for (const [id, o] of Object.entries(store.library.overrides)) if (map.has(id)) map.set(id, { ...o, id, base: map.get(id) });
+  return [...map.values()];
+}
+const libGet = id => libraryAll().find(s => s.id === id) || SPELL[id];
+const inGrimoire = s => SPELLS.some(x => x.id === s.id || (s.en && norm(x.en || '') === norm(s.en)));
+
+/* ---------- filtros ---------- */
+function libMatches(s, f, q) {
+  if (f.level !== '' && String(s.level) !== f.level) return false;
+  if (f.school && s.school !== f.school) return false;
+  if (f.cls && !(s.classes || []).includes(f.cls) && s.src !== 'minha') return false;
+  if (f.dmg && !(s.r || []).some(x => x.t === 'dmg' && x.type === f.dmg) && !(s.choice || []).includes(f.dmg)) return false;
+  if (f.conc && String(!!s.conc) !== f.conc) return false;
+  if (f.ritual && String(!!s.ritual) !== f.ritual) return false;
+  if (f.time && !String(s.time).startsWith(f.time)) return false;
+  if (f.src === 'srd' && !String(s.src).startsWith('srd')) return false;
+  if (f.src === 'pessoal' && !String(s.src).includes('pessoal')) return false;
+  if (f.src === 'minha' && s.src !== 'minha' && !store.library.overrides[s.id]) return false;
+  return !q || spellHaystack(s).includes(q);
+}
+const SRC_TAG = { srd: 'SRD', 'srd+pessoal': 'SRD + pessoal', pessoal: 'Pessoal', minha: 'Minha' };
+
+function renderLibrary() {
+  const box = $('#lib-view');
+  if (libStatus === 'idle' || libStatus === 'loading') {
+    box.innerHTML = '<p class="empty">Abrindo a biblioteca…</p>';
+    ensureLibrary().then(() => { if (grimView === 'lib') renderLibrary(); });
+    return;
+  }
+  const f = libFilters, q = norm(f.q.trim());
+  const sel = (key, label, opts) => `<label class="lf"><span>${label}</span><select data-lib="${key}">${opts.map(([v, t]) => `<option value="${esc(v)}" ${f[key] === v ? 'selected' : ''}>${esc(t)}</option>`).join('')}</select></label>`;
+  const aviso = libStatus === 'erro' ? `<p class="note">O arquivo da biblioteca não foi encontrado. Abra pelo site ou mantenha a pasta <b>data</b> junto do <b>index.html</b>. Suas magias e a biblioteca pessoal continuam disponíveis.</p>` : '';
+  const all = libraryAll(), list = all.filter(s => libMatches(s, f, q)).sort((a, b) => a.level - b.level || a.name.localeCompare(b.name, 'pt-BR'));
+  box.innerHTML = `${aviso}<div class="lib-bar">
+      <div class="search"><svg class="ic"><use href="#i-search"/></svg><input id="lib-q" type="search" value="${esc(f.q)}" placeholder="Buscar em português ou inglês…" autocomplete="off" aria-label="Buscar na biblioteca"></div>
+      <div class="lib-filters">
+        ${sel('level', 'Círculo', [['', 'Todos'], ['0', 'Truques'], ...[1, 2, 3, 4, 5, 6, 7, 8, 9].map(n => [String(n), n + 'º'])])}
+        ${sel('school', 'Escola', [['', 'Todas'], ...SCHOOLS.map(x => [x, x])])}
+        ${sel('cls', 'Classe', [['', 'Todas'], ...Object.entries(CLASS_NAMES).filter(([k]) => k !== 'barbarian' && k !== 'fighter' && k !== 'monk' && k !== 'rogue')])}
+        ${sel('dmg', 'Dano', [['', 'Todos'], ...DMG_TYPES.map(x => [x, x])])}
+        ${sel('conc', 'Concentração', [['', 'Tanto faz'], ['true', 'Sim'], ['false', 'Não']])}
+        ${sel('ritual', 'Ritual', [['', 'Tanto faz'], ['true', 'Sim'], ['false', 'Não']])}
+        ${sel('time', 'Tempo', [['', 'Todos'], ['1 Ação', 'Ação'], ['1 Ação Bônus', 'Ação Bônus'], ['Reação', 'Reação']])}
+        ${sel('src', 'Fonte', [['', 'Todas'], ['srd', 'SRD'], ['pessoal', 'Pessoal'], ['minha', 'Minhas']])}
+      </div>
+      <div class="lib-actions"><span class="note" id="lib-count">${list.length} de ${all.length} magias</span>
+        <button class="btn sm" data-action="lib-clear">Limpar filtros</button>
+        <button class="btn sm" data-action="lib-import">${icon('i-up')}Biblioteca pessoal${privateSpells.length ? ` (${privateSpells.length})` : ''}</button>
+        <button class="btn sm gold" data-action="spell-new">${icon('i-plus')}Criar magia</button></div>
+    </div>
+    <div class="spell-list">${list.slice(0, libLimit).map(s => {
+      const dano = chipOf(s), tem = inGrimoire(s);
+      return `<div class="spell lib-card ${lvClass(s.level)}" data-action="lib-open" data-id="${esc(s.id)}" role="button" tabindex="0">
+        <div class="s-main"><b>${esc(s.name)}</b><small>${s.level ? ORD(s.level) + ' círculo' : 'Truque'} · ${esc(s.school)}${s.en && s.en !== s.name ? ' · ' + esc(s.en) : ''}</small>
+        <div class="s-tags"><span class="tag">${SRC_TAG[s.src] || s.src}</span>${dano ? `<span class="tag dmg">${esc(dano)}</span>` : ''}${s.conc ? '<span class="tag conc">Conc.</span>' : ''}${s.ritual ? '<span class="tag">Ritual</span>' : ''}${tem ? '<span class="tag new">No grimório</span>' : ''}</div></div></div>`;
+    }).join('') || '<p class="empty">Nenhuma magia com esses filtros.</p>'}</div>
+    ${list.length > libLimit ? `<div class="add-row"><button class="btn block" data-action="lib-more">Mostrar mais (${list.length - libLimit})</button></div>` : ''}`;
+}
+
+function setGrimView(v) {
+  grimView = v;
+  $('#grim-view').hidden = v !== 'meu';
+  $('#lib-view').hidden = v !== 'lib';
+  document.querySelectorAll('[data-action="grim-view"]').forEach(b => b.setAttribute('aria-pressed', b.dataset.v === v));
+  if (v === 'lib') renderLibrary(); else renderGrim();
+}
+
+/* ---------- grimório do personagem ---------- */
+function grimoireOf(c) { return c.grimoire || (c.grimoire = { added: [], removed: [] }); }
+function afterGrimoire() {
+  bindSheet(activeChar());
+  persistStore();
+  render();
+  if (grimView === 'lib') renderLibrary();
+  if (modalRefresh) modalRefresh();
+}
+function limitMessage(s) {
+  const lim = CHAR.limits, n = SPELLS.filter(x => !x.draconic && (s.level ? x.level > 0 : x.level === 0)).length;
+  if (s.level && !LEVELS.some(l => l >= s.level)) return `${s.name} é de ${ORD(s.level)} círculo: você ainda não tem espaços desse círculo.`;
+  if (lim && !s.level && n >= lim.cantrips) return `Você já conhece ${lim.cantrips} truques. Remova um antes de adicionar outro.`;
+  if (lim && s.level && n >= lim.prepared) return `Você já tem ${lim.prepared} magias preparadas. Remova uma antes de adicionar outra.`;
+  return '';
+}
+function addToGrimoire(id) {
+  const s = libGet(id), msg = limitMessage(s);
+  if (msg) { toast(msg, false); return; }
+  const g = grimoireOf(activeChar()), { orig, base, _hay, ...copia } = s;
+  g.removed = g.removed.filter(x => x !== s.id);
+  if (!SOREN_SPELLS.some(x => x.id === s.id && activeChar().template === 'soren')) g.added.push({ ...copia, orig: orig || null });
+  afterGrimoire();
+  toast(`${s.name} adicionada ao grimório`, true, () => removeFromGrimoire(s.id, true));
+}
+function removeFromGrimoire(id, silent) {
+  const g = grimoireOf(activeChar()), s = SPELL[id];
+  const estava = g.added.some(x => x.id === id);
+  g.added = g.added.filter(x => x.id !== id);
+  if (!estava) g.removed.push(id);
+  if (state.conc === id) state.conc = null;
+  afterGrimoire();
+  if (!silent && s) toast(`${s.name} removida do grimório`, true, () => { if (estava) g.added.push(s); else g.removed = g.removed.filter(x => x !== id); afterGrimoire(); });
+}
+
+/* ---------- importador privado ---------- */
+async function importPrivate(file) {
+  try {
+    const d = JSON.parse(await file.text());
+    if (d.tipo !== 'biblioteca-pessoal' || !Array.isArray(d.magias)) throw new Error('formato');
+    await idbSet('pessoal', d);
+    await loadPrivate();
+    store.library.privateRefs = { magias: d.magias.length, talentos: (d.talentos || []).length, importado: new Date().toISOString() };
+    persistStore();
+    if (grimView === 'lib') renderLibrary();
+    toast(`Biblioteca pessoal importada: ${d.magias.length} magias, só neste navegador`, false);
+  } catch (e) { toast('Arquivo de biblioteca inválido', false); }
+}
+
+/* ---------- editor de magias ---------- */
+let draft = null;
+const newRow = () => ({ d: '1d6', type: 'Fogo', half: false, up: '', cantrip: '', heal: false, choose: false });
+
+function openEditor(id) {
+  const s = id ? clone(stripSpell(libGet(id))) : { name: '', en: '', level: 1, school: 'Evocação', time: '1 Ação', range: '', comp: 'V, S', dur: 'Instantânea', conc: false, ritual: false, classes: ['sorcerer'], desc: [''], r: [], src: 'minha' };
+  draft = { id: id || null, s, rows: (s.r || []).filter(x => x.t === 'dmg').map(x => ({ ...newRow(), ...x, choose: !!s.choice && x === (s.r || []).find(y => y.t === 'dmg') })), saveA: (s.r || []).find(x => x.t === 'save')?.a || '', atk: (s.r || []).some(x => x.t === 'atk'), choice: s.choice || [] };
+  renderEditor();
+}
+function stripSpell(s) { const { _hay, base, ...r } = s; return r; }
+
+function renderEditor() {
+  const { s, rows } = draft, F = (id, label, val, extra = '') => `<div class="field"><label for="${id}">${label}</label><input id="${id}" value="${esc(val ?? '')}" ${extra}></div>`;
+  const items = state.items.map(it => `<option value="${esc(it.key || it.id)}" ${s.mat?.key === (it.key || it.id) ? 'selected' : ''}>${esc(it.name)}</option>`).join('');
+  const buildRow = (r, i) => `<div class="ed-row" data-row="${i}">
+      <div class="field"><label>Dados</label><input data-r="d" value="${esc(r.d)}" placeholder="8d6"></div>
+      <div class="field"><label>Tipo</label><select data-r="type">${[...DMG_TYPES, 'Cura'].map(t => `<option ${r.type === t || (t === 'Cura' && r.heal) ? 'selected' : ''}>${t}</option>`).join('')}</select></div>
+      <div class="field"><label>Por círculo acima</label><input data-r="up" value="${esc(r.up || '')}" placeholder="1d6"></div>
+      <div class="field"><label>Truque (5/11/17)</label><input data-r="cantrip" value="${esc(r.cantrip || '')}" placeholder="1d10"></div>
+      <label class="ck"><input type="checkbox" data-r="half" ${r.half ? 'checked' : ''}>Metade se passar</label>
+      <button type="button" class="btn sm ghost" data-action="ed-row-del" data-i="${i}">${icon('i-trash')}Remover</button></div>`;
+  const body = () => `${mHead('Editor de magias', draft.id ? 'Alterar magia' : 'Nova magia')}
+    <form id="spell-form" style="margin-top:14px" autocomplete="off">
+      <div class="field-row">${F('e-name', 'Nome', s.name, 'required maxlength="80"')}${F('e-en', 'Nome em inglês', s.en, 'maxlength="80"')}</div>
+      <div class="field-row"><div class="field"><label for="e-level">Círculo</label><select id="e-level">${[0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map(n => `<option value="${n}" ${s.level === n ? 'selected' : ''}>${n ? n + 'º' : 'Truque'}</option>`).join('')}</select></div>
+        <div class="field"><label for="e-school">Escola</label><select id="e-school">${SCHOOLS.map(x => `<option ${s.school === x ? 'selected' : ''}>${x}</option>`).join('')}</select></div></div>
+      <div class="field-row">${F('e-time', 'Tempo de conjuração', s.time)}${F('e-range', 'Alcance', s.range)}</div>
+      <div class="field-row">${F('e-comp', 'Componentes', s.comp)}${F('e-dur', 'Duração', s.dur)}</div>
+      ${F('e-material', 'Material', s.material || '', 'maxlength="160"')}
+      <div class="ck-row"><label class="ck"><input type="checkbox" id="e-conc" ${s.conc ? 'checked' : ''}>Concentração</label><label class="ck"><input type="checkbox" id="e-ritual" ${s.ritual ? 'checked' : ''}>Ritual</label><label class="ck"><input type="checkbox" id="e-atk" ${draft.atk ? 'checked' : ''}>Jogada de ataque</label></div>
+      <div class="field"><label for="e-save">Salvaguarda</label><select id="e-save"><option value="">Nenhuma</option>${ABIL_KEYS.map(a => `<option ${draft.saveA === a ? 'selected' : ''}>${a}</option>`).join('')}</select></div>
+      <div class="field"><label for="e-desc">Descrição</label><textarea id="e-desc" rows="5" maxlength="5000">${esc((s.desc || []).join('\n\n'))}</textarea></div>
+      <div class="field"><label for="e-higher">${s.level ? 'Em círculos superiores' : 'Aprimoramento de truque'}</label><textarea id="e-higher" rows="2" maxlength="800">${esc(s.level ? s.higher || '' : s.upgrade || '')}</textarea></div>
+      <h4 class="ed-h">Dano e cura</h4>
+      <div id="ed-rows">${rows.map(buildRow).join('')}</div>
+      <button type="button" class="btn sm" data-action="ed-row-add">${icon('i-plus')}Adicionar linha</button>
+      <div class="field" style="margin-top:12px"><label>Escolher o tipo ao conjurar</label><div class="ck-row">${DMG_TYPES.map(t => `<label class="ck"><input type="checkbox" data-choice="${t}" ${draft.choice.includes(t) ? 'checked' : ''}>${t}</label>`).join('')}</div></div>
+      <h4 class="ed-h">Consumível vinculado</h4>
+      <div class="field-row"><div class="field"><label for="e-mat">Item da mochila</label><select id="e-mat"><option value="">Nenhum</option>${items}</select></div>${F('e-mat-n', 'Quantidade por conjuração', s.mat?.n || 1, 'type="number" min="1" max="99"')}</div>
+      <div class="ck-row"><label class="ck"><input type="checkbox" id="e-mat-req" ${s.mat?.required ? 'checked' : ''}>Obrigatório</label><label class="ck"><input type="checkbox" id="e-mat-con" ${s.mat?.required ? (s.mat?.consumed ? 'checked' : '') : 'checked'}>Consumido</label></div>
+      <div class="m-actions">${draft.id && store.library.overrides[draft.id] ? '<button type="button" class="btn ghost" data-action="ed-restore">Restaurar original</button>' : ''}<button type="button" class="btn ghost" data-action="close">Cancelar</button><button class="btn gold">Salvar</button></div>
+    </form>`;
+  openModal(body);
+}
+function readForm() {
+  const { s } = draft, v = id => $(id).value.trim(), ck = id => $(id).checked;
+  Object.assign(s, { name: v('#e-name'), en: v('#e-en'), level: +v('#e-level'), school: v('#e-school'), time: v('#e-time'), range: v('#e-range'), comp: v('#e-comp'), dur: v('#e-dur'), material: v('#e-material'), conc: ck('#e-conc'), ritual: ck('#e-ritual') });
+  s.desc = v('#e-desc').split(/\n{2,}/).map(x => x.trim()).filter(Boolean);
+  if (s.level) { s.higher = v('#e-higher'); delete s.upgrade; } else { s.upgrade = v('#e-higher'); delete s.higher; }
+  draft.atk = ck('#e-atk'); draft.saveA = v('#e-save');
+  draft.choice = [...document.querySelectorAll('[data-choice]')].filter(x => x.checked).map(x => x.dataset.choice);
+  draft.rows = [...document.querySelectorAll('.ed-row')].map(el => {
+    const g = k => el.querySelector(`[data-r="${k}"]`), type = g('type').value;
+    return { d: g('d').value.replace(/\s/g, ''), type, heal: type === 'Cura', up: g('up').value.replace(/\s/g, ''), cantrip: g('cantrip').value.replace(/\s/g, ''), half: g('half').checked };
+  });
+  const key = v('#e-mat');
+  if (key) {
+    const it = state.items.find(x => (x.key || x.id) === key);
+    if (it && !it.key) it.key = key;
+    const required = ck('#e-mat-req');
+    s.mat = { key, n: Math.max(1, +v('#e-mat-n') || 1), ...(required ? { required: true, consumed: ck('#e-mat-con') } : {}) };
+  } else delete s.mat;
+}
+function saveEditor() {
+  readForm();
+  const { s, id } = draft;
+  if (!s.name) { $('#e-name').focus(); return; }
+  const rolls = (s.r || []).filter(x => x.t === 'note');
+  if (draft.atk) rolls.unshift({ t: 'atk' });
+  if (draft.saveA) rolls.push({ t: 'save', a: draft.saveA });
+  draft.rows.filter(r => /^\d+d\d+([+-]\d+)?$/.test(r.d)).forEach(r => {
+    rolls.push({ t: 'dmg', d: r.d, type: r.type, ...(r.heal ? { heal: true } : {}), ...(r.half ? { half: true } : {}), ...(r.up ? { up: r.up } : {}), ...(r.cantrip ? { cantrip: r.cantrip } : {}), ...(draft.atk ? { crit: true } : {}) });
+  });
+  s.r = rolls;
+  s.dmgChip = chipOf(s) || undefined;
+  if (draft.choice.length) s.choice = draft.choice; else delete s.choice;
+  delete s._hay;
+  const novo = !id || String(id).startsWith('m-');
+  if (novo) {
+    s.id = id || newId('m-'); s.src = 'minha';
+    store.library.custom = [...store.library.custom.filter(x => x.id !== s.id), s];
+  } else { s.id = id; store.library.overrides[id] = s; }
+  for (const c of store.characters) { const g = c.grimoire; if (g) g.added = g.added.map(x => (x.id === s.id ? s : x)); }
+  save();
+  closeModal();
+  afterGrimoire();
+  toast(`${s.name} salva`, false);
+}
+function restoreSpell() {
+  delete store.library.overrides[draft.id];
+  for (const c of store.characters) { const g = c.grimoire; if (g) g.added = g.added.map(x => (x.id === draft.id ? (libGet(draft.id) || x) : x)); }
+  closeModal();
+  afterGrimoire();
+  toast('Magia restaurada ao original', false);
+}
+
+/* ---------- eventos ---------- */
+document.addEventListener('click', e => {
+  const b = e.target.closest('[data-action]');
+  if (!b) return;
+  const id = b.dataset.id;
+  switch (b.dataset.action) {
+    case 'grim-view': setGrimView(b.dataset.v); break;
+    case 'lib-open': spellModal(id, true); break;
+    case 'lib-add': addToGrimoire(id); break;
+    case 'lib-remove': removeFromGrimoire(id); break;
+    case 'lib-more': libLimit += LIB_PAGE; renderLibrary(); break;
+    case 'lib-clear': libFilters = { ...LIB_FILTERS_DEFAULT }; libLimit = LIB_PAGE; renderLibrary(); break;
+    case 'lib-import': $('#lib-file').click(); break;
+    case 'spell-new': openEditor(null); break;
+    case 'spell-edit': openEditor(id); break;
+    case 'spell-copy': { openEditor(id); draft.id = null; draft.s.src = 'minha'; draft.s.name += ' (cópia)'; renderEditor(); break; }
+    case 'ed-row-add': readForm(); draft.rows.push(newRow()); renderEditor(); break;
+    case 'ed-row-del': readForm(); draft.rows.splice(+b.dataset.i, 1); renderEditor(); break;
+    case 'ed-restore': restoreSpell(); break;
+  }
+});
+document.addEventListener('submit', e => { if (e.target.id === 'spell-form') { e.preventDefault(); saveEditor(); } });
+document.addEventListener('change', e => {
+  if (e.target.dataset?.lib) { libFilters[e.target.dataset.lib] = e.target.value; libLimit = LIB_PAGE; renderLibrary(); }
+  if (e.target.id === 'lib-file' && e.target.files[0]) { importPrivate(e.target.files[0]); e.target.value = ''; }
+});
+document.addEventListener('input', e => {
+  if (e.target.id !== 'lib-q') return;
+  libFilters.q = e.target.value; libLimit = LIB_PAGE;
+  clearTimeout(libTimer);
+  libTimer = setTimeout(() => { const pos = e.target.selectionStart; renderLibrary(); const i = $('#lib-q'); i?.focus(); i?.setSelectionRange(pos, pos); }, 140);
+});
+let libTimer = null;
+document.addEventListener('keydown', e => {
+  if ((e.key === 'Enter' || e.key === ' ') && e.target.classList?.contains('lib-card')) { e.preventDefault(); spellModal(e.target.dataset.id, true); }
+});
+loadPrivate().then(() => { if (privateSpells.length && grimView === 'lib') renderLibrary(); });
+/* Início do app: roda depois de todos os módulos carregados. */
+refreshAll();
 </script>
 <script>
 /* =====================================================================

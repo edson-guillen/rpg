@@ -25,24 +25,32 @@ let castMeta = new Set();
 const metaCost = () => [...castMeta].reduce((a, id) => a + META[id].cost, 0);
 
 let castMat = true;
+/** Dados de uma linha, já com o escalonamento de truque pelo nível e o modificador de conjuração. */
+const cantripTier = () => { const n = activeChar().level; return n >= 17 ? 4 : n >= 11 ? 3 : n >= 5 ? 2 : 1; };
+const modExpr = x => (x.addMod ? sign(CHAR.stats.cha).replace('−', '-') : '');
+function baseDice(x) {
+  const d = x.cantrip ? addDice(x.d, x.cantrip, cantripTier() - 1) : x.d;
+  return x.addMod ? d + modExpr(x) : d;
+}
 function rollsSection(s) {
   if (!s.r || !s.r.length) return '';
   const rows = s.r.map(x => {
     if (x.t === 'atk') {
       const bonus = x.bonus ?? CHAR.stats.atk, spell = x.spell !== false, adv = spell && state.fx.innate;
       return `<div class="rr"><span class="rk atk">ATQ</span><div class="rt"><b>${x.label || 'Ataque mágico'} ${sign(bonus)}</b>
-        <span>d20 + ${bonus} (BP 2 + CAR 4)${adv ? ' · <b>Vantagem</b> (Feitiçaria Inata)' : ''}</span></div>
+        <span>d20 + ${bonus} (${CHAR.calc.atk})${adv ? ' · <b>Vantagem</b> (Feitiçaria Inata)' : ''}</span></div>
         ${rollBtn({ kind: 'd20', bonus, atk: 1, src: s.id, adv: spell ? 'spell' : null, label: `${s.name} · ataque` }, `${icon('i-d20')}<b class="num">${sign(bonus)}</b>`)}</div>`;
     }
     if (x.t === 'save') return `<div class="rr"><span class="rk save">CD ${dc()}</span><div class="rt"><b>Salvaguarda de ${SAVE_NAME[x.a]}</b><span>${x.txt || 'O alvo rola contra a sua CD'}</span></div></div>`;
     if (x.t === 'dc') return `<div class="rr"><span class="rk save">CD ${dc()}</span><div class="rt"><b>${x.txt}</b></div></div>`;
     if (x.t === 'note') return `<div class="rr"><span class="rk note">NOTA</span><div class="rt"><span>${x.txt}</span></div></div>`;
-    const variants = [[x.d, s.level]];
-    if (x.up) LEVELS.filter(l => l > s.level).forEach(l => variants.push([addDice(x.d, x.up, l - s.level), l]));
+    const base = baseDice(x), variants = [[base, s.level]];
+    if (x.table) LEVELS.filter(l => l > s.level && x.table[l]).forEach(l => variants.push([x.table[l] + modExpr(x), l]));
+    else if (x.up) LEVELS.filter(l => l > s.level).forEach(l => variants.push([addDice(base, x.up, l - s.level), l]));
     const btns = variants.map(([e, l]) => rollBtn({ kind: 'dmg', expr: e, src: s.id, crit: x.crit, explode: x.explode, max: x.max, half: x.half, orb: x.orb, type: x.type,
       label: s.name + (l > s.level ? ` (${ORD(l)} círc.)` : '') }, `${icon('i-die')}<b class="num">${showDice(e)}</b>${l > s.level ? `<small>${ORD(l)}</small>` : ''}`)).join('');
-    return `<div class="rr"><span class="rk dmg">DANO</span><div class="rt"><b>${showDice(x.d)} ${x.type}</b>
-      <span>${x.label ? x.label + ' · ' : ''}média ${decimal(avgOf(x.d))}${x.half ? ' · metade se passar' : ''}${x.up ? ` · +${x.up} por círculo acima` : ''}</span></div><div class="rbs">${btns}</div></div>`;
+    return `<div class="rr"><span class="rk dmg">${x.heal ? 'CURA' : 'DANO'}</span><div class="rt"><b>${showDice(base)} ${x.type}</b>
+      <span>${x.label ? x.label + ' · ' : ''}média ${decimal(avgOf(base))}${x.half ? ' · metade se passar' : ''}${x.up ? ` · +${x.up} por círculo acima` : ''}${x.cantrip ? ' · cresce nos níveis 5, 11 e 17' : ''}</span></div><div class="rbs">${btns}</div></div>`;
   }).join('');
   return `<div class="rolls-box"><h4>Números e rolagens</h4>${rows}</div>`;
 }
@@ -62,7 +70,7 @@ function castSection(s) {
       if (subtle && !blk) matNote = `<p class="mat-line">${icon('i-gem')}Magia Sutil não dispensa o ${esc(name)} (tem custo em PO).</p>`;
       else matNote = blk
         ? box('Bloqueada', `Requer <b>${esc(name)}</b> e você tem <b>0</b>. Quando conseguir um, ajuste a quantidade na Mochila.`, 'warn')
-        : `<p class="mat-line">${icon('i-gem')}${esc(name)}: <b>${q}</b> no inventário — necessário, não é consumido.</p>`;
+        : `<p class="mat-line">${icon('i-gem')}${esc(name)}: <b>${q}</b> no inventário — ${s.mat.consumed ? `necessário, gasta ${n} por conjuração` : 'necessário, não é consumido'}.</p>`;
     } else if (subtle) {
       matNote = `<p class="mat-line">${icon('i-hush')}Magia Sutil: sem componentes — o estoque de <b>${esc(name)}</b> não é usado.</p>`;
     } else {
@@ -88,8 +96,17 @@ function castSection(s) {
     <div class="cast-row">${btns}</div>${matNote}${notes.map(n => `<p class="note" style="margin-top:8px">${n}</p>`).join('')}</div>`;
 }
 
-function spellModal(id) {
-  const s = SPELL[id]; castMeta = new Set(); castMat = true;
+let showOriginal = false;
+function spellTools(s) {
+  return `<div class="m-actions"><button class="btn sm ghost" data-action="spell-edit" data-id="${esc(s.id)}">Editar magia</button><button class="btn sm ghost" data-action="lib-remove" data-id="${esc(s.id)}">Remover do grimório</button></div>`;
+}
+function libActions(s) {
+  const tem = inGrimoire(s), id = esc(s.id);
+  return `<div class="m-actions">${tem ? `<button class="btn ghost" data-action="lib-remove" data-id="${id}">Remover do grimório</button>` : `<button class="btn gold" data-action="lib-add" data-id="${id}">${icon('i-plus')}Adicionar ao grimório</button>`}
+    <button class="btn" data-action="spell-copy" data-id="${id}">Duplicar e editar</button><button class="btn" data-action="spell-edit" data-id="${id}">Editar</button></div>`;
+}
+function spellModal(id, fromLib = false) {
+  const s = fromLib ? libGet(id) : SPELL[id]; castMeta = new Set(); castMat = true; showOriginal = false;
   openModal(() => {
     const tags = [`<span class="tag">${esc(s.school)}</span>`];
     if (s.conc) tags.push('<span class="tag conc">Concentração</span>');
@@ -102,20 +119,22 @@ function spellModal(id) {
     const P = t => `<p>${fmt(t)}</p>`;
     return `<div class="${lvClass(s.level)}">${mHead(s.level ? `${ORD(s.level)} Círculo · ${s.school}` : `Truque · ${s.school}`, esc(s.name), esc(s.en))}
       <div class="m-tags">${tags.join('')}</div>
-      <dl class="props">${prop('Tempo de Conjuração', s.time)}${prop('Alcance', s.range)}${prop('Componentes', s.comp)}${prop('Duração', s.dur)}</dl>
+      <dl class="props">${prop('Tempo de Conjuração', s.time)}${prop('Alcance', s.range)}${prop('Componentes', s.comp + (s.material ? ` (${s.material})` : ''))}${prop('Duração', s.dur)}${s.area ? prop('Área', s.area.text) : ''}${s.ritual ? prop('Ritual', 'Pode ser conjurada como ritual') : ''}</dl>
       ${rollsSection(s)}
-      <div class="m-body">${s.desc.map(P).join('')}${s.list ? `<ul>${s.list.map(li => `<li>${fmt(li)}</li>`).join('')}</ul>` : ''}${(s.desc2 || []).map(P).join('')}</div>
-      ${s.upgrade ? box('Aprimoramento de Truque', fmt(s.upgrade)) : ''}${s.higher ? box('Em círculos superiores', fmt(s.higher)) : ''}
+      ${s.orig ? `<div class="m-tags"><button class="btn sm ghost" data-action="spell-orig" aria-pressed="${showOriginal}">${showOriginal ? 'Ver em português' : 'Ver original'}</button></div>` : ''}
+      ${showOriginal && s.orig ? `<div class="m-body" lang="en">${s.orig.desc.map(P).join('')}</div>${s.orig.upgrade ? box('Cantrip Upgrade', fmt(s.orig.upgrade)) : ''}${s.orig.higher ? box('Using a Higher-Level Spell Slot', fmt(s.orig.higher)) : ''}` : `<div class="m-body">${s.desc.map(P).join('')}${s.list ? `<ul>${s.list.map(li => `<li>${fmt(li)}</li>`).join('')}</ul>` : ''}${(s.desc2 || []).map(P).join('')}</div>
+      ${s.upgrade ? box('Aprimoramento de Truque', fmt(s.upgrade)) : ''}${s.higher ? box('Em círculos superiores', fmt(s.higher)) : ''}`}
       ${s.warn ? box('Atenção', fmt(s.warn), 'warn') : ''}${s.tactic ? box(`Tática de ${esc(activeChar().name.split(' ')[0])}`, fmt(s.tactic), 'tactic') : ''}
-      ${castSection(s)}</div>`;
+      ${fromLib ? libActions(s) : castSection(s) + spellTools(s)}</div>`;
   });
 }
 
 function doCast(id, lv) {
   const s = SPELL[id], cost = metaCost(), prev = state.conc;
   if (blocked(s)) { toast(`${s.name} bloqueada: falta ${matItem(s.mat.key)?.name || 'componente'}`, false); return; }
-  const it = s.mat && !s.mat.required ? matItem(s.mat.key) : null, n = s.mat?.n || 1;
-  const useMat = !!(it && castMat && !castMeta.has('subtle') && (it.qty ?? 0) >= n);
+  const gasta = s.mat && (!s.mat.required || s.mat.consumed);
+  const it = gasta ? matItem(s.mat.key) : null, n = s.mat?.n || 1;
+  const useMat = !!(it && (s.mat.required || (castMat && !castMeta.has('subtle'))) && (it.qty ?? 0) >= n);
   const metaTxt = [...castMeta].map(m => META[m].name).join(' + ');
   let label = `${s.name} conjurada${lv ? ` (${ORD(lv)})` : ''}${metaTxt ? ` · ${metaTxt} (−${cost} PF)` : ''}`;
   if (useMat) label += ` · −${n}${it.unit === 'cm' ? ' cm' : ''} ${it.name} (resta ${it.qty - n})`;

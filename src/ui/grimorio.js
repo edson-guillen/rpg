@@ -1,11 +1,13 @@
 /* =====================================================================
    ABA GRIMÓRIO
    ===================================================================== */
-const FILTERS = [
-  { id: 'all', label: 'Todas' }, { id: '0', label: 'Truques' }, { id: '1', label: '1º Círculo' }, { id: '2', label: '2º Círculo' },
-  { id: 'conc', label: 'Concentração' }, { id: 'noconc', label: 'Sem concentração' }, { id: 'drac', label: 'Dracônicas' }
+const filterList = () => [
+  { id: 'all', label: 'Todas' }, ...(SPELLS.some(s => !s.level) ? [{ id: '0', label: 'Truques' }] : []),
+  ...[...new Set(SPELLS.filter(s => s.level).map(s => s.level))].sort((a, b) => a - b).map(l => ({ id: String(l), label: ORD(l) + ' Círculo' })),
+  { id: 'conc', label: 'Concentração' }, { id: 'noconc', label: 'Sem concentração' },
+  ...(SPELLS.some(s => s.draconic) ? [{ id: 'drac', label: 'Dracônicas' }] : [])
 ];
-const GROUP_NAME = { 0: 'Truques', 1: '1º Círculo', 2: '2º Círculo' };
+const GROUP_NAME = { 0: 'Truques' };
 let query = '';
 
 function highlight(text, q) {
@@ -23,18 +25,19 @@ function matchFilter(s, f) {
   return String(s.level) === f;
 }
 function spellHaystack(s) {
-  return s._hay || (s._hay = norm([s.name, s.en, s.school, s.sum, s.time, s.range, s.dur, ...(s.desc || []), ...(s.list || []), ...(s.desc2 || []), s.conc ? 'concentracao' : '', s.draconic ? 'draconica' : ''].map(strip).join(' ')));
+  return s._hay || (s._hay = norm([s.name, s.en, s.school, s.sum, s.time, s.range, s.dur, ...(s.desc || []), ...(s.orig?.desc || []), ...(s.list || []), ...(s.desc2 || []), s.conc ? 'concentracao' : '', s.draconic ? 'draconica' : ''].map(strip).join(' ')));
 }
 
 function renderFilters() {
-  $('#filters').innerHTML = FILTERS.map(f => `<button class="filter" data-action="filter" data-f="${f.id}" aria-pressed="${state.ui.filter === f.id}">${f.label}</button>`).join('');
+  $('#filters').innerHTML = filterList().map(f => `<button class="filter" data-action="filter" data-f="${f.id}" aria-pressed="${state.ui.filter === f.id}">${f.label}</button>`).join('');
 }
 
 function spellCard(s, q) {
   const tags = [], rr = s.r || [], atk = rr.find(x => x.t === 'atk');
   if (atk) tags.push(`<span class="tag atk">ATQ ${sign(atk.bonus ?? CHAR.stats.atk)}</span>`);
   rr.filter(x => x.t === 'save').forEach(x => tags.push(`<span class="tag save">CD ${dc()} · ${x.a}</span>`));
-  if (s.dmgChip) tags.push(`<span class="tag dmg">${esc(s.dmgChip)}</span>`);
+  const dano = (s.r || []).find(x => x.t === 'dmg');
+  if (s.dmgChip) tags.push(`<span class="tag dmg">${esc(dano?.cantrip ? baseDice(dano) : s.dmgChip)}</span>`);
   if (blocked(s)) tags.push('<span class="tag block">Bloqueada</span>');
   if (s.time !== '1 Ação') tags.push(`<span class="tag ${s.reaction ? 'react' : ''}">${s.reaction ? 'Reação' : esc(s.time)}</span>`);
   tags.push(`<span class="tag">${esc(s.range.replace(/ \(.*\)/, ''))}</span>`);

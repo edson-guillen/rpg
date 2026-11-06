@@ -315,4 +315,3 @@ try { document.execCommand('defaultParagraphSeparator', false, 'p'); } catch (e)
 
 function initNotes() { renderNoteList(); renderNoteEditor(); }
 
-refreshAll();

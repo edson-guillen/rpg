@@ -6,6 +6,7 @@
 const SOREN = {
   stats: { ac: 16, shieldBonus: 5, hpMax: 30, dc: 14, atk: 6, init: 2, speed: '10,5 m', pb: 2, cha: 4, conSave: 4 },
   hitDie: 6, conMod: 2,
+  limits: { cantrips: 5, prepared: 7 },
   calc: {
     ac: '10 + DES 2 + CAR 4 (Resiliência Dracônica)',
     hp: '8 (nv 1: 6 + CON 2) + 18 (3 × [4 + CON 2]) + 4 (Resiliência Dracônica)',

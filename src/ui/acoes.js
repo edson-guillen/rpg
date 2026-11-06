@@ -109,6 +109,7 @@ function handle(a, el) {
     case 'filter': setUI('filter', ds.f); renderFilters(); renderGrim(); break;
     case 'clear-q': query = ''; $('#q').value = ''; syncClear(); renderGrim(); $('#q').focus(); break;
     case 'spell': spellModal(ds.id); break;
+    case 'spell-orig': showOriginal = !showOriginal; if (modalRefresh) modalRefresh(); break;
     case 'meta-toggle': { const on = castMeta.has(ds.id); castMeta.clear(); if (!on) castMeta.add(ds.id); modalRefresh?.(); break; }
     case 'goto-sp': setTab('magia'); setTimeout(() => $('#sp-hub').scrollIntoView({ block: 'start', behavior: 'smooth' }), 40); break;
     case 'cast': doCast(ds.id, +ds.lv); break;

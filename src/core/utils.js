@@ -20,5 +20,5 @@ const decimal = n => String(Math.round(n * 10) / 10).replace('.', ',');
 const SAVE_NAME = { FOR: 'Força', DES: 'Destreza', CON: 'Constituição', INT: 'Inteligência', SAB: 'Sabedoria', CAR: 'Carisma' };
 const matItem = key => state.items.find(i => i.key === key);
 const matQty = key => matItem(key)?.qty ?? 0;
-const blocked = s => !!(s.mat?.required && matQty(s.mat.key) < 1);
+const blocked = s => !!(s.mat?.required && matQty(s.mat.key) < (s.mat.n || 1));
 

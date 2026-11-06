@@ -7,7 +7,8 @@
   "scripts": {
     "build": "node tools/build.mjs",
     "extract": "node tools/extract-private.mjs",
-    "test": "node tools/build.mjs && node tests/run.mjs"
+    "test": "node tools/build.mjs && node tests/run.mjs",
+    "srd": "node tools/build-srd.mjs"
   },
   "devDependencies": {
     "gsap": "^3.12.5",

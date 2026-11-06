@@ -191,6 +191,129 @@ const cenarios = {
     await ctx.close();
   },
 
+  async 'biblioteca: busca, filtros e grimório'({ browser, opts }) {
+    const { ctx, page, erros } = await abrir(browser, opts);
+    await aba(page, 'grimorio');
+    await clicar(page, '[data-action="grim-view"][data-v="lib"]');
+    await page.waitForSelector('#lib-count');
+    await page.selectOption('[data-lib="cls"]', '');
+    await page.waitForFunction(() => document.querySelector('#lib-count').textContent.startsWith('339'));
+    await page.fill('#lib-q', 'fireball');
+    await page.waitForFunction(() => /^2 de/.test(document.querySelector('#lib-count').textContent));
+    ok((await page.locator('.lib-card b').first().textContent()).includes('Bola de Fogo'), 'busca em inglês acha o nome em português');
+    await page.fill('#lib-q', 'bola de fogo');
+    await page.waitForFunction(() => /^2 de/.test(document.querySelector('#lib-count').textContent));
+    await clicar(page, '[data-action="lib-clear"]');
+    await page.waitForFunction(() => /^\d+ de 339/.test(document.querySelector('#lib-count').textContent));
+    const feit = await page.evaluate(() => libraryAll().filter(s => s.classes.includes('sorcerer')).length);
+    ok(feit > 100 && +(await page.locator('#lib-count').textContent()).split(' ')[0] === feit, 'filtro padrão é Feiticeiro');
+    await page.selectOption('[data-lib="dmg"]', 'Fogo');
+    await page.selectOption('[data-lib="level"]', '3');
+    await page.waitForFunction(() => document.querySelectorAll('.lib-card').length > 0);
+    const nomes = await page.locator('.lib-card b').allTextContents();
+    ok(nomes.includes('Bola de Fogo'), 'filtros de círculo e dano');
+    await clicar(page, '[data-action="lib-clear"]');
+    await page.fill('#lib-q', 'fire bolt');
+    await page.waitForFunction(() => /^1 de/.test(document.querySelector('#lib-count').textContent));
+    await clicar(page, '.lib-card');
+    await page.waitForSelector('[data-action="lib-add"]');
+    await clicar(page, '[data-action="spell-orig"]');
+    ok((await page.locator('.m-body').first().textContent()).toLowerCase().includes('hurl'), 'Ver original mostra o inglês');
+    await clicar(page, '[data-action="lib-add"]');
+    ok(await page.evaluate(() => !SPELL['fire-bolt']), 'limite de truques impede adicionar');
+    ok((await page.locator('#toast .msg').textContent()).includes('truques'), 'mensagem do limite');
+    await page.evaluate(() => { closeModal(); removeFromGrimoire('mind-sliver', true); });
+    await page.evaluate(() => addToGrimoire('fire-bolt'));
+    ok(await page.evaluate(() => !!SPELL['fire-bolt'] && !SPELL['mind-sliver']), 'trocar truque funciona');
+    ok(await page.evaluate(() => baseDice(SPELL['fire-bolt'].r.find(x => x.t === 'dmg'))) === '1d10', 'truque no nível 4 = 1d10');
+    await page.evaluate(() => { activeChar().level = 5; });
+    ok(await page.evaluate(() => baseDice(SPELL['fire-bolt'].r.find(x => x.t === 'dmg'))) === '2d10', 'truque no nível 5 = 2d10');
+    await page.evaluate(() => { activeChar().level = 17; });
+    ok(await page.evaluate(() => baseDice(SPELL['fire-bolt'].r.find(x => x.t === 'dmg'))) === '4d10', 'truque no nível 17 = 4d10');
+    await page.evaluate(() => { activeChar().level = 4; });
+    await page.reload();
+    await page.waitForFunction(() => document.querySelector('#stats')?.children.length > 0);
+    ok(await page.evaluate(() => !!SPELL['fire-bolt'] && !SPELL['mind-sliver']), 'grimório sobrevive a recarregar');
+    ok(!erros.length, `sem erros de JS: ${erros}`);
+    await ctx.close();
+  },
+
+  async 'rolagens por círculo e editor com consumível'({ browser, opts }) {
+    const { ctx, page, erros } = await abrir(browser, opts);
+    await page.evaluate(() => { CHAR.slots[3] = 2; CHAR.slots[4] = 1; bindSheet(activeChar()); state.used[3] = 0; state.used[4] = 0; state.extra[3] = 0; state.extra[4] = 0; });
+    await page.evaluate(() => ensureLibrary());
+    await page.evaluate(() => { spellModal('fireball', true); });
+    const bot = await page.locator('.rolls-box .rb').allTextContents();
+    ok(bot.join(' ').includes('8d6') && bot.join(' ').includes('9d6'), `Bola de Fogo escala por círculo: ${bot}`);
+    await page.evaluate(() => { closeModal(); spellModal('cure-wounds', true); });
+    ok(/2d8s*+s*4/.test(await page.locator('.rolls-box').textContent()), 'cura soma o modificador');
+    await page.evaluate(() => closeModal());
+    await page.waitForFunction(() => document.querySelector('#modal').hidden);
+    await aba(page, 'grimorio');
+    await clicar(page, '[data-action="grim-view"][data-v="lib"]');
+    await page.waitForSelector('[data-action="spell-new"]');
+    await clicar(page, '[data-action="spell-new"]');
+    await page.fill('#e-name', 'Lança de Geada');
+    await page.selectOption('#e-level', '1');
+    await page.fill('#e-range', '18 m');
+    await page.fill('#e-desc', 'Uma lança de gelo atinge o alvo.');
+    await page.check('#e-atk');
+    await clicar(page, '[data-action="ed-row-add"]');
+    await page.fill('[data-r="d"]', '2d6');
+    await page.selectOption('[data-r="type"]', 'Frio');
+    await page.fill('[data-r="up"]', '1d6');
+    await page.selectOption('#e-mat', 'web');
+    await page.fill('#e-mat-n', '2');
+    await page.locator('#spell-form button.gold').click();
+    await page.waitForFunction(() => store.library.custom.length === 1);
+    await page.waitForFunction(() => document.querySelector('#modal').hidden);
+    const id = await page.evaluate(() => { const s = store.library.custom[0]; removeFromGrimoire('sleet-storm', true); const g = grimoireOf(activeChar()); g.removed.push(SPELLS.find(x => x.level === 1 && !x.draconic).id); bindSheet(activeChar()); addToGrimoire(s.id); return s.id; });
+    ok(await page.evaluate(i => !!SPELL[i], id), 'magia criada entra no grimório');
+    await page.evaluate(i => spellModal(i), id);
+    const antes = await page.evaluate(() => state.items.find(i => i.key === 'web')?.qty);
+    ok((await page.locator('.rolls-box').textContent()).includes('2d6'), 'dano da magia criada');
+    await clicar(page, '[data-action="cast"]:not([disabled])');
+    const depois = await page.evaluate(() => state.items.find(i => i.key === 'web')?.qty);
+    ok(depois === antes - 2, `consumível descontado (${antes} -> ${depois})`);
+    await page.keyboard.press('Control+z');
+    ok(await page.evaluate(() => state.items.find(i => i.key === 'web')?.qty) === antes, 'desfazer devolve o consumível');
+    await page.evaluate(() => closeModal());
+    await page.waitForFunction(() => document.querySelector('#modal').hidden);
+    await page.evaluate(() => { openEditor('fireball'); });
+    await page.fill('#e-name', 'Bola de Fogo Azul');
+    await page.locator('#spell-form button.gold').click();
+    await page.waitForFunction(() => !!store.library.overrides.fireball);
+    ok(await page.evaluate(() => libGet('fireball').name) === 'Bola de Fogo Azul', 'alteração vira override');
+    await page.waitForFunction(() => document.querySelector('#modal').hidden);
+    await page.evaluate(() => openEditor('fireball'));
+    await clicar(page, '[data-action="ed-restore"]');
+    await page.waitForFunction(() => !store.library.overrides.fireball);
+    ok(await page.evaluate(() => libGet('fireball').name) === 'Bola de Fogo', 'restaurar original');
+    ok(!erros.length, `sem erros de JS: ${erros}`);
+    await ctx.close();
+  },
+
+  async 'importador da biblioteca pessoal'({ browser, opts }) {
+    const { ctx, page, erros } = await abrir(browser, opts);
+    const fixture = { app: 'grimorio', tipo: 'biblioteca-pessoal', schema: 1, magias: [
+      { id: 'magia-de-teste', nome: 'Magia de Teste', nomeEn: 'Test Spell', circulo: 2, escola: 'evocation', classes: ['sorcerer'], tempo: 'Ação', alcance: '18 metros', comp: 'V, S', material: '', duracao: 'Instantânea', concentracao: false, ritual: false, texto: 'O alvo faz uma salvaguarda de Destreza e sofre 3d8 de dano Trovejante, ou metade se passar.', superior: 'Usando um Espaço de Magia de Círculo Superior. O dano aumenta em 1d8 para cada círculo.', fonte: { id: 'x', pagina: 1 } },
+      { id: 'bola-de-fogo', nome: 'Bola de Fogo', nomeEn: 'Fireball', circulo: 3, escola: 'evocation', classes: ['sorcerer'], tempo: 'Ação', alcance: '45 metros', comp: 'V, S, M', material: 'enxofre', duracao: 'Instantânea', texto: 'Texto pessoal da bola de fogo.', superior: '', fonte: { id: 'x', pagina: 2 } }
+    ] };
+    await aba(page, 'grimorio');
+    await clicar(page, '[data-action="grim-view"][data-v="lib"]');
+    await page.waitForSelector('[data-action="lib-import"]');
+    await page.setInputFiles('#lib-file', { name: 'b.json', mimeType: 'application/json', buffer: Buffer.from(JSON.stringify(fixture)) });
+    await page.waitForFunction(() => privateSpells.length === 2);
+    const r = await page.evaluate(() => { const a = libGet('p-magia-de-teste'), b = libGet('fireball'); return { rolls: a.r, nome: a.name, src: b.src, t: b.desc[0], up: a.r.find(x => x.t === 'dmg')?.up, dano: b.r.find(x => x.t === 'dmg')?.d, armazenado: localStorage.getItem('grimorio-v3').includes('Texto pessoal') }; });
+    ok(r.nome === 'Magia de Teste' && r.rolls.some(x => x.t === 'save' && x.a === 'DES') && r.up === '1d8', 'magia pessoal ganha rolagens');
+    ok(r.src === 'srd+pessoal' && r.t.includes('Texto pessoal') && r.dano === '8d6', 'versão pessoal completa a do SRD');
+    ok(!r.armazenado, 'texto pessoal fica fora do localStorage');
+    await page.reload();
+    await page.waitForFunction(() => privateSpells.length === 2);
+    ok(!erros.length, `sem erros de JS: ${erros}`);
+    await ctx.close();
+  },
+
   async 'duplicar, excluir com desfazer e exportar/importar'({ browser, opts }) {
     const { ctx, page, erros } = await abrir(browser, { ...opts, seed: true });
     await clicar(page, '[data-action="chars"]');

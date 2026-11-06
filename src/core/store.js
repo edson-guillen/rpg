@@ -26,8 +26,7 @@ function blankSheet() {
   return {
     ...base,
     stats: { ac: 10, shieldBonus: 5, hpMax: 6, dc: 10, atk: 2, init: 0, speed: '9 m', pb: 2, cha: 0, conSave: 2 },
-    conMod: 0, carry: '',
-    calc: { ac: '10 + DES', hp: '6 + CON', dc: '8 + BP + CAR', atk: 'BP + CAR' },
+    conMod: 0, carry: '', calc: {},
     abilities: base.abilities.map(({ k, n, prof }) => ({ k, n, s: 10, ...(prof ? { prof } : {}) })),
     skills: base.skills.map(([n, a]) => [n, a]),
     tools: [], attacks: [], slots: { 1: 2 }, createSlotCost: { 1: 2 }, metamagic: [], passives: [], items: [], limits: { cantrips: 4, prepared: 2 },
@@ -39,10 +38,10 @@ function blankSheet() {
   };
 }
 
-function newCharacter(name) {
+function newCharacter(name, build = null) {
   return {
-    id: newId('c'), name, sub: 'Feiticeiro · Nível 1', template: 'blank', classId: 'sorcerer', subclassId: null, level: 1,
-    sheet: blankSheet(), spells: [], state: null, notes: null
+    id: newId('c'), name, sub: 'Feiticeiro · Nível 1', template: 'blank', classId: 'sorcerer', subclassId: null, level: build?.level || 1,
+    sheet: blankSheet(), spells: [], state: null, notes: null, build: build || blankBuild(1), identity: {}, grimoire: { added: [], removed: [] }
   };
 }
 
@@ -97,7 +96,7 @@ function composeSpells(c) {
 /* Valores da ficha ativa. Todo o app lê daqui; trocar de personagem só reaponta estas variáveis. */
 let CHAR, SPELLS, LEVELS, RES, SPELL, META;
 function bindSheet(c) {
-  CHAR = c.template === 'soren' ? SOREN : c.sheet;
+  CHAR = deriveSheet(c);
   SPELLS = composeSpells(c);
   LEVELS = Object.keys(CHAR.slots).map(Number);
   RES = Object.fromEntries(CHAR.resources.map(r => [r.id, r]));

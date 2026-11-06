@@ -5,7 +5,7 @@ const ANIM_LABEL = { full: 'completas', reduced: 'reduzidas', off: 'desligadas' 
 function renderHero() {
   const c = activeChar();
   $('#char-name-txt').textContent = c.name;
-  $('#char-sub').textContent = c.sub;
+  $('#char-sub').textContent = c.sub = CHAR.subText || c.sub;
   $('#char-eyebrow').textContent = `D&D 2024 · Grimório${c.subclassId === 'draconic' ? ' Dracônico' : ''}`;
   $('#carry-aside').textContent = (CHAR.carry ? `Carga máx. ${CHAR.carry} · ` : '') + 'toque no nome para editar';
   document.title = `${c.name} · Grimório`;
@@ -97,8 +97,8 @@ function newCharModal() {
   openModal(() => `${mHead('Personagens', 'Novo personagem')}
     <form id="char-form" style="margin-top:14px" autocomplete="off">
       <div class="field"><label for="c-name">Nome</label><input id="c-name" required maxlength="60" autofocus placeholder="Ex.: Lyra Ventoleve"></div>
-      <p class="note">Começa como Feiticeiro de nível 1, com ficha em branco. A criação guiada chega numa próxima etapa.</p>
-      <div class="m-actions"><button type="button" class="btn ghost" data-action="close">Cancelar</button><button class="btn gold">Criar</button></div>
+      <p class="note">O assistente segue as regras de 2024: espécie, antecedente, atributos, perícias, talento, equipamento, magias e nível.</p>
+      <div class="m-actions"><button type="button" class="btn ghost" data-action="close">Cancelar</button><button class="btn gold">Continuar</button></div>
     </form>`);
 }
 
@@ -144,9 +144,7 @@ document.addEventListener('submit', e => {
   e.preventDefault();
   const name = $('#c-name').value.trim();
   if (!name) return;
-  closeModal();
-  addCharacter(newCharacter(name));
-  toast(`${name} criado`, false);
+  openCreator(name);
 });
 
 window.addEventListener('storage', e => {

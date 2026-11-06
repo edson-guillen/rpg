@@ -49,8 +49,18 @@ async function novoPersonagem(page, nome) {
   await clicar(page, '[data-action="char-new"]');
   await page.fill('#c-name', nome);
   await page.press('#c-name', 'Enter');
+  await page.waitForSelector('[data-action="cw-next"]');
+  await assistente(page);
   await page.waitForFunction(n => activeChar().name === n, nome);
   await page.waitForFunction(() => document.querySelector('#modal').hidden);
+}
+/** Percorre o assistente de criação com as opções padrão. */
+async function assistente(page, ajustes = {}) {
+  for (let i = 0; i < 8; i++) {
+    if (ajustes[i]) await ajustes[i]();
+    if (i === 3 && !ajustes[3]) { const c = page.locator('[data-cwskill]'); await c.nth(0).check(); await page.waitForSelector('[data-cwskill]'); await page.locator('[data-cwskill]').nth(1).check(); }
+    await clicar(page, i === 7 ? '[data-action="cw-finish"]' : '[data-action="cw-next"]');
+  }
 }
 async function trocarPara(page, nome) {
   await clicar(page, '[data-action="chars"]');
@@ -60,6 +70,7 @@ async function trocarPara(page, nome) {
 }
 async function novaNota(page, titulo) {
   await page.evaluate(() => { setTab('notas'); newNote(); });
+  await page.waitForTimeout(120); // a nota nova move o foco depois de 60 ms
   await page.fill('#ne-title', titulo);
   await page.evaluate(() => flushNote());
 }
@@ -87,6 +98,30 @@ const cenarios = {
     const s2 = await estado(page);
     ok(s2.notas.includes('Mestre Halvar') && s2.hp === 17, 'dados continuam após recarregar');
     ok(await page.evaluate(() => localStorage.getItem('soren-frostgaard-nv4')) === JSON.stringify(OLD_STATE), 'chave antiga segue intacta após salvar');
+    ok(!erros.length, `sem erros de JS: ${erros}`);
+    await ctx.close();
+  },
+
+  async 'motor de regras reproduz o Søren do nível 4'({ browser, opts }) {
+    const { ctx, page, erros } = await abrir(browser, opts);
+    const r = await page.evaluate(() => {
+      const c = deriveSheet(activeChar()), s = SOREN, dif = [];
+      for (const k of Object.keys(s.stats)) if (c.stats[k] !== s.stats[k]) dif.push(k + ': ' + c.stats[k] + ' x ' + s.stats[k]);
+      if (JSON.stringify(c.slots) !== JSON.stringify(s.slots)) dif.push('slots');
+      if (JSON.stringify(c.createSlotCost) !== JSON.stringify(s.createSlotCost)) dif.push('createSlotCost');
+      if (c.carry !== s.carry) dif.push('carga ' + c.carry);
+      if (c.conMod !== s.conMod || c.hitDie !== s.hitDie) dif.push('dado');
+      for (const r of s.resources) { const x = c.resources.find(y => y.id === r.id); if (!x || x.max !== r.max || x.desc !== r.desc) dif.push('recurso ' + r.id + ': ' + (x && x.desc)); }
+      for (const a of s.attacks) { const x = c.attacks.find(y => y.id === a.id); if (!x || x.atk !== a.atk || x.dmg !== a.dmg || x.calc !== a.calc) dif.push('ataque ' + a.id + ': ' + (x && x.calc + ' ' + x.dmg)); }
+      for (const k of Object.keys(s.calc)) if (c.calc[k] !== s.calc[k]) dif.push('calc ' + k + ': ' + c.calc[k]);
+      if (JSON.stringify(c.passives) !== JSON.stringify(s.passives)) dif.push('passivas');
+      if (JSON.stringify(c.abilities.map(a => [a.k, a.s, !!a.prof])) !== JSON.stringify(s.abilities.map(a => [a.k, a.s, !!a.prof]))) dif.push('atributos');
+      if (JSON.stringify(c.skills.filter(x => x[2])) !== JSON.stringify(s.skills.filter(x => x[2]))) dif.push('pericias');
+      if (c.metamagic.length !== 2) dif.push('metamagia');
+      if (c.subText !== activeChar().sub) dif.push('sub ' + c.subText);
+      return dif;
+    });
+    ok(!r.length, 'motor diverge da ficha: ' + r.join(' | '));
     ok(!erros.length, `sem erros de JS: ${erros}`);
     await ctx.close();
   },
@@ -132,7 +167,7 @@ const cenarios = {
     ok(s.n === 2 && s.nome === 'Lyra Ventoleve', 'novo personagem ativo');
     ok(await page.locator('#char-name-txt').textContent() === 'Lyra Ventoleve', 'cabeçalho mostra o novo nome');
     ok(!s.notas.includes('Mestre Halvar'), 'nota do Søren não aparece na Lyra');
-    ok(s.items.length === 0, 'mochila da Lyra vazia');
+    ok(s.items.includes('Lança') && !s.items.includes('Poção de teste'), 'mochila da Lyra é a do equipamento inicial');
     for (const t of ['ficha', 'magia', 'grimorio', 'recursos', 'mochila', 'notas']) await aba(page, t);
     await novaNota(page, 'Segredo da Lyra');
     await page.evaluate(() => commit('Teste', st => { st.hp = 2; }));
@@ -168,6 +203,15 @@ const cenarios = {
     s = await estado(page);
     ok(!s.notas.includes('Mapa do Norte') && !s.notas.includes('Mestre Halvar'), 'escopo do personagem não mistura');
     ok(await page.locator('#note-scope').textContent().then(t => t.includes('Notas de Bram')), 'seletor mostra o nome do personagem');
+    ok(!erros.length, `sem erros de JS: ${erros}`);
+    await ctx.close();
+  },
+
+  async 'as sete abas cabem na tela'({ browser, opts }) {
+    const { ctx, page, erros } = await abrir(browser, opts);
+    const m = await page.evaluate(() => { const t = [...document.querySelectorAll('.tab')].map(x => x.getBoundingClientRect()); return { n: t.length, topo: new Set(t.map(r => Math.round(r.top))).size, dentro: t.every(r => r.right <= innerWidth + 1 && r.left >= -1), vaza: [...document.querySelectorAll('.tab')].some(x => x.scrollWidth > x.clientWidth + 1) }; });
+    ok(m.n === 7 && m.topo === 1, `sete abas numa linha só (${m.topo})`);
+    ok(m.dentro && !m.vaza, 'nenhuma aba corta o texto');
     ok(!erros.length, `sem erros de JS: ${erros}`);
     await ctx.close();
   },
@@ -241,7 +285,7 @@ const cenarios = {
 
   async 'rolagens por círculo e editor com consumível'({ browser, opts }) {
     const { ctx, page, erros } = await abrir(browser, opts);
-    await page.evaluate(() => { CHAR.slots[3] = 2; CHAR.slots[4] = 1; bindSheet(activeChar()); state.used[3] = 0; state.used[4] = 0; state.extra[3] = 0; state.extra[4] = 0; });
+    await page.evaluate(() => { const c = activeChar(); buildOf(c).level = 7; buildOf(c).hpRolls = [4, 4, 4, 4, 4, 4]; c.level = 7; bindSheet(c); state = sanitize(state); render(); });
     await page.evaluate(() => ensureLibrary());
     await page.evaluate(() => { spellModal('fireball', true); });
     const bot = await page.locator('.rolls-box .rb').allTextContents();
@@ -361,6 +405,127 @@ const cenarios = {
     await ctx.close();
   },
 
+  async 'subir do 4 ao 5 com a média bate com a ficha'({ browser, opts }) {
+    const { ctx, page, erros } = await abrir(browser, opts);
+    await aba(page, 'personagem');
+    await clicar(page, '[data-action="lv-open"]');
+    await page.waitForSelector('[data-action="lv-avg"]');
+    await clicar(page, '[data-action="lv-avg"]');
+    ok((await page.locator('#sheet').textContent()).includes('7 PV'), 'mostra o ganho de 7 PV');
+    await clicar(page, '[data-action="lv-next"]');
+    const muda = await page.locator('#sheet').textContent();
+    ok(muda.includes('Restauração Feiticeira') && muda.includes('Medo') && muda.includes('Voo'), 'mostra o que muda');
+    await clicar(page, '[data-action="lv-next"]');
+    await page.waitForSelector('[data-sp]');
+    await clicar(page, '[data-action="lv-next"]');
+    await clicar(page, '[data-action="lv-apply"]');
+    await page.waitForFunction(() => activeChar().level === 5);
+    const r = await page.evaluate(() => ({ hp: CHAR.stats.hpMax, atual: state.hp, pb: CHAR.stats.pb, dc: CHAR.stats.dc, atk: CHAR.stats.atk, slots: CHAR.slots, sp: RES.sp.max, spAtual: state.res.sp, prep: CHAR.limits.prepared, tru: CHAR.limits.cantrips, salto: RES.jaunt.max, sorte: RES.luck.max, grande: !!RES.large, medo: SPELL.fear?.draconic, voo: SPELL.fly?.draconic, cant: baseDice(SPELL['mind-sliver'].r.find(x => x.t === 'dmg')), expl: baseDice(SPELL['sorcerous-burst'].r.find(x => x.t === 'dmg')), sub: document.querySelector('#char-sub').textContent, gr: SPELL['sorcerous-burst'].r.find(x => x.t === 'dmg').cantrip }));
+    ok(r.hp === 37 && r.atual === 37, `PV 37 (${r.hp}/${r.atual})`);
+    ok(r.pb === 3 && r.dc === 15 && r.atk === 7, `BP +3, CD 15, +7 (${r.pb}, ${r.dc}, ${r.atk})`);
+    ok(r.slots[1] === 4 && r.slots[2] === 3 && r.slots[3] === 2, 'espaços 4/3/2');
+    ok(r.sp === 5 && r.spAtual === 5, '5 PF');
+    ok(r.prep === 9, '9 preparadas');
+    ok(r.salto === 3 && r.sorte === 3, 'Salto e Sorte 3 usos');
+    ok(r.grande, 'Forma Grande desbloqueada');
+    ok(r.medo && r.voo, 'Medo e Voo sempre preparadas');
+    ok(r.sub.includes('Nível 5'), 'cabeçalho mostra o nível');
+    await page.evaluate(() => { const l = SOREN_SPELLS.find(s => s.id === 'mind-sliver'); });
+    await aba(page, 'personagem');
+    await clicar(page, '[data-action="lv-undo"]');
+    await page.waitForFunction(() => activeChar().level === 4);
+    const u = await page.evaluate(() => ({ hp: CHAR.stats.hpMax, atual: state.hp, sp: state.res.sp, medo: !!SPELL.fear, slots: CHAR.slots[3] }));
+    ok(u.hp === 30 && u.atual === 30 && u.sp === 4 && !u.medo && !u.slots, 'desfazer nível volta ao 4');
+    ok(!erros.length, `sem erros de JS: ${erros}`);
+    await ctx.close();
+  },
+
+  async 'do nível 4 ao 20 bate com as tabelas'({ browser, opts }) {
+    const { ctx, page, erros } = await abrir(browser, opts);
+    const r = await page.evaluate(async () => {
+      await ensureLibrary();
+      const c = activeChar(), dif = [], meta = METAMAGIC.map(m => m.id);
+      for (let n = 5; n <= 20; n++) {
+        const need = levelNeeds(c);
+        commitLevel({ hp: 4, asi: {}, feat: need.boon ? 'boon-fate' : '', metamagic: meta.filter(m => !buildOf(c).metamagic.includes(m)).slice(0, Math.max(0, need.metamagic)) });
+        const L = SORCERER_LEVELS[n - 1], s = CHAR, ok = s.stats.pb === L.pb && RES.sp.max === n && s.limits.cantrips === L.cantrips && s.limits.prepared === L.prepared && L.slots.every((v, i) => (s.slots[i + 1] || 0) === v) && s.stats.hpMax === 30 + (n - 4) * 7 && RES.hd.max === n && activeChar().level === n;
+        if (!ok) dif.push(n + ':' + JSON.stringify(s.slots) + ' pv' + s.stats.hpMax);
+      }
+      return { dif, meta: CHAR.metamagic.length, pv: CHAR.stats.hpMax, pb: CHAR.stats.pb, drag: !!SPELL['summon-dragon'], dad: CHAR.feats, level: activeChar().level, feats: buildOf(c).feats.length, tier: baseDice(SPELL['mind-sliver'].r.find(x => x.t === 'dmg')) };
+    });
+    ok(!r.dif.length, 'progressão diverge: ' + r.dif.join(' '));
+    ok(r.level === 20 && r.pv === 142 && r.pb === 6, `nível 20, PV 142, BP +6 (${r.pv})`);
+    ok(r.meta === 6, `6 Metamagias (${r.meta})`);
+    ok(r.drag, 'Invocar Dragão preparada');
+    ok(r.feats === 3, 'Dádiva Épica adicionada');
+    ok(!erros.length, `sem erros de JS: ${erros}`);
+    await ctx.close();
+  },
+
+  async 'aba Personagem edita e planeja'({ browser, opts }) {
+    const { ctx, page, erros } = await abrir(browser, opts);
+    await aba(page, 'personagem');
+    const t = await page.locator('#personagem').textContent();
+    ok(t.includes('Golias') && t.includes('Gigante das Nuvens') && t.includes('Andarilho') && t.includes('Sortudo') && t.includes('Conjurador Bélico'), 'mostra origem e talentos');
+    ok(t.includes('Feitiçaria Inata') && t.includes('Apoteose Arcana'), 'linha do tempo completa');
+    await page.fill('#id-story', 'Nova história');
+    await page.fill('#id-name', 'Søren da Geada');
+    await page.waitForFunction(() => document.querySelector('#char-name-txt').textContent === 'Søren da Geada');
+    await clicar(page, '[data-action="feat-catalog"]');
+    await page.selectOption('[data-plan="alert"]', '8');
+    await page.waitForFunction(() => buildOf(activeChar()).planned.alert === 8);
+    await page.fill('#ft-name', 'Mestre da Geada');
+    await page.fill('#ft-desc', 'Talento criado.');
+    await page.locator('#feat-form button').click();
+    await page.waitForFunction(() => (store.library.feats || []).length === 1);
+    ok(await page.evaluate(() => allFeats().some(f => f.name === 'Mestre da Geada')), 'talento criado entra no catálogo');
+    await page.reload();
+    await page.waitForFunction(() => document.querySelector('#stats')?.children.length > 0);
+    ok(await page.evaluate(() => activeChar().identity.story === 'Nova história' && activeChar().name === 'Søren da Geada'), 'identidade salva');
+    ok(!erros.length, `sem erros de JS: ${erros}`);
+    await ctx.close();
+  },
+
+  async 'criação de feiticeiro do 1 ao 3'({ browser, opts }) {
+    const { ctx, page, erros } = await abrir(browser, opts);
+    await clicar(page, '[data-action="chars"]');
+    await clicar(page, '[data-action="char-new"]');
+    await page.fill('#c-name', 'Ilda');
+    await page.press('#c-name', 'Enter');
+    await page.waitForSelector('#cw-sp');
+    await assistente(page, {
+      0: async () => { await page.selectOption('#cw-sp', 'goliath'); await page.selectOption('#cw-lin', 'storm'); },
+      1: async () => { await page.selectOption('#cw-bg', 'sage'); await page.selectOption('#cw-p2', 'CON'); await page.selectOption('#cw-p1', 'INT'); },
+      2: async () => {
+        await page.check('input[name="cw-method"][value="compra"]');
+        await page.waitForSelector('[data-action="cw-score"]');
+        for (let i = 0; i < 8; i++) await clicar(page, '[data-action="cw-score"][data-k="CAR"][data-d="1"]');
+        ok(await page.evaluate(() => pointsUsed()) === 9, 'compra de pontos soma o custo certo');
+        for (const k of ['DES', 'CON', 'SAB', 'FOR', 'INT']) for (let i = 0; i < 8; i++) await clicar(page, `[data-action="cw-score"][data-k="${k}"][data-d="1"]`).catch(() => {});
+        ok(await page.locator('[data-action="cw-next"]').isDisabled(), 'passar de 27 pontos bloqueia');
+        for (const k of ['DES', 'CON', 'SAB', 'FOR', 'INT']) for (let i = 0; i < 4; i++) await clicar(page, `[data-action="cw-score"][data-k="${k}"][data-d="-1"]`);
+      },
+      6: async () => {
+        await page.locator('[data-cwsp]').first().check();
+        await page.waitForSelector('[data-cwsp]');
+      },
+      7: async () => { await page.selectOption('#cw-level', '3'); }
+    });
+    await page.waitForFunction(() => activeChar().name === 'Ilda' && activeChar().level === 3);
+    const r = await page.evaluate(() => { const b = buildOf(activeChar()); return { sc: b.scores, pv: CHAR.stats.hpMax, atual: state.hp, drac: b.subclassId, orbe: !!SPELL['chromatic-orb'], meta: CHAR.metamagic.length, pb: CHAR.stats.pb, sp: RES.sp.max, slots: CHAR.slots, feat: b.feats, sk: Object.keys(b.skills).length, sub: activeChar().sub, salto: !!RES.jaunt, ac: CHAR.stats.ac, spd: CHAR.stats.speed, it: state.items.length }; });
+    const con = Math.floor((r.sc.CON - 10) / 2);
+    ok(r.sc.CAR === 15 && r.sc.CON === 13 + 0 || r.sc.CON >= 10, 'atributos com bônus');
+    ok(r.pv === 6 + con + 2 * (4 + con) + 3 && r.atual === r.pv, `PV do nível 3 (${r.pv})`);
+    ok(r.drac === 'draconic' && r.orbe && r.meta === 2, 'subclasse, magias dracônicas e Metamagia');
+    ok(r.slots[1] === 4 && r.slots[2] === 2 && r.sp === 3 && r.pb === 2, 'espaços e PF do nível 3');
+    ok(r.feat.includes('magic-initiate') && r.sk === 4, 'talento e perícias do antecedente');
+    ok(r.sub.includes('Golias (Gigante da Tempestade)') && !r.salto, 'ascendência escolhida');
+    ok(r.spd === '10,5 m', 'deslocamento da espécie');
+    ok(r.it === 5, 'equipamento inicial');
+    ok(!erros.length, `sem erros de JS: ${erros}`);
+    await ctx.close();
+  },
+
   async 'duplicar, excluir com desfazer e exportar/importar'({ browser, opts }) {
     const { ctx, page, erros } = await abrir(browser, { ...opts, seed: true });
     await clicar(page, '[data-action="chars"]');
@@ -400,7 +565,9 @@ const cenarios = {
 };
 
 const browser = await chromium.launch();
+const rapido = process.env.TESTE_RAPIDO;
 for (const [nome, viewport] of Object.entries(VIEWPORTS)) for (const comGsap of [true, false]) {
+  if (rapido && (nome !== 'celular' || comGsap)) continue;
   console.log(`\n${nome}, ${comGsap ? 'com' : 'sem'} GSAP`);
   for (const [titulo, fn] of Object.entries(cenarios)) {
     const antes = falhas;

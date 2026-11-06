@@ -2,7 +2,7 @@
    ESTADO, PERSISTÊNCIA E DESFAZER
    ===================================================================== */
 const ORD = n => n + 'º';
-const TABS = ['ficha', 'magia', 'grimorio', 'recursos', 'mochila', 'notas'];
+const TABS = ['ficha', 'personagem', 'magia', 'grimorio', 'recursos', 'mochila', 'notas'];
 
 function defaultState() {
   return {

@@ -71,7 +71,7 @@ function renderItems() {
 
 function render() {
   renderStats(); renderEffects(); renderFicha(); renderSlots(); renderSpHub(); renderReminders();
-  renderFilters(); renderGrim(); renderHp(); renderRes(); renderItems();
+  renderFilters(); renderGrim(); renderHp(); renderRes(); renderItems(); renderPersonagem();
   popKey = null;
   if (modalRefresh) modalRefresh();
 }

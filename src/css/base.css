@@ -104,7 +104,7 @@ svg.ic{width:22px;height:22px;flex:none;fill:none;stroke:currentColor;stroke-wid
 .tabs{position:fixed;left:0;right:0;bottom:0;z-index:40;display:grid;grid-template-columns:repeat(4,1fr);
   height:calc(var(--nav-h) + var(--safe-b));padding-bottom:var(--safe-b);
   background:rgba(14,19,28,.96);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-top:1px solid var(--line)}
-.tabs{grid-template-columns:repeat(6,1fr)}
+.tabs{grid-template-columns:repeat(7,minmax(0,1fr))}
 .tab{border:0;background:none;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;color:var(--faint);
   font-family:var(--f-display);font-size:10px;letter-spacing:.05em;text-transform:uppercase;position:relative;padding:0}
 .tab svg.ic{width:24px;height:24px}
@@ -120,7 +120,7 @@ main{margin-top:8px}
 
 @media (min-width:900px){
   .tabs{position:sticky;top:0;bottom:auto;height:56px;padding:0;margin:4px 0 0;border:1px solid var(--line);border-radius:14px;
-    grid-template-columns:repeat(6,auto);justify-content:start;gap:4px;padding-inline:6px;background:rgba(20,27,39,.92)}
+    grid-template-columns:repeat(7,auto);justify-content:start;gap:4px;padding-inline:6px;background:rgba(20,27,39,.92)}
   .tab{flex-direction:row;gap:8px;font-size:13px;padding:0 18px}
   .tab[aria-selected="true"]::before{top:auto;bottom:-1px;left:14px;right:14px}
   .tab .badge{position:static}

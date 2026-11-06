@@ -86,7 +86,7 @@ function handle(a, el) {
       commit(hit ? (m - 1 ? `Duplicata destruída — restam ${m - 1}` : 'Última duplicata destruída — Reflexos termina') : 'Duplicata restaurada', st => { st.fx.mirror = Math.max(0, Math.min(3, m + (hit ? -1 : 1))); }); break; }
     case 'conc-end': commit(`Concentração em ${SPELL[state.conc]?.name} encerrada`, st => { st.conc = null; }); break;
     case 'conc-check': concModal(0); break;
-    case 'conc-roll': { const a1 = d(20), b1 = d(20), total = Math.max(a1, b1) + CHAR.stats.conSave; concRoll = { a: a1, b: b1, total, ok: total >= concDC() }; modalRefresh?.(); break; }
+    case 'conc-roll': { const a1 = d(20), b1 = CHAR.warCaster ? d(20) : a1, total = Math.max(a1, b1) + CHAR.stats.conSave; concRoll = { a: a1, b: b1, total, ok: total >= concDC() }; modalRefresh?.(); break; }
     case 'conc-lost': commit(`Concentração em ${SPELL[state.conc]?.name} perdida`, st => { st.conc = null; }); closeModal(); break;
     case 'hp': {
       const inp = $('#hp-amt'), amt = Math.round(+inp.value);

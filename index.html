@@ -118,7 +118,7 @@ svg.ic{width:22px;height:22px;flex:none;fill:none;stroke:currentColor;stroke-wid
 .tabs{position:fixed;left:0;right:0;bottom:0;z-index:40;display:grid;grid-template-columns:repeat(4,1fr);
   height:calc(var(--nav-h) + var(--safe-b));padding-bottom:var(--safe-b);
   background:rgba(14,19,28,.96);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-top:1px solid var(--line)}
-.tabs{grid-template-columns:repeat(6,1fr)}
+.tabs{grid-template-columns:repeat(7,minmax(0,1fr))}
 .tab{border:0;background:none;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;color:var(--faint);
   font-family:var(--f-display);font-size:10px;letter-spacing:.05em;text-transform:uppercase;position:relative;padding:0}
 .tab svg.ic{width:24px;height:24px}
@@ -134,7 +134,7 @@ main{margin-top:8px}
 
 @media (min-width:900px){
   .tabs{position:sticky;top:0;bottom:auto;height:56px;padding:0;margin:4px 0 0;border:1px solid var(--line);border-radius:14px;
-    grid-template-columns:repeat(6,auto);justify-content:start;gap:4px;padding-inline:6px;background:rgba(20,27,39,.92)}
+    grid-template-columns:repeat(7,auto);justify-content:start;gap:4px;padding-inline:6px;background:rgba(20,27,39,.92)}
   .tab{flex-direction:row;gap:8px;font-size:13px;padding:0 18px}
   .tab[aria-selected="true"]::before{top:auto;bottom:-1px;left:14px;right:14px}
   .tab .badge{position:static}
@@ -680,6 +680,31 @@ footer.foot{margin-top:28px;text-align:center;color:var(--faint);font-size:14px}
 .field select,.field textarea{width:100%}
 .cast-types{margin-bottom:10px}
 .cast-types h4{margin-bottom:6px}
+.persona{display:grid;gap:14px}
+@media (min-width:900px){ .persona{grid-template-columns:1fr 1fr;align-items:start} }
+.plist{margin:0;padding-left:18px;display:grid;gap:6px}
+.plist small{color:var(--muted)}
+.timeline{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.tl{display:flex;gap:10px;opacity:.55}
+.tl.on{opacity:1}
+.tl-n{flex:none;width:30px;height:30px;border-radius:50%;display:grid;place-items:center;border:1px solid var(--line);color:var(--muted);font-size:14px}
+.tl.on .tl-n{border-color:var(--gold-l);color:var(--gold-l)}
+.tl p{margin:2px 0 0;color:var(--muted);font-size:15px}
+.tl small{color:var(--muted)}
+.feat-list{display:grid;gap:8px}
+.feat{display:grid;grid-template-columns:minmax(0,1fr) 110px;gap:10px;padding:10px;border:1px solid var(--line);border-radius:12px}
+.feat p{margin:2px 0 0;color:var(--muted);font-size:15px}
+.pick{display:grid;gap:6px;max-height:260px;overflow:auto;padding:4px 2px}
+.pick .ck{align-items:flex-start}
+.pick small{color:var(--muted)}
+.scores{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.score{display:grid;gap:4px;padding:8px;border:1px solid var(--line);border-radius:12px}
+.score>div{display:flex;align-items:center;justify-content:space-between}
+.score select{min-height:38px;border-radius:10px;border:1px solid var(--line);background:var(--bg2);color:var(--text)}
+.score small{color:var(--muted)}
+.t-short{display:none}
+@media (max-width:699px){ .t-long{display:none} .t-short{display:inline} .tab{min-width:0;overflow:hidden;letter-spacing:.02em} }
+@media (min-width:900px){ .tab{padding:0 12px;white-space:nowrap} }
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <style id="fx-css">
@@ -850,6 +875,7 @@ body::after{content:"";position:fixed;inset:0;z-index:300;pointer-events:none;op
 
   <nav class="tabs" role="tablist" aria-label="Seções da ficha">
     <button class="tab" role="tab" data-action="tab" data-tab="ficha" id="t-ficha" aria-controls="tab-ficha"><svg class="ic"><use href="#i-scroll"/></svg>Ficha</button>
+    <button class="tab" role="tab" data-action="tab" data-tab="personagem" id="t-personagem" aria-controls="tab-personagem"><svg class="ic"><use href="#i-eye"/></svg><span class="t-long">Personagem</span><span class="t-short">Perfil</span></button>
     <button class="tab" role="tab" data-action="tab" data-tab="magia" id="t-magia" aria-controls="tab-magia"><svg class="ic"><use href="#i-gem"/></svg>Magia<span class="badge num" id="badge-slots" hidden></span></button>
     <button class="tab" role="tab" data-action="tab" data-tab="grimorio" id="t-grimorio" aria-controls="tab-grimorio"><svg class="ic"><use href="#i-book"/></svg>Grimório</button>
     <button class="tab" role="tab" data-action="tab" data-tab="recursos" id="t-recursos" aria-controls="tab-recursos"><svg class="ic"><use href="#i-flame"/></svg>Recursos</button>
@@ -920,6 +946,9 @@ body::after{content:"";position:fixed;inset:0;z-index:300;pointer-events:none;op
       <input type="file" id="lib-file" accept="application/json,.json" hidden>
     </section>
 
+    <!-- ======================= PERSONAGEM ======================= -->
+    <section class="panel-tab" id="tab-personagem" role="tabpanel" aria-labelledby="t-personagem"><div id="personagem" class="persona"></div></section>
+
     <!-- ======================= RECURSOS ======================= -->
     <section class="panel-tab" id="tab-recursos" role="tabpanel" aria-labelledby="t-recursos">
       <div class="grid two">
@@ -959,7 +988,7 @@ body::after{content:"";position:fixed;inset:0;z-index:300;pointer-events:none;op
     </section>
   </main>
 
-  <footer class="foot">Progresso salvo automaticamente neste navegador.<br>Contém material do <a href="https://dndbeyond.com/srd" rel="noopener">System Reference Document 5.2</a>, da Wizards of the Coast, sob licença <a href="https://creativecommons.org/licenses/by/4.0/legalcode" rel="noopener">CC BY 4.0</a>.</footer>
+  <footer class="foot" id="foot">Progresso salvo automaticamente neste navegador.<br>Contém material do <a href="https://dndbeyond.com/srd" rel="noopener">System Reference Document 5.2</a>, da Wizards of the Coast, sob licença <a href="https://creativecommons.org/licenses/by/4.0/legalcode" rel="noopener">CC BY 4.0</a>.</footer>
 </div>
 
 <div class="modal" id="modal" hidden>
@@ -1094,15 +1123,15 @@ const SOREN_SPELLS = [
     tactic:'Abre o combo principal: aplique o −1d4 com a Ação e, gastando 2 PF em <b>Magia Acelerada</b>, conjure <i>Teia</i>, <i>Sugestão</i> ou <i>Força Espectral</i> na Ação Bônus contra o alvo enfraquecido.' },
   { id:'sorcerous-burst', name:'Explosão Elemental', en:'Sorcerous Burst', level:0, school:'Evocação', choice:['Ácido', 'Elétrico', 'Frio', 'Fogo', 'Psíquico', 'Trovejante', 'Veneno'],
     time:'1 Ação', range:'36 m (120 pés)', comp:'V, S', dur:'Instantânea',
-    sum:'Ataque à distância (+6): 1d8 do elemento escolhido; 8s explodem.', dmgChip:'1d8',
+    sum:'Ataque à distância ({ATQ}): 1d8 do elemento escolhido; 8s explodem.', dmgChip:'1d8',
     r:[{ t:'atk' }, { t:'dmg', d:'1d8', type:'Frio (ou outro elemento)', label:'Se acertar · 8 explode (até +4d8)', crit:true, explode:8, max:4 }],
-    desc:['Você dispara energia mágica contra uma criatura ou objeto dentro do alcance. Faça um <b>ataque mágico à distância (+6)</b>. Se acertar, o alvo sofre <b>1d8</b> de dano de um tipo à sua escolha: Ácido, Elétrico, Frio, Fogo, Psíquico, Trovejante ou Veneno.',
+    desc:['Você dispara energia mágica contra uma criatura ou objeto dentro do alcance. Faça um <b>ataque mágico à distância ({ATQ})</b>. Se acertar, o alvo sofre <b>1d8</b> de dano de um tipo à sua escolha: Ácido, Elétrico, Frio, Fogo, Psíquico, Trovejante ou Veneno.',
           'Sempre que rolar <b>8</b> num d8 desta magia, role mais um d8 e some ao dano. Esses dados extras podem ocorrer no máximo <b>4 vezes</b> (seu modificador de Carisma) por conjuração.'],
     upgrade:'O dano aumenta em 1d8 nos níveis 5 (2d8), 11 (3d8) e 17 (4d8). No nível 4, o Carisma não soma ao dano.',
     tactic:'Sua artilharia de longo alcance. Escolha <b>Frio</b> para manter a temática gélida.' },
   { id:'true-strike', name:'Golpe Certeiro', en:'True Strike', level:0, school:'Adivinhação',
     time:'1 Ação', range:'Pessoal', comp:'S, M (arma com proficiência de 1 PC ou mais — sua Lança ou Adaga)', dur:'Instantânea',
-    sum:'Ataque com arma usando Carisma (+6); Lança 1d6+4 / 1d8+4, Adaga 1d4+4.', dmgChip:'1d6+4',
+    sum:'Ataque com arma usando Carisma ({ATQ}); Lança 1d6+4 / 1d8+4, Adaga 1d4+4.', dmgChip:'1d6+4',
     r:[{ t:'atk', label:'Ataque com a arma (Carisma)' },
        { t:'dmg', d:'1d6+4', type:'Perfurante ou Radiante', label:'Lança · 1 mão', crit:true },
        { t:'dmg', d:'1d8+4', type:'Perfurante ou Radiante', label:'Lança · 2 mãos', crit:true },
@@ -1134,11 +1163,11 @@ const SOREN_SPELLS = [
   /* ------------------------------ 1º CÍRCULO ------------------------------ */
   { id:'ice-knife', name:'Faca de Gelo', en:'Ice Knife', level:1, school:'Invocação', isNew:true,
     time:'1 Ação', range:'18 m (60 pés)', comp:'S, M (uma gota d\'água ou um pedaço de gelo — o foco arcano substitui)', dur:'Instantânea',
-    sum:'Ataque (+6): 1d10 Perfurante; explosão de 2d6 Frio (salv. DES) em 1,5 m.', dmgChip:'1d10 + 2d6',
+    sum:'Ataque ({ATQ}): 1d10 Perfurante; explosão de 2d6 Frio (salv. DES) em 1,5 m.', dmgChip:'1d10 + 2d6',
     r:[{ t:'atk' }, { t:'dmg', d:'1d10', type:'Perfurante', label:'No alvo, se acertar', crit:true },
        { t:'save', a:'DES', txt:'Alvo e todos a até 1,5 m dele · sucesso = 0 de dano' },
        { t:'dmg', d:'2d6', type:'Frio', label:'Explosão, em quem falhar', up:'1d6' }],
-    desc:['Você cria um estilhaço de gelo e o arremessa contra uma criatura dentro do alcance. Faça um <b>ataque mágico à distância (+6)</b>. Se acertar, o alvo sofre <b>1d10 de dano Perfurante</b>.',
+    desc:['Você cria um estilhaço de gelo e o arremessa contra uma criatura dentro do alcance. Faça um <b>ataque mágico à distância ({ATQ})</b>. Se acertar, o alvo sofre <b>1d10 de dano Perfurante</b>.',
           'Acertando ou errando, o estilhaço <b>explode</b>: o alvo e cada criatura a até 1,5 m dele devem ser bem-sucedidos numa <b>salvaguarda de Destreza</b> (CD {CD}) ou sofrem <b>2d6 de dano de Frio</b>. Quem passa não sofre dano.'],
     higher:'O dano de Frio aumenta em 1d6 por nível de espaço acima do 1º (3d6 com espaço de 2º).',
     tactic:'Não usa concentração — dano gélido enquanto <i>Teia</i> mantém os inimigos presos (Contidos têm Desvantagem em salvaguardas de DES).' },
@@ -1159,9 +1188,9 @@ const SOREN_SPELLS = [
   { id:'chromatic-orb', name:'Orbe Cromático', en:'Chromatic Orb', level:1, school:'Evocação', draconic:true, choice:['Ácido', 'Frio', 'Fogo', 'Elétrico', 'Veneno', 'Trovejante'],
     mat:{ key:'diamond', required:true },
     time:'1 Ação', range:'27 m (90 pés)', comp:'V, S, M (um diamante de 50+ PO — não é consumido)', dur:'Instantânea',
-    sum:'Ataque (+6): 3d8 do elemento escolhido; dados iguais fazem o orbe saltar.', dmgChip:'3d8',
+    sum:'Ataque ({ATQ}): 3d8 do elemento escolhido; dados iguais fazem o orbe saltar.', dmgChip:'3d8',
     r:[{ t:'atk' }, { t:'dmg', d:'3d8', type:'Elemental à escolha', label:'Se acertar · dados iguais = salto', up:'1d8', crit:true, orb:true }],
-    desc:['Você arremessa uma esfera de energia contra uma criatura dentro do alcance. Escolha Ácido, Elétrico, Frio, Fogo, Trovejante ou Veneno e faça um <b>ataque mágico à distância (+6)</b>. Se acertar, o alvo sofre <b>3d8</b> de dano do tipo escolhido.',
+    desc:['Você arremessa uma esfera de energia contra uma criatura dentro do alcance. Escolha Ácido, Elétrico, Frio, Fogo, Trovejante ou Veneno e faça um <b>ataque mágico à distância ({ATQ})</b>. Se acertar, o alvo sofre <b>3d8</b> de dano do tipo escolhido.',
           'Se você rolar o <b>mesmo número em dois ou mais d8</b>, o orbe salta para outro alvo à sua escolha a até 9 m do primeiro: faça um novo ataque e uma nova rolagem de dano.'],
     higher:'+1d8 de dano por nível de espaço acima do 1º. O orbe pode saltar um número de vezes igual ao nível do espaço gasto, e cada criatura só pode ser alvo uma vez por conjuração.',
     tactic:'Seu maior dano de 1º círculo (média 13,5). Varie o elemento conforme as resistências do inimigo.' },
@@ -1240,6 +1269,221 @@ const SOREN_SPELLS = [
 ];
 </script>
 <script>
+/* Progressão do Feiticeiro no SRD 5.2 (CC BY 4.0). Gerado a partir de data/srd/Levels.json. */
+const SORCERER_LEVELS = [{"pb":2,"cantrips":4,"prepared":2,"slots":[2,0,0,0,0,0,0,0,0]},{"pb":2,"cantrips":4,"prepared":4,"slots":[3,0,0,0,0,0,0,0,0]},{"pb":2,"cantrips":4,"prepared":6,"slots":[4,2,0,0,0,0,0,0,0]},{"pb":2,"cantrips":5,"prepared":7,"slots":[4,3,0,0,0,0,0,0,0]},{"pb":3,"cantrips":5,"prepared":9,"slots":[4,3,2,0,0,0,0,0,0]},{"pb":3,"cantrips":5,"prepared":10,"slots":[4,3,3,0,0,0,0,0,0]},{"pb":3,"cantrips":5,"prepared":11,"slots":[4,3,3,1,0,0,0,0,0]},{"pb":3,"cantrips":5,"prepared":12,"slots":[4,3,3,2,0,0,0,0,0]},{"pb":4,"cantrips":5,"prepared":14,"slots":[4,3,3,3,1,0,0,0,0]},{"pb":4,"cantrips":6,"prepared":15,"slots":[4,3,3,3,2,0,0,0,0]},{"pb":4,"cantrips":6,"prepared":16,"slots":[4,3,3,3,2,1,0,0,0]},{"pb":4,"cantrips":6,"prepared":16,"slots":[4,3,3,3,2,1,0,0,0]},{"pb":5,"cantrips":6,"prepared":17,"slots":[4,3,3,3,2,1,1,0,0]},{"pb":5,"cantrips":6,"prepared":17,"slots":[4,3,3,3,2,1,1,0,0]},{"pb":5,"cantrips":6,"prepared":18,"slots":[4,3,3,3,2,1,1,1,0]},{"pb":5,"cantrips":6,"prepared":18,"slots":[4,3,3,3,2,1,1,1,0]},{"pb":6,"cantrips":6,"prepared":19,"slots":[4,3,3,3,2,1,1,1,1]},{"pb":6,"cantrips":6,"prepared":20,"slots":[4,3,3,3,3,1,1,1,1]},{"pb":6,"cantrips":6,"prepared":21,"slots":[4,3,3,3,3,2,1,1,1]},{"pb":6,"cantrips":6,"prepared":22,"slots":[4,3,3,3,3,2,2,1,1]}];
+/* =====================================================================
+   CONTEÚDO DE REGRAS (D&D 2024)
+   Resumos com palavras próprias, baseados no SRD 5.2 (CC BY 4.0).
+   Andarilho, Sortudo e Conjurador Bélico não estão no SRD: aparecem aqui
+   só o que a ficha do Søren já usa, também resumido.
+   ===================================================================== */
+const ATTR = [['FOR', 'Força'], ['DES', 'Destreza'], ['CON', 'Constituição'], ['INT', 'Inteligência'], ['SAB', 'Sabedoria'], ['CAR', 'Carisma']];
+const SKILLS = [['Acrobacia', 'DES'], ['Adestrar Animais', 'SAB'], ['Arcanismo', 'INT'], ['Atletismo', 'FOR'], ['Atuação', 'CAR'], ['Enganação', 'CAR'], ['Furtividade', 'DES'], ['História', 'INT'], ['Intimidação', 'CAR'], ['Intuição', 'SAB'], ['Investigação', 'INT'], ['Medicina', 'SAB'], ['Natureza', 'INT'], ['Percepção', 'SAB'], ['Persuasão', 'CAR'], ['Prestidigitação', 'DES'], ['Religião', 'INT'], ['Sobrevivência', 'SAB']];
+const SORCERER_SKILLS = ['Arcanismo', 'Enganação', 'Intimidação', 'Intuição', 'Persuasão', 'Religião'];
+const ASI_LEVELS = [4, 8, 12, 16], SLOT_COST = { 1: 2, 2: 3, 3: 5, 4: 6, 5: 7 };
+const metamagicKnown = n => (n >= 17 ? 6 : n >= 10 ? 4 : n >= 2 ? 2 : 0);
+
+const SPECIES = [
+  { id: 'dragonborn', name: 'Draconato', speed: 30, traits: [['Ancestralidade Dracônica', 'Escolha um tipo de dragão: ele define o elemento do sopro e da resistência.'], ['Arma de Sopro', 'Troca um ataque por um Cone ou uma Linha de energia. Os usos são iguais ao Bônus de Proficiência.'], ['Resistência a Dano', 'Resistência ao elemento da sua ancestralidade.'], ['Visão no Escuro', 'Enxerga no escuro até 18 m.'], ['Voo Dracônico', 'A partir do nível 5, asas espectrais dão Deslocamento de voo por 10 minutos, uma vez por Descanso Longo.']] },
+  { id: 'dwarf', name: 'Anão', speed: 30, traits: [['Visão no Escuro', 'Enxerga no escuro até 36 m.'], ['Resiliência Anã', 'Resistência a Veneno e Vantagem contra a condição Envenenado.'], ['Tenacidade Anã', 'Ganha 1 PV máximo por nível.'], ['Sensibilidade à Pedra', 'Ação Bônus para sentir tremores ao tocar em pedra, algumas vezes por Descanso Longo.']] },
+  { id: 'elf', name: 'Elfo', speed: 30, traits: [['Visão no Escuro', 'Enxerga no escuro até 18 m.'], ['Ancestralidade Feérica', 'Vantagem contra a condição Enfeitiçado.'], ['Linhagem Élfica', 'Escolha Drow, Alto Elfo ou Elfo da Floresta, que dão magias e benefícios próprios.'], ['Sentidos Aguçados', 'Proficiência em Intuição, Percepção ou Sobrevivência.'], ['Transe', 'Descanso Longo em 4 horas de transe.']] },
+  { id: 'gnome', name: 'Gnomo', speed: 30, traits: [['Visão no Escuro', 'Enxerga no escuro até 18 m.'], ['Astúcia Gnômica', 'Vantagem em salvaguardas de Inteligência, Sabedoria e Carisma.'], ['Linhagem Gnômica', 'Gnomo da Floresta ou das Rochas, com truques e magias próprios.']] },
+  { id: 'goliath', name: 'Golias', speed: 35, traits: [['Ascendência Gigante', 'Escolha um gigante ancestral. Ele dá um benefício sobrenatural com usos iguais ao Bônus de Proficiência, por Descanso Longo.'], ['Forma Grande', 'A partir do nível 5, Ação Bônus para virar Grande por 10 minutos, uma vez por Descanso Longo, com Vantagem em testes de Força e +3 m de Deslocamento.'], ['Constituição Poderosa', 'Vantagem para encerrar a condição Agarrado e conta como um tamanho maior para carga.']],
+    lineages: { cloud: ['Gigante das Nuvens', 'Salto das Nuvens: Ação Bônus para se teleportar até 9 m.'], fire: ['Gigante do Fogo', 'Queimadura do Fogo: ao acertar, causa 1d10 extra de Fogo.'], frost: ['Gigante do Gelo', 'Gelo do Frio: ao acertar, causa 1d6 extra de Frio e reduz o Deslocamento do alvo.'], hill: ['Gigante da Colina', 'Tombo da Colina: ao acertar, derruba um alvo Grande ou menor.'], stone: ['Gigante da Pedra', 'Resistência da Pedra: Reação para reduzir o dano sofrido.'], storm: ['Gigante da Tempestade', 'Trovão da Tempestade: Reação para causar 1d8 Trovejante a quem o atingiu.'] } },
+  { id: 'halfling', name: 'Pequenino', speed: 30, traits: [['Bravura', 'Vantagem contra a condição Amedrontado.'], ['Agilidade Pequenina', 'Atravessa o espaço de criaturas maiores.'], ['Sorte', 'Pode rolar de novo um 1 natural em Testes de d20.'], ['Furtividade Natural', 'Pode se esconder atrás de criaturas maiores.']] },
+  { id: 'human', name: 'Humano', speed: 30, traits: [['Engenhoso', 'Ganha Inspiração Heroica ao terminar um Descanso Longo.'], ['Habilidoso', 'Proficiência em uma perícia à escolha.'], ['Versátil', 'Um talento de origem à escolha.']] },
+  { id: 'orc', name: 'Orc', speed: 30, traits: [['Descarga de Adrenalina', 'Ação Bônus para Disparar e ganhar PV temporários, com usos iguais ao Bônus de Proficiência.'], ['Visão no Escuro', 'Enxerga no escuro até 36 m.'], ['Resistência Implacável', 'Uma vez por Descanso Longo, cai para 1 PV em vez de 0.']] },
+  { id: 'tiefling', name: 'Tiferino', speed: 30, traits: [['Visão no Escuro', 'Enxerga no escuro até 18 m.'], ['Legado Ínfero', 'Escolha Abissal, Ctônico ou Infernal, que dão resistência e magias próprias.'], ['Presença Sobrenatural', 'Conhece o truque Taumaturgia.']] }
+];
+const BACKGROUNDS = [
+  { id: 'acolyte', name: 'Acólito', attrs: ['INT', 'SAB', 'CAR'], feat: 'magic-initiate', skills: ['Intuição', 'Religião'], tool: 'Suprimentos de Calígrafo', desc: 'Você serviu num templo e aprendeu seus ritos.' },
+  { id: 'criminal', name: 'Criminoso', attrs: ['DES', 'CON', 'INT'], feat: 'alert', skills: ['Prestidigitação', 'Furtividade'], tool: 'Ferramentas de Ladrão', desc: 'Você viveu de golpes, roubos e contatos nas sombras.' },
+  { id: 'sage', name: 'Sábio', attrs: ['CON', 'INT', 'SAB'], feat: 'magic-initiate', skills: ['Arcanismo', 'História'], tool: 'Suprimentos de Calígrafo', desc: 'Você passou anos entre bibliotecas e mestres.' },
+  { id: 'soldier', name: 'Soldado', attrs: ['FOR', 'DES', 'CON'], feat: 'savage-attacker', skills: ['Atletismo', 'Intimidação'], tool: 'Kit de Jogos', desc: 'Você treinou para a guerra e conhece a vida de quartel.' },
+  { id: 'wayfarer', name: 'Andarilho', attrs: ['DES', 'SAB', 'CAR'], feat: 'lucky', skills: ['Intuição', 'Furtividade'], tool: 'Ferramentas de Ladrão', desc: 'Você cresceu pelas estradas, sobrevivendo com astúcia.' }
+];
+const FEATS = [
+  { id: 'alert', name: 'Alerta', cat: 'origem', desc: 'Soma o Bônus de Proficiência à Iniciativa e pode trocar de Iniciativa com um aliado.' },
+  { id: 'magic-initiate', name: 'Iniciado em Magia', cat: 'origem', desc: 'Aprende dois truques e uma magia de 1º círculo de uma lista de classe.' },
+  { id: 'savage-attacker', name: 'Atacante Selvagem', cat: 'origem', desc: 'Uma vez por turno, rola os dados de dano da arma duas vezes e usa o melhor.' },
+  { id: 'skilled', name: 'Habilidoso', cat: 'origem', desc: 'Ganha proficiência em três perícias ou ferramentas à escolha.' },
+  { id: 'lucky', name: 'Sortudo', cat: 'origem', desc: 'Ganha Pontos de Sorte iguais ao Bônus de Proficiência para ter Vantagem ou impor Desvantagem.' },
+  { id: 'war-caster', name: 'Conjurador Bélico', cat: 'geral', min: 4, desc: 'Vantagem para manter Concentração, conjura com as mãos ocupadas e pode responder com magia a um ataque de oportunidade.' },
+  { id: 'grappler', name: 'Agarrador', cat: 'geral', min: 4, desc: 'Ataca e agarra com mais facilidade e move-se sem penalidade com quem agarrou.' },
+  { id: 'asi', name: 'Aumento no Valor de Atributo', cat: 'geral', min: 4, desc: '+2 em um atributo ou +1 em dois, até o máximo de 20.' },
+  { id: 'archery', name: 'Arquearia', cat: 'estilo', desc: '+2 nas jogadas de ataque à distância com armas.' },
+  { id: 'defense', name: 'Defesa', cat: 'estilo', desc: '+1 na CA usando armadura.' },
+  { id: 'great-weapon-fighting', name: 'Combate com Armas Grandes', cat: 'estilo', desc: 'Dados de dano 1 e 2 contam como 3 em armas de duas mãos.' },
+  { id: 'two-weapon-fighting', name: 'Combate com Duas Armas', cat: 'estilo', desc: 'Soma o modificador ao dano do ataque extra.' },
+  { id: 'boon-combat-prowess', name: 'Dádiva da Proeza em Combate', cat: 'dadiva', min: 19, desc: 'Uma vez por turno, transforma um ataque errado em acerto.' },
+  { id: 'boon-dimensional-travel', name: 'Dádiva da Viagem Dimensional', cat: 'dadiva', min: 19, desc: 'Teleporta-se 9 m depois de atacar ou conjurar.' },
+  { id: 'boon-fate', name: 'Dádiva do Destino', cat: 'dadiva', min: 19, desc: 'Soma ou subtrai 2d4 de um Teste de d20 próximo.' },
+  { id: 'boon-irresistible-offense', name: 'Dádiva da Ofensiva Irresistível', cat: 'dadiva', min: 19, desc: 'Seus ataques ignoram Resistência e um 20 natural causa dano extra.' },
+  { id: 'boon-spell-recall', name: 'Dádiva da Lembrança Mágica', cat: 'dadiva', min: 19, desc: 'Às vezes conjura sem gastar o espaço de magia.' },
+  { id: 'boon-night-spirit', name: 'Dádiva do Espírito da Noite', cat: 'dadiva', min: 19, desc: 'Fica Invisível na penumbra e resiste a quase todo dano nela.' },
+  { id: 'boon-truesight', name: 'Dádiva da Visão Verdadeira', cat: 'dadiva', min: 19, desc: 'Ganha Visão Verdadeira até 18 m.' }
+];
+const METAMAGIC = [
+  { id: 'careful', name: 'Magia Cuidadosa', en: 'Careful Spell', cost: 1, icon: 'i-shield', desc: 'Protege criaturas à escolha do efeito de uma magia com salvaguarda.', when: 'Para lançar área perto de aliados.' },
+  { id: 'distant', name: 'Magia Distante', en: 'Distant Spell', cost: 1, icon: 'i-spark', desc: 'Dobra o alcance da magia, ou dá 9 m a uma magia de Toque.', when: 'Para atingir de longe.' },
+  { id: 'empowered', name: 'Magia Potencializada', en: 'Empowered Spell', cost: 1, icon: 'i-flame', desc: 'Rola de novo alguns dados de dano e fica com os novos resultados.', when: 'Depois de uma rolagem fraca.' },
+  { id: 'extended', name: 'Magia Estendida', en: 'Extended Spell', cost: 1, icon: 'i-moon', desc: 'Dobra a duração, até 24 horas, e dá Vantagem para manter a Concentração.', when: 'Em magias longas de controle.' },
+  { id: 'heightened', name: 'Magia Elevada', en: 'Heightened Spell', cost: 2, icon: 'i-gem', desc: 'Um alvo tem Desvantagem na salvaguarda contra a magia.', when: 'Contra o alvo mais perigoso.' },
+  { id: 'quick', name: 'Magia Acelerada', en: 'Quickened Spell', cost: 2, icon: 'i-bolt', desc: 'Uma magia de 1 Ação passa a ser conjurada como Ação Bônus.', when: 'Para agir duas vezes no turno.' },
+  { id: 'seeking', name: 'Magia Rastreadora', en: 'Seeking Spell', cost: 1, icon: 'i-eye', desc: 'Rola de novo um ataque mágico que errou.', when: 'Depois de errar um ataque importante.' },
+  { id: 'subtle', name: 'Magia Sutil', en: 'Subtle Spell', cost: 1, icon: 'i-hush', desc: 'Conjura sem componentes Verbais, Somáticos ou Materiais sem custo.', when: 'Para conjurar sem ser percebido.' },
+  { id: 'transmuted', name: 'Magia Transmutada', en: 'Transmuted Spell', cost: 1, icon: 'i-flame', desc: 'Troca o tipo de dano da magia entre Ácido, Elétrico, Frio, Fogo, Trovejante e Veneno.', when: 'Contra resistências.' },
+  { id: 'twinned', name: 'Magia Geminada', en: 'Twinned Spell', cost: 1, icon: 'i-spark', desc: 'A magia ganha um alvo adicional ao ser ampliada em um círculo.', when: 'Para dobrar buffs e controle.' }
+];
+const SORCERER_FEATURES = [
+  [1, 'Conjuração', 'Conjura magias de Feiticeiro usando Carisma.'], [1, 'Feitiçaria Inata', 'Ação Bônus para somar +1 à CD e ter Vantagem em ataques de magia por 1 minuto, duas vezes por Descanso Longo.'],
+  [2, 'Fonte de Magia', 'Pontos de Feitiçaria iguais ao nível, que viram espaços de magia e vice-versa.'], [2, 'Metamagia', 'Escolhe 2 opções para moldar magias; mais 2 nos níveis 10 e 17.'],
+  [3, 'Subclasse de Feiticeiro', 'Escolhe a origem do seu poder.'], [4, 'Aumento no Valor de Atributo', 'Aumenta atributos ou escolhe um talento. Repete nos níveis 8, 12 e 16.'],
+  [5, 'Restauração Feiticeira', 'Em um Descanso Curto, recupera Pontos de Feitiçaria iguais à metade do nível, uma vez por Descanso Longo.'], [7, 'Feitiçaria Encarnada', 'Com a Feitiçaria Inata ativa, pode usar até duas Metamagias por magia; gasta 2 PF para ativá-la sem usos.'],
+  [10, 'Metamagia adicional', 'Conhece mais 2 opções de Metamagia.'], [17, 'Metamagia adicional', 'Conhece mais 2 opções de Metamagia.'],
+  [19, 'Dádiva Épica', 'Escolhe uma Dádiva Épica.'], [20, 'Apoteose Arcana', 'Com a Feitiçaria Inata ativa, uma Metamagia por turno sai sem custo de PF.']
+];
+const DRACONIC_FEATURES = [
+  [3, 'Resiliência Dracônica', '+3 PV máximos, mais 1 por nível, e CA sem armadura = 10 + DES + CAR.'], [3, 'Magias Dracônicas', 'Alterar-se, Orbe Cromático, Comando e Sopro de Dragão sempre preparadas.'],
+  [5, 'Magias Dracônicas', 'Medo e Voo sempre preparadas.'], [6, 'Afinidade Elemental', 'Escolha um elemento: Resistência a ele e soma Carisma a um dano de magia desse tipo.'],
+  [7, 'Magias Dracônicas', 'Olho Arcano e Enfeitiçar Monstro sempre preparadas.'], [9, 'Magias Dracônicas', 'Lendas e Histórias e Invocar Dragão sempre preparadas.'],
+  [14, 'Asas de Dragão', 'Ação Bônus para ganhar Deslocamento de voo de 18 m por 1 hora, uma vez por Descanso Longo.'], [18, 'Companheiro Dracônico', 'Conjura Invocar Dragão sem componente Material e, uma vez, sem espaço de magia.']
+];
+const DRACONIC_SPELLS = { 3: ['alter-self', 'chromatic-orb', 'command', 'dragons-breath'], 5: ['fear', 'fly'], 7: ['arcane-eye', 'charm-monster'], 9: ['legend-lore', 'summon-dragon'] };
+const STARTING_GEAR = {
+  a: { label: 'Lança, 2 Adagas, Foco Arcano, Kit de Masmorra e 28 PO', items: [['Lança', 1, 'arm'], ['Adaga', 2, 'arm'], ['Foco Arcano', 1, 'arm'], ['Kit de Masmorra', 1, 'eq'], ['Peças de Ouro', 28, 'cons']] },
+  b: { label: '50 PO para comprar o que quiser', items: [['Peças de Ouro', 50, 'cons']] }
+};
+const speciesById = id => SPECIES.find(s => s.id === id) || privateCatalog().especies.find(s => s.id === id);
+const backgroundById = id => BACKGROUNDS.find(b => b.id === id) || privateCatalog().antecedentes.find(b => b.id === id);
+const featById = id => allFeats().find(f => f.id === id);
+/* =====================================================================
+   MOTOR DE REGRAS — calcula a ficha a partir do nível, dos atributos e
+   das escolhas. Por enquanto cobre o Feiticeiro de D&D 2024.
+   ===================================================================== */
+const modScore = v => Math.floor((v - 10) / 2);
+const pbOf = n => Math.ceil(n / 4) + 1;
+const signed = n => (n >= 0 ? '+' : '−') + Math.abs(n);
+const num = n => (n < 0 ? '−' : '') + Math.abs(n);
+const spd = ft => String(ft * 0.3).replace('.', ',') + ' m';
+
+function sorenBuild() {
+  return {
+    classId: 'sorcerer', subclassId: 'draconic', level: 4, speciesId: 'goliath', lineage: 'cloud', backgroundId: 'wayfarer',
+    scores: Object.fromEntries(SOREN.abilities.map(a => [a.k, a.s])), hpRolls: [4, 4, 4], feats: ['lucky', 'war-caster'], metamagic: ['quick', 'subtle'], planned: {},
+    skills: Object.fromEntries(SOREN.skills.filter(s => s[2]).map(s => [s[0], s[2]]))
+  };
+}
+function blankBuild(level = 1) {
+  return { classId: 'sorcerer', subclassId: level >= 3 ? 'draconic' : null, level, speciesId: null, lineage: null, backgroundId: null, scores: Object.fromEntries(ATTR.map(([k]) => [k, 10])), hpRolls: [], feats: [], metamagic: [], planned: {}, skills: {} };
+}
+const buildOf = c => c.build || (c.build = c.template === 'soren' ? sorenBuild() : blankBuild(c.level || 1));
+
+function hpMaxOf(b, con = modScore(b.scores.CON)) {
+  const n = b.level, rolls = b.hpRolls.slice(0, n - 1).reduce((a, r) => a + r + con, 0);
+  return { base: 6 + con, rolls, resil: b.subclassId === 'draconic' && n >= 3 ? n : 0, total: Math.max(1, 6 + con + rolls + (b.subclassId === 'draconic' && n >= 3 ? n : 0)) };
+}
+function featuresOf(b) {
+  const sub = b.subclassId === 'draconic' ? DRACONIC_FEATURES : [];
+  return [...SORCERER_FEATURES.map(f => [...f, 'Feiticeiro']), ...sub.map(f => [...f, 'Feitiçaria Dracônica'])].sort((x, y) => x[0] - y[0]);
+}
+
+/** Monta a ficha completa no formato que as telas usam. */
+function deriveSheet(c) {
+  const b = buildOf(c), base = c.template === 'soren' ? SOREN : blankSheet(), n = b.level, L = SORCERER_LEVELS[n - 1];
+  const mod = k => modScore(b.scores[k]), pb = L.pb, cha = mod('CAR'), con = mod('CON'), dex = mod('DES'), str = mod('FOR');
+  const drac = b.subclassId === 'draconic' && n >= 3, hp = hpMaxOf(b), has = id => b.feats.includes(id), sp = speciesById(b.speciesId);
+  const stats = { ac: 10 + dex + (drac ? cha : 0), shieldBonus: 5, hpMax: hp.total, dc: 8 + pb + cha, atk: pb + cha, init: dex + (has('alert') ? pb : 0), speed: spd(sp?.speed || 30), pb, cha, conSave: con + pb };
+  const slots = Object.fromEntries(L.slots.map((v, i) => [i + 1, v]).filter(([, v]) => v > 0));
+  const res = id => base.resources?.find(r => r.id === id) || SOREN.resources.find(r => r.id === id);
+  const resources = [{ ...res('sp'), max: n >= 2 ? n : 0, desc: res('sp').desc.replace(/Máximo de \d+/, `Máximo de ${n >= 2 ? n : 0}`) }, { ...res('innate'), desc: res('innate').desc.replace(/\(fica \d+\)/, `(fica ${stats.dc + 1})`) }];
+  if (b.speciesId === 'goliath' && b.lineage === 'cloud') resources.push({ ...res('jaunt'), max: pb });
+  if (has('lucky')) resources.push({ ...res('luck'), max: pb });
+  if (b.speciesId === 'goliath' && n >= 5) resources.push({ id: 'large', name: 'Forma Grande', icon: 'i-shield', c: 'lv0', max: 1, meta: 'Golias · Ação Bônus · 10 minutos · Descanso Longo', desc: 'Fica <b>Grande</b>, com Vantagem em testes de Força e <b>+3 m</b> de Deslocamento.' });
+  resources.push({ ...res('hd'), max: n, meta: 'd6 · Descanso Curto para gastar', desc: `Cada dado gasto num Descanso Curto cura <b>1d6 ${con < 0 ? '−' : '+'} ${Math.abs(con)}</b>. Todos voltam no Descanso Longo (regra 2024).` });
+  const attacks = (c.template === 'soren' ? SOREN.attacks : []).map(a => {
+    const k = a.id.startsWith('ts-') || a.id === 'natural' ? 'CAR' : a.id === 'dagger' ? 'DES' : 'FOR', m = mod(k), die = a.dmg.match(/^\d+d\d+/)[0], ts = a.id.startsWith('ts-');
+    return { ...a, atk: m + pb, calc: `${k} ${num(m)} + BP ${pb}`, dmg: `${die}${m < 0 ? '-' : '+'}${Math.abs(m)}`, ...(ts && n >= 5 ? { sub: `${a.sub} · +${n >= 17 ? 3 : n >= 11 ? 2 : 1}d6 Radiante` } : {}) };
+  });
+  const chosen = b.metamagic.map(id => (c.template === 'soren' && SOREN.metamagic.find(m => m.id === id)) || METAMAGIC.find(m => m.id === id)).filter(Boolean);
+  const lin = sp?.lineages?.[b.lineage]?.[0], carry = Math.round(b.scores.FOR * 7.5 * (b.speciesId === 'goliath' ? 2 : 1));
+  const passives = (c.template === 'soren' ? SOREN.passives : []).map(p => ({
+    ...p, items: p.t === 'Resiliência Dracônica' ? [`+${n} PV máximos (já incluídos nos ${hp.total}).`, `Sem armadura, CA = 10 + DES ${num(dex)} + CAR ${num(cha)} = <b>${stats.ac}</b>.`]
+      : p.items.map(i => i.replace(/\(\+4\)\./, `(${signed(stats.conSave)}).`).replace(/<b>120 kg<\/b>|120 kg/, m => m.replace('120', carry)))
+  }));
+  return {
+    ...base, stats, hitDie: 6, conMod: con, slots, createSlotCost: Object.fromEntries(Object.keys(slots).filter(l => SLOT_COST[l]).map(l => [l, SLOT_COST[l]])),
+    carry: `${carry} kg`, resources, attacks, metamagic: chosen, passives, warCaster: has('war-caster'), limits: { cantrips: L.cantrips, prepared: L.prepared }, level: n, items: c.template === 'soren' ? SOREN.items : startingItems(c),
+    abilities: ATTR.map(([k, nome]) => ({ k, n: nome, s: b.scores[k], ...(k === 'CON' || k === 'CAR' ? { prof: true } : {}), ...(k === 'CON' && has('war-caster') ? { note: 'Vantagem em Concentração' } : {}) })),
+    skills: SKILLS.map(([nome, a]) => (b.skills[nome] ? [nome, a, b.skills[nome]] : [nome, a])), tools: c.template === 'soren' ? SOREN.tools : (b.tools || []),
+    calc: {
+      ac: drac ? `10 + DES ${num(dex)} + CAR ${num(cha)} (Resiliência Dracônica)` : `10 + DES ${num(dex)}`,
+      hp: `${hp.base} (nv 1: 6 + CON ${num(con)})` + (n > 1 ? ` + ${hp.rolls} (${n - 1} × [${b.hpRolls.length && b.hpRolls.every(r => r === b.hpRolls[0]) ? b.hpRolls[0] : 'dado'} + CON ${num(con)}])` : '') + (hp.resil ? ` + ${hp.resil} (Resiliência Dracônica)` : ''),
+      dc: `8 + BP ${pb} + CAR ${num(cha)}`, atk: `BP ${pb} + CAR ${num(cha)}`, ...(has('war-caster') ? { concNote: '<small>(V em conc.)</small>' } : {})
+    },
+    subText: subTextOf(b, lin)
+  };
+}
+function subTextOf(b, lin) {
+  const sp = speciesById(b.speciesId), ori = sp ? (lin ? `${sp.name} (${lin})` : sp.name) + ' · ' : '';
+  return `${ori}Feiticeiro${b.subclassId === 'draconic' ? ' Dracônico' : ''} · Nível ${b.level}`;
+}
+function startingItems(c) { return (c.sheet?.items || []); }
+
+/* ---------- subir de nível ---------- */
+/** Prévia do que muda: compara a ficha atual com a do nível seguinte. */
+function levelDiff(c) {
+  const antes = deriveSheet(c), futuro = clone(c);
+  futuro.build.level++; futuro.level++; futuro.build.hpRolls = [...futuro.build.hpRolls, 4];
+  const d = deriveSheet(futuro), n = d.level, out = [];
+  if (d.stats.pb !== antes.stats.pb) out.push(`Bônus de Proficiência ${signed(antes.stats.pb)} → ${signed(d.stats.pb)}`);
+  if (d.stats.dc !== antes.stats.dc) out.push(`CD de magia ${antes.stats.dc} → ${d.stats.dc}`);
+  if (d.stats.atk !== antes.stats.atk) out.push(`Ataque mágico ${signed(antes.stats.atk)} → ${signed(d.stats.atk)}`);
+  for (const [l, v] of Object.entries(d.slots)) if ((antes.slots[l] || 0) !== v) out.push(`Espaços de ${l}º círculo ${antes.slots[l] || 0} → ${v}`);
+  for (const r of d.resources) { const a = antes.resources.find(x => x.id === r.id)?.max ?? 0; if (a !== r.max) out.push(`${r.name} ${a} → ${r.max}`); }
+  if (d.limits.cantrips !== antes.limits.cantrips) out.push(`Truques conhecidos ${antes.limits.cantrips} → ${d.limits.cantrips}`);
+  if (d.limits.prepared !== antes.limits.prepared) out.push(`Magias preparadas ${antes.limits.prepared} → ${d.limits.prepared}`);
+  const tier = x => (x >= 17 ? 4 : x >= 11 ? 3 : x >= 5 ? 2 : 1);
+  if (tier(n) !== tier(n - 1)) out.push(`Truques causam ${tier(n)} dados de dano`);
+  featuresOf(d.__b || futuro.build).filter(f => f[0] === n).forEach(f => out.push(`Nova: ${f[1]}`));
+  return out;
+}
+function levelNeeds(c) {
+  const b = buildOf(c), n = b.level + 1, cur = SORCERER_LEVELS[n - 2], nx = SORCERER_LEVELS[n - 1];
+  return {
+    n, asi: ASI_LEVELS.includes(n), boon: n === 19, subclass: n === 3 && !b.subclassId,
+    metamagic: metamagicKnown(n) - metamagicKnown(n - 1), cantrips: nx.cantrips - cur.cantrips, prepared: nx.prepared - cur.prepared, draconic: b.subclassId === 'draconic' || n === 3 ? DRACONIC_SPELLS[n] || [] : []
+  };
+}
+/** Aplica um nível. `ch` traz o dado de PV e as escolhas do assistente. */
+function applyLevel(c, ch) {
+  const b = buildOf(c), g = c.grimoire || (c.grimoire = { added: [], removed: [] }), antes = deriveSheet(c);
+  (c.history || (c.history = [])).push(JSON.stringify({ build: b, grimoire: g, level: c.level, sub: c.sub, sheet: c.sheet ? 1 : 0, gain: 0 }));
+  const need = levelNeeds(c);
+  b.level = need.n; c.level = need.n; b.hpRolls = [...b.hpRolls, ch.hp];
+  if (need.subclass) b.subclassId = 'draconic';
+  if (ch.asi) for (const [k, v] of Object.entries(ch.asi)) b.scores[k] = Math.min(20, b.scores[k] + v);
+  if (ch.feat) b.feats = [...b.feats, ch.feat];
+  if (ch.metamagic?.length) b.metamagic = [...b.metamagic, ...ch.metamagic];
+  const spellsToAdd = [...(ch.spells || []), ...need.draconic.map(id => ({ id, draconic: true }))];
+  for (const e of spellsToAdd) {
+    const s = typeof e === 'string' ? libGet(e) : { ...libGet(e.id), draconic: e.draconic };
+    if (!s?.id || g.added.some(x => x.id === s.id)) continue;
+    const { base: _b, _hay, ...cp } = s;
+    if (c.template !== 'soren' || !SOREN_SPELLS.some(x => x.id === s.id)) g.added.push(cp);
+    g.removed = g.removed.filter(x => x !== s.id);
+  }
+  if (ch.swapOut) { const was = g.added.some(x => x.id === ch.swapOut); g.added = g.added.filter(x => x.id !== ch.swapOut); if (!was) g.removed.push(ch.swapOut); }
+  const depois = deriveSheet(c);
+  c.sub = depois.subText;
+  return { antes, depois };
+}
+function undoLevel(c) {
+  if (!c.history?.length) return false;
+  const h = JSON.parse(c.history.pop());
+  c.build = h.build; c.grimoire = h.grimoire; c.level = h.level; c.sub = h.sub;
+  return true;
+}
 'use strict';
 /* =====================================================================
    BIBLIOTECA DE PERSONAGENS (store v3)
@@ -1268,8 +1512,7 @@ function blankSheet() {
   return {
     ...base,
     stats: { ac: 10, shieldBonus: 5, hpMax: 6, dc: 10, atk: 2, init: 0, speed: '9 m', pb: 2, cha: 0, conSave: 2 },
-    conMod: 0, carry: '',
-    calc: { ac: '10 + DES', hp: '6 + CON', dc: '8 + BP + CAR', atk: 'BP + CAR' },
+    conMod: 0, carry: '', calc: {},
     abilities: base.abilities.map(({ k, n, prof }) => ({ k, n, s: 10, ...(prof ? { prof } : {}) })),
     skills: base.skills.map(([n, a]) => [n, a]),
     tools: [], attacks: [], slots: { 1: 2 }, createSlotCost: { 1: 2 }, metamagic: [], passives: [], items: [], limits: { cantrips: 4, prepared: 2 },
@@ -1281,10 +1524,10 @@ function blankSheet() {
   };
 }
 
-function newCharacter(name) {
+function newCharacter(name, build = null) {
   return {
-    id: newId('c'), name, sub: 'Feiticeiro · Nível 1', template: 'blank', classId: 'sorcerer', subclassId: null, level: 1,
-    sheet: blankSheet(), spells: [], state: null, notes: null
+    id: newId('c'), name, sub: 'Feiticeiro · Nível 1', template: 'blank', classId: 'sorcerer', subclassId: null, level: build?.level || 1,
+    sheet: blankSheet(), spells: [], state: null, notes: null, build: build || blankBuild(1), identity: {}, grimoire: { added: [], removed: [] }
   };
 }
 
@@ -1339,7 +1582,7 @@ function composeSpells(c) {
 /* Valores da ficha ativa. Todo o app lê daqui; trocar de personagem só reaponta estas variáveis. */
 let CHAR, SPELLS, LEVELS, RES, SPELL, META;
 function bindSheet(c) {
-  CHAR = c.template === 'soren' ? SOREN : c.sheet;
+  CHAR = deriveSheet(c);
   SPELLS = composeSpells(c);
   LEVELS = Object.keys(CHAR.slots).map(Number);
   RES = Object.fromEntries(CHAR.resources.map(r => [r.id, r]));
@@ -1351,7 +1594,7 @@ bindSheet(activeChar());
    ESTADO, PERSISTÊNCIA E DESFAZER
    ===================================================================== */
 const ORD = n => n + 'º';
-const TABS = ['ficha', 'magia', 'grimorio', 'recursos', 'mochila', 'notas'];
+const TABS = ['ficha', 'personagem', 'magia', 'grimorio', 'recursos', 'mochila', 'notas'];
 
 function defaultState() {
   return {
@@ -1450,7 +1693,7 @@ const dc = () => CHAR.stats.dc + (state.fx.innate ? 1 : 0);
 const ac = () => CHAR.stats.ac + (state.fx.shield ? CHAR.stats.shieldBonus : 0);
 const norm = s => [...String(s)].map(ch => ch.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase()).join('');
 const strip = s => String(s).replace(/<[^>]+>/g, '');
-const fmt = s => String(s ?? '').replace(/\{CD\}/g, dc());
+const fmt = s => String(s ?? '').replace(/\{CD\}/g, dc()).replace(/\{ATQ\}/g, sign(CHAR.stats.atk));
 const modOf = score => Math.floor((score - 10) / 2);
 const abil = k => CHAR.abilities.find(a => a.k === k);
 const decimal = n => String(Math.round(n * 10) / 10).replace('.', ',');
@@ -1755,7 +1998,7 @@ function spellCard(s, q) {
   return `<button class="spell ${lvClass(s.level)} ${state.conc === s.id ? 'conc-on' : ''}" data-action="spell" data-id="${s.id}">
     <span class="rune">${icon(SCHOOL_ICON[s.school] || 'i-spark')}</span>
     <span class="t"><span class="name">${highlight(s.name, q)}<span class="en">${highlight(s.en, q)}</span></span>
-      <span class="sum">${highlight(s.sum, q)}</span><span class="tags">${tags.join('')}</span></span>
+      <span class="sum">${highlight(fmt(s.sum || summaryOf(s)), q)}</span><span class="tags">${tags.join('')}</span></span>
     <span class="chev">${icon('i-chev')}</span></button>`;
 }
 
@@ -1772,6 +2015,16 @@ function renderGrim() {
   }).join('');
 }
 
+
+/** Resumo curto para magias vindas da biblioteca, que não têm um escrito à mão. */
+function summaryOf(s) {
+  const r = s.r || [], dano = r.find(x => x.t === 'dmg'), partes = [];
+  if (r.some(x => x.t === 'atk')) partes.push('Ataque');
+  const sv = r.find(x => x.t === 'save');
+  if (sv) partes.push('Salv. ' + sv.a);
+  if (dano) partes.push(baseDice(dano) + ' ' + dano.type);
+  return (partes.join(' · ') || s.time + ' · ' + s.range);
+}
 /* =====================================================================
    ABA RECURSOS
    ===================================================================== */
@@ -1845,7 +2098,7 @@ function renderItems() {
 
 function render() {
   renderStats(); renderEffects(); renderFicha(); renderSlots(); renderSpHub(); renderReminders();
-  renderFilters(); renderGrim(); renderHp(); renderRes(); renderItems();
+  renderFilters(); renderGrim(); renderHp(); renderRes(); renderItems(); renderPersonagem();
   popKey = null;
   if (modalRefresh) modalRefresh();
 }
@@ -2090,7 +2343,7 @@ function concModal(dmg = 0) {
       <div class="dc-big num" id="conc-dc">CD ${concDC()}</div>
       <p class="note" style="text-align:center">Salvaguarda de Constituição <b>${sign(CHAR.stats.conSave)}</b> com <b>Vantagem</b> (Conjurador Bélico)</p>
       <div class="rolls" style="justify-content:center">${roll}</div>
-      <button class="btn frost block" data-action="conc-roll">${icon('i-d20')}Rolar 2d20 (maior) ${sign(CHAR.stats.conSave)}</button>
+      <button class="btn frost block" data-action="conc-roll">${icon('i-d20')}Rolar ${CHAR.warCaster ? '2d20 (maior)' : '1d20'} ${sign(CHAR.stats.conSave)}</button>
       <div class="m-actions"><button class="btn danger" data-action="conc-lost">Perdi a concentração</button><button class="btn gold" data-action="close">Mantive</button></div>`;
   });
 }
@@ -2210,7 +2463,7 @@ function handle(a, el) {
       commit(hit ? (m - 1 ? `Duplicata destruída — restam ${m - 1}` : 'Última duplicata destruída — Reflexos termina') : 'Duplicata restaurada', st => { st.fx.mirror = Math.max(0, Math.min(3, m + (hit ? -1 : 1))); }); break; }
     case 'conc-end': commit(`Concentração em ${SPELL[state.conc]?.name} encerrada`, st => { st.conc = null; }); break;
     case 'conc-check': concModal(0); break;
-    case 'conc-roll': { const a1 = d(20), b1 = d(20), total = Math.max(a1, b1) + CHAR.stats.conSave; concRoll = { a: a1, b: b1, total, ok: total >= concDC() }; modalRefresh?.(); break; }
+    case 'conc-roll': { const a1 = d(20), b1 = CHAR.warCaster ? d(20) : a1, total = Math.max(a1, b1) + CHAR.stats.conSave; concRoll = { a: a1, b: b1, total, ok: total >= concDC() }; modalRefresh?.(); break; }
     case 'conc-lost': commit(`Concentração em ${SPELL[state.conc]?.name} perdida`, st => { st.conc = null; }); closeModal(); break;
     case 'hp': {
       const inp = $('#hp-amt'), amt = Math.round(+inp.value);
@@ -2643,7 +2896,7 @@ const ANIM_LABEL = { full: 'completas', reduced: 'reduzidas', off: 'desligadas' 
 function renderHero() {
   const c = activeChar();
   $('#char-name-txt').textContent = c.name;
-  $('#char-sub').textContent = c.sub;
+  $('#char-sub').textContent = c.sub = CHAR.subText || c.sub;
   $('#char-eyebrow').textContent = `D&D 2024 · Grimório${c.subclassId === 'draconic' ? ' Dracônico' : ''}`;
   $('#carry-aside').textContent = (CHAR.carry ? `Carga máx. ${CHAR.carry} · ` : '') + 'toque no nome para editar';
   document.title = `${c.name} · Grimório`;
@@ -2735,8 +2988,8 @@ function newCharModal() {
   openModal(() => `${mHead('Personagens', 'Novo personagem')}
     <form id="char-form" style="margin-top:14px" autocomplete="off">
       <div class="field"><label for="c-name">Nome</label><input id="c-name" required maxlength="60" autofocus placeholder="Ex.: Lyra Ventoleve"></div>
-      <p class="note">Começa como Feiticeiro de nível 1, com ficha em branco. A criação guiada chega numa próxima etapa.</p>
-      <div class="m-actions"><button type="button" class="btn ghost" data-action="close">Cancelar</button><button class="btn gold">Criar</button></div>
+      <p class="note">O assistente segue as regras de 2024: espécie, antecedente, atributos, perícias, talento, equipamento, magias e nível.</p>
+      <div class="m-actions"><button type="button" class="btn ghost" data-action="close">Cancelar</button><button class="btn gold">Continuar</button></div>
     </form>`);
 }
 
@@ -2782,9 +3035,7 @@ document.addEventListener('submit', e => {
   e.preventDefault();
   const name = $('#c-name').value.trim();
   if (!name) return;
-  closeModal();
-  addCharacter(newCharacter(name));
-  toast(`${name} criado`, false);
+  openCreator(name);
 });
 
 window.addEventListener('storage', e => {
@@ -2809,12 +3060,24 @@ window.addEventListener('storage', e => {
    ===================================================================== */
 const LIB_FILTERS_DEFAULT = { q: '', level: '', school: '', cls: 'sorcerer', dmg: '', conc: '', ritual: '', time: '', src: '' };
 const LIB_PAGE = 40;
+const NOME_ATTR = { Força: 'FOR', Destreza: 'DES', Constituição: 'CON', Inteligência: 'INT', Sabedoria: 'SAB', Carisma: 'CAR' };
+/** Talentos, antecedentes e espécies da biblioteca pessoal, no formato do catálogo. */
+function privateCatalog() {
+  const d = privateRaw || {};
+  return {
+    talentos: (d.talentos || []).map(t => ({ id: 'p-' + t.id, name: t.nome, cat: t.categoria, desc: t.texto, pre: t.prerequisito || '', src: 'pessoal' })),
+    antecedentes: (d.antecedentes || []).map(b => ({ id: 'p-' + b.id, name: b.nome, attrs: (b.atributos || []).map(a => NOME_ATTR[a]).filter(Boolean), feat: 'p-' + norm(b.talento || '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, ''), skills: b.pericias || [], tool: b.ferramenta || '', desc: b.equipamento || '', src: 'pessoal' })),
+    especies: (d.especies || []).map(e => ({ id: 'p-' + e.id, name: e.nome, speed: Math.round(parseFloat(String(e.deslocamento).replace(',', '.')) / 0.3) || 30, traits: [['Traços', e.texto]], src: 'pessoal' }))
+  };
+}
+const allFeats = () => [...FEATS.filter(f => !privateCatalog().talentos.some(p => norm(p.name) === norm(f.name))), ...privateCatalog().talentos, ...(store.library.feats || [])];
 const ABIL_KEYS = Object.keys(SAVE_NAME);
 const DMG_TYPES = ['Ácido', 'Contundente', 'Cortante', 'Elétrico', 'Energético', 'Fogo', 'Frio', 'Necrótico', 'Perfurante', 'Psíquico', 'Radiante', 'Trovejante', 'Veneno'];
 const SCHOOLS = ['Abjuração', 'Adivinhação', 'Encantamento', 'Evocação', 'Ilusão', 'Invocação', 'Necromancia', 'Transmutação'];
 const CLASS_NAMES = { artificer: 'Artífice', barbarian: 'Bárbaro', bard: 'Bardo', cleric: 'Clérigo', druid: 'Druida', fighter: 'Guerreiro', monk: 'Monge', paladin: 'Paladino', ranger: 'Patrulheiro', rogue: 'Ladino', sorcerer: 'Feiticeiro', warlock: 'Bruxo', wizard: 'Mago' };
 
 let libFilters = { ...LIB_FILTERS_DEFAULT }, libLimit = LIB_PAGE, libStatus = 'idle', grimView = 'meu', privateSpells = [];
+var privateRaw = null; // var: o motor de regras lê isto antes de este arquivo rodar
 
 /* ---------- carregamento sob demanda ---------- */
 function ensureLibrary() {
@@ -2851,7 +3114,7 @@ async function idbSet(k, v) {
   return new Promise((res, rej) => { const t = db.transaction('biblioteca', 'readwrite'); if (v === null) t.objectStore('biblioteca').delete(k); else t.objectStore('biblioteca').put(v, k); t.oncomplete = () => res(true); t.onerror = () => rej(t.error); });
 }
 async function loadPrivate() {
-  try { privateSpells = ((await idbGet('pessoal'))?.magias || []).map(mapPrivate); } catch (e) { privateSpells = []; }
+  try { privateRaw = await idbGet('pessoal'); privateSpells = (privateRaw?.magias || []).map(mapPrivate); } catch (e) { privateRaw = null; privateSpells = []; }
 }
 
 const TIME_PT = t => /^Ação Bônus/.test(t) ? '1 Ação Bônus' : /^Ação/.test(t) ? '1 Ação' : /^Reação/.test(t) ? 'Reação' : t;
@@ -3482,6 +3745,374 @@ function fxDryRun(s, tipo) {
   fxState.parts.length = 0;
   return rec;
 }
+/* =====================================================================
+   ABA PERSONAGEM — identidade, origem, talentos e características
+   ===================================================================== */
+const SOREN_IDENTITY = {
+  concept: 'Manipulação, ilusões e controle de campo, com poder mágico crescente.', alignment: 'Caótico Neutro',
+  appearance: 'Golias alto e esguio, cabelos castanhos e olhos verdes. Leva um cetro com cristal como foco arcano.',
+  story: 'Herdeiro da Casa Frostgaard, exilado depois que a família foi acusada de traição. Viaja para descobrir quem armou a queda da casa e de onde vem o poder dracônico que desperta nele.'
+};
+const identityOf = c => c.identity || (c.identity = c.template === 'soren' ? { ...SOREN_IDENTITY } : {});
+
+function renderPersonagem() {
+  const c = activeChar(), b = buildOf(c), id = identityOf(c), n = b.level, sp = speciesById(b.speciesId), bg = backgroundById(b.backgroundId);
+  const F = (k, label, tag = 'input') => tag === 'input'
+    ? `<div class="field"><label for="id-${k}">${label}</label><input id="id-${k}" data-id-f="${k}" maxlength="120" value="${esc(id[k] || '')}"></div>`
+    : `<div class="field"><label for="id-${k}">${label}</label><textarea id="id-${k}" data-id-f="${k}" rows="4" maxlength="4000">${esc(id[k] || '')}</textarea></div>`;
+  const lin = sp?.lineages?.[b.lineage];
+  const tracos = sp ? `<ul class="plist">${sp.traits.map(([t, d]) => `<li><b>${esc(t)}.</b> ${esc(d)}</li>`).join('')}${lin ? `<li><b>${esc(lin[0])}.</b> ${esc(lin[1])}</li>` : ''}</ul>` : '<p class="note">Espécie ainda não definida.</p>';
+  const feats = b.feats.map(featById).filter(Boolean);
+  const feitos = featuresOf(b).filter(f => f[0] <= n), proximos = featuresOf(b).filter(f => f[0] > n);
+  const linha = (f, on) => `<li class="tl ${on ? 'on' : ''}"><span class="tl-n">${f[0]}</span><div><b>${esc(f[1])}</b> <small>${esc(f[3])}</small><p>${esc(f[2])}</p></div></li>`;
+  const planos = Object.entries(b.planned || {}).sort((x, y) => x[1] - y[1]).map(([fid, lv]) => { const f = featById(fid); return f ? `<li><b>Nível ${lv}:</b> ${esc(f.name)} <button class="btn sm ghost" data-action="feat-unplan" data-id="${esc(fid)}">Tirar</button></li>` : ''; }).join('');
+  $('#personagem').innerHTML = `
+    <div class="panel"><div class="panel-h"><h2>Identidade</h2><span class="rule"></span></div>
+      <div class="field"><label for="id-name">Nome</label><input id="id-name" data-id-f="name" maxlength="60" value="${esc(c.name)}"></div>
+      ${F('concept', 'Conceito')}${F('alignment', 'Alinhamento')}${F('appearance', 'Aparência', 'textarea')}${F('story', 'História', 'textarea')}
+    </div>
+    <div class="panel"><div class="panel-h"><h2>Nível ${n}</h2><span class="rule"></span></div>
+      <p class="note">${esc(CHAR.subText)}</p>
+      <div class="m-actions"><button class="btn gold" data-action="lv-open" ${n >= 20 ? 'disabled' : ''}>${icon('i-plus')}${n >= 20 ? 'Nível máximo' : 'Subir de nível'}</button>${c.history?.length ? `<button class="btn ghost" data-action="lv-undo">Desfazer último nível</button>` : ''}</div>
+    </div>
+    <div class="panel"><div class="panel-h"><h2>Espécie</h2><span class="rule"></span><span class="aside">${esc(sp ? sp.name + (lin ? ' · ' + lin[0] : '') : '—')}</span></div>${tracos}</div>
+    <div class="panel"><div class="panel-h"><h2>Antecedente</h2><span class="rule"></span><span class="aside">${esc(bg?.name || '—')}</span></div>
+      ${bg ? `<p>${esc(bg.desc || '')}</p><ul class="plist"><li><b>Perícias:</b> ${esc((bg.skills || []).join(', '))}</li>${bg.tool ? `<li><b>Ferramenta:</b> ${esc(bg.tool)}</li>` : ''}<li><b>Talento:</b> ${esc(featById(bg.feat)?.name || bg.feat || '—')}</li></ul>` : '<p class="note">Antecedente ainda não definido.</p>'}</div>
+    <div class="panel"><div class="panel-h"><h2>Talentos</h2><span class="rule"></span><button class="btn sm" data-action="feat-catalog">Catálogo</button></div>
+      ${feats.length ? `<ul class="plist">${feats.map(f => `<li><b>${esc(f.name)}.</b> ${esc(f.desc)}</li>`).join('')}</ul>` : '<p class="note">Nenhum talento ainda.</p>'}
+      ${planos ? `<h4 class="ed-h">Planejados</h4><ul class="plist">${planos}</ul>` : ''}</div>
+    <div class="panel"><div class="panel-h"><h2>Características</h2><span class="rule"></span><span class="aside">${feitos.length} obtidas · ${proximos.length} por vir</span></div>
+      <ul class="timeline">${feitos.map(f => linha(f, true)).join('')}${proximos.map(f => linha(f, false)).join('')}</ul></div>`;
+}
+
+function featCatalog() {
+  const c = activeChar(), b = buildOf(c);
+  openModal(() => {
+    const lista = allFeats().filter(f => !b.feats.includes(f.id) && f.id !== 'asi' && f.cat !== 'estilo');
+    const grupos = [['origem', 'Talentos de origem'], ['geral', 'Talentos gerais'], ['dadiva', 'Dádivas épicas'], [undefined, 'Criados por você']];
+    return `${mHead('Catálogo', 'Talentos para o futuro')}
+      ${grupos.map(([cat, nome]) => { const fs = lista.filter(f => f.cat === cat); return fs.length ? `<h4 class="ed-h">${nome}</h4><div class="feat-list">${fs.map(f => `<div class="feat"><div><b>${esc(f.name)}</b>${f.min ? ` <small>nível ${f.min}+</small>` : ''}${f.pre ? ` <small>${esc(f.pre)}</small>` : ''}<p>${esc(String(f.desc).slice(0, 220))}</p></div>
+        <label class="lf"><span>Planejar</span><select data-plan="${esc(f.id)}"><option value="">—</option>${[4, 8, 12, 16, 19].filter(l => l > b.level && l >= (f.min || 0)).map(l => `<option value="${l}" ${b.planned?.[f.id] === l ? 'selected' : ''}>Nível ${l}</option>`).join('')}</select></label></div>`).join('')}</div>` : ''; }).join('')}
+      <form id="feat-form" autocomplete="off" style="margin-top:14px"><h4 class="ed-h">Criar talento</h4>
+        <div class="field"><label for="ft-name">Nome</label><input id="ft-name" required maxlength="60"></div>
+        <div class="field"><label for="ft-desc">Descrição</label><textarea id="ft-desc" rows="2" maxlength="500"></textarea></div>
+        <button class="btn sm gold">Adicionar ao catálogo</button></form>`;
+  });
+}
+
+let idTimer = null;
+document.addEventListener('input', e => {
+  const k = e.target.dataset?.idF;
+  if (!k) return;
+  const c = activeChar();
+  if (k === 'name') c.name = e.target.value.trim() || c.name; else identityOf(c)[k] = e.target.value;
+  clearTimeout(idTimer);
+  idTimer = setTimeout(() => { persistStore(); renderHero(); renderNotesScope(); }, 250);
+});
+document.addEventListener('change', e => {
+  const fid = e.target.dataset?.plan;
+  if (fid === undefined) return;
+  const b = buildOf(activeChar());
+  b.planned = b.planned || {};
+  if (e.target.value) b.planned[fid] = +e.target.value; else delete b.planned[fid];
+  persistStore(); renderPersonagem();
+});
+document.addEventListener('click', e => {
+  const b = e.target.closest('[data-action]');
+  if (!b) return;
+  if (b.dataset.action === 'feat-catalog') featCatalog();
+  if (b.dataset.action === 'feat-unplan') { delete buildOf(activeChar()).planned[b.dataset.id]; persistStore(); renderPersonagem(); }
+});
+document.addEventListener('submit', e => {
+  if (e.target.id !== 'feat-form') return;
+  e.preventDefault();
+  const name = $('#ft-name').value.trim();
+  if (!name) return;
+  store.library.feats = [...(store.library.feats || []), { id: newId('f-'), name, desc: $('#ft-desc').value.trim(), src: 'minha' }];
+  persistStore(); modalRefresh?.(); toast(`${name} adicionado ao catálogo`, false);
+});
+/* =====================================================================
+   SUBIR DE NÍVEL — assistente com PV, mudanças, escolhas e revisão
+   ===================================================================== */
+let lv = null;
+const pickCount = (s, nivel) => s.filter(x => (nivel ? x.level > 0 : x.level === 0)).length;
+
+async function openLevelUp() {
+  const c = activeChar();
+  if (buildOf(c).level >= 20) return;
+  await ensureLibrary();
+  lv = { step: 0, need: levelNeeds(c), hp: null, src: '', mode: 'asi2', a1: 'CAR', a2: 'CON', feat: '', meta: [], spells: [], swapOut: '', swapIn: '' };
+  // Talento planejado para este nível já vem marcado.
+  const plan = Object.entries(buildOf(c).planned || {}).find(([, l]) => l === lv.need.n);
+  if (plan && (lv.need.asi || lv.need.boon)) { lv.mode = 'feat'; lv.feat = plan[0]; }
+  if (lv.need.boon) lv.mode = 'feat';
+  openModal(levelBody);
+}
+const hasChoices = () => { const n = lv.need; return n.asi || n.boon || n.metamagic > 0 || n.cantrips > 0 || n.prepared > 0; };
+const steps = () => [0, 1, ...(hasChoices() ? [2] : []), 3];
+
+function levelBody() {
+  const c = activeChar(), b = buildOf(c), n = lv.need, con = modScore(b.scores.CON), resil = (b.subclassId === 'draconic' || n.subclass) && n.n >= 3 ? (n.n === 3 ? 3 : 1) : 0, st = steps(), i = st.indexOf(lv.step);
+  const nav = (ok, label = 'Continuar') => `<div class="m-actions">${i ? '<button class="btn ghost" data-action="lv-back">Voltar</button>' : '<button class="btn ghost" data-action="close">Cancelar</button>'}<button class="btn gold" data-action="${lv.step === 3 ? 'lv-apply' : 'lv-next'}" ${ok ? '' : 'disabled'}>${label}</button></div>`;
+  const head = mHead(`Nível ${b.level} → ${n.n} · etapa ${i + 1} de ${st.length}`, ['Pontos de Vida', 'O que muda', 'Suas escolhas', 'Revisão'][lv.step]);
+  if (lv.step === 0) return `${head}
+    <p class="note" style="margin-top:12px">Ganho de PV: 1d6 ${sign(con)} (CON)${resil ? ` + ${resil} (Resiliência Dracônica)` : ''}, com mínimo de 1.</p>
+    <div class="m-actions"><button class="btn frost" data-action="lv-roll">${icon('i-d20')}Rolar 1d6</button><button class="btn" data-action="lv-avg">Usar a média (4)</button></div>
+    <div class="field" style="margin-top:12px"><label for="lv-die">Ou digite o dado físico</label><input id="lv-die" type="number" min="1" max="6" inputmode="numeric" value="${lv.src === 'dado físico' ? lv.hp : ''}"></div>
+    ${lv.hp ? `<p class="note">Dado: <b>${lv.hp}</b> (${lv.src}) · ganho de <b>${Math.max(1, lv.hp + con) + resil} PV</b></p>` : ''}${nav(!!lv.hp)}`;
+  if (lv.step === 1) return `${head}<ul class="plist" style="margin-top:12px">${levelDiff(c).map(t => `<li>${esc(t)}</li>`).join('') || '<li>Nenhuma mudança além dos PV.</li>'}${n.draconic.length ? `<li>Sempre preparadas: ${n.draconic.map(x => esc(libGet(x)?.name || x)).join(', ')}</li>` : ''}</ul>${nav(true)}`;
+  if (lv.step === 2) {
+    const attrs = ATTR.map(([k, nome]) => [k, `${nome} (${b.scores[k]})`]);
+    const op = (sel, val, list) => list.map(([k, t]) => `<option value="${k}" ${val === k ? 'selected' : ''}>${esc(t)}</option>`).join('');
+    const feats = allFeats().filter(f => !b.feats.includes(f.id) && f.id !== 'asi' && f.cat !== 'estilo' && (!f.min || f.min <= n.n) && (n.boon ? f.cat === 'dadiva' : f.cat !== 'dadiva'));
+    const asi = n.asi || n.boon ? `<h4 class="ed-h">${n.boon ? 'Dádiva Épica' : 'Aumento no Valor de Atributo'}</h4>
+      ${n.boon ? '' : `<div class="ck-row"><label class="ck"><input type="radio" name="lv-mode" value="asi2" ${lv.mode === 'asi2' ? 'checked' : ''}>+2 em um</label><label class="ck"><input type="radio" name="lv-mode" value="asi11" ${lv.mode === 'asi11' ? 'checked' : ''}>+1 em dois</label><label class="ck"><input type="radio" name="lv-mode" value="feat" ${lv.mode === 'feat' ? 'checked' : ''}>Talento</label></div>`}
+      ${lv.mode === 'feat' ? `<div class="field"><label for="lv-feat">Talento</label><select id="lv-feat"><option value="">Escolha…</option>${op('', lv.feat, feats.map(f => [f.id, f.name]))}</select></div>${lv.feat ? `<p class="note">${esc(String(featById(lv.feat)?.desc || '').slice(0, 240))}</p>` : ''}`
+        : `<div class="field-row"><div class="field"><label for="lv-a1">Atributo</label><select id="lv-a1">${op('', lv.a1, attrs)}</select></div>${lv.mode === 'asi11' ? `<div class="field"><label for="lv-a2">Segundo atributo</label><select id="lv-a2">${op('', lv.a2, attrs)}</select></div>` : ''}</div>`}` : '';
+    const meta = n.metamagic > 0 ? `<h4 class="ed-h">Metamagia: escolha ${n.metamagic}</h4><div class="pick">${METAMAGIC.filter(m => !b.metamagic.includes(m.id)).map(m => `<label class="ck"><input type="checkbox" data-meta="${m.id}" ${lv.meta.includes(m.id) ? 'checked' : ''}><span><b>${esc(m.name)}</b> · ${m.cost} PF<br><small>${esc(m.desc)}</small></span></label>`).join('')}</div>` : '';
+    const maxC = Math.max(...Object.keys(deriveSheetAt(c, n.n).slots).map(Number));
+    const lista = libraryAll().filter(s => (s.classes || []).includes('sorcerer') && s.level <= maxC && !inGrimoire(s));
+    const grupo = (titulo, q, filtro) => (q > 0 ? `<h4 class="ed-h">${titulo}: escolha até ${q} <small>(ou depois, na Biblioteca)</small></h4><div class="pick">${lista.filter(filtro).sort((x, y) => x.level - y.level || x.name.localeCompare(y.name, 'pt-BR')).map(s => `<label class="ck"><input type="checkbox" data-sp="${esc(s.id)}" ${lv.spells.includes(s.id) ? 'checked' : ''}><span>${esc(s.name)} <small>${s.level ? s.level + 'º' : 'truque'}</small></span></label>`).join('')}</div>` : '');
+    const troca = `<h4 class="ed-h">Trocar uma magia (opcional)</h4><div class="field"><label for="lv-swap">Sair do grimório</label><select id="lv-swap"><option value="">Nenhuma</option>${SPELLS.filter(s => !s.draconic).map(s => `<option value="${esc(s.id)}" ${lv.swapOut === s.id ? 'selected' : ''}>${esc(s.name)}</option>`).join('')}</select></div>`;
+    const okMeta = lv.meta.length === n.metamagic || n.metamagic <= 0, okFeat = !(n.asi || n.boon) || lv.mode !== 'feat' || !!lv.feat;
+    return `${head}${asi}${meta}${grupo('Novos truques', n.cantrips, s => !s.level)}${grupo('Novas magias', n.prepared, s => s.level)}${troca}${nav(okMeta && okFeat)}`;
+  }
+  const ganho = Math.max(1, lv.hp + con) + resil, itens = [`+${ganho} PV (dado ${lv.hp}, ${lv.src})`];
+  if (lv.mode === 'feat' && lv.feat) itens.push(`Talento: ${featById(lv.feat)?.name}`);
+  else if (n.asi) itens.push(lv.mode === 'asi2' ? `+2 em ${lv.a1}` : `+1 em ${lv.a1} e +1 em ${lv.a2}`);
+  if (lv.meta.length) itens.push('Metamagia: ' + lv.meta.map(id => METAMAGIC.find(m => m.id === id).name).join(', '));
+  if (lv.spells.length) itens.push('Magias: ' + lv.spells.map(id => libGet(id)?.name).join(', '));
+  if (lv.swapOut) itens.push('Sai do grimório: ' + (SPELL[lv.swapOut]?.name || lv.swapOut));
+  return `${head}<ul class="plist" style="margin-top:12px">${itens.map(t => `<li>${esc(t)}</li>`).join('')}</ul>${nav(true, 'Aplicar nível')}`;
+}
+function deriveSheetAt(c, n) { const f = clone(c); f.build.level = n; f.level = n; return deriveSheet(f); }
+
+function choicesFromWizard() {
+  const n = lv.need, asi = {};
+  if ((n.asi || n.boon) && lv.mode !== 'feat') {
+    if (lv.mode === 'asi2') asi[lv.a1] = 2; else { asi[lv.a1] = (asi[lv.a1] || 0) + 1; asi[lv.a2] = (asi[lv.a2] || 0) + 1; }
+  }
+  return { hp: lv.hp, asi, feat: lv.mode === 'feat' ? lv.feat : '', metamagic: lv.meta, spells: lv.spells, swapOut: lv.swapOut };
+}
+/** Aplica o nível no personagem ativo e atualiza recursos, PV e telas. */
+function commitLevel(ch) {
+  const c = activeChar();
+  save();
+  const { antes, depois } = applyLevel(c, ch);
+  bindSheet(c);
+  const st = state, dif = id => (depois.resources.find(r => r.id === id)?.max ?? 0) - (antes.resources.find(r => r.id === id)?.max ?? 0);
+  for (const r of depois.resources) st.res[r.id] = (st.res[r.id] ?? 0) + Math.max(0, dif(r.id));
+  st.hp += depois.stats.hpMax - antes.stats.hpMax;
+  state = sanitize(st);
+  undoStack.length = 0;
+  save();
+  return depois;
+}
+function undoLastLevel() {
+  const c = activeChar(), antes = deriveSheet(c);
+  if (!undoLevel(c)) return;
+  bindSheet(c);
+  const d = deriveSheet(c);
+  state.hp -= antes.stats.hpMax - d.stats.hpMax;
+  for (const r of antes.resources) { const m = d.resources.find(x => x.id === r.id)?.max ?? 0; if (r.max > m) state.res[r.id] = Math.max(0, (state.res[r.id] ?? 0) - (r.max - m)); }
+  state = sanitize(state);
+  undoStack.length = 0;
+  save(); renderHero(); render(); renderPassives();
+  toast(`De volta ao nível ${c.level}`, false);
+}
+
+document.addEventListener('click', e => {
+  const b = e.target.closest('[data-action]');
+  if (!b) return;
+  switch (b.dataset.action) {
+    case 'lv-open': openLevelUp(); break;
+    case 'lv-undo': undoLastLevel(); break;
+    case 'lv-roll': lv.hp = d(6); lv.src = 'rolado'; modalRefresh(); break;
+    case 'lv-avg': lv.hp = 4; lv.src = 'média'; modalRefresh(); break;
+    case 'lv-next': { const s = steps(); lv.step = s[s.indexOf(lv.step) + 1]; modalRefresh(); $('#sheet').scrollTop = 0; break; }
+    case 'lv-back': { const s = steps(); lv.step = s[s.indexOf(lv.step) - 1]; modalRefresh(); break; }
+    case 'lv-apply': {
+      const dep = commitLevel(choicesFromWizard());
+      closeModal(); renderHero(); render(); renderPassives();
+      toast(`Nível ${dep.level}! PV máximos: ${dep.stats.hpMax}`, false);
+      break;
+    }
+  }
+});
+document.addEventListener('change', e => {
+  if (!lv || $('#modal').hidden) return;
+  const t = e.target;
+  if (t.id === 'lv-die') { const v = +t.value; if (v >= 1 && v <= 6) { lv.hp = v; lv.src = 'dado físico'; modalRefresh(); } }
+  else if (t.name === 'lv-mode') { lv.mode = t.value; modalRefresh(); }
+  else if (t.id === 'lv-feat') { lv.feat = t.value; modalRefresh(); }
+  else if (t.id === 'lv-a1') lv.a1 = t.value;
+  else if (t.id === 'lv-a2') lv.a2 = t.value;
+  else if (t.id === 'lv-swap') lv.swapOut = t.value;
+  else if (t.dataset.meta) {
+    if (t.checked && lv.meta.length >= lv.need.metamagic) { t.checked = false; toast(`Escolha só ${lv.need.metamagic}`, false); return; }
+    lv.meta = t.checked ? [...lv.meta, t.dataset.meta] : lv.meta.filter(x => x !== t.dataset.meta); modalRefresh();
+  } else if (t.dataset.sp) {
+    const s = libGet(t.dataset.sp), q = s.level ? lv.need.prepared : lv.need.cantrips, atuais = lv.spells.map(libGet);
+    if (t.checked && pickCount(atuais, s.level > 0) >= q) { t.checked = false; toast(`Escolha até ${q}`, false); return; }
+    lv.spells = t.checked ? [...lv.spells, s.id] : lv.spells.filter(x => x !== s.id);
+  }
+});
+/* =====================================================================
+   CRIAR PERSONAGEM — assistente guiado (Feiticeiro, D&D 2024)
+   ===================================================================== */
+const STANDARD_ARRAY = [15, 14, 13, 12, 10, 8];
+const POINT_COST = { 8: 0, 9: 1, 10: 2, 11: 3, 12: 4, 13: 5, 14: 7, 15: 9 };
+let cw = null;
+const CW_TITLES = ['Espécie', 'Antecedente', 'Atributos', 'Perícias', 'Talento de origem', 'Equipamento', 'Truques e magias', 'Nível inicial'];
+
+function freshWizard(name) {
+  return { step: 0, name, speciesId: 'human', lineage: 'cloud', customSpecies: '', customSpeed: 30, backgroundId: 'acolyte', customBg: '', attrs: ['CAR', 'CON', 'DES'], bonusMode: '21', bonus: { plus2: 'CAR', plus1: 'SAB' }, method: 'padrao', scores: Object.fromEntries(ATTR.map(([k]) => [k, 10])), pool: [...STANDARD_ARRAY], assign: { CAR: 15, CON: 14, DES: 13, SAB: 12, INT: 10, FOR: 8 }, skills: [], feat: '', gear: 'a', spells: [], level: 1 };
+}
+async function openCreator(name) { await ensureLibrary(); cw = freshWizard(name); openModal(creatorBody); }
+
+const cwSpecies = () => (cw.speciesId === 'custom' ? { id: 'custom', name: cw.customSpecies || 'Personalizada', speed: cw.customSpeed, traits: [] } : speciesById(cw.speciesId));
+const cwBackground = () => (cw.backgroundId === 'custom' ? { id: 'custom', name: cw.customBg || 'Personalizado', attrs: cw.attrs, feat: '', skills: [], tool: '', desc: '' } : backgroundById(cw.backgroundId));
+function baseScores() {
+  if (cw.method === 'compra') return { ...cw.scores };
+  return Object.fromEntries(ATTR.map(([k]) => [k, cw.assign[k] ?? 8]));
+}
+function finalScores() {
+  const s = baseScores(), bg = cwBackground();
+  if (cw.bonusMode === '111') bg.attrs.forEach(k => { s[k] += 1; });
+  else { s[cw.bonus.plus2] += 2; s[cw.bonus.plus1] += 1; }
+  for (const k of Object.keys(s)) s[k] = Math.min(20, s[k]);
+  return s;
+}
+const pointsUsed = () => Object.values(cw.scores).reduce((a, v) => a + (POINT_COST[v] ?? 0), 0);
+function stepValid() {
+  const bg = cwBackground();
+  switch (cw.step) {
+    case 0: return cw.speciesId !== 'custom' || !!cw.customSpecies.trim();
+    case 1: return (cw.backgroundId !== 'custom' || !!cw.customBg.trim()) && (cw.bonusMode === '111' || (cw.bonus.plus2 !== cw.bonus.plus1 && bg.attrs.includes(cw.bonus.plus2) && bg.attrs.includes(cw.bonus.plus1)));
+    case 2: { if (cw.method === 'compra') return pointsUsed() <= 27; const v = Object.values(cw.assign); return new Set(ATTR.map(([k]) => k)).size === 6 && [...v].sort().join() === [...cw.pool].sort().join(); }
+    case 3: return cw.skills.length === 2;
+    case 5: return !!cw.gear;
+    default: return true;
+  }
+}
+function creatorBody() {
+  const i = cw.step, head = mHead(`${cw.name} · etapa ${i + 1} de ${CW_TITLES.length}`, CW_TITLES[i]);
+  const nav = `<div class="m-actions">${i ? '<button class="btn ghost" data-action="cw-back">Voltar</button>' : '<button class="btn ghost" data-action="close">Cancelar</button>'}<button class="btn gold" data-action="${i === CW_TITLES.length - 1 ? 'cw-finish' : 'cw-next'}" ${stepValid() ? '' : 'disabled'}>${i === CW_TITLES.length - 1 ? 'Criar personagem' : 'Continuar'}</button></div>`;
+  const opts = (list, val) => list.map(([v, t]) => `<option value="${esc(v)}" ${val === v ? 'selected' : ''}>${esc(t)}</option>`).join('');
+  const P = privateCatalog();
+  let b = '';
+  if (i === 0) {
+    const sp = cwSpecies();
+    b = `<div class="field"><label for="cw-sp">Espécie</label><select id="cw-sp">${opts([...SPECIES.map(s => [s.id, s.name]), ...P.especies.map(s => [s.id, s.name + ' (pessoal)']), ['custom', 'Personalizada']], cw.speciesId)}</select></div>
+      ${cw.speciesId === 'custom' ? `<div class="field-row"><div class="field"><label for="cw-spn">Nome</label><input id="cw-spn" maxlength="40" value="${esc(cw.customSpecies)}"></div><div class="field"><label for="cw-spd">Deslocamento (pés)</label><input id="cw-spd" type="number" min="5" max="60" step="5" value="${cw.customSpeed}"></div></div>` : ''}
+      ${sp.lineages ? `<div class="field"><label for="cw-lin">Ascendência</label><select id="cw-lin">${opts(Object.entries(sp.lineages).map(([k, v]) => [k, v[0]]), cw.lineage)}</select></div>` : ''}
+      <ul class="plist">${(sp.traits || []).map(([t, d]) => `<li><b>${esc(t)}.</b> ${esc(String(d).slice(0, 240))}</li>`).join('')}</ul>`;
+  } else if (i === 1) {
+    const bg = cwBackground(), a = bg.attrs.map(k => [k, ATTR.find(x => x[0] === k)[1]]);
+    b = `<div class="field"><label for="cw-bg">Antecedente</label><select id="cw-bg">${opts([...BACKGROUNDS.filter(x => x.id !== 'wayfarer').map(x => [x.id, x.name]), ...P.antecedentes.map(x => [x.id, x.name + ' (pessoal)']), ['custom', 'Personalizado']], cw.backgroundId)}</select></div>
+      ${cw.backgroundId === 'custom' ? `<div class="field"><label for="cw-bgn">Nome</label><input id="cw-bgn" maxlength="40" value="${esc(cw.customBg)}"></div><div class="field-row">${[0, 1, 2].map(n => `<div class="field"><label>Atributo ${n + 1}</label><select data-cwattr="${n}">${opts(ATTR, cw.attrs[n])}</select></div>`).join('')}</div>` : `<p class="note">${esc(bg.desc || '')} Perícias: ${esc((bg.skills || []).join(', '))}.</p>`}
+      <div class="ck-row"><label class="ck"><input type="radio" name="cw-bonus" value="21" ${cw.bonusMode === '21' ? 'checked' : ''}>+2 e +1</label><label class="ck"><input type="radio" name="cw-bonus" value="111" ${cw.bonusMode === '111' ? 'checked' : ''}>+1, +1 e +1</label></div>
+      ${cw.bonusMode === '21' ? `<div class="field-row"><div class="field"><label for="cw-p2">+2 em</label><select id="cw-p2">${opts(a, cw.bonus.plus2)}</select></div><div class="field"><label for="cw-p1">+1 em</label><select id="cw-p1">${opts(a, cw.bonus.plus1)}</select></div></div>${cw.bonus.plus2 === cw.bonus.plus1 ? '<p class="note">Escolha atributos diferentes.</p>' : ''}` : ''}`;
+  } else if (i === 2) {
+    const metodo = `<div class="ck-row">${[['padrao', 'Conjunto padrão'], ['compra', 'Compra de pontos (27)'], ['rolar', 'Rolar 4d6']].map(([v, t]) => `<label class="ck"><input type="radio" name="cw-method" value="${v}" ${cw.method === v ? 'checked' : ''}>${t}</label>`).join('')}</div>`;
+    const fim = finalScores();
+    if (cw.method === 'compra') b = `${metodo}<p class="note">Pontos usados: <b>${pointsUsed()}</b> de 27</p><div class="scores">${ATTR.map(([k, n]) => `<div class="score"><span>${n}</span><div><button type="button" class="btn sm" data-action="cw-score" data-k="${k}" data-d="-1">−</button><b>${cw.scores[k]}</b><button type="button" class="btn sm" data-action="cw-score" data-k="${k}" data-d="1">+</button></div><small>com bônus: ${fim[k]}</small></div>`).join('')}</div>`;
+    else b = `${metodo}${cw.method === 'rolar' ? `<div class="m-actions"><button type="button" class="btn frost" data-action="cw-roll">${icon('i-d20')}Rolar 4d6 seis vezes</button></div>` : ''}<p class="note">Valores: ${cw.pool.join(', ')}</p><div class="scores">${ATTR.map(([k, n]) => `<div class="score"><span>${n}</span><select data-cwassign="${k}">${[...new Set(cw.pool)].sort((x, y) => y - x).map(v => `<option ${cw.assign[k] === v ? 'selected' : ''}>${v}</option>`).join('')}</select><small>com bônus: ${fim[k]}</small></div>`).join('')}</div>${stepValid() ? '' : '<p class="note">Use cada valor uma vez só.</p>'}`;
+  } else if (i === 3) {
+    const bgS = cwBackground().skills || [];
+    b = `<p class="note" style="margin-top:12px">Do antecedente: ${esc(bgS.join(', ') || 'nenhuma')}. Escolha 2 perícias de Feiticeiro.</p><div class="pick">${SORCERER_SKILLS.filter(s => !bgS.includes(s)).map(s => `<label class="ck"><input type="checkbox" data-cwskill="${s}" ${cw.skills.includes(s) ? 'checked' : ''}>${s}</label>`).join('')}</div>`;
+  } else if (i === 4) {
+    const bg = cwBackground(), fixo = bg.feat && featById(bg.feat), origem = allFeats().filter(f => f.cat === 'origem');
+    b = fixo && cw.backgroundId !== 'custom' ? `<p style="margin-top:12px"><b>${esc(fixo.name)}</b>, do antecedente.</p><p class="note">${esc(String(fixo.desc).slice(0, 260))}</p>` : `<div class="field"><label for="cw-feat">Talento</label><select id="cw-feat"><option value="">Nenhum</option>${opts(origem.map(f => [f.id, f.name]), cw.feat)}</select></div>`;
+  } else if (i === 5) {
+    b = `<div class="pick" style="margin-top:12px">${Object.entries(STARTING_GEAR).map(([k, g]) => `<label class="ck"><input type="radio" name="cw-gear" value="${k}" ${cw.gear === k ? 'checked' : ''}>${esc(g.label)}</label>`).join('')}</div>`;
+  } else if (i === 6) {
+    const L1 = SORCERER_LEVELS[0], lista = libraryAll().filter(s => (s.classes || []).includes('sorcerer') && s.level <= 1);
+    const q = nivel => cw.spells.filter(id => { const s = libGet(id); return nivel ? s.level > 0 : s.level === 0; }).length;
+    const box = (titulo, max, f, nv) => `<h4 class="ed-h">${titulo} (${q(nv)} de ${max})</h4><div class="pick">${lista.filter(f).sort((x, y) => x.name.localeCompare(y.name, 'pt-BR')).map(s => `<label class="ck"><input type="checkbox" data-cwsp="${esc(s.id)}" ${cw.spells.includes(s.id) ? 'checked' : ''}>${esc(s.name)}</label>`).join('')}</div>`;
+    b = lista.length ? box('Truques', L1.cantrips, s => !s.level, false) + box('Magias preparadas', L1.prepared, s => s.level, true) : '<p class="note">A biblioteca não está disponível. Você pode escolher as magias depois.</p>';
+  } else {
+    b = `<div class="field" style="margin-top:12px"><label for="cw-level">Nível inicial</label><select id="cw-level">${Array.from({ length: 20 }, (_, n) => n + 1).map(n => `<option ${cw.level === n ? 'selected' : ''}>${n}</option>`).join('')}</select></div>
+      <p class="note">Acima do nível 1, o app usa a média de PV e soma os aumentos de atributo em Carisma. Depois você ajusta magias e talentos pela Biblioteca e pela aba Personagem.</p>`;
+  }
+  return head + b + nav;
+}
+function buildFromWizard() {
+  const bg = cwBackground(), sp = cwSpecies(), b = blankBuild(1);
+  b.speciesId = sp.id === 'custom' ? null : sp.id;
+  b.lineage = sp.lineages ? cw.lineage : null;
+  b.backgroundId = bg.id === 'custom' ? null : bg.id;
+  b.scores = finalScores();
+  b.skills = Object.fromEntries([...cw.skills.map(s => [s, 'Classe']), ...(bg.skills || []).map(s => [s, bg.name])]);
+  const feat = cw.backgroundId !== 'custom' && bg.feat && featById(bg.feat) ? bg.feat : cw.feat;
+  b.feats = feat ? [feat] : [];
+  if (bg.tool) b.tools = [[bg.tool, 'DES', bg.name]];
+  return b;
+}
+function finishCreator() {
+  const b = buildFromWizard(), c = newCharacter(cw.name, b);
+  c.sheet.items = STARTING_GEAR[cw.gear].items.map(([name, qty, cat]) => ({ name, note: '', qty, cat, unit: '' }));
+  c.grimoire.added = cw.spells.map(id => { const { base: _b, _hay, ...s } = libGet(id); return s; });
+  c.sub = deriveSheet(c).subText;
+  closeModal();
+  addCharacter(c);
+  const meta = METAMAGIC.map(m => m.id);
+  while (buildOf(c).level < cw.level) {
+    const need = levelNeeds(c), attr = buildOf(c).scores.CAR < 20 ? 'CAR' : 'CON';
+    commitLevel({ hp: 4, asi: need.asi ? { [attr]: 2 } : {}, feat: need.boon ? 'boon-fate' : '', metamagic: meta.filter(m => !buildOf(c).metamagic.includes(m)).slice(0, Math.max(0, need.metamagic)) });
+  }
+  state.hp = CHAR.stats.hpMax;
+  save(); renderHero(); render(); renderPassives();
+  toast(`${c.name} criado`, false);
+}
+document.addEventListener('click', e => {
+  const b = e.target.closest('[data-action]');
+  if (!b || !cw) return;
+  switch (b.dataset.action) {
+    case 'cw-next': cw.step++; modalRefresh(); $('#sheet').scrollTop = 0; break;
+    case 'cw-back': cw.step--; modalRefresh(); break;
+    case 'cw-finish': finishCreator(); break;
+    case 'cw-score': { const k = b.dataset.k, v = cw.scores[k] + +b.dataset.d; if (v >= 8 && v <= 15) { cw.scores[k] = v; modalRefresh(); } break; }
+    case 'cw-roll': {
+      cw.pool = Array.from({ length: 6 }, () => { const r = [d(6), d(6), d(6), d(6)].sort((x, y) => x - y); return r[1] + r[2] + r[3]; }).sort((x, y) => y - x);
+      ATTR.forEach(([k], i) => { cw.assign[k] = cw.pool[i]; }); modalRefresh(); break;
+    }
+  }
+});
+document.addEventListener('change', e => {
+  if (!cw || $('#modal').hidden) return;
+  const t = e.target, set = (f, v) => { cw[f] = v; modalRefresh(); };
+  if (t.id === 'cw-sp') set('speciesId', t.value);
+  else if (t.id === 'cw-lin') set('lineage', t.value);
+  else if (t.id === 'cw-spn') set('customSpecies', t.value);
+  else if (t.id === 'cw-spd') set('customSpeed', +t.value || 30);
+  else if (t.id === 'cw-bg') {
+    cw.backgroundId = t.value; const a = cwBackground().attrs; cw.bonus = { plus2: a[0], plus1: a[1] }; modalRefresh();
+  } else if (t.id === 'cw-bgn') set('customBg', t.value);
+  else if (t.dataset.cwattr) { cw.attrs[+t.dataset.cwattr] = t.value; modalRefresh(); }
+  else if (t.name === 'cw-bonus') set('bonusMode', t.value);
+  else if (t.id === 'cw-p2') { cw.bonus.plus2 = t.value; modalRefresh(); }
+  else if (t.id === 'cw-p1') { cw.bonus.plus1 = t.value; modalRefresh(); }
+  else if (t.name === 'cw-method') {
+    cw.method = t.value;
+    if (t.value === 'padrao') { cw.pool = [...STANDARD_ARRAY]; ATTR.forEach(([k], i) => { cw.assign[k] = [8, 13, 14, 10, 12, 15][i]; }); }
+    if (t.value === 'compra') cw.scores = Object.fromEntries(ATTR.map(([k]) => [k, 8]));
+    if (t.value === 'rolar') cw.pool = [10, 10, 10, 10, 10, 10];
+    modalRefresh();
+  } else if (t.dataset.cwassign) { cw.assign[t.dataset.cwassign] = +t.value; modalRefresh(); }
+  else if (t.dataset.cwskill) {
+    if (t.checked && cw.skills.length >= 2) { t.checked = false; toast('Escolha 2 perícias', false); return; }
+    cw.skills = t.checked ? [...cw.skills, t.dataset.cwskill] : cw.skills.filter(s => s !== t.dataset.cwskill); modalRefresh();
+  } else if (t.id === 'cw-feat') set('feat', t.value);
+  else if (t.name === 'cw-gear') set('gear', t.value);
+  else if (t.id === 'cw-level') set('level', +t.value);
+  else if (t.dataset.cwsp) {
+    const s = libGet(t.dataset.cwsp), L1 = SORCERER_LEVELS[0], max = s.level ? L1.prepared : L1.cantrips;
+    const n = cw.spells.filter(id => (libGet(id).level > 0) === (s.level > 0)).length;
+    if (t.checked && n >= max) { t.checked = false; toast(`Escolha até ${max}`, false); return; }
+    cw.spells = t.checked ? [...cw.spells, s.id] : cw.spells.filter(x => x !== s.id); modalRefresh();
+  }
+});
 /* Início do app: roda depois de todos os módulos carregados. */
 refreshAll();
 </script>

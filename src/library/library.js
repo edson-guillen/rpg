@@ -6,12 +6,24 @@
    ===================================================================== */
 const LIB_FILTERS_DEFAULT = { q: '', level: '', school: '', cls: 'sorcerer', dmg: '', conc: '', ritual: '', time: '', src: '' };
 const LIB_PAGE = 40;
+const NOME_ATTR = { Força: 'FOR', Destreza: 'DES', Constituição: 'CON', Inteligência: 'INT', Sabedoria: 'SAB', Carisma: 'CAR' };
+/** Talentos, antecedentes e espécies da biblioteca pessoal, no formato do catálogo. */
+function privateCatalog() {
+  const d = privateRaw || {};
+  return {
+    talentos: (d.talentos || []).map(t => ({ id: 'p-' + t.id, name: t.nome, cat: t.categoria, desc: t.texto, pre: t.prerequisito || '', src: 'pessoal' })),
+    antecedentes: (d.antecedentes || []).map(b => ({ id: 'p-' + b.id, name: b.nome, attrs: (b.atributos || []).map(a => NOME_ATTR[a]).filter(Boolean), feat: 'p-' + norm(b.talento || '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, ''), skills: b.pericias || [], tool: b.ferramenta || '', desc: b.equipamento || '', src: 'pessoal' })),
+    especies: (d.especies || []).map(e => ({ id: 'p-' + e.id, name: e.nome, speed: Math.round(parseFloat(String(e.deslocamento).replace(',', '.')) / 0.3) || 30, traits: [['Traços', e.texto]], src: 'pessoal' }))
+  };
+}
+const allFeats = () => [...FEATS.filter(f => !privateCatalog().talentos.some(p => norm(p.name) === norm(f.name))), ...privateCatalog().talentos, ...(store.library.feats || [])];
 const ABIL_KEYS = Object.keys(SAVE_NAME);
 const DMG_TYPES = ['Ácido', 'Contundente', 'Cortante', 'Elétrico', 'Energético', 'Fogo', 'Frio', 'Necrótico', 'Perfurante', 'Psíquico', 'Radiante', 'Trovejante', 'Veneno'];
 const SCHOOLS = ['Abjuração', 'Adivinhação', 'Encantamento', 'Evocação', 'Ilusão', 'Invocação', 'Necromancia', 'Transmutação'];
 const CLASS_NAMES = { artificer: 'Artífice', barbarian: 'Bárbaro', bard: 'Bardo', cleric: 'Clérigo', druid: 'Druida', fighter: 'Guerreiro', monk: 'Monge', paladin: 'Paladino', ranger: 'Patrulheiro', rogue: 'Ladino', sorcerer: 'Feiticeiro', warlock: 'Bruxo', wizard: 'Mago' };
 
 let libFilters = { ...LIB_FILTERS_DEFAULT }, libLimit = LIB_PAGE, libStatus = 'idle', grimView = 'meu', privateSpells = [];
+var privateRaw = null; // var: o motor de regras lê isto antes de este arquivo rodar
 
 /* ---------- carregamento sob demanda ---------- */
 function ensureLibrary() {
@@ -48,7 +60,7 @@ async function idbSet(k, v) {
   return new Promise((res, rej) => { const t = db.transaction('biblioteca', 'readwrite'); if (v === null) t.objectStore('biblioteca').delete(k); else t.objectStore('biblioteca').put(v, k); t.oncomplete = () => res(true); t.onerror = () => rej(t.error); });
 }
 async function loadPrivate() {
-  try { privateSpells = ((await idbGet('pessoal'))?.magias || []).map(mapPrivate); } catch (e) { privateSpells = []; }
+  try { privateRaw = await idbGet('pessoal'); privateSpells = (privateRaw?.magias || []).map(mapPrivate); } catch (e) { privateRaw = null; privateSpells = []; }
 }
 
 const TIME_PT = t => /^Ação Bônus/.test(t) ? '1 Ação Bônus' : /^Ação/.test(t) ? '1 Ação' : /^Reação/.test(t) ? 'Reação' : t;

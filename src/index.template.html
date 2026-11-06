@@ -95,6 +95,7 @@
 
   <nav class="tabs" role="tablist" aria-label="Seções da ficha">
     <button class="tab" role="tab" data-action="tab" data-tab="ficha" id="t-ficha" aria-controls="tab-ficha"><svg class="ic"><use href="#i-scroll"/></svg>Ficha</button>
+    <button class="tab" role="tab" data-action="tab" data-tab="personagem" id="t-personagem" aria-controls="tab-personagem"><svg class="ic"><use href="#i-eye"/></svg><span class="t-long">Personagem</span><span class="t-short">Perfil</span></button>
     <button class="tab" role="tab" data-action="tab" data-tab="magia" id="t-magia" aria-controls="tab-magia"><svg class="ic"><use href="#i-gem"/></svg>Magia<span class="badge num" id="badge-slots" hidden></span></button>
     <button class="tab" role="tab" data-action="tab" data-tab="grimorio" id="t-grimorio" aria-controls="tab-grimorio"><svg class="ic"><use href="#i-book"/></svg>Grimório</button>
     <button class="tab" role="tab" data-action="tab" data-tab="recursos" id="t-recursos" aria-controls="tab-recursos"><svg class="ic"><use href="#i-flame"/></svg>Recursos</button>
@@ -165,6 +166,9 @@
       <input type="file" id="lib-file" accept="application/json,.json" hidden>
     </section>
 
+    <!-- ======================= PERSONAGEM ======================= -->
+    <section class="panel-tab" id="tab-personagem" role="tabpanel" aria-labelledby="t-personagem"><div id="personagem" class="persona"></div></section>
+
     <!-- ======================= RECURSOS ======================= -->
     <section class="panel-tab" id="tab-recursos" role="tabpanel" aria-labelledby="t-recursos">
       <div class="grid two">
@@ -204,7 +208,7 @@
     </section>
   </main>
 
-  <footer class="foot">Progresso salvo automaticamente neste navegador.<br>Contém material do <a href="https://dndbeyond.com/srd" rel="noopener">System Reference Document 5.2</a>, da Wizards of the Coast, sob licença <a href="https://creativecommons.org/licenses/by/4.0/legalcode" rel="noopener">CC BY 4.0</a>.</footer>
+  <footer class="foot" id="foot">Progresso salvo automaticamente neste navegador.<br>Contém material do <a href="https://dndbeyond.com/srd" rel="noopener">System Reference Document 5.2</a>, da Wizards of the Coast, sob licença <a href="https://creativecommons.org/licenses/by/4.0/legalcode" rel="noopener">CC BY 4.0</a>.</footer>
 </div>
 
 <div class="modal" id="modal" hidden>

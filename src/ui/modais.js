@@ -238,7 +238,7 @@ function concModal(dmg = 0) {
       <div class="dc-big num" id="conc-dc">CD ${concDC()}</div>
       <p class="note" style="text-align:center">Salvaguarda de Constituição <b>${sign(CHAR.stats.conSave)}</b> com <b>Vantagem</b> (Conjurador Bélico)</p>
       <div class="rolls" style="justify-content:center">${roll}</div>
-      <button class="btn frost block" data-action="conc-roll">${icon('i-d20')}Rolar 2d20 (maior) ${sign(CHAR.stats.conSave)}</button>
+      <button class="btn frost block" data-action="conc-roll">${icon('i-d20')}Rolar ${CHAR.warCaster ? '2d20 (maior)' : '1d20'} ${sign(CHAR.stats.conSave)}</button>
       <div class="m-actions"><button class="btn danger" data-action="conc-lost">Perdi a concentração</button><button class="btn gold" data-action="close">Mantive</button></div>`;
   });
 }

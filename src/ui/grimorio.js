@@ -47,7 +47,7 @@ function spellCard(s, q) {
   return `<button class="spell ${lvClass(s.level)} ${state.conc === s.id ? 'conc-on' : ''}" data-action="spell" data-id="${s.id}">
     <span class="rune">${icon(SCHOOL_ICON[s.school] || 'i-spark')}</span>
     <span class="t"><span class="name">${highlight(s.name, q)}<span class="en">${highlight(s.en, q)}</span></span>
-      <span class="sum">${highlight(s.sum, q)}</span><span class="tags">${tags.join('')}</span></span>
+      <span class="sum">${highlight(fmt(s.sum || summaryOf(s)), q)}</span><span class="tags">${tags.join('')}</span></span>
     <span class="chev">${icon('i-chev')}</span></button>`;
 }
 
@@ -64,3 +64,13 @@ function renderGrim() {
   }).join('');
 }
 
+
+/** Resumo curto para magias vindas da biblioteca, que não têm um escrito à mão. */
+function summaryOf(s) {
+  const r = s.r || [], dano = r.find(x => x.t === 'dmg'), partes = [];
+  if (r.some(x => x.t === 'atk')) partes.push('Ataque');
+  const sv = r.find(x => x.t === 'save');
+  if (sv) partes.push('Salv. ' + sv.a);
+  if (dano) partes.push(baseDice(dano) + ' ' + dano.type);
+  return (partes.join(' · ') || s.time + ' · ' + s.range);
+}

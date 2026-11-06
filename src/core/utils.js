@@ -13,7 +13,7 @@ const dc = () => CHAR.stats.dc + (state.fx.innate ? 1 : 0);
 const ac = () => CHAR.stats.ac + (state.fx.shield ? CHAR.stats.shieldBonus : 0);
 const norm = s => [...String(s)].map(ch => ch.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase()).join('');
 const strip = s => String(s).replace(/<[^>]+>/g, '');
-const fmt = s => String(s ?? '').replace(/\{CD\}/g, dc());
+const fmt = s => String(s ?? '').replace(/\{CD\}/g, dc()).replace(/\{ATQ\}/g, sign(CHAR.stats.atk));
 const modOf = score => Math.floor((score - 10) / 2);
 const abil = k => CHAR.abilities.find(a => a.k === k);
 const decimal = n => String(Math.round(n * 10) / 10).replace('.', ',');

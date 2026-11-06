@@ -203,7 +203,7 @@ Código sob a licença [MIT](LICENSE).
 
 Ao conjurar, a mesa de dados recebe os valores físicos dentro dos limites da magia: quantidade pelo círculo e pelo nível, ataques múltiplos, crítico, salvaguarda, dados que explodem e saltos do Orbe Cromático. Casa vazia é rolada pelo app.
 
-Depois, a cena da magia toma a tela. As 355 cenas do SRD e do Søren foram escritas à mão em `src/fx/cenas.js`, com os verbos de `src/fx/cena-atos.js`. O tamanho vem do dano total e a força vem da sorte na rolagem. Um toque pula a cena.
+Depois, a cena da magia toma a tela. As 340 cenas do SRD e do Søren foram escritas à mão em `src/fx/cenas.js`, com os verbos de `src/fx/cena-atos.js`. O tamanho vem do dano total e a força vem da sorte na rolagem. Um toque pula a cena.
 
 - `npm run build` gera `data/fx-art.js` só com as silhuetas usadas pelas cenas.
 - `npm run cenas` junta `private/cenas-pessoais.json` à biblioteca pessoal. Depois disso, importe o arquivo de novo no app.

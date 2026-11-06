@@ -51,6 +51,8 @@ async function novoPersonagem(page, nome) {
   await page.fill('#c-name', nome);
   await page.press('#c-name', 'Enter');
   await page.waitForSelector('[data-action="cw-next"]');
+  await clicar(page, '[data-action="cw-next"]');
+  await page.waitForSelector('#cw-sp');
   await assistente(page);
   await page.waitForFunction(n => activeChar().name === n, nome);
   await page.waitForFunction(() => document.querySelector('#modal').hidden);
@@ -280,6 +282,34 @@ const cenarios = {
     await page.waitForFunction(() => document.querySelectorAll('.lib-card').length > 0);
     const nomes = await page.locator('.lib-card b').allTextContents();
     ok(nomes.includes('Bola de Fogo'), 'filtros de círculo e dano');
+    // Todas as classes e subclasses, do nível 1 ao 20, com ações e cenas.
+    const classes = await page.evaluate(async () => {
+      await ensureLibrary();
+      const erros = [], semMagia = new Set(); let fichas = 0, acoes = 0, cenas = new Set();
+      for (const [id, C] of Object.entries(CLASSES)) for (const sub of Object.keys(C.subs)) {
+        const c = { template: 'blank', level: 1, sheet: blankSheet(), build: { ...blankBuild(1, id), scores: { FOR: 16, DES: 14, CON: 14, INT: 12, SAB: 12, CAR: 12 } }, grimoire: { added: [], removed: [] }, spells: [] };
+        for (const n of [1, 2, 3, 5, 7, 9, 11, 14, 17, 18, 20]) {
+          c.build.level = n; c.level = n; c.build.hpRolls = Array(n - 1).fill(4); c.build.subclassId = n >= 3 ? sub : null;
+          try {
+            const f = deriveSheet(c); fichas++;
+            if (!(f.stats.hpMax > 0) || !(f.stats.ac >= 10) || f.hitDie !== C.hd) erros.push(id + ' ficha ' + n);
+            for (const r of f.resources) if (!(r.max >= 0) || !r.name) erros.push(id + ' recurso ' + r.id);
+            for (const a of f.acoes) {
+              acoes++;
+              if (a.res && !f.resources.some(r => r.id === a.res)) erros.push(id + '/' + sub + ' sem recurso ' + a.res + ' em ' + a.id + ' nv ' + n);
+              const s = acaoSpell(a);
+              if (!cenas.has(a.id)) { cenas.add(a.id); fxDryRun(s, null, null, 1); }
+              if (a.r.some(x => x.t === 'dmg' || x.t === 'aux')) resolveLance(completarLance(novoLance(diceSpec(s, 0, { modo: 'livre' }))));
+            }
+          } catch (e) { erros.push(id + '/' + sub + ' nv ' + n + ': ' + e.message); }
+        }
+        for (const nomes of Object.values(C.subs[sub].magias || {})) for (const nome of nomes) if (!libraryAll().some(x => norm(x.name) === norm(nome))) semMagia.add(nome);
+      }
+      return { erros: erros.slice(0, 12), n: erros.length, fichas, acoes, cenas: cenas.size, semMagia: [...semMagia], classes: Object.keys(CLASSES).length, subs: Object.values(CLASSES).reduce((a, C) => a + Object.keys(C.subs).length, 0) };
+    });
+    ok(!classes.n, 'fichas e ações de todas as classes: ' + JSON.stringify(classes.erros));
+    ok(classes.classes === 13 && classes.subs === 53, 'treze classes e 53 subclasses');
+    ok(classes.cenas >= 60, 'ações de classe com cena');
     ok((await page.locator('#lib-view .group-h h3').allTextContents()).join() === '3º Círculo', 'biblioteca separada por círculo');
     const termos = await page.evaluate(() => ({ tipos: Object.keys(DMG_COLORS), ruins: libraryAll().filter(s => /dano de (Fogo|Frio|Veneno)|Penumbra|Corruptor|ação Disparada|ação Estudar/.test(JSON.stringify(s.desc))).map(s => s.name), conc: libGet('protection-from-evil-and-good').conc, nome: libGet('arcane-hand').name, meta: METAMAGIC.map(m => m.name).join() }));
     ok(termos.tipos.includes('Ígneo') && termos.tipos.includes('Gélido') && termos.tipos.includes('Venenoso') && !termos.tipos.includes('Fogo'), 'tipos de dano com os nomes do livro');
@@ -705,6 +735,8 @@ const cenarios = {
     await clicar(page, '[data-action="char-new"]');
     await page.fill('#c-name', 'Ilda');
     await page.press('#c-name', 'Enter');
+    await page.waitForSelector('#cw-cl');
+    await clicar(page, '[data-action="cw-next"]');
     await page.waitForSelector('#cw-sp');
     await assistente(page, {
       0: async () => { await page.selectOption('#cw-sp', 'goliath'); await page.selectOption('#cw-lin', 'storm'); },

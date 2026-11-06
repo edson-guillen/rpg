@@ -149,7 +149,9 @@ function libGrupos(list) {
   }).join('');
 }
 
+let libDono = null;
 function renderLibrary() {
+  if (libDono !== store.activeId) { libDono = store.activeId; libFilters.cls = CHAR.lista || ''; }
   const box = $('#lib-view');
   if (libStatus === 'idle' || libStatus === 'loading') {
     box.innerHTML = '<p class="empty">Abrindo a biblioteca…</p>';
@@ -165,7 +167,7 @@ function renderLibrary() {
       <div class="lib-filters">
         ${sel('level', 'Círculo', [['', 'Todos'], ['0', 'Truques'], ...[1, 2, 3, 4, 5, 6, 7, 8, 9].map(n => [String(n), n + 'º'])])}
         ${sel('school', 'Escola', [['', 'Todas'], ...SCHOOLS.map(x => [x, x])])}
-        ${sel('cls', 'Classe', [['', 'Todas'], ...Object.entries(CLASS_NAMES).filter(([k]) => k !== 'barbarian' && k !== 'fighter' && k !== 'monk' && k !== 'rogue')])}
+        ${sel('cls', 'Classe', [['', 'Todas'], ...Object.entries(CLASS_NAMES).filter(([k]) => !['barbarian', 'fighter', 'monk', 'rogue'].includes(k))])}
         ${sel('dmg', 'Dano', [['', 'Todos'], ...DMG_TYPES.map(x => [x, x])])}
         ${sel('conc', 'Concentração', [['', 'Tanto faz'], ['true', 'Sim'], ['false', 'Não']])}
         ${sel('ritual', 'Ritual', [['', 'Tanto faz'], ['true', 'Sim'], ['false', 'Não']])}
@@ -356,7 +358,7 @@ document.addEventListener('click', e => {
     case 'lib-add': addToGrimoire(id); break;
     case 'lib-remove': removeFromGrimoire(id); break;
     case 'lib-more': libLimit += LIB_PAGE; renderLibrary(); break;
-    case 'lib-clear': libFilters = { ...LIB_FILTERS_DEFAULT }; libLimit = LIB_PAGE; renderLibrary(); break;
+    case 'lib-clear': libFilters = { ...LIB_FILTERS_DEFAULT, cls: CHAR.lista || '' }; libLimit = LIB_PAGE; renderLibrary(); break;
     case 'lib-import': $('#lib-file').click(); break;
     case 'spell-new': openEditor(null); break;
     case 'spell-edit': openEditor(id); break;

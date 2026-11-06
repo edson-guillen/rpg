@@ -727,6 +727,14 @@ footer.foot{margin-top:28px;text-align:center;color:var(--faint);font-size:14px}
 .mesa-foot{position:sticky;bottom:-1px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;justify-content:space-between;padding:10px 0 2px;background:linear-gradient(to top,var(--bg2) 75%,transparent)}
 .mesa-foot .m-actions{margin:0;flex:1;justify-content:flex-end}
 .mesa-t{display:flex;flex-direction:column;line-height:1}.mesa-t small{font-size:11px;color:var(--muted)}.mesa-t b{font-size:30px}
+
+/* Ações de classe */
+.acoes-lista{display:grid;gap:8px}
+.acao{display:flex;justify-content:space-between;gap:10px;align-items:center;padding:8px 0;border-top:1px solid color-mix(in srgb,var(--faint) 30%,transparent)}
+.acao:first-child{border-top:0}
+.acao small{color:var(--muted)}
+.acao p{margin:2px 0 0;color:var(--muted);font-size:14px}
+.acao-b{display:flex;gap:6px;flex:none}
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <style id="fx-css">
@@ -1292,8 +1300,10 @@ const SOREN_SPELLS = [
 ];
 </script>
 <script>
-/* Progressão do Feiticeiro no SRD 5.2 (CC BY 4.0). Gerado a partir de data/srd/Levels.json. */
-const SORCERER_LEVELS = [{"pb":2,"cantrips":4,"prepared":2,"slots":[2,0,0,0,0,0,0,0,0]},{"pb":2,"cantrips":4,"prepared":4,"slots":[3,0,0,0,0,0,0,0,0]},{"pb":2,"cantrips":4,"prepared":6,"slots":[4,2,0,0,0,0,0,0,0]},{"pb":2,"cantrips":5,"prepared":7,"slots":[4,3,0,0,0,0,0,0,0]},{"pb":3,"cantrips":5,"prepared":9,"slots":[4,3,2,0,0,0,0,0,0]},{"pb":3,"cantrips":5,"prepared":10,"slots":[4,3,3,0,0,0,0,0,0]},{"pb":3,"cantrips":5,"prepared":11,"slots":[4,3,3,1,0,0,0,0,0]},{"pb":3,"cantrips":5,"prepared":12,"slots":[4,3,3,2,0,0,0,0,0]},{"pb":4,"cantrips":5,"prepared":14,"slots":[4,3,3,3,1,0,0,0,0]},{"pb":4,"cantrips":6,"prepared":15,"slots":[4,3,3,3,2,0,0,0,0]},{"pb":4,"cantrips":6,"prepared":16,"slots":[4,3,3,3,2,1,0,0,0]},{"pb":4,"cantrips":6,"prepared":16,"slots":[4,3,3,3,2,1,0,0,0]},{"pb":5,"cantrips":6,"prepared":17,"slots":[4,3,3,3,2,1,1,0,0]},{"pb":5,"cantrips":6,"prepared":17,"slots":[4,3,3,3,2,1,1,0,0]},{"pb":5,"cantrips":6,"prepared":18,"slots":[4,3,3,3,2,1,1,1,0]},{"pb":5,"cantrips":6,"prepared":18,"slots":[4,3,3,3,2,1,1,1,0]},{"pb":6,"cantrips":6,"prepared":19,"slots":[4,3,3,3,2,1,1,1,1]},{"pb":6,"cantrips":6,"prepared":20,"slots":[4,3,3,3,3,1,1,1,1]},{"pb":6,"cantrips":6,"prepared":21,"slots":[4,3,3,3,3,2,1,1,1]},{"pb":6,"cantrips":6,"prepared":22,"slots":[4,3,3,3,3,2,2,1,1]}];
+/* Progressão das classes. Gerado por tools/build-progressao.mjs a partir do SRD 5.2 (CC BY 4.0) e de Eberron: Forge of the Artificer. */
+const CLASS_LEVELS = {"barbarian":[{"pb":2,"rage_count":2,"rage_damage_bonus":2},{"pb":2,"rage_count":2,"rage_damage_bonus":2},{"pb":2,"rage_count":3,"rage_damage_bonus":2},{"pb":2,"rage_count":3,"rage_damage_bonus":2},{"pb":3,"rage_count":3,"rage_damage_bonus":2},{"pb":3,"rage_count":4,"rage_damage_bonus":2},{"pb":3,"rage_count":4,"rage_damage_bonus":2},{"pb":3,"rage_count":4,"rage_damage_bonus":2},{"pb":4,"rage_count":4,"rage_damage_bonus":3},{"pb":4,"rage_count":4,"rage_damage_bonus":3},{"pb":4,"rage_count":4,"rage_damage_bonus":3},{"pb":4,"rage_count":5,"rage_damage_bonus":3},{"pb":5,"rage_count":5,"rage_damage_bonus":3},{"pb":5,"rage_count":5,"rage_damage_bonus":3},{"pb":5,"rage_count":5,"rage_damage_bonus":3},{"pb":5,"rage_count":5,"rage_damage_bonus":4},{"pb":6,"rage_count":6,"rage_damage_bonus":4},{"pb":6,"rage_count":6,"rage_damage_bonus":4},{"pb":6,"rage_count":6,"rage_damage_bonus":4},{"pb":6,"rage_count":6,"rage_damage_bonus":4}],"bard":[{"pb":2,"cantrips":2,"prepared":4,"slots":[2,0,0,0,0,0,0,0,0],"bardic_inspiration_die":6},{"pb":2,"cantrips":2,"prepared":5,"slots":[3,0,0,0,0,0,0,0,0],"bardic_inspiration_die":6},{"pb":2,"cantrips":2,"prepared":6,"slots":[4,2,0,0,0,0,0,0,0],"bardic_inspiration_die":6},{"pb":2,"cantrips":3,"prepared":7,"slots":[4,3,0,0,0,0,0,0,0],"bardic_inspiration_die":6},{"pb":3,"cantrips":3,"prepared":9,"slots":[4,3,2,0,0,0,0,0,0],"bardic_inspiration_die":8},{"pb":3,"cantrips":3,"prepared":10,"slots":[4,3,3,0,0,0,0,0,0],"bardic_inspiration_die":8},{"pb":3,"cantrips":3,"prepared":11,"slots":[4,3,3,1,0,0,0,0,0],"bardic_inspiration_die":8},{"pb":3,"cantrips":3,"prepared":12,"slots":[4,3,3,2,0,0,0,0,0],"bardic_inspiration_die":8},{"pb":4,"cantrips":3,"prepared":14,"slots":[4,3,3,3,1,0,0,0,0],"bardic_inspiration_die":8},{"pb":4,"cantrips":4,"prepared":15,"slots":[4,3,3,3,2,0,0,0,0],"bardic_inspiration_die":10},{"pb":4,"cantrips":4,"prepared":16,"slots":[4,3,3,3,2,1,0,0,0],"bardic_inspiration_die":10},{"pb":4,"cantrips":4,"prepared":16,"slots":[4,3,3,3,2,1,0,0,0],"bardic_inspiration_die":10},{"pb":5,"cantrips":4,"prepared":17,"slots":[4,3,3,3,2,1,1,0,0],"bardic_inspiration_die":10},{"pb":5,"cantrips":4,"prepared":17,"slots":[4,3,3,3,2,1,1,0,0],"bardic_inspiration_die":10},{"pb":5,"cantrips":4,"prepared":18,"slots":[4,3,3,3,2,1,1,1,0],"bardic_inspiration_die":12},{"pb":5,"cantrips":4,"prepared":18,"slots":[4,3,3,3,2,1,1,1,0],"bardic_inspiration_die":12},{"pb":6,"cantrips":4,"prepared":19,"slots":[4,3,3,3,2,1,1,1,1],"bardic_inspiration_die":12},{"pb":6,"cantrips":4,"prepared":20,"slots":[4,3,3,3,3,1,1,1,1],"bardic_inspiration_die":12},{"pb":6,"cantrips":4,"prepared":21,"slots":[4,3,3,3,3,2,1,1,1],"bardic_inspiration_die":12},{"pb":6,"cantrips":4,"prepared":22,"slots":[4,3,3,3,3,2,2,1,1],"bardic_inspiration_die":12}],"cleric":[{"pb":2,"cantrips":3,"prepared":4,"slots":[2,0,0,0,0,0,0,0,0],"channel_divinity_charges":0},{"pb":2,"cantrips":3,"prepared":5,"slots":[3,0,0,0,0,0,0,0,0],"channel_divinity_charges":2},{"pb":2,"cantrips":3,"prepared":6,"slots":[4,2,0,0,0,0,0,0,0],"channel_divinity_charges":2},{"pb":2,"cantrips":4,"prepared":7,"slots":[4,3,0,0,0,0,0,0,0],"channel_divinity_charges":2},{"pb":3,"cantrips":4,"prepared":9,"slots":[4,3,2,0,0,0,0,0,0],"channel_divinity_charges":2},{"pb":3,"cantrips":4,"prepared":10,"slots":[4,3,3,0,0,0,0,0,0],"channel_divinity_charges":3},{"pb":3,"cantrips":4,"prepared":11,"slots":[4,3,3,1,0,0,0,0,0],"channel_divinity_charges":3},{"pb":3,"cantrips":4,"prepared":12,"slots":[4,3,3,2,0,0,0,0,0],"channel_divinity_charges":3},{"pb":4,"cantrips":4,"prepared":14,"slots":[4,3,3,3,1,0,0,0,0],"channel_divinity_charges":3},{"pb":4,"cantrips":5,"prepared":15,"slots":[4,3,3,3,2,0,0,0,0],"channel_divinity_charges":3},{"pb":4,"cantrips":5,"prepared":16,"slots":[4,3,3,3,2,1,0,0,0],"channel_divinity_charges":3},{"pb":4,"cantrips":5,"prepared":16,"slots":[4,3,3,3,2,1,0,0,0],"channel_divinity_charges":3},{"pb":5,"cantrips":5,"prepared":17,"slots":[4,3,3,3,2,1,1,0,0],"channel_divinity_charges":3},{"pb":5,"cantrips":5,"prepared":17,"slots":[4,3,3,3,2,1,1,0,0],"channel_divinity_charges":3},{"pb":5,"cantrips":5,"prepared":18,"slots":[4,3,3,3,2,1,1,1,0],"channel_divinity_charges":3},{"pb":5,"cantrips":5,"prepared":18,"slots":[4,3,3,3,2,1,1,1,0],"channel_divinity_charges":3},{"pb":6,"cantrips":5,"prepared":19,"slots":[4,3,3,3,2,1,1,1,1],"channel_divinity_charges":3},{"pb":6,"cantrips":5,"prepared":20,"slots":[4,3,3,3,3,1,1,1,1],"channel_divinity_charges":4},{"pb":6,"cantrips":5,"prepared":21,"slots":[4,3,3,3,3,2,1,1,1],"channel_divinity_charges":4},{"pb":6,"cantrips":5,"prepared":22,"slots":[4,3,3,3,3,2,2,1,1],"channel_divinity_charges":4}],"druid":[{"pb":2,"cantrips":2,"prepared":4,"slots":[2,0,0,0,0,0,0,0,0],"wild_shape_uses":0},{"pb":2,"cantrips":2,"prepared":5,"slots":[3,0,0,0,0,0,0,0,0],"wild_shape_uses":2},{"pb":2,"cantrips":2,"prepared":6,"slots":[4,2,0,0,0,0,0,0,0],"wild_shape_uses":2},{"pb":2,"cantrips":3,"prepared":7,"slots":[4,3,0,0,0,0,0,0,0],"wild_shape_uses":2},{"pb":3,"cantrips":3,"prepared":9,"slots":[4,3,2,0,0,0,0,0,0],"wild_shape_uses":2},{"pb":3,"cantrips":3,"prepared":10,"slots":[4,3,3,0,0,0,0,0,0],"wild_shape_uses":3},{"pb":3,"cantrips":4,"prepared":11,"slots":[4,3,3,1,0,0,0,0,0],"wild_shape_uses":3},{"pb":3,"cantrips":3,"prepared":12,"slots":[4,3,3,2,0,0,0,0,0],"wild_shape_uses":3},{"pb":4,"cantrips":3,"prepared":14,"slots":[4,3,3,3,1,0,0,0,0],"wild_shape_uses":3},{"pb":4,"cantrips":4,"prepared":15,"slots":[4,3,3,3,2,0,0,0,0],"wild_shape_uses":3},{"pb":4,"cantrips":4,"prepared":16,"slots":[4,3,3,3,2,1,0,0,0],"wild_shape_uses":3},{"pb":4,"cantrips":4,"prepared":16,"slots":[4,3,3,3,2,1,0,0,0],"wild_shape_uses":3},{"pb":5,"cantrips":4,"prepared":17,"slots":[4,3,3,3,2,1,1,0,0],"wild_shape_uses":3},{"pb":5,"cantrips":4,"prepared":17,"slots":[4,3,3,3,2,1,1,0,0],"wild_shape_uses":3},{"pb":5,"cantrips":4,"prepared":18,"slots":[4,3,3,3,2,1,1,1,0],"wild_shape_uses":3},{"pb":5,"cantrips":5,"prepared":18,"slots":[4,3,3,3,2,1,1,1,0],"wild_shape_uses":3},{"pb":6,"cantrips":4,"prepared":19,"slots":[4,3,3,3,2,1,1,1,1],"wild_shape_uses":4},{"pb":6,"cantrips":4,"prepared":20,"slots":[4,3,3,3,3,1,1,1,1],"wild_shape_uses":4},{"pb":6,"cantrips":4,"prepared":21,"slots":[4,3,3,3,3,2,1,1,1],"wild_shape_uses":4},{"pb":6,"cantrips":4,"prepared":22,"slots":[4,3,3,3,3,2,2,1,1],"wild_shape_uses":4}],"fighter":[{"pb":2,"second_wind_uses":2},{"pb":2,"second_wind_uses":2},{"pb":2,"second_wind_uses":2},{"pb":2,"second_wind_uses":3},{"pb":3,"second_wind_uses":3},{"pb":3,"second_wind_uses":3},{"pb":3,"second_wind_uses":3},{"pb":3,"second_wind_uses":3},{"pb":4,"second_wind_uses":3},{"pb":4,"second_wind_uses":4},{"pb":4,"second_wind_uses":4},{"pb":4,"second_wind_uses":4},{"pb":5,"second_wind_uses":4},{"pb":5,"second_wind_uses":4},{"pb":5,"second_wind_uses":4},{"pb":5,"second_wind_uses":4},{"pb":6,"second_wind_uses":4},{"pb":6,"second_wind_uses":4},{"pb":6,"second_wind_uses":4},{"pb":6,"second_wind_uses":4}],"monk":[{"pb":2,"martial_arts_die":6,"focus_points":0,"unarmored_movement_bonus":0},{"pb":2,"martial_arts_die":6,"focus_points":2,"unarmored_movement_bonus":10},{"pb":2,"martial_arts_die":6,"focus_points":3,"unarmored_movement_bonus":10},{"pb":2,"martial_arts_die":6,"focus_points":4,"unarmored_movement_bonus":10},{"pb":3,"martial_arts_die":8,"focus_points":5,"unarmored_movement_bonus":10},{"pb":3,"martial_arts_die":8,"focus_points":6,"unarmored_movement_bonus":15},{"pb":3,"martial_arts_die":8,"focus_points":7,"unarmored_movement_bonus":15},{"pb":3,"martial_arts_die":8,"focus_points":8,"unarmored_movement_bonus":15},{"pb":4,"martial_arts_die":8,"focus_points":9,"unarmored_movement_bonus":15},{"pb":4,"martial_arts_die":8,"focus_points":10,"unarmored_movement_bonus":20},{"pb":4,"martial_arts_die":10,"focus_points":11,"unarmored_movement_bonus":20},{"pb":4,"martial_arts_die":10,"focus_points":12,"unarmored_movement_bonus":20},{"pb":5,"martial_arts_die":10,"focus_points":13,"unarmored_movement_bonus":20},{"pb":5,"martial_arts_die":10,"focus_points":14,"unarmored_movement_bonus":25},{"pb":5,"martial_arts_die":10,"focus_points":15,"unarmored_movement_bonus":25},{"pb":5,"martial_arts_die":10,"focus_points":16,"unarmored_movement_bonus":25},{"pb":6,"martial_arts_die":12,"focus_points":17,"unarmored_movement_bonus":25},{"pb":6,"martial_arts_die":12,"focus_points":18,"unarmored_movement_bonus":30},{"pb":6,"martial_arts_die":12,"focus_points":19,"unarmored_movement_bonus":30},{"pb":6,"martial_arts_die":12,"focus_points":20,"unarmored_movement_bonus":30}],"paladin":[{"pb":2,"cantrips":0,"prepared":2,"slots":[2,0,0,0,0,0,0,0,0],"channel_divinity_charges":0},{"pb":2,"cantrips":0,"prepared":3,"slots":[2,0,0,0,0,0,0,0,0],"channel_divinity_charges":0},{"pb":2,"cantrips":0,"prepared":4,"slots":[3,0,0,0,0,0,0,0,0],"channel_divinity_charges":2},{"pb":2,"cantrips":0,"prepared":5,"slots":[3,0,0,0,0,0,0,0,0],"channel_divinity_charges":2},{"pb":3,"cantrips":0,"prepared":6,"slots":[4,2,0,0,0,0,0,0,0],"channel_divinity_charges":2},{"pb":3,"cantrips":0,"prepared":6,"slots":[4,2,0,0,0,0,0,0,0],"channel_divinity_charges":2},{"pb":3,"cantrips":0,"prepared":7,"slots":[4,3,0,0,0,0,0,0,0],"channel_divinity_charges":2},{"pb":3,"cantrips":0,"prepared":7,"slots":[4,3,0,0,0,0,0,0,0],"channel_divinity_charges":2},{"pb":4,"cantrips":0,"prepared":9,"slots":[4,3,2,0,0,0,0,0,0],"channel_divinity_charges":2},{"pb":4,"cantrips":0,"prepared":9,"slots":[4,3,2,0,0,0,0,0,0],"channel_divinity_charges":2},{"pb":4,"cantrips":0,"prepared":10,"slots":[4,3,3,0,0,0,0,0,0],"channel_divinity_charges":3},{"pb":4,"cantrips":0,"prepared":10,"slots":[4,3,3,0,0,0,0,0,0],"channel_divinity_charges":3},{"pb":5,"cantrips":0,"prepared":11,"slots":[4,3,3,1,0,0,0,0,0],"channel_divinity_charges":3},{"pb":5,"cantrips":0,"prepared":11,"slots":[4,3,3,1,0,0,0,0,0],"channel_divinity_charges":3},{"pb":5,"cantrips":0,"prepared":12,"slots":[4,3,3,2,0,0,0,0,0],"channel_divinity_charges":3},{"pb":5,"cantrips":0,"prepared":12,"slots":[4,3,3,2,0,0,0,0,0],"channel_divinity_charges":3},{"pb":6,"cantrips":0,"prepared":14,"slots":[4,3,3,3,1,0,0,0,0],"channel_divinity_charges":3},{"pb":6,"cantrips":0,"prepared":14,"slots":[4,3,3,3,1,0,0,0,0],"channel_divinity_charges":3},{"pb":6,"cantrips":0,"prepared":15,"slots":[4,3,3,3,2,0,0,0,0],"channel_divinity_charges":3},{"pb":6,"cantrips":0,"prepared":15,"slots":[4,3,3,3,2,0,0,0,0],"channel_divinity_charges":3}],"ranger":[{"pb":2,"cantrips":0,"prepared":2,"slots":[2,0,0,0,0,0,0,0,0],"favored_enemies":2},{"pb":2,"cantrips":0,"prepared":3,"slots":[2,0,0,0,0,0,0,0,0],"favored_enemies":2},{"pb":2,"cantrips":0,"prepared":4,"slots":[3,0,0,0,0,0,0,0,0],"favored_enemies":2},{"pb":2,"cantrips":0,"prepared":5,"slots":[3,0,0,0,0,0,0,0,0],"favored_enemies":2},{"pb":3,"cantrips":0,"prepared":6,"slots":[4,2,0,0,0,0,0,0,0],"favored_enemies":3},{"pb":3,"cantrips":0,"prepared":6,"slots":[4,2,0,0,0,0,0,0,0],"favored_enemies":3},{"pb":3,"cantrips":0,"prepared":7,"slots":[4,3,0,0,0,0,0,0,0],"favored_enemies":3},{"pb":3,"cantrips":0,"prepared":7,"slots":[4,3,0,0,0,0,0,0,0],"favored_enemies":3},{"pb":4,"cantrips":0,"prepared":9,"slots":[4,3,2,0,0,0,0,0,0],"favored_enemies":4},{"pb":4,"cantrips":0,"prepared":9,"slots":[4,3,2,0,0,0,0,0,0],"favored_enemies":4},{"pb":4,"cantrips":0,"prepared":10,"slots":[4,3,3,0,0,0,0,0,0],"favored_enemies":4},{"pb":4,"cantrips":0,"prepared":10,"slots":[4,3,3,0,0,0,0,0,0],"favored_enemies":4},{"pb":5,"cantrips":0,"prepared":11,"slots":[4,3,3,1,0,0,0,0,0],"favored_enemies":5},{"pb":5,"cantrips":0,"prepared":11,"slots":[4,3,3,1,0,0,0,0,0],"favored_enemies":5},{"pb":5,"cantrips":0,"prepared":12,"slots":[4,3,3,2,0,0,0,0,0],"favored_enemies":5},{"pb":5,"cantrips":0,"prepared":12,"slots":[4,3,3,2,0,0,0,0,0],"favored_enemies":5},{"pb":6,"cantrips":0,"prepared":14,"slots":[4,3,3,3,1,0,0,0,0],"favored_enemies":6},{"pb":6,"cantrips":0,"prepared":14,"slots":[4,3,3,3,1,0,0,0,0],"favored_enemies":6},{"pb":6,"cantrips":0,"prepared":15,"slots":[4,3,3,3,2,0,0,0,0],"favored_enemies":6},{"pb":6,"cantrips":0,"prepared":15,"slots":[4,3,3,3,2,0,0,0,0],"favored_enemies":6}],"rogue":[{"pb":2},{"pb":2},{"pb":2},{"pb":2},{"pb":3},{"pb":3},{"pb":3},{"pb":3},{"pb":4},{"pb":4},{"pb":4},{"pb":4},{"pb":5},{"pb":5},{"pb":5},{"pb":5},{"pb":6},{"pb":6},{"pb":6},{"pb":6}],"sorcerer":[{"pb":2,"cantrips":4,"prepared":2,"slots":[2,0,0,0,0,0,0,0,0],"sorcery_points":0},{"pb":2,"cantrips":4,"prepared":4,"slots":[3,0,0,0,0,0,0,0,0],"sorcery_points":2},{"pb":2,"cantrips":4,"prepared":6,"slots":[4,2,0,0,0,0,0,0,0],"sorcery_points":3},{"pb":2,"cantrips":5,"prepared":7,"slots":[4,3,0,0,0,0,0,0,0],"sorcery_points":4},{"pb":3,"cantrips":5,"prepared":9,"slots":[4,3,2,0,0,0,0,0,0],"sorcery_points":5},{"pb":3,"cantrips":5,"prepared":10,"slots":[4,3,3,0,0,0,0,0,0],"sorcery_points":6},{"pb":3,"cantrips":5,"prepared":11,"slots":[4,3,3,1,0,0,0,0,0],"sorcery_points":7},{"pb":3,"cantrips":5,"prepared":12,"slots":[4,3,3,2,0,0,0,0,0],"sorcery_points":8},{"pb":4,"cantrips":5,"prepared":14,"slots":[4,3,3,3,1,0,0,0,0],"sorcery_points":9},{"pb":4,"cantrips":6,"prepared":15,"slots":[4,3,3,3,2,0,0,0,0],"sorcery_points":10},{"pb":4,"cantrips":6,"prepared":16,"slots":[4,3,3,3,2,1,0,0,0],"sorcery_points":11},{"pb":4,"cantrips":6,"prepared":16,"slots":[4,3,3,3,2,1,0,0,0],"sorcery_points":12},{"pb":5,"cantrips":6,"prepared":17,"slots":[4,3,3,3,2,1,1,0,0],"sorcery_points":13},{"pb":5,"cantrips":6,"prepared":17,"slots":[4,3,3,3,2,1,1,0,0],"sorcery_points":14},{"pb":5,"cantrips":6,"prepared":18,"slots":[4,3,3,3,2,1,1,1,0],"sorcery_points":15},{"pb":5,"cantrips":6,"prepared":18,"slots":[4,3,3,3,2,1,1,1,0],"sorcery_points":16},{"pb":6,"cantrips":6,"prepared":19,"slots":[4,3,3,3,2,1,1,1,1],"sorcery_points":17},{"pb":6,"cantrips":6,"prepared":20,"slots":[4,3,3,3,3,1,1,1,1],"sorcery_points":18},{"pb":6,"cantrips":6,"prepared":21,"slots":[4,3,3,3,3,2,1,1,1],"sorcery_points":19},{"pb":6,"cantrips":6,"prepared":22,"slots":[4,3,3,3,3,2,2,1,1],"sorcery_points":20}],"warlock":[{"pb":2,"cantrips":2,"prepared":2,"slots":[1,0,0,0,0,0,0,0,0],"eldritch_invocations":1},{"pb":2,"cantrips":2,"prepared":3,"slots":[2,0,0,0,0,0,0,0,0],"eldritch_invocations":3},{"pb":2,"cantrips":2,"prepared":4,"slots":[0,2,0,0,0,0,0,0,0],"eldritch_invocations":3},{"pb":2,"cantrips":3,"prepared":5,"slots":[0,2,0,0,0,0,0,0,0],"eldritch_invocations":3},{"pb":3,"cantrips":3,"prepared":6,"slots":[0,0,2,0,0,0,0,0,0],"eldritch_invocations":5},{"pb":3,"cantrips":3,"prepared":7,"slots":[0,0,2,0,0,0,0,0,0],"eldritch_invocations":5},{"pb":3,"cantrips":3,"prepared":8,"slots":[0,0,0,2,0,0,0,0,0],"eldritch_invocations":6},{"pb":3,"cantrips":3,"prepared":9,"slots":[0,0,0,2,0,0,0,0,0],"eldritch_invocations":6},{"pb":4,"cantrips":3,"prepared":10,"slots":[0,0,0,0,2,0,0,0,0],"eldritch_invocations":7},{"pb":4,"cantrips":4,"prepared":10,"slots":[0,0,0,0,2,0,0,0,0],"eldritch_invocations":7},{"pb":4,"cantrips":4,"prepared":11,"slots":[0,0,0,0,3,0,0,0,0],"eldritch_invocations":7},{"pb":4,"cantrips":4,"prepared":11,"slots":[0,0,0,0,3,0,0,0,0],"eldritch_invocations":8},{"pb":5,"cantrips":4,"prepared":12,"slots":[0,0,0,0,3,0,0,0,0],"eldritch_invocations":8},{"pb":5,"cantrips":4,"prepared":12,"slots":[0,0,0,0,3,0,0,0,0],"eldritch_invocations":8},{"pb":5,"cantrips":4,"prepared":13,"slots":[0,0,0,0,3,0,0,0,0],"eldritch_invocations":9},{"pb":5,"cantrips":4,"prepared":13,"slots":[0,0,0,0,3,0,0,0,0],"eldritch_invocations":9},{"pb":6,"cantrips":4,"prepared":14,"slots":[0,0,0,0,4,0,0,0,0],"eldritch_invocations":9},{"pb":6,"cantrips":4,"prepared":14,"slots":[0,0,0,0,4,0,0,0,0],"eldritch_invocations":10},{"pb":6,"cantrips":4,"prepared":15,"slots":[0,0,0,0,4,0,0,0,0],"eldritch_invocations":10},{"pb":6,"cantrips":4,"prepared":15,"slots":[0,0,0,0,4,0,0,0,0],"eldritch_invocations":10}],"wizard":[{"pb":2,"cantrips":3,"prepared":4,"slots":[2,0,0,0,0,0,0,0,0]},{"pb":2,"cantrips":3,"prepared":5,"slots":[3,0,0,0,0,0,0,0,0]},{"pb":2,"cantrips":3,"prepared":6,"slots":[4,2,0,0,0,0,0,0,0]},{"pb":2,"cantrips":4,"prepared":7,"slots":[4,3,0,0,0,0,0,0,0]},{"pb":3,"cantrips":4,"prepared":9,"slots":[4,3,2,0,0,0,0,0,0]},{"pb":3,"cantrips":4,"prepared":10,"slots":[4,3,3,0,0,0,0,0,0]},{"pb":3,"cantrips":4,"prepared":11,"slots":[4,3,3,1,0,0,0,0,0]},{"pb":3,"cantrips":4,"prepared":12,"slots":[4,3,3,2,0,0,0,0,0]},{"pb":4,"cantrips":4,"prepared":14,"slots":[4,3,3,3,1,0,0,0,0]},{"pb":4,"cantrips":5,"prepared":15,"slots":[4,3,3,3,2,0,0,0,0]},{"pb":4,"cantrips":5,"prepared":16,"slots":[4,3,3,3,2,1,0,0,0]},{"pb":4,"cantrips":5,"prepared":16,"slots":[4,3,3,3,2,1,0,0,0]},{"pb":5,"cantrips":5,"prepared":17,"slots":[4,3,3,3,2,1,1,0,0]},{"pb":5,"cantrips":5,"prepared":17,"slots":[4,3,3,3,2,1,1,0,0]},{"pb":5,"cantrips":5,"prepared":18,"slots":[4,3,3,3,2,1,1,1,0]},{"pb":5,"cantrips":5,"prepared":18,"slots":[4,3,3,3,2,1,1,1,0]},{"pb":6,"cantrips":5,"prepared":19,"slots":[4,3,3,3,2,1,1,1,1]},{"pb":6,"cantrips":5,"prepared":20,"slots":[4,3,3,3,3,1,1,1,1]},{"pb":6,"cantrips":5,"prepared":21,"slots":[4,3,3,3,3,2,1,1,1]},{"pb":6,"cantrips":5,"prepared":22,"slots":[4,3,3,3,3,2,2,1,1]}],"artificer":[{"pb":2,"cantrips":2,"prepared":2,"slots":[2,0,0,0,0,0,0,0,0]},{"pb":2,"cantrips":2,"prepared":3,"slots":[2,0,0,0,0,0,0,0,0]},{"pb":2,"cantrips":2,"prepared":4,"slots":[3,0,0,0,0,0,0,0,0]},{"pb":2,"cantrips":2,"prepared":5,"slots":[3,0,0,0,0,0,0,0,0]},{"pb":3,"cantrips":2,"prepared":6,"slots":[4,2,0,0,0,0,0,0,0]},{"pb":3,"cantrips":2,"prepared":6,"slots":[4,2,0,0,0,0,0,0,0]},{"pb":3,"cantrips":2,"prepared":7,"slots":[4,3,0,0,0,0,0,0,0]},{"pb":3,"cantrips":2,"prepared":7,"slots":[4,3,0,0,0,0,0,0,0]},{"pb":4,"cantrips":2,"prepared":9,"slots":[4,3,2,0,0,0,0,0,0]},{"pb":4,"cantrips":3,"prepared":9,"slots":[4,3,2,0,0,0,0,0,0]},{"pb":4,"cantrips":3,"prepared":10,"slots":[4,3,3,0,0,0,0,0,0]},{"pb":4,"cantrips":3,"prepared":10,"slots":[4,3,3,0,0,0,0,0,0]},{"pb":5,"cantrips":3,"prepared":11,"slots":[4,3,3,1,0,0,0,0,0]},{"pb":5,"cantrips":4,"prepared":11,"slots":[4,3,3,1,0,0,0,0,0]},{"pb":5,"cantrips":4,"prepared":12,"slots":[4,3,3,2,0,0,0,0,0]},{"pb":5,"cantrips":4,"prepared":12,"slots":[4,3,3,2,0,0,0,0,0]},{"pb":6,"cantrips":4,"prepared":14,"slots":[4,3,3,3,1,0,0,0,0]},{"pb":6,"cantrips":4,"prepared":14,"slots":[4,3,3,3,1,0,0,0,0]},{"pb":6,"cantrips":4,"prepared":15,"slots":[4,3,3,3,2,0,0,0,0]},{"pb":6,"cantrips":4,"prepared":15,"slots":[4,3,3,3,2,0,0,0,0]}]};
+const SORCERER_LEVELS = CLASS_LEVELS.sorcerer;
+const TERCO_SLOTS = [[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[2,0,0,0,0,0,0,0,0],[3,0,0,0,0,0,0,0,0],[3,0,0,0,0,0,0,0,0],[3,0,0,0,0,0,0,0,0],[4,2,0,0,0,0,0,0,0],[4,2,0,0,0,0,0,0,0],[4,2,0,0,0,0,0,0,0],[4,3,0,0,0,0,0,0,0],[4,3,0,0,0,0,0,0,0],[4,3,0,0,0,0,0,0,0],[4,3,2,0,0,0,0,0,0],[4,3,2,0,0,0,0,0,0],[4,3,2,0,0,0,0,0,0],[4,3,3,0,0,0,0,0,0],[4,3,3,0,0,0,0,0,0],[4,3,3,0,0,0,0,0,0],[4,3,3,1,0,0,0,0,0],[4,3,3,1,0,0,0,0,0]];
 /* =====================================================================
    CONTEÚDO DE REGRAS (D&D 2024)
    Resumos com palavras próprias, conferidos com o Livro do Jogador 2024.
@@ -1380,8 +1390,289 @@ const speciesById = id => SPECIES.find(s => s.id === id) || privateCatalog().esp
 const backgroundById = id => BACKGROUNDS.find(b => b.id === id) || privateCatalog().antecedentes.find(b => b.id === id);
 const featById = id => allFeats().find(f => f.id === id);
 /* =====================================================================
+   CLASSES — resumos com palavras próprias, conferidos com o Livro do
+   Jogador 2024 e com Eberron: Forge of the Artificer. O texto integral
+   dos livros fica só na biblioteca pessoal, nunca aqui.
+   feats: [nível, nome, resumo]. acoes: o que gasta recurso ou rola dado.
+   ===================================================================== */
+const CLASSES = {};
+const ACAO = (id, name, tempo, res, custo, min, desc, cena, r) => ({ id, name, tempo, res, custo, min, desc, cena, r });
+const dMod = (d, m) => `${d}${m ? (m > 0 ? '+' : '-') + Math.abs(m) : ''}`;
+const ASI_PADRAO = [4, 8, 12, 16];
+
+CLASSES.barbarian = {
+  name: 'Bárbaro', hd: 12, prim: ['FOR'], multi: ['FOR'], saves: ['FOR', 'CON'], skills: [2, ['Atletismo', 'Intimidação', 'Lidar com Animais', 'Natureza', 'Percepção', 'Sobrevivência']],
+  armas: 'Simples e Marciais', armadura: 'Leve, Média e Escudos', unarmored: 'CON', mastery: n => (n >= 10 ? 4 : n >= 4 ? 3 : 2), asi: ASI_PADRAO,
+  gear: { a: { label: '4 Machadinhas, Machado Grande, Kit de Aventureiro e 15 PO', items: [['Machadinha', 4, 'arma'], ['Machado Grande', 1, 'arma'], ['Kit de Aventureiro', 1, 'equip'], ['Peças de Ouro', 15, 'cons']] }, b: { label: '75 PO', items: [['Peças de Ouro', 75, 'cons']] } },
+  recursos: (n, L, m) => [{ id: 'rage', name: 'Fúria', icon: 'i-flame', c: 'lvR', max: L.rage_count, rest: 'um', meta: 'Ação Bônus · Descanso Longo (1 no Curto)', desc: `<b>+${L.rage_damage_bonus}</b> no dano com Força, Resistência a Contundente, Cortante e Perfurante e Vantagem em testes e salvaguardas de Força.`, action: { label: 'Entrar em Fúria', acao: 'rage' } }],
+  feats: [
+    [1, 'Fúria', 'Ação Bônus sem armadura Pesada: bônus de dano, Resistência física e Vantagem em Força. Dura até 10 minutos se mantida a cada turno.'], [1, 'Defesa sem Armadura', 'Sem armadura, CA = 10 + DES + CON; pode usar Escudo.'], [1, 'Maestria em Arma', 'Usa a maestria de armas corpo a corpo escolhidas; troca uma no Descanso Longo.'],
+    [2, 'Ataque Imprudente', 'Vantagem nos ataques com Força no turno, e ataques contra você têm Vantagem até seu próximo turno.'], [2, 'Sentido de Perigo', 'Vantagem em salvaguardas de Destreza, salvo Incapacitado.'],
+    [3, 'Conhecimento Primordial', 'Mais uma perícia; em Fúria, usa Força em alguns testes de Destreza e Sabedoria.'], [3, 'Subclasse de Bárbaro', 'Escolhe sua Trilha.'], [5, 'Ataque Extra', 'Ataca duas vezes na ação Atacar.'], [5, 'Movimento Rápido', '+3 m de Deslocamento sem armadura Pesada.'],
+    [7, 'Bote Instintivo', 'Ao entrar em Fúria, move até metade do Deslocamento.'], [7, 'Instintos Primitivos', 'Vantagem na Iniciativa.'], [9, 'Golpe Brutal', 'Troca a Vantagem do Ataque Imprudente por +1d10 e um efeito: Golpe Forçoso ou Golpe Debilitante.'],
+    [11, 'Fúria Implacável', 'A 0 PV em Fúria, salvaguarda de CON (CD 10, sobe 5 por uso) para voltar com PV iguais ao dobro do nível.'], [13, 'Golpe Brutal Fortalecido', 'Novos efeitos: Golpe Atordoante e Golpe Destruidor.'], [15, 'Fúria Persistente', 'Recupera todas as Fúrias ao rolar Iniciativa uma vez por Descanso Longo; a Fúria dura 10 minutos sozinha.'],
+    [17, 'Golpe Brutal Fortalecido', 'Sobe para 2d10 e permite dois efeitos.'], [18, 'Força Indomável', 'Teste ou salvaguarda de Força nunca fica abaixo do seu valor de Força.'], [19, 'Dádiva Épica', 'Escolhe uma Dádiva Épica.'], [20, 'Campeão Primitivo', '+4 em Força e Constituição, até 25.']
+  ],
+  acoes: [
+    ACAO('rage', 'Fúria', 'Ação Bônus', 'rage', 1, 1, 'Entra em Fúria.', ['fogo:sangue', 'A fúria toma conta do corpo', ['alvo', { em: 'C', art: '@enrage', s: .42, reage: 'treme', cor: 'sangue' }], ['ondas', { em: 'C', s: .9, n: 3, cor: 'sangue' }], ['explodir', { em: 'C', s: .3, t: [.3, .8], cor: 'sangue' }]]),
+    ACAO('reckless', 'Ataque Imprudente', 'Parte do ataque', null, 0, 2, 'Vantagem agora, Vantagem contra você depois.', ['tempestade:sangue', 'Sem defesa, só ataque', ['golpe', { art: '@magic-axe', s: .7 }], ['alvo', { em: 'B', s: .24, reage: 'treme', t: [.3, 1] }], ['clarao', { t: [.4, .7] }]]),
+    ACAO('brutal', 'Golpe Brutal', 'Parte do ataque', null, 0, 9, 'Dano extra no lugar da Vantagem.', ['tempestade:sangue', 'Um golpe que derruba tudo', ['golpe', { art: '@warhammer', s: .8 }], ['fendas', { em: 'B', s: .5, t: [.4, 1] }], ['explodir', { t: [.45, 1], s: .3 }]], (n) => [{ t: 'dmg', d: n >= 17 ? '2d10' : '1d10', type: 'Da arma' }])
+  ],
+  subs: {
+    'world-tree': { name: 'Trilha da Árvore do Mundo', feats: [[3, 'Vitalidade da Árvore', 'Em Fúria, ganha PV temporários iguais ao nível ao ativar e dá 1d6 por bônus de dano a aliados a até 3 m.'], [6, 'Ramos da Árvore', 'Reação: puxa uma criatura a 9 m para perto (salvaguarda de FOR), reduzindo Deslocamento a 0.'], [10, 'Raízes Devastadoras', '+3 m de alcance com armas Pesadas ou Versáteis e Derrubar ou Empurrar além da maestria.'], [14, 'Percorrer a Árvore', 'Teleporte de 18 m em Fúria; uma vez por Fúria, 45 m com até seis aliados.']], acoes: [ACAO('wt-branches', 'Ramos da Árvore', 'Reação', 'rage', 0, 6, 'Puxa o alvo com ramos espectrais.', ['floresta:natureza', 'Ramos da Árvore do Mundo agarram o alvo', ['vinhas', { em: 'B', s: .5 }], ['alvo', { em: 'B', s: .24, reage: 'preso' }]])] },
+    berserker: { name: 'Trilha do Berserker', feats: [[3, 'Frenesi', 'Com Ataque Imprudente em Fúria, o primeiro acerto com Força soma d6 iguais ao bônus de dano.'], [6, 'Fúria Irracional', 'Imune a Amedrontado e Enfeitiçado em Fúria.'], [10, 'Retaliação', 'Reação: ataque corpo a corpo em quem o feriu a 1,5 m.'], [14, 'Presença Intimidante', 'Ação Bônus: Amedronta criaturas em Emanação de 9 m (SAB). Volta no Descanso Longo ou gastando uma Fúria.']], acoes: [ACAO('frenzy', 'Frenesi', 'Parte do ataque', null, 0, 3, 'Dano extra no primeiro acerto.', ['fogo:sangue', 'O golpe vem em frenesi', ['golpe', { art: '@magic-axe', s: .7, n: 2 }], ['explodir', { t: [.4, 1], s: .34 }]], (n, L) => [{ t: 'dmg', d: `${L.rage_damage_bonus}d6`, type: 'Da arma' }])] },
+    'wild-heart': { name: 'Trilha do Coração Selvagem', feats: [[3, 'Arauto da Fauna', 'Falar com Animais e Sentido Feral como Rituais, com Sabedoria.'], [3, 'Fúria dos Selvagens', 'Ao entrar em Fúria escolhe Águia, Lobo ou Urso: mobilidade, Vantagem para aliados ou Resistência ampla.'], [6, 'Aspecto dos Selvagens', 'Coruja, Pantera ou Salmão: Visão no Escuro, Escalada ou Natação; troca no Descanso Longo.'], [10, 'Arauto da Natureza', 'Comunhão com a Natureza como Ritual.'], [14, 'Poder dos Selvagens', 'Em Fúria escolhe Carneiro, Falcão ou Leão.']], acoes: [ACAO('wild-rage', 'Fúria dos Selvagens', 'Ao entrar em Fúria', null, 0, 3, 'Espírito animal da Fúria.', ['floresta:natureza', 'O espírito da fera desperta', ['aparecer', { art: '@wolf-howl', s: .5 }], ['revoada', { art: '@paw-print', n: 6, s: .1 }]])] },
+    zealot: { name: 'Trilha do Fanático', feats: [[3, 'Campeão dos Deuses', 'Reserva de quatro d12 para se curar com Ação Bônus; o máximo por uso sobe com o nível.'], [3, 'Fúria Divina', 'Em Fúria, o primeiro acerto no turno causa 1d6 + metade do nível, Necrótico ou Radiante.'], [6, 'Concentração Fanática', 'Uma vez por Fúria, refaz uma salvaguarda com bônus igual ao dano da Fúria.'], [10, 'Presença Zelosa', 'Ação Bônus: até dez aliados a 18 m têm Vantagem em ataques e salvaguardas por um turno.'], [14, 'Fúria dos Deuses', 'Forma divina por 1 minuto: voo, resistências e impede aliados de cair a 0 PV.']], recursos: (n) => [{ id: 'zealot-d12', name: 'Campeão dos Deuses', icon: 'i-d20', c: 'lvO', max: 4, meta: 'Reserva de d12 · Descanso Longo', desc: 'Ação Bônus: gasta dados da reserva e recupera o total em PV.', action: { label: 'Curar', acao: 'zealot-heal' } }], acoes: [ACAO('zealot-heal', 'Campeão dos Deuses', 'Ação Bônus', 'zealot-d12', 1, 3, 'Gasta um d12 da reserva.', ['templo:luz', 'A divindade recusa sua queda', ['surgir', { art: '@angel-wings', de: 'cima', em: [.5, .3], s: .5 }], ['subir', { txt: '+', d: .6, l: .6 }]], () => [{ t: 'dmg', d: '1d12', type: 'Cura', heal: true }]), ACAO('zealot-strike', 'Fúria Divina', 'Parte do ataque', null, 0, 3, 'Dano sagrado ou profano.', ['templo:luz', 'O golpe carrega o poder dos deuses', ['feixe', { de: 'cima', larg: 26, em: 'B', t: [0, .6] }], ['golpe', { art: '@magic-axe', s: .6, t: [.2, .8] }]], (n) => [{ t: 'dmg', d: dMod('1d6', Math.floor(n / 2)), type: 'Radiante' }])] }
+  }
+};
+
+CLASSES.bard = {
+  name: 'Bardo', hd: 8, prim: ['CAR'], multi: ['CAR'], saves: ['DES', 'CAR'], skills: [3, null], armas: 'Simples', armadura: 'Leve', ferr: '3 Instrumentos Musicais', caster: { tipo: 'full', attr: 'CAR' }, asi: ASI_PADRAO, expertise: { 2: 2, 9: 2 },
+  gear: { a: { label: 'Armadura de Couro, 2 Adagas, Instrumento Musical, Kit de Artista e 19 PO', items: [['Armadura de Couro', 1, 'arma'], ['Adaga', 2, 'arma'], ['Instrumento Musical', 1, 'equip'], ['Kit de Artista', 1, 'equip'], ['Peças de Ouro', 19, 'cons']] }, b: { label: '90 PO', items: [['Peças de Ouro', 90, 'cons']] } },
+  recursos: (n, L, m) => [{ id: 'bardic', name: 'Inspiração de Bardo', icon: 'i-spark', c: 'lvG', max: Math.max(1, m.CAR), rest: n >= 5 ? 'curto' : 'longo', meta: `d${L.bardic_inspiration_die} · ${n >= 5 ? 'Descanso Curto ou Longo' : 'Descanso Longo'}`, desc: `Ação Bônus: uma criatura a 18 m guarda um d${L.bardic_inspiration_die} por 1 hora para somar a um Teste de D20.`, action: { label: 'Inspirar', acao: 'bardic' } }],
+  feats: [
+    [1, 'Inspiração de Bardo', 'Dado que aliados somam a um Teste de D20 que falhar; sobe de d6 a d12.'], [1, 'Conjuração', 'Magias de Bardo com Carisma; muda uma preparada ao subir de nível.'], [2, 'Especialista', 'Especialização em duas perícias; mais duas no nível 9.'], [2, 'Pau pra Toda Obra', 'Soma metade do BP em testes de perícias sem proficiência.'],
+    [3, 'Subclasse de Bardo', 'Escolhe seu Colégio.'], [5, 'Fonte de Inspiração', 'Inspiração volta no Descanso Curto; um espaço de magia recupera um uso.'], [7, 'Contra-Encantamento', 'Reação: refaz salvaguarda contra Amedrontado ou Enfeitiçado a até 9 m, com Vantagem.'],
+    [10, 'Segredos Mágicos', 'Novas magias preparadas podem vir das listas de Bardo, Clérigo, Druida ou Mago.'], [18, 'Inspiração Superior', 'Ao rolar Iniciativa, volta a ter ao menos dois usos.'], [19, 'Dádiva Épica', 'Escolhe uma Dádiva Épica.'], [20, 'Palavras de Criação', 'Sempre tem Palavra de Poder: Matar e Palavra de Poder: Salvar, podendo afetar um segundo alvo.']
+  ],
+  acoes: [ACAO('bardic', 'Inspiração de Bardo', 'Ação Bônus', 'bardic', 1, 1, 'Dá um dado a um aliado.', ['sonho:ouro', 'Uma nota muda o rumo da batalha', ['revoada', { art: '@musical-notes', n: 7, s: .1 }], ['aura', { em: 'C', s: .3 }], ['brilhos', { em: 'C', s: .34 }]], (n, L) => [{ t: 'aux', d: `1d${L.bardic_inspiration_die}`, label: 'Dado de Inspiração' }])],
+  subs: {
+    valor: { name: 'Colégio da Bravura', feats: [[3, 'Inspiração em Combate', 'O dado de Inspiração pode somar dano ou aumentar a CA contra um ataque.'], [3, 'Treinamento Marcial', 'Armas Marciais, armadura Média e Escudos; arma como Foco.'], [6, 'Ataque Extra', 'Ataca duas vezes; um ataque pode ser um truque.'], [14, 'Magia de Batalha', 'Depois de conjurar magia de uma ação, ataca com arma na Ação Bônus.']] },
+    dance: { name: 'Colégio da Dança', feats: [[3, 'Ginga Fascinante', 'Sem armadura ou Escudo: CA 10 + DES + CAR, dano desarmado com o dado de Inspiração e Vantagem em Atuação ao dançar.'], [6, 'Gingado Coordenado', 'Ao rolar Iniciativa, gasta Inspiração para dar bônus a todos a 9 m.'], [6, 'Movimento Inspirador', 'Reação: você e um aliado se movem quando um inimigo termina perto.'], [14, 'Evasão Liderada', 'Evasão, que pode dividir com quem estiver a 1,5 m.']], acoes: [ACAO('dance-step', 'Gingado Coordenado', 'Ao rolar Iniciativa', 'bardic', 1, 6, 'Bônus de Iniciativa para o grupo.', ['sonho:ouro', 'O grupo entra no ritmo', ['orbitar', { art: '@acrobatic', n: 5, em: 'C', s: .46, tam: .16 }], ['revoada', { art: '@musical-notes', n: 5, s: .08 }]], (n, L) => [{ t: 'aux', d: `1d${L.bardic_inspiration_die}`, label: 'Bônus de Iniciativa' }])] },
+    lore: { name: 'Colégio do Conhecimento', feats: [[3, 'Palavras de Interrupção', 'Reação: subtrai o dado de Inspiração de dano, teste ou ataque de uma criatura a 18 m.'], [3, 'Proficiências Bônus', 'Três perícias à escolha.'], [6, 'Descobertas Mágicas', 'Duas magias de Clérigo, Druida ou Mago sempre preparadas.'], [14, 'Perícia Inigualável', 'Soma o dado de Inspiração a teste ou ataque que falhou; se ainda falhar, não gasta.']], acoes: [ACAO('cutting', 'Palavras de Interrupção', 'Reação', 'bardic', 1, 3, 'Reduz a jogada do inimigo.', ['sonho:arcano', 'Uma palavra afiada corta a confiança', ['palavra', { txt: 'Falhou' }], ['alvo', { em: 'B', s: .24, reage: 'treme' }]], (n, L) => [{ t: 'aux', d: `1d${L.bardic_inspiration_die}`, label: 'Subtrai da jogada' }])] },
+    glamour: { name: 'Colégio do Glamour', magias: { 3: ['Enfeitiçar Pessoa', 'Reflexos'], 6: ['Comando'] }, feats: [[3, 'Magia Fascinante', 'Sempre tem Enfeitiçar Pessoa e Reflexos; após magia de Encantamento ou Ilusão, Amedronta ou Enfeitiça um alvo.'], [3, 'Manto de Inspiração', 'Ação Bônus: Inspiração dá PV temporários e movimento a aliados.'], [6, 'Manto de Majestade', 'Comando sem espaço como Ação Bônus por 1 minuto; alvos Enfeitiçados falham.'], [14, 'Majestade Inquebrável', 'Ação Bônus: quem o atacar pode ter que escolher outro alvo (CAR).']], acoes: [ACAO('mantle', 'Manto de Inspiração', 'Ação Bônus', 'bardic', 1, 3, 'PV temporários para aliados.', ['sonho', 'Um manto feérico envolve os aliados', ['aura', { em: 'C', s: .4 }], ['chover', { forma: 'estrela', d: .7, fixo: 1 }]], (n, L) => [{ t: 'aux', d: `1d${L.bardic_inspiration_die}`, label: 'PV temporários (× 2)' }])] }
+  }
+};
+
+CLASSES.warlock = {
+  name: 'Bruxo', hd: 8, prim: ['CAR'], multi: ['CAR'], saves: ['SAB', 'CAR'], skills: [2, ['Arcanismo', 'Enganação', 'História', 'Intimidação', 'Investigação', 'Natureza', 'Religião']], armas: 'Simples', armadura: 'Leve', caster: { tipo: 'pact', attr: 'CAR' }, asi: ASI_PADRAO,
+  gear: { a: { label: 'Armadura de Couro, Foice, 2 Adagas, Foco Arcano, Livro, Kit de Erudito e 15 PO', items: [['Armadura de Couro', 1, 'arma'], ['Foice', 1, 'arma'], ['Adaga', 2, 'arma'], ['Foco Arcano', 1, 'arma'], ['Livro', 1, 'equip'], ['Kit de Erudito', 1, 'equip'], ['Peças de Ouro', 15, 'cons']] }, b: { label: '100 PO', items: [['Peças de Ouro', 100, 'cons']] } },
+  recursos: (n, L, m) => [
+    ...(n >= 2 ? [{ id: 'cunning', name: 'Astúcia Mágica', icon: 'i-moon', c: 'lv1', max: 1, meta: 'Rito de 1 minuto · Descanso Longo', desc: n >= 20 ? 'Recupera todos os espaços de Pacto.' : 'Recupera metade dos espaços de Pacto, arredondando para cima.', action: { label: 'Recuperar espaços', acao: 'cunning' } }] : []),
+    ...[[11, 6], [13, 7], [15, 8], [17, 9]].filter(([q]) => n >= q).map(([, c]) => ({ id: `arcanum${c}`, name: `Arcana Mística (${c}º)`, icon: 'i-gem', c: 'lv2', max: 1, meta: 'Sem espaço · Descanso Longo', desc: `Conjura sua magia de ${c}º círculo escolhida sem gastar espaço.`, action: { label: 'Usar' } }))
+  ],
+  feats: [
+    [1, 'Invocações Místicas', 'Fragmentos de saber proibido; a quantidade sobe com o nível.'], [1, 'Magia de Pacto', 'Espaços do mesmo círculo que voltam no Descanso Curto ou Longo; usa Carisma.'], [2, 'Astúcia Mágica', 'Rito de 1 minuto recupera metade dos espaços de Pacto, uma vez por Descanso Longo.'],
+    [3, 'Subclasse de Bruxo', 'Escolhe seu Patrono.'], [9, 'Contatar Patrono', 'Contato Extraplanar sem espaço, com sucesso automático na salvaguarda, uma vez por Descanso Longo.'], [11, 'Arcana Mística', 'Uma magia de 6º círculo sem espaço; mais uma de 7º, 8º e 9º nos níveis 13, 15 e 17.'], [19, 'Dádiva Épica', 'Escolhe uma Dádiva Épica.'], [20, 'Mestre Místico', 'Astúcia Mágica recupera todos os espaços de Pacto.']
+  ],
+  acoes: [ACAO('cunning', 'Astúcia Mágica', '1 minuto', 'cunning', 1, 2, 'Recupera espaços de Pacto.', ['arcano:sombra', 'O patrono devolve o poder', ['circulo', { em: 'C', s: .5 }], ['runas', { em: 'C', s: .5 }], ['subir', { txt: '✦', d: .5, l: .6 }]])],
+  subs: {
+    archfey: { name: 'Patrono Arquifada', magias: { 3: ['Acalmar Emoções', 'Fogo das Fadas', 'Força Espectral', 'Passo Nebuloso', 'Sono'], 5: ['Crescimento de Plantas', 'Piscar'], 7: ['Dominar Fera', 'Invisibilidade Maior'], 9: ['Dominar Pessoa', 'Similaridade'] }, feats: [[3, 'Passos Feéricos', 'Passo Nebuloso sem espaço CAR vezes por Descanso Longo, com efeito Revigorante ou Provocante.'], [6, 'Fuga em Névoa', 'Passo Nebuloso como Reação ao sofrer dano; ganha Passo Desvanecedor e Passo Pavoroso.'], [10, 'Defesas Sedutoras', 'Imune a Enfeitiçado; Reação reduz à metade o dano e Enfeitiça quem atacou.'], [14, 'Magia Sedutora', 'Depois de magia de Encantamento ou Ilusão, Passo Nebuloso grátis.']], recursos: (n, L, m) => [{ id: 'fey-step', name: 'Passos Feéricos', icon: 'i-cloud', c: 'lv0', max: Math.max(1, m.CAR), meta: 'Passo Nebuloso sem espaço · Descanso Longo', desc: 'Conjura Passo Nebuloso sem gastar espaço.', action: { label: 'Usar', acao: 'fey-step' } }], acoes: [ACAO('fey-step', 'Passos Feéricos', 'Ação Bônus', 'fey-step', 1, 3, 'Passo Nebuloso sem espaço.', ['sonho:sonho', 'Um passo pela trilha feérica', ['nuvem', { em: 'A', s: .24, op: .4, t: [0, .55] }], ['teleporte', { em: [.5, .42] }], ['revoada', { art: '@fairy', n: 4, s: .1 }]])] },
+    celestial: { name: 'Patrono Celestial', magias: { 3: ['Auxílio', 'Chama Sagrada', 'Curar Ferimentos', 'Luz', 'Raio Guia', 'Restauração Menor'], 5: ['Luz do Dia', 'Revivificar'], 7: ['Defensor da Fé', 'Muralha de Fogo'], 9: ['Convocar Celestial', 'Restauração Maior'] }, feats: [[3, 'Luz Medicinal', 'Reserva de d6 (1 + nível) para curar a até 18 m com Ação Bônus; máximo de CAR dados por vez.'], [6, 'Alma Radiante', 'Resistência a dano Radiante; soma CAR a dano Ígneo ou Radiante uma vez por turno.'], [10, 'Resiliência Celestial', 'PV temporários ao descansar ou usar Astúcia, e também para até cinco aliados.'], [14, 'Vingança Calcinante', 'Na Salvaguarda Contra Morte sua ou de aliado: recupera metade dos PV e fere inimigos próximos.']], recursos: (n) => [{ id: 'healing-light', name: 'Luz Medicinal', icon: 'i-spark', c: 'lvG', max: n + 1, meta: 'd6 · Descanso Longo', desc: 'Ação Bônus: cura a até 18 m gastando dados da reserva.', action: { label: 'Curar', acao: 'healing-light' } }], acoes: [ACAO('healing-light', 'Luz Medicinal', 'Ação Bônus', 'healing-light', 1, 3, 'Gasta 1d6 da reserva.', ['amanhecer:luz', 'Luz celestial fecha a ferida', ['feixe', { de: 'cima', larg: 40, em: 'C' }], ['subir', { txt: '+', d: .6, l: .6 }]], () => [{ t: 'dmg', d: '1d6', type: 'Cura', heal: true }])] },
+    'great-old-one': { name: 'Patrono O Grande Antigo', magias: { 3: ['Detectar Pensamentos', 'Força Espectral', 'Gargalhada Nefasta de Tasha', 'Sussurros Dissonantes'], 5: ['Clarividência', 'Fome de Hadar'], 7: ['Confusão', 'Invocar Aberração'], 9: ['Modificar Memória', 'Telecinese'] }, feats: [[3, 'Magias Psíquicas', 'Muda dano de magia de Bruxo para Psíquico; Encantamento e Ilusão sem componentes Verbais ou Somáticos.'], [3, 'Mente Desperta', 'Ação Bônus: telepatia com uma criatura a 9 m.'], [6, 'Combatente Clarividente', 'Na ligação telepática, salvaguarda de SAB: Desvantagem do alvo contra você e Vantagem sua contra ele.'], [10, 'Danação Mística', 'Sempre tem Danação; o alvo também tem Desvantagem nas salvaguardas do atributo.'], [10, 'Escudo Mental', 'Mente fechada, Resistência a dano Psíquico e reflete esse dano em quem causou.'], [14, 'Criar Servo', 'Invocar Aberração sem Concentração, com PV temporários e dano extra.']], acoes: [ACAO('awakened', 'Mente Desperta', 'Ação Bônus', null, 0, 3, 'Abre uma ligação telepática.', ['astral:sonho', 'Uma voz surge dentro da mente', ['ondas', { em: 'B', s: .6, n: 4 }], ['aparecer', { art: '@brain', em: 'B', s: .3 }]])] },
+    fiend: { name: 'Patrono Ínfero', magias: { 3: ['Comando', 'Mãos Flamejantes', 'Raio Ardente', 'Sugestão'], 5: ['Bola de Fogo', 'Nuvem Fétida'], 7: ['Escudo Ardente', 'Muralha de Fogo'], 9: ['Missão', 'Praga de Insetos'] }, feats: [[3, 'Bênção do Tenebroso', 'Ganha CAR + nível de PV temporários ao ver um inimigo cair.'], [6, 'A Sorte do Próprio Tenebroso', 'Soma 1d10 a teste ou salvaguarda depois de ver o dado; CAR usos.'], [10, 'Resistência Ínfera', 'Ao descansar, escolhe uma Resistência, exceto Energético.'], [14, 'Lançar no Inferno', 'Uma vez por turno, ao acertar, envia o alvo aos Planos Inferiores (CAR): 8d10 Psíquico.']], recursos: (n, L, m) => (n >= 6 ? [{ id: 'dark-luck', name: 'Sorte do Tenebroso', icon: 'i-d20', c: 'lvO', max: Math.max(1, m.CAR), rest: 'curto1', meta: 'Soma 1d10 · Descanso Longo (1 no Curto)', desc: 'Soma 1d10 a um teste de atributo ou salvaguarda.', action: { label: 'Usar', acao: 'dark-luck' } }] : []), acoes: [ACAO('dark-luck', 'A Sorte do Próprio Tenebroso', 'Sem ação', 'dark-luck', 1, 6, 'Soma 1d10.', ['fogo:fogo', 'O destino pende para o seu lado', ['aparecer', { art: '@devil-mask', s: .4 }], ['clarao', { t: [.4, .7] }]], () => [{ t: 'aux', d: '1d10', label: 'Soma à jogada' }]), ACAO('hurl', 'Lançar no Inferno', 'Ao acertar', null, 0, 14, 'Envia o alvo aos Planos Inferiores.', ['fogo', 'O alvo despenca nos Planos Inferiores', ['fendas', { em: 'B', s: .6 }], ['alvo', { em: 'B', s: .24, reage: 'some' }], ['chover', { forma: 'brasa', d: .7, fixo: 1 }]], () => [{ t: 'save', a: 'CAR' }, { t: 'dmg', d: '8d10', type: 'Psíquico' }])] }
+  }
+};
+
+CLASSES.cleric = {
+  name: 'Clérigo', hd: 8, prim: ['SAB'], multi: ['SAB'], saves: ['SAB', 'CAR'], skills: [2, ['História', 'Intuição', 'Medicina', 'Persuasão', 'Religião']], armas: 'Simples', armadura: 'Leve, Média e Escudos', caster: { tipo: 'full', attr: 'SAB' }, asi: ASI_PADRAO,
+  gear: { a: { label: 'Cota de Malha Parcial, Escudo, Maça, Símbolo Sagrado, Kit de Sacerdote e 7 PO', items: [['Cota de Malha Parcial', 1, 'arma'], ['Escudo', 1, 'arma'], ['Maça', 1, 'arma'], ['Símbolo Sagrado', 1, 'arma'], ['Kit de Sacerdote', 1, 'equip'], ['Peças de Ouro', 7, 'cons']] }, b: { label: '110 PO', items: [['Peças de Ouro', 110, 'cons']] } },
+  recursos: (n, L) => (n >= 2 ? [{ id: 'channel', name: 'Canalizar Divindade', icon: 'i-spark', c: 'lvG', max: L.channel_divinity_charges, rest: 'um', meta: 'Descanso Longo (1 no Curto)', desc: 'Alimenta Centelha Divina, Expulsar Mortos-Vivos e os poderes do Domínio.', action: { label: 'Usar', acao: 'channel-spark' } }] : []),
+  feats: [
+    [1, 'Conjuração', 'Magias de Clérigo com Sabedoria; muda as preparadas no Descanso Longo.'], [1, 'Ordem Divina', 'Protetor (armas Marciais e armadura Pesada) ou Taumaturgo (truque extra e bônus em Arcanismo e Religião).'], [2, 'Canalizar Divindade', 'Centelha Divina cura ou fere; Expulsar Mortos-Vivos os faz fugir.'], [3, 'Subclasse de Clérigo', 'Escolhe seu Domínio.'],
+    [5, 'Fulminar Mortos-Vivos', 'Expulsar Mortos-Vivos também causa d8 Radiante por modificador de SAB.'], [7, 'Golpes Abençoados', 'Golpe Divino (+1d8 com arma) ou Conjuração Poderosa (soma SAB ao truque).'], [10, 'Intervenção Divina', 'Conjura de graça uma magia de Clérigo de até 5º círculo, uma vez por Descanso Longo.'], [14, 'Golpes Abençoados Aprimorados', 'A opção de Golpes Abençoados melhora.'], [19, 'Dádiva Épica', 'Escolhe uma Dádiva Épica.'], [20, 'Intervenção Divina Maior', 'Pode escolher Desejo, com espera de 2d4 Descansos Longos.']
+  ],
+  acoes: [
+    ACAO('channel-spark', 'Centelha Divina', 'Usar Magia', 'channel', 1, 2, 'Cura ou fere a até 9 m.', ['templo:luz', 'Uma centelha divina salta do símbolo', ['aparecer', { art: '@holy-symbol', em: 'A', s: .26 }], ['lancar', { art: '@sun', de: 'A', em: 'B', s: .08, voo: .5 }], ['explodir', { t: [.5, 1], s: .28 }]], (n, L, m) => [{ t: 'dmg', d: dMod(`${n >= 18 ? 4 : n >= 13 ? 3 : n >= 7 ? 2 : 1}d8`, m.SAB), type: 'Radiante' }]),
+    ACAO('turn-undead', 'Expulsar Mortos-Vivos', 'Usar Magia', 'channel', 1, 2, 'Mortos-Vivos fogem (SAB).', ['cripta:luz', 'O símbolo sagrado repele os mortos', ['aparecer', { art: '@holy-symbol', em: 'A', s: .3 }], ['ondas', { em: 'A', s: 1.2, n: 4 }], ['alvo', { em: 'B', art: '@shambling-zombie', s: .3, reage: 'foge' }]], (n, L, m) => (n >= 5 ? [{ t: 'save', a: 'SAB' }, { t: 'dmg', d: `${Math.max(1, m.SAB)}d8`, type: 'Radiante' }] : [{ t: 'save', a: 'SAB' }]))
+  ],
+  subs: {
+    life: { name: 'Domínio da Vida', magias: { 3: ['Auxílio', 'Bênção', 'Curar Ferimentos', 'Restauração Menor'], 5: ['Palavra Curativa em Massa', 'Revivificar'], 7: ['Aura de Vida', 'Proteção Contra a Morte'], 9: ['Curar Ferimentos em Massa', 'Restauração Maior'] }, feats: [[3, 'Discípulo da Vida', 'Magias de cura restauram 2 + círculo a mais.'], [3, 'Preservar a Vida', 'Canalizar: divide 5 × nível de PV entre criaturas a 9 m, até metade dos PV delas.'], [6, 'Curandeiro Abençoado', 'Ao curar outro, recupera 2 + círculo.'], [17, 'Cura Suprema', 'Dados de cura dão o valor máximo.']], acoes: [ACAO('preserve', 'Preservar a Vida', 'Usar Magia', 'channel', 1, 3, 'Divide 5 × nível em PV entre o grupo.', ['amanhecer:cura', 'A vida transborda do símbolo sagrado', ['aura', { em: 'C', s: .5 }], ['subir', { txt: '+', d: .8, l: .6 }]])] },
+    light: { name: 'Domínio da Luz', magias: { 3: ['Fogo das Fadas', 'Mãos Flamejantes', 'Raio Ardente', 'Ver o Invisível'], 5: ['Bola de Fogo', 'Luz do Dia'], 7: ['Muralha de Fogo', 'Olho Arcano'], 9: ['Coluna de Chamas', 'Vidência'] }, feats: [[3, 'Brilho do Amanhecer', 'Canalizar: dissipa Escuridão mágica e causa 2d10 + nível Radiante em Emanação de 9 m (CON).'], [3, 'Labareda Protetora', 'Reação: impõe Desvantagem a um ataque; SAB usos.'], [6, 'Labareda Protetora Aprimorada', 'Volta no Descanso Curto e dá PV temporários ao alvo.'], [17, 'Coroa de Luz', 'Aura solar: inimigos têm Desvantagem contra suas magias Ígneas e Radiantes.']], acoes: [ACAO('dawn', 'Brilho do Amanhecer', 'Usar Magia', 'channel', 1, 3, 'Luz radiante em Emanação.', ['amanhecer:luz', 'O amanhecer explode ao seu redor', ['clarao', {}], ['ondas', { em: 'C', s: 1.2, n: 4 }], ['explodir', { em: 'C', s: .5 }]], (n) => [{ t: 'save', a: 'CON' }, { t: 'dmg', d: dMod('2d10', n), type: 'Radiante', half: true }])] },
+    trickery: { name: 'Domínio da Trapaça', magias: { 3: ['Disfarçar-se', 'Enfeitiçar Pessoa', 'Invisibilidade', 'Passo Sem Rastro'], 5: ['Indetectável', 'Padrão Hipnótico'], 7: ['Confusão', 'Porta Dimensional'], 9: ['Dominar Pessoa', 'Modificar Memória'] }, feats: [[3, 'Bênção do Trapaceiro', 'Dá Vantagem em Furtividade a alguém até o próximo Descanso.'], [3, 'Invocar Duplicidade', 'Canalizar: ilusão sua a 9 m por 1 minuto; conjura a partir dela e ganha Vantagem de distração.'], [6, 'Transposição do Trapaceiro', 'Teleporta trocando de lugar com a ilusão.'], [17, 'Duplicidade Aprimorada', 'A ilusão distrai aliados e cura quem estiver perto ao terminar.']], acoes: [ACAO('duplicity', 'Invocar Duplicidade', 'Ação Bônus', 'channel', 1, 3, 'Cria sua ilusão.', ['sonho:sonho', 'Agora existem dois de você', ['espelhos', { art: '@person', em: 'C', n: 2, s: .34 }], ['brilhos', { em: 'C', s: .3 }]])] },
+    war: { name: 'Domínio da Guerra', magias: { 3: ['Arma Espiritual', 'Arma Mágica', 'Escudo da Fé', 'Raio Guia'], 5: ['Guardiões Espirituais', 'Manto do Cruzado'], 7: ['Escudo Ardente', 'Movimentação Livre'], 9: ['Golpe de Aço', 'Paralisar Monstro'] }, feats: [[3, 'Ataque Direcionado', 'Canalizar: +10 em um ataque que errou, seu ou de quem está a 9 m.'], [3, 'Sacerdote da Guerra', 'Ataque como Ação Bônus SAB vezes por descanso.'], [6, 'Bênção do Deus da Guerra', 'Canalizar conjura Arma Espiritual ou Escudo da Fé sem Concentração.'], [17, 'Avatar da Guerra', 'Resistência a dano Contundente, Cortante e Perfurante.']], recursos: (n, L, m) => [{ id: 'war-priest', name: 'Sacerdote da Guerra', icon: 'i-bolt', c: 'lvR', max: Math.max(1, m.SAB), rest: 'curto', meta: 'Ação Bônus · Descanso Curto ou Longo', desc: 'Faz um ataque com arma ou Ataque Desarmado.', action: { label: 'Usar' } }], acoes: [ACAO('guided', 'Ataque Direcionado', 'Sem ação', 'channel', 1, 3, '+10 em um ataque que errou.', ['templo:ouro', 'A divindade guia o golpe', ['feixe', { de: 'cima', larg: 20, em: 'B' }], ['lancar', { art: '@plain-arrow', voo: .5, s: .08 }], ['explodir', { t: [.5, 1], s: .22 }]])] }
+  }
+};
+
+CLASSES.druid = {
+  name: 'Druida', hd: 8, prim: ['SAB'], multi: ['SAB'], saves: ['INT', 'SAB'], skills: [2, ['Arcanismo', 'Lidar com Animais', 'Intuição', 'Medicina', 'Natureza', 'Percepção', 'Religião', 'Sobrevivência']], armas: 'Simples', armadura: 'Leve e Escudos', ferr: 'Kit de Herbalismo', caster: { tipo: 'full', attr: 'SAB' }, asi: ASI_PADRAO,
+  gear: { a: { label: 'Armadura de Couro, Escudo, Foice, Foco Druídico, Kit de Explorador, Kit de Herbalismo e 9 PO', items: [['Armadura de Couro', 1, 'arma'], ['Escudo', 1, 'arma'], ['Foice', 1, 'arma'], ['Foco Druídico', 1, 'arma'], ['Kit de Explorador', 1, 'equip'], ['Kit de Herbalismo', 1, 'equip'], ['Peças de Ouro', 9, 'cons']] }, b: { label: '50 PO', items: [['Peças de Ouro', 50, 'cons']] } },
+  recursos: (n, L) => (n >= 2 ? [{ id: 'wild', name: 'Forma Selvagem', icon: 'i-hand', c: 'lv0', max: L.wild_shape_uses, rest: 'um', meta: 'Ação Bônus · Descanso Longo (1 no Curto)', desc: 'Assume uma forma Animal aprendida, com PV temporários iguais ao nível.', action: { label: 'Transformar', acao: 'wild-shape' } }] : []),
+  feats: [
+    [1, 'Conjuração', 'Magias de Druida com Sabedoria; muda as preparadas no Descanso Longo.'], [1, 'Idioma Druídico', 'Sabe Druídico e sempre tem Falar com Animais.'], [1, 'Ordem Primal', 'Protetor (armas Marciais e armadura Média) ou Xamã (truque extra e bônus em Arcanismo e Natureza).'],
+    [2, 'Companheiro Selvagem', 'Gasta espaço ou Forma Selvagem para Convocar Familiar sem material.'], [2, 'Forma Selvagem', 'Vira um Animal conhecido; a quantidade de formas e o ND sobem com o nível.'], [3, 'Subclasse de Druida', 'Escolhe seu Círculo.'], [5, 'Ressurgimento Selvagem', 'Troca espaço por Forma Selvagem, ou Forma por um espaço de 1º círculo uma vez por Descanso Longo.'],
+    [7, 'Fúria Elemental', 'Ataque Primal (+1d8 elemental) ou Conjuração Poderosa (soma SAB ao truque).'], [15, 'Fúria Elemental Aprimorada', 'Ataque Primal 2d8, ou truques com alcance maior.'], [18, 'Magias Bestiais', 'Conjura em forma Animal, salvo material com custo.'], [19, 'Dádiva Épica', 'Escolhe uma Dádiva Épica.'], [20, 'Arquidruida', 'Forma ilimitada em certas condições, mago da natureza e envelhecimento lento.']
+  ],
+  acoes: [ACAO('wild-shape', 'Forma Selvagem', 'Ação Bônus', 'wild', 1, 2, 'Vira um Animal.', ['floresta:natureza', 'O corpo cede à forma da fera', ['transformar', { de: '@person', para: '@bear-head', em: 'C', s: .46 }], ['chover', { forma: 'folha', d: .6, fixo: 1 }]])],
+  subs: {
+    moon: { name: 'Círculo da Lua', magias: { 3: ['Curar Ferimentos', 'Fagulha Estelar', 'Raio Lunar'], 5: ['Invocar Animais'], 7: ['Fonte do Luar'], 9: ['Curar Ferimentos em Massa'] }, feats: [[3, 'Formas Animais dos Círculos Druídicos', 'Forma Selvagem com ND maior, CA 13 + SAB e o triplo do nível em PV temporários.'], [3, 'Magias do Círculo da Lua', 'Magias sempre preparadas, conjuráveis em forma Animal.'], [6, 'Formas Aprimoradas', 'Ataques podem ser Radiantes e soma SAB a salvaguardas de Constituição.'], [10, 'Passo Lunar', 'Ação Bônus: teleporte de 9 m com Vantagem no próximo ataque.'], [14, 'Forma Lunar', '+2d10 Radiante uma vez por turno e leva um aliado no Passo Lunar.']], recursos: (n, L, m) => (n >= 10 ? [{ id: 'moon-step', name: 'Passo Lunar', icon: 'i-moon', c: 'lv1', max: Math.max(1, m.SAB), meta: 'Ação Bônus · Descanso Longo', desc: 'Teleporte de 9 m com Vantagem no próximo ataque.', action: { label: 'Usar', acao: 'moon-step' } }] : []), acoes: [ACAO('moon-step', 'Passo Lunar', 'Ação Bônus', 'moon-step', 1, 10, 'Teleporte de luar.', ['lua:lua', 'Um clarão de luar e você já está lá', ['nuvem', { em: 'A', s: .24, op: .4, t: [0, .55] }], ['teleporte', { em: [.5, .42] }], ['clarao', { t: [.4, .6] }]])] },
+    land: { name: 'Círculo da Terra', feats: [[3, 'Auxílio da Terra', 'Forma Selvagem: Esfera de 3 m a 18 m causa 2d6 Necrótico (CON) e cura um aliado.'], [3, 'Magias do Círculo da Terra', 'Lista por terreno (árido, polar, temperado ou tropical), trocada no Descanso Longo.'], [6, 'Recuperação Natural', 'Uma magia de círculo sem espaço e recupera espaços no Descanso Curto.'], [10, 'Proteção Natural', 'Imune a Envenenado e Resistência ligada ao terreno.'], [14, 'Santuário Natural', 'Forma Selvagem: Cubo de 4,5 m que dá Cobertura Parcial a aliados.']], terrenos: { árido: { 3: ['Mãos Flamejantes', 'Raio de Fogo', 'Turvar'], 5: ['Bola de Fogo'], 7: ['Malogro'], 9: ['Muralha de Pedra'] }, polar: { 3: ['Névoa Obscurecente', 'Paralisar Pessoa', 'Raio de Gelo'], 5: ['Nevasca'], 7: ['Tempestade Glacial'], 9: ['Cone de Frio'] }, temperado: { 3: ['Passo Nebuloso', 'Sono', 'Toque Chocante'], 5: ['Relâmpago'], 7: ['Movimentação Livre'], 9: ['Passo Arbóreo'] }, tropical: { 3: ['Bolha Ácida', 'Raio Nauseante', 'Teia'], 5: ['Nuvem Fétida'], 7: ['Polimorfia'], 9: ['Praga de Insetos'] } }, acoes: [ACAO('land-aid', 'Auxílio da Terra', 'Usar Magia', 'wild', 1, 3, 'Espinhos ferem, flores curam.', ['floresta:natureza', 'Flores e espinhos brotam juntos', ['vinhas', { em: 'B', s: .5 }], ['subir', { txt: '+', d: .5, l: .6, em: 'C' }]], (n, L, m) => [{ t: 'save', a: 'CON' }, { t: 'dmg', d: `${n >= 14 ? 4 : n >= 10 ? 3 : 2}d6`, type: 'Necrótico', half: true }])] },
+    stars: { name: 'Círculo das Estrelas', feats: [[3, 'Forma Estrelada', 'Forma Selvagem: Arqueiro (ataque de luz), Taça (cura extra) ou Dragão (Concentração segura).'], [3, 'Mapa Estelar', 'Foco que dá Orientação e Raio Guia grátis SAB vezes.'], [6, 'Presságio Cósmico', 'Ao descansar, Bem ou Mal: Reação soma ou subtrai 1d6.'], [10, 'Constelações Cintilantes', 'Dados viram 2d8, Dragão ganha voo e troca de forma a cada turno.'], [14, 'Repleto de Estrelas', 'Em Forma Estrelada, Resistência física.']], acoes: [ACAO('starry', 'Forma Estrelada', 'Ação Bônus', 'wild', 1, 3, 'Corpo de constelação.', ['astral:lua', 'Seu corpo vira constelação', ['aura', { em: 'C', s: .4 }], ['orbitar', { art: '@star-swirl', n: 6, em: 'C', s: .44, tam: .1 }]], (n, L, m) => [{ t: 'atk' }, { t: 'dmg', d: dMod(n >= 10 ? '2d8' : '1d8', m.SAB), type: 'Radiante' }])] },
+    sea: { name: 'Círculo do Mar', magias: { 3: ['Despedaçar', 'Lufada de Vento', 'Névoa Obscurecente', 'Onda Trovejante', 'Raio de Gelo'], 5: ['Relâmpago', 'Respirar na Água'], 7: ['Controlar Água', 'Tempestade Glacial'], 9: ['Invocar Elemental', 'Paralisar Monstro'] }, feats: [[3, 'Ira do Mar', 'Forma Selvagem: Emanação de 1,5 m por 10 minutos causa dano Gélido e empurra (CON).'], [6, 'Afinidade Aquática', 'Emanação de 3 m e Deslocamento de Natação.'], [10, 'Filho da Tempestade', 'Na Ira do Mar: voo e Resistência a Gélido, Elétrico e Trovejante.'], [14, 'Manifestação Oceânica', 'Pode pôr a Emanação em um aliado a 18 m.']], acoes: [ACAO('sea-wrath', 'Ira do Mar', 'Ação Bônus', 'wild', 1, 3, 'Maré ao seu redor.', ['oceano:agua', 'O oceano gira ao seu redor', ['mare', { em: 'C', s: .5 }], ['ondas', { em: 'C', s: .8, n: 3 }]], (n, L, m) => [{ t: 'save', a: 'CON' }, { t: 'dmg', d: `${Math.max(1, m.SAB)}d6`, type: 'Gélido' }])] }
+  }
+};
+/* Segunda parte das classes. Mesmo formato de classes-a.js. */
+const PSI = n => (n >= 17 ? [12, 12] : n >= 13 ? [10, 10] : n >= 11 ? [10, 8] : n >= 9 ? [8, 8] : n >= 5 ? [8, 6] : [6, 4]);
+const TERCO_PREP = [0, 0, 3, 4, 4, 4, 5, 6, 6, 7, 8, 8, 9, 10, 10, 11, 11, 11, 12, 13];
+
+CLASSES.sorcerer = {
+  name: 'Feiticeiro', hd: 6, prim: ['CAR'], multi: ['CAR'], saves: ['CON', 'CAR'], skills: [2, SORCERER_SKILLS], armas: 'Simples', armadura: 'Nenhuma', caster: { tipo: 'full', attr: 'CAR' }, asi: ASI_PADRAO, gear: STARTING_GEAR,
+  recursos: () => [], feats: SORCERER_FEATURES, acoes: [],
+  subs: {
+    draconic: { name: 'Feitiçaria Dracônica', adj: 'Dracônico', feats: DRACONIC_FEATURES, acoes: [] },
+    aberrant: { name: 'Feitiçaria Aberrante', magias: { 3: ['Acalmar Emoções', 'Braços de Hadar', 'Detectar Pensamentos', 'Sussurros Dissonantes', 'Talho Mental'], 5: ['Fome de Hadar', 'Remeter'], 7: ['Invocar Aberração', 'Tentáculos Negros de Evard'], 9: ['Ligação Telepática de Rary', 'Telecinese'] }, feats: [[3, 'Fala Telepática', 'Telepatia com uma criatura a 9 m por minutos iguais ao nível.'], [3, 'Magias Psiônicas', 'Lista sempre preparada; pode trocar uma magia de Feiticeiro ao subir de nível.'], [6, 'Defesas Psíquicas', 'Resistência a dano Psíquico e Vantagem contra Amedrontado e Enfeitiçado.'], [6, 'Feitiçaria Psiônica', 'Conjura magias Psiônicas com PF iguais ao círculo, sem componentes V e S.'], [14, 'Revelação em Carne', 'Gasta PF para ver o invisível, voar, nadar ou escorregar por frestas.'], [18, 'Implosão de Distorção', 'Teleporta 36 m; quem fica a 9 m sofre 3d10 Energético e é puxado (FOR).']], acoes: [ACAO('warp', 'Implosão de Distorção', 'Usar Magia', 'sp', 0, 18, 'Teleporte que puxa inimigos.', ['astral:arcano', 'O espaço implode onde você estava', ['teleporte', { em: [.5, .36] }], ['espiral', { em: 'A', s: .6 }], ['explodir', { em: 'A', s: .4, t: [.4, 1] }]], () => [{ t: 'save', a: 'FOR' }, { t: 'dmg', d: '3d10', type: 'Energético', half: true }])] },
+    clockwork: { name: 'Feitiçaria Mecânica', magias: { 3: ['Alarme', 'Auxílio', 'Proteção Contra o Bem e o Mal', 'Restauração Menor'], 5: ['Dissipar Magia', 'Proteção Contra Energia'], 7: ['Invocar Constructo', 'Movimentação Livre'], 9: ['Muralha de Energia', 'Restauração Maior'] }, feats: [[3, 'Magias Mecânicas', 'Lista sempre preparada e uma manifestação da ordem.'], [3, 'Restaurar Equilíbrio', 'Reação: anula Vantagem ou Desvantagem de um d20 a 18 m; CAR usos.'], [6, 'Bastião da Lei', 'Gasta 1 a 5 PF em proteção de d8 que absorve dano.'], [14, 'Transe da Ordem', 'Ação Bônus: ataques contra você não têm Vantagem e seus d20 baixos viram 10, por 1 minuto.'], [18, 'Cavalgada Mecânica', 'Cubo de 9 m cura, conserta e dissipa magias de até 6º círculo.']], recursos: (n, L, m) => [{ id: 'equilibrium', name: 'Restaurar Equilíbrio', icon: 'i-swap', c: 'lvG', max: Math.max(1, m.CAR), meta: 'Reação · Descanso Longo', desc: 'Anula Vantagem ou Desvantagem de um d20.', action: { label: 'Usar', acao: 'equilibrium' } }], acoes: [ACAO('equilibrium', 'Restaurar Equilíbrio', 'Reação', 'equilibrium', 1, 3, 'A sorte volta ao centro.', ['arcano:ouro', 'As engrenagens da ordem acertam a balança', ['aparecer', { art: '@gears', s: .4, giro: 1 }], ['aparecer', { art: '@scales', em: [.5, .24], s: .2 }]]), ACAO('ward', 'Bastião da Lei', 'Usar Magia', null, 0, 6, 'Proteção de d8 por PF.', ['arcano:ouro', 'Um escudo de ordem cintila', ['cupula', { em: 'C', s: .46 }], ['aparecer', { art: '@gears', em: 'C', s: .24, giro: 1 }]], () => [{ t: 'aux', d: '1d8', label: 'Proteção por PF' }])] },
+    wild: { name: 'Feitiçaria Selvagem', feats: [[3, 'Marés do Caos', 'Vantagem num Teste de D20; depois pode exigir um Surto. Volta ao ter um Surto.'], [3, 'Surto de Magia Selvagem', 'Ao conjurar com espaço, 1d20: em 20 rola na tabela de Surto.'], [6, 'Distorcer a Sorte', 'Reação e 1 PF: soma ou subtrai 1d4 de um d20 de outra criatura.'], [14, 'Caos Controlado', 'Rola o Surto duas vezes e escolhe.'], [18, 'Surto Controlado', 'Escolhe o efeito do Surto, uma vez por Descanso Longo.']], recursos: () => [{ id: 'tides', name: 'Marés do Caos', icon: 'i-d20', c: 'lvO', max: 1, meta: 'Vantagem · Volta com um Surto ou Descanso Longo', desc: 'Vantagem em um Teste de D20 antes de jogar.', action: { label: 'Usar', acao: 'tides' } }], acoes: [ACAO('tides', 'Marés do Caos', 'Sem ação', 'tides', 1, 3, 'Vantagem no próximo d20.', ['arcano:sonho', 'O caos pende a seu favor', ['espiral', { em: 'C', s: .5 }], ['brilhos', { em: 'C', s: .4 }]]), ACAO('surge', 'Surto de Magia Selvagem', 'Depois de conjurar', null, 0, 3, 'Testa o surto.', ['arcano:sonho', 'A magia escapa do controle', ['explodir', { em: 'C', s: .4 }], ['revoada', { art: '@magic-swirl', n: 6, s: .1 }]], () => [{ t: 'aux', d: '1d20', label: 'Em 20, rola o Surto' }]), ACAO('bend', 'Distorcer a Sorte', 'Reação', 'sp', 1, 6, 'Soma ou subtrai 1d4.', ['arcano:sonho', 'Você empurra o destino', ['aparecer', { art: '@knocked-out-stars', s: .3 }]], () => [{ t: 'aux', d: '1d4', label: 'Soma ou subtrai' }])] }
+  }
+};
+
+CLASSES.ranger = {
+  name: 'Guardião', hd: 10, prim: ['DES', 'SAB'], multi: ['DES', 'SAB'], saves: ['FOR', 'DES'], skills: [3, ['Atletismo', 'Furtividade', 'Intuição', 'Investigação', 'Lidar com Animais', 'Natureza', 'Percepção', 'Sobrevivência']], armas: 'Simples e Marciais', armadura: 'Leve, Média e Escudos', caster: { tipo: 'half', attr: 'SAB' }, mastery: () => 2, asi: ASI_PADRAO, expertise: { 2: 1, 9: 2 }, style: { 2: 1 },
+  gear: { a: { label: 'Couro Batido, Cimitarra, Espada Curta, Arco Longo, 20 Flechas, Aljava, Foco Druídico, Kit de Aventureiro e 7 PO', items: [['Armadura de Couro Batido', 1, 'arma'], ['Cimitarra', 1, 'arma'], ['Espada Curta', 1, 'arma'], ['Arco Longo', 1, 'arma'], ['Flechas', 20, 'cons'], ['Aljava', 1, 'equip'], ['Foco Druídico', 1, 'arma'], ['Kit de Aventureiro', 1, 'equip'], ['Peças de Ouro', 7, 'cons']] }, b: { label: '150 PO', items: [['Peças de Ouro', 150, 'cons']] } },
+  recursos: (n, L) => [{ id: 'favored', name: 'Inimigo Favorito', icon: 'i-target', c: 'lvR', max: L.favored_enemies, meta: 'Marca do Predador sem espaço · Descanso Longo', desc: 'Conjura Marca do Predador sem gastar espaço.', action: { label: 'Marcar', acao: 'favored' } }, ...(n >= 14 ? [{ id: 'veil', name: 'Véu da Natureza', icon: 'i-eye', c: 'lv0', max: Math.max(1, L.wis), meta: 'Ação Bônus · Descanso Longo', desc: 'Fica Invisível até o fim do próximo turno.', action: { label: 'Usar', acao: 'veil' } }] : [])],
+  feats: [
+    [1, 'Conjuração', 'Magias de Guardião com Sabedoria.'], [1, 'Inimigo Favorito', 'Sempre tem Marca do Predador e a conjura sem espaço algumas vezes.'], [1, 'Maestria em Arma', 'Duas armas com maestria, trocadas no Descanso Longo.'], [2, 'Estilo de Luta', 'Um talento de Estilo de Luta, ou Combatente Druídico com dois truques.'], [2, 'Explorador Hábil', 'Especialização em uma perícia e dois idiomas.'],
+    [3, 'Subclasse de Guardião', 'Escolhe sua subclasse.'], [5, 'Ataque Extra', 'Ataca duas vezes.'], [6, 'Errante', '+3 m sem armadura Pesada, com Escalada e Natação iguais ao Deslocamento.'], [9, 'Especialista', 'Especialização em mais duas perícias.'], [10, 'Incansável', 'Usar Magia dá 1d8 + SAB de PV temporários; descanso curto reduz Exaustão.'],
+    [13, 'Predador Implacável', 'Dano não quebra a Concentração na Marca do Predador.'], [14, 'Véu da Natureza', 'Ação Bônus: Invisível até o fim do próximo turno.'], [17, 'Caçador Preciso', 'Vantagem contra o alvo da Marca do Predador.'], [18, 'Sentidos Selvagens', 'Visão às Cegas de 9 m.'], [19, 'Dádiva Épica', 'Escolhe uma Dádiva Épica.'], [20, 'Matador de Inimigos Favoritos', 'O dado da Marca do Predador vira d10.']
+  ],
+  acoes: [
+    ACAO('favored', 'Inimigo Favorito', 'Ação Bônus', 'favored', 1, 1, 'Marca do Predador sem espaço.', ['floresta:sangue', 'A presa está marcada', ['aparecer', { art: '@convergence-target', em: 'B', s: .36 }], ['alvo', { em: 'B', s: .22, reage: 'treme' }]], (n) => [{ t: 'dmg', d: n >= 20 ? '1d10' : '1d6', type: 'Energético', label: 'Ao atingir o alvo' }]),
+    ACAO('tireless', 'Incansável', 'Usar Magia', null, 0, 10, 'PV temporários.', ['floresta:natureza', 'A natureza empurra você adiante', ['aura', { em: 'C', s: .34 }]], (n, L, m) => [{ t: 'dmg', d: dMod('1d8', m.SAB), type: 'Cura', heal: true, label: 'PV temporários' }]),
+    ACAO('veil', 'Véu da Natureza', 'Ação Bônus', 'veil', 1, 14, 'Fica Invisível.', ['floresta:natureza', 'As folhas escondem você', ['chover', { forma: 'folha', d: .9, fixo: 1 }], ['alvo', { em: 'C', s: .3, reage: 'some' }]])
+  ],
+  subs: {
+    'fey-wanderer': { name: 'Andarilho Feérico', magias: { 3: ['Enfeitiçar Pessoa'], 5: ['Passo Nebuloso'], 9: ['Convocar Feérico'], 13: ['Porta Dimensional'], 17: ['Despistar'] }, feats: [[3, 'Glamour Transcendental', 'Soma SAB a testes de Carisma e ganha Enganação, Atuação ou Persuasão.'], [3, 'Golpes Terríveis', 'Uma vez por turno, +1d4 Psíquico com arma; 1d6 no nível 11.'], [3, 'Magias do Andarilho Feérico', 'Lista sempre preparada e uma dádiva de Faéria.'], [7, 'Detalhe Sedutor', 'Vantagem contra Amedrontado e Enfeitiçado; Reação passa o efeito a outra criatura.'], [11, 'Reforços Feéricos', 'Convocar Feérico sem material e uma vez sem espaço.'], [15, 'Andarilho Nebuloso', 'Passo Nebuloso sem espaço SAB vezes, levando um aliado.']], acoes: [ACAO('dreadful', 'Golpes Terríveis', 'Ao acertar', null, 0, 3, 'Dano psíquico.', ['sonho:sonho', 'Um terror feérico corta junto', ['golpe', { art: '@pointy-sword', s: .6 }], ['ondas', { em: 'B', s: .4, n: 2 }]], (n) => [{ t: 'dmg', d: n >= 11 ? '1d6' : '1d4', type: 'Psíquico' }])] },
+    hunter: { name: 'Caçador', feats: [[3, 'Conhecimento do Caçador', 'Sabe Imunidades, Resistências e Vulnerabilidades do alvo marcado.'], [3, 'Presa do Caçador', 'Assassino de Colossos (+1d8 em alvo ferido, uma vez por turno) ou Destruidor de Hordas (ataque extra num vizinho).'], [7, 'Táticas Defensivas', 'Escapar da Horda ou Defesa Contra Ataques Múltiplos.'], [11, 'Presa do Caçador Superior', 'O dano da Marca alcança outra criatura a 9 m.'], [15, 'Defesa do Caçador Superior', 'Reação: Resistência a um tipo de dano até o fim do turno.']], acoes: [ACAO('colossus', 'Assassino de Colossos', 'Ao acertar', null, 0, 3, '+1d8 em alvo ferido.', ['floresta:sangue', 'A flecha acha o ponto fraco', ['lancar', { art: '@fast-arrow', voo: .55, s: .08 }], ['explodir', { t: [.5, 1], s: .26 }]], () => [{ t: 'dmg', d: '1d8', type: 'Da arma' }])] },
+    'beast-master': { name: 'Senhor das Feras', feats: [[3, 'Companheiro Primal', 'Fera da Terra, do Céu ou do Mar; age com sua Ação Bônus e volta com um espaço de magia.'], [7, 'Treinamento Excepcional', 'A fera também Ajuda, Corre, Desengaja ou Esquiva, e causa dano Energético.'], [11, 'Fúria Bestial', 'A fera ataca duas vezes e soma o dano da Marca.'], [15, 'Compartilhar Magias', 'Magias em você também afetam a fera a 9 m.']], acoes: [ACAO('beast', 'Comandar a Fera', 'Ação Bônus', null, 0, 3, 'A fera ataca.', ['floresta:natureza', 'A fera salta ao seu comando', ['lancar', { art: '@wolf-head', s: .22, voo: .55 }], ['explodir', { t: [.55, 1], s: .26 }]], (n, L, m) => [{ t: 'atk' }, { t: 'dmg', d: dMod('1d8', 2 + m.SAB), type: 'Contundente' }])] },
+    'gloom-stalker': { name: 'Vigilante das Sombras', magias: { 3: ['Disfarçar-se'], 5: ['Corda Extradimensional'], 9: ['Medo'], 13: ['Invisibilidade Maior'], 17: ['Similaridade'] }, feats: [[3, 'Emboscador das Sombras', 'Soma SAB à Iniciativa; +3 m no primeiro turno e Golpe Terrível de 2d6 Psíquico.'], [3, 'Magias do Vigilante das Sombras', 'Lista sempre preparada.'], [3, 'Visão Umbrosa', 'Visão no Escuro de 18 m e invisível para ela na escuridão.'], [7, 'Mente de Ferro', 'Proficiência em salvaguardas de Sabedoria, ou Carisma se já tiver.'], [11, 'Torrente do Vigilante', 'Golpe Terrível vira 2d8 e ganha um efeito.'], [15, 'Esquiva Sombria', 'Reação: Desvantagem no ataque e teleporte de 9 m.']], acoes: [ACAO('dread-strike', 'Golpe Terrível', 'Ao acertar', null, 0, 3, 'Dano psíquico da sombra.', ['noite:sombra', 'Da escuridão vem o golpe', ['trevas', { s: .5 }], ['golpe', { art: '@flying-dagger', s: .6 }]], (n) => [{ t: 'dmg', d: n >= 11 ? '2d8' : '2d6', type: 'Psíquico' }])] }
+  }
+};
+
+CLASSES.fighter = {
+  name: 'Guerreiro', hd: 10, prim: ['FOR', 'DES'], multi: ['FOR', 'DES'], multiAlgum: true, saves: ['FOR', 'CON'], skills: [2, ['Acrobacia', 'Atletismo', 'História', 'Intimidação', 'Intuição', 'Lidar com Animais', 'Percepção', 'Persuasão', 'Sobrevivência']], armas: 'Simples e Marciais', armadura: 'Leve, Média, Pesada e Escudos', mastery: n => (n >= 16 ? 6 : n >= 10 ? 5 : n >= 4 ? 4 : 3), asi: [4, 6, 8, 12, 14, 16], style: { 1: 1 },
+  gear: { a: { label: 'Cota de Malha, Espada Grande, Mangual, 8 Azagaias, Kit de Explorador de Masmorras e 4 PO', items: [['Cota de Malha', 1, 'arma'], ['Espada Grande', 1, 'arma'], ['Mangual', 1, 'arma'], ['Azagaia', 8, 'arma'], ['Kit de Explorador de Masmorras', 1, 'equip'], ['Peças de Ouro', 4, 'cons']] }, b: { label: 'Couro Batido, Cimitarra, Espada Curta, Arco Longo, 20 Flechas, Aljava, Kit de Explorador de Masmorras e 11 PO', items: [['Armadura de Couro Batido', 1, 'arma'], ['Cimitarra', 1, 'arma'], ['Espada Curta', 1, 'arma'], ['Arco Longo', 1, 'arma'], ['Flechas', 20, 'cons'], ['Aljava', 1, 'equip'], ['Kit de Explorador de Masmorras', 1, 'equip'], ['Peças de Ouro', 11, 'cons']] }, c: { label: '155 PO', items: [['Peças de Ouro', 155, 'cons']] } },
+  recursos: (n, L) => [
+    { id: 'second-wind', name: 'Recuperar Fôlego', icon: 'i-spark', c: 'lvR', max: L.second_wind_uses, rest: 'um', meta: 'Ação Bônus · Descanso Longo (1 no Curto)', desc: `Recupera 1d10 + ${n} PV.`, action: { label: 'Recuperar', acao: 'second-wind' } },
+    ...(n >= 2 ? [{ id: 'surge-a', name: 'Surto de Ação', icon: 'i-bolt', c: 'lvG', max: n >= 17 ? 2 : 1, rest: 'curto', meta: 'Sem ação · Descanso Curto ou Longo', desc: 'Faz uma ação adicional, exceto Usar Magia.', action: { label: 'Usar', acao: 'surge-a' } }] : []),
+    ...(n >= 9 ? [{ id: 'indomitable', name: 'Indomável', icon: 'i-shield', c: 'lv1', max: n >= 17 ? 3 : n >= 13 ? 2 : 1, meta: 'Sem ação · Descanso Longo', desc: `Refaz uma salvaguarda com +${n}.`, action: { label: 'Usar', acao: 'indomitable' } }] : [])
+  ],
+  feats: [
+    [1, 'Estilo de Luta', 'Um talento de Estilo de Luta, trocável ao subir de nível.'], [1, 'Maestria em Arma', 'Três armas com maestria, trocadas no Descanso Longo.'], [1, 'Recuperar Fôlego', 'Ação Bônus: 1d10 + nível em PV.'], [2, 'Mente Tática', 'Gasta Recuperar Fôlego para somar 1d10 a um teste que falhou.'], [2, 'Surto de Ação', 'Uma ação adicional no turno.'],
+    [3, 'Subclasse de Guerreiro', 'Escolhe sua subclasse.'], [5, 'Ajuste Tático', 'Com Recuperar Fôlego, move metade do Deslocamento sem Ataques de Oportunidade.'], [5, 'Ataque Extra', 'Ataca duas vezes.'], [9, 'Indomável', 'Refaz uma salvaguarda somando o nível.'], [9, 'Mestre Tático', 'Troca a maestria da arma por Empurrar, Drenar ou Lentidão.'],
+    [11, 'Dois Ataques Extras', 'Ataca três vezes.'], [13, 'Ataques Estudados', 'Errar um ataque dá Vantagem no próximo contra o mesmo alvo.'], [19, 'Dádiva Épica', 'Escolhe uma Dádiva Épica.'], [20, 'Três Ataques Extras', 'Ataca quatro vezes.']
+  ],
+  acoes: [
+    ACAO('second-wind', 'Recuperar Fôlego', 'Ação Bônus', 'second-wind', 1, 1, 'Recupera PV.', ['dia:cura', 'Um fôlego fundo e você volta à luta', ['aparecer', { art: '@heart-beats', s: .34 }], ['subir', { txt: '+', d: .6, l: .6 }]], (n) => [{ t: 'dmg', d: dMod('1d10', n), type: 'Cura', heal: true }]),
+    ACAO('surge-a', 'Surto de Ação', 'Sem ação', 'surge-a', 1, 2, 'Ação adicional.', ['tempestade:ouro', 'Você se força além do limite', ['espelhos', { art: '@sprint', em: 'C', n: 2, s: .34 }], ['golpe', { art: '@crossed-swords', s: .6, t: [.3, .9] }], ['clarao', { t: [.3, .55] }]]),
+    ACAO('indomitable', 'Indomável', 'Sem ação', 'indomitable', 1, 9, 'Refaz a salvaguarda.', ['templo:prata', 'Nada dobra a sua vontade', ['aparecer', { art: '@spartan-helmet', s: .4 }], ['quebrar', { em: 'C', s: .4, t: [.3, 1] }]], (n) => [{ t: 'aux', d: dMod('1d20', n), label: 'Nova salvaguarda (some seu bônus)' }])
+  ],
+  subs: {
+    champion: { name: 'Campeão', feats: [[3, 'Atleta Extraordinário', 'Vantagem na Iniciativa e em Atletismo; move após Acerto Crítico.'], [3, 'Crítico Aprimorado', 'Acerto Crítico em 19 ou 20.'], [7, 'Estilo de Luta Adicional', 'Outro talento de Estilo de Luta.'], [10, 'Combatente Heroico', 'Ganha Inspiração Heroica ao começar o turno sem ela.'], [15, 'Crítico Superior', 'Acerto Crítico de 18 a 20.'], [18, 'Sobrevivente', 'Vantagem em Salvaguardas Contra Morte e recupera 5 + CON a cada turno se ferido.']], crit: n => (n >= 15 ? 18 : 19), acoes: [] },
+    'eldritch-knight': { name: 'Cavaleiro Místico', caster: { tipo: 'third', attr: 'INT', lista: 'wizard', truques: n => (n >= 10 ? 3 : 2) }, feats: [[3, 'Conjuração', 'Magias de Mago com Inteligência.'], [3, 'Vínculo com Arma', 'Vincula até duas armas: não larga e invoca como Ação Bônus.'], [7, 'Magia de Guerra', 'Troca um ataque por um truque.'], [10, 'Golpe Místico', 'Acertar dá Desvantagem na próxima salvaguarda contra sua magia.'], [15, 'Investida Mística', 'Surto de Ação teleporta 9 m.'], [18, 'Magia de Guerra Aprimorada', 'Troca dois ataques por magia de 1º ou 2º círculo.']], acoes: [] },
+    'psi-warrior': { name: 'Combatente Psíquico', feats: [[3, 'Poder Psiônico', 'Dados de Energia: Campo Protetor reduz dano, Golpe Psiônico soma Energético e Movimento Telecinético desloca alguém.'], [7, 'Adepto Telecinético', 'Salto Psíquico e Estocada Telecinética.'], [10, 'Resguardo Mental', 'Resistência a dano Psíquico e gasta dado para encerrar Amedrontado ou Enfeitiçado.'], [15, 'Baluarte de Energia', 'Ação Bônus: Cobertura Parcial para aliados a 9 m.'], [18, 'Mestre Telecinético', 'Telecinese sem espaço e ataque como Ação Bônus.']], recursos: (n, L, m) => [{ id: 'psi', name: 'Energia Psiônica', icon: 'i-charm', c: 'lv2', max: PSI(n)[1], rest: 'um', meta: `d${PSI(n)[0]} · Descanso Longo (1 no Curto)`, desc: 'Alimenta os poderes psiônicos.', action: { label: 'Golpe Psiônico', acao: 'psi-strike' } }], acoes: [ACAO('psi-strike', 'Golpe Psiônico', 'Ao acertar', 'psi', 1, 3, 'Soma dado de Energia.', ['astral:arcano', 'A mente empurra o golpe', ['golpe', { art: '@energy-sword', s: .6 }], ['ondas', { em: 'B', s: .5, n: 3 }]], (n, L, m) => [{ t: 'dmg', d: dMod(`1d${PSI(n)[0]}`, m.INT), type: 'Energético' }])] },
+    'battle-master': { name: 'Mestre da Batalha', feats: [[3, 'Estudioso da Guerra', 'Ferramenta de Artesão e mais uma perícia de Guerreiro.'], [3, 'Superioridade em Combate', 'Três manobras e quatro d8; mais manobras nos níveis 7, 10 e 15.'], [7, 'Conheça Seu Inimigo', 'Ação Bônus: descobre defesas da criatura.'], [10, 'Superioridade em Combate Aprimorada', 'Dado vira d10.'], [15, 'Implacável', 'Uma vez por turno, 1d8 grátis na manobra.'], [18, 'Superioridade em Combate Suprema', 'Dado vira d12.']], recursos: (n) => [{ id: 'superiority', name: 'Dados de Superioridade', icon: 'i-d20', c: 'lvO', max: n >= 15 ? 6 : n >= 7 ? 5 : 4, rest: 'curto', meta: `d${n >= 18 ? 12 : n >= 10 ? 10 : 8} · Descanso Curto ou Longo`, desc: 'Abastece as manobras.', action: { label: 'Manobra', acao: 'maneuver' } }], acoes: [ACAO('maneuver', 'Manobra', 'Ao atacar', 'superiority', 1, 3, 'Gasta um dado.', ['tempestade:prata', 'Uma manobra de quem domina a guerra', ['golpe', { art: '@sword-clash', s: .6 }], ['alvo', { em: 'B', s: .24, reage: 'treme', t: [.3, 1] }]], (n) => [{ t: 'aux', d: `1d${n >= 18 ? 12 : n >= 10 ? 10 : 8}`, label: 'Dado de Superioridade' }])] }
+  }
+};
+
+CLASSES.rogue = {
+  name: 'Ladino', hd: 8, prim: ['DES'], multi: ['DES'], saves: ['DES', 'INT'], skills: [4, ['Acrobacia', 'Atletismo', 'Enganação', 'Furtividade', 'Intimidação', 'Intuição', 'Investigação', 'Percepção', 'Persuasão', 'Prestidigitação']], armas: 'Simples e Marciais com Acuidade ou Leve', armadura: 'Leve', ferr: 'Ferramentas de Ladrão', mastery: () => 2, asi: [4, 8, 10, 12, 16], expertise: { 1: 2, 6: 2 },
+  gear: { a: { label: 'Armadura de Couro, 2 Adagas, Espada Curta, Arco Curto, 20 Flechas, Aljava, Ferramentas de Ladrão, Kit de Assaltante e 8 PO', items: [['Armadura de Couro', 1, 'arma'], ['Adaga', 2, 'arma'], ['Espada Curta', 1, 'arma'], ['Arco Curto', 1, 'arma'], ['Flechas', 20, 'cons'], ['Aljava', 1, 'equip'], ['Ferramentas de Ladrão', 1, 'equip'], ['Kit de Assaltante', 1, 'equip'], ['Peças de Ouro', 8, 'cons']] }, b: { label: '100 PO', items: [['Peças de Ouro', 100, 'cons']] } },
+  recursos: (n) => (n >= 20 ? [{ id: 'stroke', name: 'Golpe de Sorte', icon: 'i-d20', c: 'lvO', max: 1, rest: 'curto', meta: 'Descanso Curto ou Longo', desc: 'Transforma um Teste de D20 falho em 20.', action: { label: 'Usar' } }] : []),
+  feats: [
+    [1, 'Ataque Furtivo', 'Uma vez por turno, dano extra com Vantagem ou aliado perto do alvo, usando arma com Acuidade ou à Distância.'], [1, 'Especialista', 'Especialização em duas perícias; mais duas no nível 6.'], [1, 'Gíria do Ladrão', 'Sabe a Gíria dos Ladrões e mais um idioma.'], [1, 'Maestria em Arma', 'Duas armas com maestria, trocadas no Descanso Longo.'], [2, 'Ação Ardilosa', 'Correr, Desengajar ou Esconder como Ação Bônus.'],
+    [3, 'Mira Firme', 'Parado, Ação Bônus dá Vantagem no próximo ataque.'], [3, 'Subclasse de Ladino', 'Escolhe sua subclasse.'], [5, 'Golpe Astuto', 'Gasta dados do Ataque Furtivo em Envenenar, Rasteira ou Recuar.'], [5, 'Esquiva Sobrenatural', 'Reação: reduz à metade o dano de um ataque.'], [7, 'Evasão', 'Salvaguarda de DES bem-sucedida anula o dano; falha dá metade.'], [7, 'Talento Confiável', 'd20 de 9 ou menos em perícia proficiente conta como 10.'],
+    [11, 'Golpe Astuto Aprimorado', 'Até dois efeitos de Golpe Astuto.'], [14, 'Golpes Sujos', 'Novas opções: Aturdir, Nocautear e Obscurecer.'], [15, 'Mente Escorregadia', 'Proficiência em salvaguardas de Sabedoria e Carisma.'], [18, 'Elusivo', 'Ataques contra você nunca têm Vantagem, salvo Incapacitado.'], [19, 'Dádiva Épica', 'Escolhe uma Dádiva Épica.'], [20, 'Golpe de Sorte', 'Transforma um Teste de D20 falho em 20.']
+  ],
+  acoes: [ACAO('sneak', 'Ataque Furtivo', 'Ao acertar', null, 0, 1, 'Dano extra uma vez por turno.', ['noite:sombra', 'O golpe vem da sombra', ['trevas', { s: .46 }], ['golpe', { art: '@cloak-dagger', s: .6 }], ['explodir', { t: [.45, 1], s: .26 }]], (n) => [{ t: 'dmg', d: `${Math.ceil(n / 2)}d6`, type: 'Da arma', crit: true }]), ACAO('dodge-half', 'Esquiva Sobrenatural', 'Reação', null, 0, 5, 'Metade do dano.', ['noite:prata', 'Você desvia no último instante', ['aparecer', { art: '@dodging', s: .4 }], ['lancar', { art: '@plain-arrow', de: 'B', em: 'A', n: 1, s: .06, voo: .5 }]])],
+  subs: {
+    soulknife: { name: 'Adaga Espiritual', feats: [[3, 'Lâminas Psíquicas', 'Lâmina de energia com 1d6 + DES Psíquico, Acuidade e Arremesso; segunda lâmina como Ação Bônus.'], [3, 'Poder Psiônico', 'Dados de Energia: Palavras Telepáticas e Amparo Psi em testes.'], [9, 'Lâminas da Alma', 'Golpes Teleguiados e Teleporte Psíquico.'], [13, 'Véu Psíquico', 'Invisível por 1 hora; volta com dado de Energia.'], [17, 'Rasgar Mente', 'Ataque Furtivo com a lâmina Atordoa (SAB).']], recursos: (n) => [{ id: 'psi', name: 'Energia Psiônica', icon: 'i-charm', c: 'lv2', max: PSI(n)[1], rest: 'um', meta: `d${PSI(n)[0]} · Descanso Longo (1 no Curto)`, desc: 'Alimenta os poderes psiônicos.', action: { label: 'Amparo Psi', acao: 'psi-bolster' } }], acoes: [ACAO('psi-blade', 'Lâmina Psíquica', 'Ataque', null, 0, 3, 'Ataque de energia.', ['astral:arcano', 'Uma lâmina de pensamento se forma', ['aparecer', { art: '@energy-sword', em: 'A', s: .3 }], ['golpe', { art: '@energy-sword', s: .6, t: [.25, .9] }]], (n, L, m) => [{ t: 'atk' }, { t: 'dmg', d: dMod('1d6', m.DES), type: 'Psíquico', crit: true }]), ACAO('psi-bolster', 'Amparo Psi', 'Sem ação', 'psi', 0, 3, 'Soma dado a um teste que falhou.', ['astral:arcano', 'A mente completa o que faltou', ['aparecer', { art: '@brain', s: .3 }]], (n) => [{ t: 'aux', d: `1d${PSI(n)[0]}`, label: 'Soma ao teste' }])] },
+    assassin: { name: 'Assassino', feats: [[3, 'Assassinar', 'Vantagem na Iniciativa e, na primeira rodada, contra quem ainda não agiu, com dano extra igual ao nível.'], [3, 'Ferramentas de Assassino', 'Kit de Disfarce e Kit de Veneno.'], [9, 'Especialista em Infiltração', 'Imita falas e escritas; Ação Bônus de distância.'], [13, 'Armas Venenosas', 'Envenenar também causa 2d6 Venenoso, ignorando Resistência.'], [17, 'Golpe Mortal', 'Na primeira rodada, salvaguarda de CON ou dobra o dano do Ataque Furtivo.']], acoes: [ACAO('assassinate', 'Assassinar', 'Primeira rodada', null, 0, 3, 'Golpe surpresa.', ['noite:sangue', 'Antes que ele perceba, acabou', ['trevas', { s: .5 }], ['golpe', { art: '@flying-dagger', s: .7 }], ['clarao', { t: [.4, .6], cor: 'sangue' }]])] },
+    thief: { name: 'Ladrão', feats: [[3, 'Andarilho de Telhados', 'Deslocamento de Escalada e usa DES na distância de salto.'], [3, 'Mão Leve', 'Ação Bônus: Prestidigitação ou ação Usar Objeto.'], [9, 'Furtividade Suprema', 'Ataque Escondido mantém o Esconder.'], [13, 'Usar Dispositivo Mágico', 'Quatro sintonias, cargas poupadas e pergaminhos com qualquer classe.'], [17, 'Reflexos de Ladrão', 'Dois turnos na primeira rodada.']], acoes: [] },
+    'arcane-trickster': { name: 'Trapaceiro Arcano', caster: { tipo: 'third', attr: 'INT', lista: 'wizard', truques: n => (n >= 10 ? 4 : 3) }, magias: { 3: ['Mãos Mágicas'] }, feats: [[3, 'Conjuração', 'Magias de Mago com Inteligência; sempre tem Mãos Mágicas.'], [3, 'Mãos Mágicas Ligeiras', 'Mão Invisível, controlada com Ação Bônus, que faz Prestidigitação.'], [9, 'Emboscada Mágica', 'Invisível, impõe Desvantagem na salvaguarda da sua magia.'], [13, 'Trapaceiro Versátil', 'Golpe Astuto também afeta outra criatura perto da mão.'], [17, 'Ladrão de Magias', 'Reação: rouba uma magia que o tinha como alvo.']], acoes: [] }
+  }
+};
+
+CLASSES.wizard = {
+  name: 'Mago', hd: 6, prim: ['INT'], multi: ['INT'], saves: ['INT', 'SAB'], skills: [2, ['Arcanismo', 'História', 'Intuição', 'Investigação', 'Medicina', 'Natureza', 'Religião']], armas: 'Simples', armadura: 'Nenhuma', caster: { tipo: 'full', attr: 'INT' }, asi: ASI_PADRAO,
+  gear: { a: { label: '2 Adagas, Foco Arcano, Kit de Erudito, Livro de Magias, Túnica e 5 PO', items: [['Adaga', 2, 'arma'], ['Foco Arcano', 1, 'arma'], ['Kit de Erudito', 1, 'equip'], ['Livro de Magias', 1, 'equip'], ['Túnica', 1, 'equip'], ['Peças de Ouro', 5, 'cons']] }, b: { label: '55 PO', items: [['Peças de Ouro', 55, 'cons']] } },
+  recursos: (n) => [{ id: 'arcane-recovery', name: 'Recuperação Arcana', icon: 'i-moon', c: 'lv1', max: 1, meta: `Descanso Curto · até ${Math.ceil(n / 2)} círculos · Descanso Longo`, desc: `Recupera espaços somando até ${Math.ceil(n / 2)} círculos, nenhum de 6º ou mais.`, action: { label: 'Usar', acao: 'arcane-recovery' } }],
+  feats: [[1, 'Adepto de Ritual', 'Conjura Rituais do livro sem prepará-los.'], [1, 'Conjuração', 'Magias de Mago com Inteligência, guardadas no livro; ganha duas ao subir de nível.'], [1, 'Recuperação Arcana', 'Recupera espaços no Descanso Curto.'], [2, 'Acadêmico', 'Especialização em Arcanismo, História, Investigação, Medicina, Natureza ou Religião.'], [3, 'Subclasse de Mago', 'Escolhe sua escola.'], [5, 'Memorizar Magia', 'No Descanso Curto, troca uma magia preparada.'], [18, 'Maestria de Magias', 'Uma magia de 1º e uma de 2º círculo à vontade.'], [19, 'Dádiva Épica', 'Escolhe uma Dádiva Épica.'], [20, 'Assinatura Mágica', 'Duas magias de 3º círculo sempre preparadas, grátis uma vez por descanso.']],
+  acoes: [ACAO('arcane-recovery', 'Recuperação Arcana', 'Descanso Curto', 'arcane-recovery', 1, 1, 'Recupera espaços.', ['arcano', 'As páginas devolvem a magia gasta', ['aparecer', { art: '@spell-book', s: .4 }], ['runas', { em: 'C', s: .5 }], ['subir', { txt: '✦', d: .5, l: .6 }]])],
+  subs: {
+    abjurer: { name: 'Abjurador', feats: [[3, 'Proteção Arcana', 'Abjuração cria proteção de 2 × nível + INT PV que absorve dano.'], [3, 'Versado em Abjuração', 'Duas magias de graça e uma a mais por círculo novo.'], [6, 'Proteção Projetada', 'Reação: a proteção absorve dano de aliado a 9 m.'], [10, 'Rompe-Magia', 'Sempre tem Contramagia e Dissipar Magia; bônus e Ação Bônus.'], [14, 'Resistência à Magia', 'Vantagem em salvaguardas contra magia e Resistência ao dano dela.']], recursos: (n, L, m) => [{ id: 'ward-hp', name: 'Proteção Arcana', icon: 'i-shield', c: 'lv1', max: 2 * n + m.INT, meta: 'PV da proteção', desc: 'Absorve dano em seu lugar. Abjurações de espaço a recarregam.' }], acoes: [ACAO('arcane-ward', 'Proteção Arcana', 'Ao conjurar Abjuração', null, 0, 3, 'Cria a proteção.', ['arcano:prata', 'Fios de magia viram armadura', ['cupula', { em: 'C', s: .46 }], ['circulo', { em: 'C', s: .4 }]])] },
+    diviner: { name: 'Adivinhador', feats: [[3, 'Prodígio', 'Rola dois d20 ao descansar e pode trocar um Teste de D20 por eles.'], [3, 'Versado em Adivinhação', 'Duas magias de graça e uma a mais por círculo novo.'], [6, 'Perito em Adivinhação', 'Magia de Adivinhação devolve um espaço de círculo menor.'], [10, 'O Terceiro Olho', 'Ação Bônus: Visão no Escuro, leitura de idiomas ou ver o invisível.'], [14, 'Prodígio Maior', 'Três d20 no Prodígio.']], recursos: (n) => [{ id: 'portent', name: 'Prodígio', icon: 'i-d20', c: 'lvO', max: n >= 14 ? 3 : 2, meta: 'd20 guardados · Descanso Longo', desc: 'Troca um Teste de D20 pelo dado guardado.', action: { label: 'Usar', acao: 'portent' } }], acoes: [ACAO('portent', 'Prodígio', 'Sem ação', 'portent', 1, 3, 'Usa um d20 guardado.', ['astral:lua', 'Você já tinha visto isso acontecer', ['aparecer', { art: '@third-eye', s: .36 }], ['aparecer', { art: '@crystal-ball', em: [.5, .62], s: .2 }]], () => [{ t: 'aux', d: '1d20', label: 'Dado do Prodígio' }])] },
+    evoker: { name: 'Evocador', feats: [[3, 'Truque Potente', 'Truque que erra ou é resistido ainda causa metade.'], [3, 'Versado em Evocação', 'Duas magias de graça e uma a mais por círculo novo.'], [6, 'Esculpir Magias', 'Protege 1 + círculo criaturas da Evocação.'], [10, 'Evocação Potencializada', 'Soma INT a uma jogada de dano de Evocação.'], [14, 'Sobrecarga', 'Dano máximo em magia de até 5º círculo; repetir causa dano Necrótico.']], acoes: [ACAO('overchannel', 'Sobrecarga', 'Ao conjurar', null, 0, 14, 'Dano máximo.', ['arcano:fogo', 'Você força a magia ao máximo', ['espiral', { em: 'C', s: .5 }], ['explodir', { em: 'C', s: .5, t: [.3, 1] }]])] },
+    illusionist: { name: 'Ilusionista', magias: { 3: ['Ilusão Menor'], 6: ['Convocar Feérico', 'Invocar Fera'] }, feats: [[3, 'Ilusões Aprimoradas', 'Ilusões sem componente Verbal, +18 m de alcance e Ilusão Menor melhorada.'], [3, 'Versado em Ilusão', 'Duas magias de graça e uma a mais por círculo novo.'], [6, 'Criaturas Espectrais', 'Convocar Feérico e Invocar Fera como Ilusão, com metade dos PV e sem espaço uma vez.'], [10, 'Autoimagem Ilusória', 'Reação: uma cópia faz o ataque errar.'], [14, 'Realidade Ilusória', 'Torna um objeto da ilusão real por 1 minuto.']], acoes: [ACAO('self-image', 'Autoimagem Ilusória', 'Reação', null, 0, 10, 'O ataque erra.', ['sonho', 'Quem levou o golpe foi uma cópia', ['espelhos', { art: '@person', em: 'C', n: 2, s: .34 }], ['quebrar', { em: 'C', s: .3, t: [.4, 1] }]])] }
+  }
+};
+
+CLASSES.monk = {
+  name: 'Monge', hd: 8, prim: ['DES', 'SAB'], multi: ['DES', 'SAB'], saves: ['FOR', 'DES'], skills: [2, ['Acrobacia', 'Atletismo', 'Furtividade', 'História', 'Intuição', 'Religião']], armas: 'Simples e Marciais Leves', armadura: 'Nenhuma', ferr: 'Ferramenta de Artesão ou Instrumento', unarmored: 'SAB', semEscudo: true, cdAttr: 'SAB', asi: ASI_PADRAO,
+  gear: { a: { label: 'Lança, 5 Adagas, Ferramenta ou Instrumento, Kit de Aventureiro e 11 PO', items: [['Lança', 1, 'arma'], ['Adaga', 5, 'arma'], ['Ferramenta ou Instrumento', 1, 'equip'], ['Kit de Aventureiro', 1, 'equip'], ['Peças de Ouro', 11, 'cons']] }, b: { label: '50 PO', items: [['Peças de Ouro', 50, 'cons']] } },
+  recursos: (n, L) => (n >= 2 ? [{ id: 'focus', name: 'Pontos de Foco', icon: 'i-spark', c: 'lvG', max: L.focus_points, rest: 'curto', meta: `d${L.martial_arts_die} de Artes Marciais · Descanso Curto ou Longo`, desc: 'Abastece Torrente de Golpes, Defesa Paciente, Passo do Vento e outras técnicas.', action: { label: 'Torrente', acao: 'flurry' } }] : []),
+  feats: [
+    [1, 'Artes Marciais', 'Dado próprio no Ataque Desarmado e em armas de Monge; usa DES e dá um Ataque Desarmado na Ação Bônus.'], [1, 'Defesa sem Armadura', 'Sem armadura nem Escudo, CA = 10 + DES + SAB.'], [2, 'Foco do Monge', 'Torrente de Golpes, Defesa Paciente e Passo do Vento.'], [2, 'Metabolismo Incomum', 'Ao rolar Iniciativa, recupera todo o Foco e cura, uma vez por Descanso Longo.'], [2, 'Movimento sem Armadura', 'Deslocamento maior sem armadura.'], [3, 'Defletir Ataques', 'Reação: reduz 1d10 + DES + nível e devolve com 1 Foco.'], [3, 'Subclasse de Monge', 'Escolhe sua subclasse.'], [4, 'Queda Lenta', 'Reação: reduz dano de queda em 5 × nível.'], [5, 'Ataque Extra', 'Ataca duas vezes.'], [5, 'Golpe Atordoante', '1 Foco: alvo Atordoado (CON).'], [6, 'Golpes Potencializados', 'Ataque Desarmado pode causar dano Energético.'], [7, 'Evasão', 'Salvaguarda de DES bem-sucedida anula o dano.'], [9, 'Movimento Acrobático', 'Corre por paredes e líquidos.'], [10, 'Foco Aprimorado', 'Técnicas de Foco ficam mais fortes.'], [10, 'Restauro Pessoal', 'Encerra Amedrontado, Enfeitiçado ou Envenenado no fim do turno.'], [13, 'Defletir Energia', 'Defletir vale contra qualquer dano.'], [14, 'Sobrevivente Disciplinado', 'Proficiência em todas as salvaguardas e refaz com 1 Foco.'], [15, 'Foco Perfeito', 'Ao rolar Iniciativa, volta a ter 4 Foco.'], [18, 'Defesa Superior', '3 Foco: Resistência a todo dano, exceto Energético, por 1 minuto.'], [19, 'Dádiva Épica', 'Escolhe uma Dádiva Épica.'], [20, 'Corpo e Mente', '+4 em Destreza e Sabedoria, até 25.']
+  ],
+  acoes: [
+    ACAO('martial', 'Ataque Desarmado', 'Ação ou Ação Bônus', null, 0, 1, 'Golpe de Artes Marciais.', ['templo:prata', 'O punho encontra o alvo', ['golpe', { art: '@mailed-fist', s: .6 }], ['explodir', { t: [.45, 1], s: .22 }]], (n, L, m) => [{ t: 'atk', bonus: Math.max(m.FOR, m.DES) + L.pb, spell: false }, { t: 'dmg', d: dMod(`1d${L.martial_arts_die}`, Math.max(m.FOR, m.DES)), type: 'Contundente', crit: true }]),
+    ACAO('flurry', 'Torrente de Golpes', 'Ação Bônus', 'focus', 1, 2, 'Dois Ataques Desarmados; três no nível 10.', ['templo:prata', 'Golpes rápidos demais para seguir', ['golpe', { art: '@mailed-fist', s: .5, n: 3 }], ['espelhos', { art: '@thor-fist', em: 'B', n: 2, s: .24 }]], (n, L, m) => [{ t: 'atk', bonus: Math.max(m.FOR, m.DES) + L.pb, spell: false }, { t: 'dmg', d: dMod(`1d${L.martial_arts_die}`, Math.max(m.FOR, m.DES)), type: 'Contundente', crit: true }]),
+    ACAO('patient', 'Defesa Paciente', 'Ação Bônus', 'focus', 1, 2, 'Desengaja e Esquiva.', ['templo:vento', 'Sua postura vira um muro', ['aparecer', { art: '@meditation', s: .4 }], ['cupula', { em: 'C', s: .4 }]]),
+    ACAO('wind', 'Passo do Vento', 'Ação Bônus', 'focus', 1, 2, 'Corre e Desengaja, salto dobrado.', ['ceu:vento', 'O vento carrega seus pés', ['tornado', { em: 'C', s: .4 }], ['espelhos', { art: '@sprint', em: 'C', n: 2, s: .3 }]]),
+    ACAO('stun', 'Golpe Atordoante', 'Ao acertar', 'focus', 1, 5, 'CON ou Atordoado.', ['templo:ouro', 'Um toque e o corpo trava', ['golpe', { art: '@open-palm', s: .5 }], ['alvo', { em: 'B', s: .24, reage: 'treme' }], ['aparecer', { art: '@knocked-out-stars', em: [.5, .22], s: .18 }]], () => [{ t: 'save', a: 'CON' }]),
+    ACAO('deflect', 'Defletir Ataques', 'Reação', null, 0, 3, 'Reduz o dano.', ['templo:prata', 'A mão desvia o golpe', ['aparecer', { art: '@open-palm', em: 'C', s: .4 }], ['lancar', { art: '@plain-arrow', de: 'B', em: 'C', s: .06, voo: .5 }]], (n, L, m) => [{ t: 'aux', d: dMod('1d10', m.DES + n), label: 'Reduz o dano' }])
+  ],
+  subs: {
+    'open-hand': { name: 'Combatente da Mão Espalmada', feats: [[3, 'Técnica da Mão Espalmada', 'Torrente de Golpes derruba, empurra ou impede Reações.'], [6, 'Integridade Corporal', 'Ação Bônus: cura dado de Artes Marciais + SAB.'], [11, 'Passo Veloz', 'Passo do Vento depois de outra Ação Bônus.'], [17, 'Palma Vibrante', '4 Foco: vibração que depois causa 10d12 Energético.']], acoes: [ACAO('palm', 'Palma Vibrante', 'Ao acertar', 'focus', 4, 17, 'Vibrações letais.', ['templo:arcano', 'Uma vibração espera a sua ordem', ['golpe', { art: '@open-palm', s: .5 }], ['ondas', { em: 'B', s: .5, n: 5 }]], () => [{ t: 'save', a: 'CON' }, { t: 'dmg', d: '10d12', type: 'Energético', half: true }])] },
+    mercy: { name: 'Combatente da Misericórdia', feats: [[3, 'Implementos de Misericórdia', 'Intuição, Medicina e Kit de Herbalismo.'], [3, 'Mão de Cura', '1 Foco: cura dado + SAB.'], [3, 'Mão de Dolo', '1 Foco: dano Necrótico extra e pode Envenenar.'], [6, 'Toque de Médico', 'Mãos ganham efeitos ao curar e ferir.'], [11, 'Torrente de Cura e Dolo', 'Torrente cura e fere sem Foco extra.'], [17, 'Mão da Misericórdia Final', '5 Foco: traz de volta quem morreu há até 24 horas.']], acoes: [ACAO('heal-hand', 'Mão de Cura', 'Usar Magia', 'focus', 1, 3, 'Cura ao toque.', ['templo:cura', 'O toque certo fecha a ferida', ['aparecer', { art: '@open-palm', s: .4 }], ['subir', { txt: '+', d: .6, l: .6 }]], (n, L, m) => [{ t: 'dmg', d: dMod(`1d${L.martial_arts_die}`, m.SAB), type: 'Cura', heal: true }]), ACAO('harm-hand', 'Mão de Dolo', 'Ao acertar', 'focus', 1, 3, 'Dano Necrótico.', ['cripta:sangue', 'O mesmo toque que cura também mata', ['golpe', { art: '@evil-hand', s: .5 }]], (n, L, m) => [{ t: 'dmg', d: dMod(`1d${L.martial_arts_die}`, m.SAB), type: 'Necrótico' }])] },
+    shadow: { name: 'Combatente das Sombras', feats: [[3, 'Artes das Sombras', 'Escuridão com 1 Foco, enxerga nela e ganha Prestidigitação Arcana e Visão no Escuro.'], [6, 'Passo da Sombra', 'Ação Bônus: teleporte de 18 m entre sombras.'], [11, 'Passo da Sombra Aprimorado', 'Com 1 Foco, ataca depois do teleporte.'], [17, 'Manto da Sombra', '3 Foco: Invisível e intangível por 1 minuto.']], acoes: [ACAO('shadow-step', 'Passo da Sombra', 'Ação Bônus', null, 0, 6, 'Teleporte de sombra.', ['noite:sombra', 'Você entra numa sombra e sai em outra', ['trevas', { s: .4, t: [0, .5] }], ['teleporte', { em: [.5, .42] }]])] },
+    elements: { name: 'Combatente dos Elementos', magias: { 3: ['Elementalismo'] }, feats: [[3, 'Manipular Elementos', 'Conhece Elementalismo.'], [3, 'Sintonia Elemental', '1 Foco: alcance maior e ataques elementais que empurram, por 10 minutos.'], [6, 'Explosão Elemental', '2 Foco: Esfera de 6 m a 36 m com três dados de Artes Marciais (DES).'], [11, 'Passo dos Elementos', 'Em sintonia, nada e voa.'], [17, 'Ápice Elemental', 'Resistências, dano extra e aura em quem o atinge.']], acoes: [ACAO('el-burst', 'Explosão Elemental', 'Usar Magia', 'focus', 2, 6, 'Esfera elemental.', ['tempestade:arcano', 'Os quatro elementos estouram de uma vez', ['lancar', { art: '@unstable-orb', s: .1, voo: .5 }], ['explodir', { t: [.5, 1], s: .5 }]], (n, L) => [{ t: 'save', a: 'DES' }, { t: 'dmg', d: `3d${L.martial_arts_die}`, type: 'Energético', half: true }])] }
+  }
+};
+
+CLASSES.paladin = {
+  name: 'Paladino', hd: 10, prim: ['FOR', 'CAR'], multi: ['FOR', 'CAR'], saves: ['SAB', 'CAR'], skills: [2, ['Atletismo', 'Intimidação', 'Intuição', 'Medicina', 'Persuasão', 'Religião']], armas: 'Simples e Marciais', armadura: 'Leve, Média, Pesada e Escudos', caster: { tipo: 'half', attr: 'CAR' }, mastery: () => 2, asi: ASI_PADRAO, style: { 2: 1 },
+  gear: { a: { label: 'Cota de Malha, Escudo, Espada Longa, 6 Azagaias, Símbolo Sagrado, Kit de Sacerdote e 9 PO', items: [['Cota de Malha', 1, 'arma'], ['Escudo', 1, 'arma'], ['Espada Longa', 1, 'arma'], ['Azagaia', 6, 'arma'], ['Símbolo Sagrado', 1, 'arma'], ['Kit de Sacerdote', 1, 'equip'], ['Peças de Ouro', 9, 'cons']] }, b: { label: '150 PO', items: [['Peças de Ouro', 150, 'cons']] } },
+  recursos: (n, L) => [{ id: 'lay', name: 'Mãos Consagradas', icon: 'i-spark', c: 'lvG', max: 5 * n, meta: 'Reserva de PV · Ação Bônus · Descanso Longo', desc: `Cura tocando, gastando pontos da reserva de ${5 * n} PV.`, action: { label: 'Curar', acao: 'lay' } }, ...(n >= 3 ? [{ id: 'channel', name: 'Canalizar Divindade', icon: 'i-spark', c: 'lv1', max: L.channel_divinity_charges, rest: 'um', meta: 'Descanso Longo (1 no Curto)', desc: 'Alimenta Sentido Divino e os poderes do Juramento.', action: { label: 'Usar', acao: 'divine-sense' } }] : [])],
+  feats: [
+    [1, 'Conjuração', 'Magias de Paladino com Carisma.'], [1, 'Maestria em Arma', 'Duas armas com maestria, trocadas no Descanso Longo.'], [1, 'Mãos Consagradas', 'Reserva de 5 × nível de PV para curar e encerrar Envenenado.'], [2, 'Destruição do Paladino', 'Sempre tem Destruição Divina e a conjura sem espaço uma vez por Descanso Longo.'], [2, 'Estilo de Luta', 'Um talento de Estilo de Luta, ou Combatente Abençoado.'], [3, 'Canalizar Divindade', 'Sentido Divino e poderes do Juramento.'], [3, 'Subclasse de Paladino', 'Escolhe seu Juramento.'], [5, 'Ataque Extra', 'Ataca duas vezes.'], [5, 'Montaria Fiel', 'Sempre tem Convocar Montaria, grátis uma vez.'], [6, 'Aura de Proteção', 'Você e aliados a 3 m somam CAR às salvaguardas.'], [9, 'Repudiar Inimigos', 'Canalizar: CAR criaturas a 18 m ficam Amedrontadas (SAB).'], [10, 'Aura de Coragem', 'Imunidade a Amedrontado na aura.'], [11, 'Golpes Radiantes', '+1d8 Radiante em todo acerto corpo a corpo.'], [14, 'Toque Restaurador', 'Mãos Consagradas encerra condições.'], [18, 'Aura Expandida', 'Aura de 9 m.'], [19, 'Dádiva Épica', 'Escolhe uma Dádiva Épica.']
+  ],
+  acoes: [
+    ACAO('lay', 'Mãos Consagradas', 'Ação Bônus', 'lay', 5, 1, 'Gasta 5 pontos da reserva; ajuste a reserva na ficha para outro valor.', ['templo:cura', 'Seu toque abençoado cura', ['aparecer', { art: '@hand', s: .4 }], ['aura', { em: 'C', s: .3 }], ['subir', { txt: '+', d: .6, l: .6 }]]),
+    ACAO('divine-sense', 'Sentido Divino', 'Ação Bônus', 'channel', 1, 3, 'Sente Celestiais, Ínferos e Mortos-Vivos a 18 m.', ['templo:luz', 'O que é santo e o que é profano se revelam', ['ondas', { em: 'C', s: .9, n: 3 }], ['olho', { em: 'C', s: .3 }]]),
+    ACAO('radiant', 'Golpes Radiantes', 'Ao acertar', null, 0, 11, 'Dano radiante extra.', ['templo:luz', 'Toda lâmina sua agora brilha', ['golpe', { art: '@shining-sword', s: .6 }]], () => [{ t: 'dmg', d: '1d8', type: 'Radiante' }]),
+    ACAO('turn-foes', 'Repudiar Inimigos', 'Usar Magia', 'channel', 1, 9, 'Amedronta inimigos.', ['templo:ouro', 'Ninguém ousa se aproximar', ['ondas', { em: 'C', s: 1.1, n: 4 }], ['alvo', { em: 'B', s: .24, reage: 'foge' }]], () => [{ t: 'save', a: 'SAB' }])
+  ],
+  subs: {
+    devotion: { name: 'Juramento da Devoção', magias: { 3: ['Escudo da Fé', 'Proteção Contra o Bem e o Mal'], 5: ['Auxílio', 'Zona da Verdade'], 9: ['Dissipar Magia', 'Sinal de Esperança'], 13: ['Defensor da Fé', 'Movimentação Livre'], 17: ['Coluna de Chamas', 'Comunhão'] }, feats: [[3, 'Arma Sagrada', 'Canalizar: soma CAR ao ataque, dano Radiante e luz por 10 minutos.'], [7, 'Aura de Devoção', 'Imunidade a Enfeitiçado na aura.'], [15, 'Destruição Protetora', 'Destruição Divina dá Cobertura Parcial na aura.'], [20, 'Resplendor Sagrado', 'Aura de luz: Desvantagem contra sua magia e dano Radiante.']], acoes: [ACAO('sacred', 'Arma Sagrada', 'Ao atacar', 'channel', 1, 3, 'Arma brilhante.', ['templo:luz', 'A lâmina acende com fé', ['aparecer', { art: '@shining-sword', s: .46 }], ['brilhos', { em: 'C', s: .36 }]])] },
+    glory: { name: 'Juramento da Glória', magias: { 3: ['Heroísmo', 'Raio Guia'], 5: ['Aprimorar Atributo', 'Arma Mágica'], 9: ['Celeridade', 'Proteção Contra Energia'], 13: ['Compulsão', 'Movimentação Livre'], 17: ['Lendas e Histórias', 'Presença Régia de Yolande'] }, feats: [[3, 'Atleta Inigualável', 'Canalizar: Vantagem em Atletismo e Acrobacia e salto maior por 1 hora.'], [3, 'Destruição Inspiradora', 'Canalizar após Destruição Divina: 2d8 + nível de PV temporários divididos.'], [7, 'Aura de Vivacidade', '+3 m para você e para aliados na aura.'], [15, 'Defesa Gloriosa', 'Reação: +CAR na CA e ataque se errar.'], [20, 'Lenda Viva', 'Vantagem em Carisma, salvaguardas e transforma erro em acerto.']], acoes: [ACAO('inspiring', 'Destruição Inspiradora', 'Sem ação', 'channel', 1, 3, 'PV temporários ao grupo.', ['templo:ouro', 'O golpe vira grito de vitória', ['clarao', {}], ['aura', { em: 'C', s: .4 }]], (n) => [{ t: 'aux', d: dMod('2d8', n), label: 'PV temporários para dividir' }])] },
+    vengeance: { name: 'Juramento da Vingança', magias: { 3: ['Marca do Predador', 'Perdição'], 5: ['Paralisar Pessoa', 'Passo Nebuloso'], 9: ['Celeridade', 'Proteção Contra Energia'], 13: ['Banimento', 'Porta Dimensional'], 17: ['Paralisar Monstro', 'Vidência'] }, feats: [[3, 'Voto de Inimizade', 'Canalizar: Vantagem contra uma criatura a 9 m por 1 minuto.'], [7, 'Vingador Implacável', 'Ataque de Oportunidade zera o Deslocamento e você persegue.'], [15, 'Alma Vingativa', 'Reação: ataca quem está sob o Voto.'], [20, 'Anjo Vingador', 'Voo e aura de Amedrontar por 10 minutos.']], acoes: [ACAO('vow', 'Voto de Inimizade', 'Ao atacar', 'channel', 1, 3, 'Vantagem contra o alvo.', ['fogo:sangue', 'Você jura e não esquece', ['palavra', { txt: 'Inimigo' }], ['aparecer', { art: '@convergence-target', em: 'B', s: .3 }]])] },
+    ancients: { name: 'Juramento dos Anciões', magias: { 3: ['Falar com Animais', 'Golpe Constritor'], 5: ['Passo Nebuloso', 'Raio Lunar'], 9: ['Crescimento de Plantas', 'Proteção Contra Energia'], 13: ['Pele-Rocha', 'Tempestade Glacial'], 17: ['Comunhão com a Natureza', 'Passo Arbóreo'] }, feats: [[3, 'A Ira da Natureza', 'Canalizar: vinhas prendem criaturas a 4,5 m (FOR).'], [7, 'Aura de Resistência', 'Resistência a dano Necrótico, Psíquico e Radiante na aura.'], [15, 'Sentinela Imortal', 'A 0 PV, fica com 1 e recupera 3 × nível, uma vez por Descanso Longo.'], [20, 'Campeão Ancestral', 'Cura na aura, magias mais rápidas e Desvantagem contra elas.']], acoes: [ACAO('nature-wrath', 'A Ira da Natureza', 'Usar Magia', 'channel', 1, 3, 'Vinhas espectrais.', ['floresta:natureza', 'Vinhas antigas agarram os inimigos', ['vinhas', { em: 'B', s: .6 }]], () => [{ t: 'save', a: 'FOR' }])] }
+  }
+};
+
+CLASSES.artificer = {
+  name: 'Artífice', hd: 8, prim: ['INT'], multi: ['INT'], saves: ['CON', 'INT'], skills: [2, ['Arcanismo', 'História', 'Investigação', 'Medicina', 'Natureza', 'Percepção', 'Prestidigitação']], armas: 'Simples', armadura: 'Leve, Média e Escudos', ferr: 'Ferramentas de Ladrão, de Funileiro e uma de Artesão', caster: { tipo: 'half', attr: 'INT', arredonda: true }, asi: ASI_PADRAO, fonte: 'Eberron: Forge of the Artificer',
+  gear: { a: { label: 'Couro Batido, Adaga, Ferramentas de Ladrão e de Funileiro, Kit de Explorador de Masmorras e 16 PO', items: [['Armadura de Couro Batido', 1, 'arma'], ['Adaga', 1, 'arma'], ['Ferramentas de Ladrão', 1, 'equip'], ['Ferramentas de Funileiro', 1, 'equip'], ['Kit de Explorador de Masmorras', 1, 'equip'], ['Peças de Ouro', 16, 'cons']] }, b: { label: '150 PO', items: [['Peças de Ouro', 150, 'cons']] } },
+  recursos: (n, L, m) => [{ id: 'tinker', name: 'Magia de Funileiro', icon: 'i-spark', c: 'lvG', max: Math.max(1, m.INT), meta: 'Usar Magia · Descanso Longo', desc: 'Cria um item comum da lista, que dura até o Descanso Longo.', action: { label: 'Criar', acao: 'tinker' } }, ...(n >= 7 ? [{ id: 'flash', name: 'Lampejo de Gênio', icon: 'i-bolt', c: 'lvO', max: Math.max(1, m.INT), meta: 'Reação · Descanso Longo', desc: `Soma ${Math.max(1, m.INT)} a um teste ou salvaguarda que falhou a 9 m.`, action: { label: 'Usar', acao: 'flash' } }] : [])],
+  feats: [[1, 'Conjuração', 'Magias de Artífice com Inteligência, canalizadas por ferramentas.'], [1, 'Magia de Funileiro', 'Conhece Reparar e cria itens simples com Ferramentas de Funileiro.'], [2, 'Replicar Item Mágico', 'Aprende planos e cria itens mágicos no Descanso Longo.'], [3, 'Subclasse de Artífice', 'Escolhe sua especialização.'], [6, 'Funileiro de Itens Mágicos', 'Recarrega, drena ou transforma itens replicados.'], [7, 'Lampejo de Gênio', 'Reação: soma INT a teste ou salvaguarda que falhou.'], [10, 'Adepto em Itens Mágicos', 'Até quatro sintonias.'], [11, 'Item Guarda-Magia', 'Guarda uma magia de até 3º círculo num objeto, usável 2 × INT vezes.'], [14, 'Artifício Avançado', 'Cinco sintonias e recupera um Lampejo no Descanso Curto.'], [18, 'Mestre em Itens Mágicos', 'Seis sintonias.'], [19, 'Dádiva Épica', 'Escolhe uma Dádiva Épica.'], [20, 'Alma do Artifício', 'Desintegra itens para escapar da morte e +1 em salvaguardas por sintonia.']],
+  acoes: [ACAO('tinker', 'Magia de Funileiro', 'Usar Magia', 'tinker', 1, 1, 'Cria um item comum.', ['arcano:ouro', 'Um objeto útil surge da sua bancada', ['aparecer', { art: '@gears', em: 'A', s: .2, giro: 1 }], ['aparecer', { art: '@cargo-crate', s: .3 }]]), ACAO('flash', 'Lampejo de Gênio', 'Reação', 'flash', 1, 7, 'Soma INT.', ['arcano:ouro', 'A ideia certa na hora certa', ['aparecer', { art: '@light-bulb', s: .4 }], ['clarao', { t: [.4, .6] }]])],
+  subs: {
+    alchemist: { name: 'Alquimista', magias: { 3: ['Palavra Curativa', 'Raio Nauseante'], 5: ['Esfera Flamejante', 'Flecha Ácida de Melf'], 9: ['Forma Gasosa', 'Palavra Curativa em Massa'], 13: ['Proteção Contra a Morte', 'Esfera Vitriólica'], 17: ['Névoa Mortal', 'Reviver os Mortos'] }, feats: [[3, 'Ferramentas do Ofício', 'Suprimentos de Alquimista e Kit de Herbalismo; poções na metade do tempo.'], [3, 'Elixir Experimental', 'Dois elixires aleatórios por Descanso Longo: cura, rapidez, resiliência, ousadia ou voo.'], [5, 'Sábio Alquímico', 'Soma INT a cura ou dano Ácido, Ígneo ou Venenoso.'], [9, 'Reagentes Restauradores', 'Restauração Menor sem espaço INT vezes.'], [15, 'Maestria Química', '2d8 Energético extra, Resistências e Caldeirão sem espaço.']], acoes: [ACAO('elixir', 'Elixir Experimental', 'Ação Bônus', null, 0, 3, 'Bebe ou dá um elixir.', ['arcano:natureza', 'O frasco borbulha e faz efeito', ['aparecer', { art: '@round-bottom-flask', s: .4 }], ['revoada', { art: '@bubbles', n: 5, s: .08 }]], (n, L, m) => [{ t: 'aux', d: '1d6', label: 'Efeito do elixir' }, { t: 'dmg', d: dMod(`${n >= 15 ? 4 : n >= 9 ? 3 : 2}d8`, m.INT), type: 'Cura', heal: true, label: 'Se for cura' }])] },
+    armorer: { name: 'Armeiro', magias: { 3: ['Mísseis Mágicos', 'Onda Trovejante'], 5: ['Reflexos', 'Despedaçar'], 9: ['Padrão Hipnótico', 'Relâmpago'], 13: ['Escudo Ardente', 'Invisibilidade Maior'], 17: ['Criar Passagem', 'Muralha de Energia'] }, feats: [[3, 'Ferramentas do Ofício', 'Armadura Pesada e Ferramentas de Ferreiro.'], [3, 'Armadura Arcana', 'Transforma a armadura vestida, que vira Foco e dispensa Força.'], [3, 'Modelo de Armadura', 'Colosso, Guardião ou Infiltrador, com arma própria que usa INT.'], [5, 'Ataque Extra', 'Ataca duas vezes.'], [9, 'Armeiro Aprimorado', 'Plano e item de Armadura extras e +1 na arma da armadura.'], [15, 'Armadura Aperfeiçoada', 'Cada modelo ganha um efeito forte.']], acoes: [ACAO('armor', 'Arma da Armadura', 'Ataque', null, 0, 3, 'Arma do modelo.', ['tempestade:arcano', 'A armadura dispara por conta própria', ['aparecer', { art: '@breastplate', em: 'A', s: .3 }], ['lancar', { art: '@energy-arrow', s: .1, voo: .5 }], ['explodir', { t: [.5, 1], s: .24 }]], (n, L, m) => [{ t: 'atk' }, { t: 'dmg', d: dMod('1d8', m.INT + (n >= 9 ? 1 : 0)), type: 'Trovejante', crit: true }])] },
+    artillerist: { name: 'Artilheiro', magias: { 3: ['Escudo Arcano', 'Onda Trovejante'], 5: ['Raio Ardente', 'Despedaçar'], 9: ['Bola de Fogo', 'Muralha de Vento'], 13: ['Tempestade Glacial', 'Muralha de Fogo'], 17: ['Cone de Frio', 'Muralha de Energia'] }, feats: [[3, 'Ferramentas do Ofício', 'Armas Marciais à Distância e Ferramentas de Entalhador.'], [3, 'Canhão Místico', 'Canhão com Lança-Chamas, Balista de Energia ou Protetor.'], [5, 'Arma de Fogo Arcana', 'Foco que soma 1d8 a um dano de magia.'], [9, 'Canhão Explosivo', 'Mais 1d8 e detona como Reação.'], [15, 'Posição Fortificada', 'Dois canhões e Cobertura Parcial perto deles.']], acoes: [ACAO('cannon', 'Canhão Místico', 'Ação Bônus', null, 0, 3, 'Dispara o canhão.', ['tempestade:fogo', 'O canhão arcano dispara', ['aparecer', { art: '@time-bomb', em: 'A', s: .24 }], ['lancar', { art: '@fireball', s: .1, voo: .5 }], ['explodir', { t: [.5, 1], s: .36 }]], (n) => [{ t: 'save', a: 'DES' }, { t: 'dmg', d: n >= 9 ? '3d8' : '2d8', type: 'Ígneo', half: true }])] },
+    'battle-smith': { name: 'Forjador de Batalha', magias: { 3: ['Heroísmo', 'Escudo Arcano'], 5: ['Destruição Radiante', 'Vínculo de Proteção'], 9: ['Aura de Vitalidade', 'Invocar Barragem'], 13: ['Aura de Pureza', 'Escudo Ardente'], 17: ['Destruição Banidora', 'Curar Ferimentos em Massa'] }, feats: [[3, 'Ferramentas do Ofício', 'Ferramentas de Ferreiro; armas na metade do tempo.'], [3, 'Pronto para a Batalha', 'Armas Marciais e INT em ataques com arma mágica.'], [3, 'Defensor de Aço', 'Companheiro que age com sua Ação Bônus.'], [5, 'Ataque Extra', 'Ataca duas vezes.'], [9, 'Descarga Arcana', 'Acerto causa ou cura 2d6, INT vezes.'], [15, 'Defensor Aprimorado', 'Descarga 4d6 e defensor mais forte.']], acoes: [ACAO('defender', 'Defensor de Aço', 'Ação Bônus', null, 0, 3, 'Comanda o defensor.', ['arcano:prata', 'O defensor de aço avança', ['lancar', { art: '@robot-golem', s: .22, voo: .55 }], ['explodir', { t: [.55, 1], s: .22 }]], (n, L, m) => [{ t: 'atk' }, { t: 'dmg', d: dMod('1d8', m.INT), type: 'Energético' }]), ACAO('jolt', 'Descarga Arcana', 'Ao acertar', null, 0, 9, 'Dano ou cura.', ['arcano:arcano', 'A energia salta do aço', ['raio', { de: 'A', em: 'B' }]], (n) => [{ t: 'dmg', d: n >= 15 ? '4d6' : '2d6', type: 'Energético' }])] },
+    cartographer: { name: 'Cartógrafo', magias: { 3: ['Fogo das Fadas', 'Raio Guia', 'Palavra Curativa'], 5: ['Localizar Objeto', 'Espinho Mental'], 9: ['Convocar Relâmpagos', 'Clarividência'], 13: ['Banimento', 'Localizar Criatura'], 17: ['Vidência', 'Círculo de Teletransporte'] }, feats: [[3, 'Ferramentas do Ofício', 'Suprimentos de Calígrafo e Ferramentas de Cartógrafo.'], [3, 'Atlas do Aventureiro', 'Mapas mágicos dão 1d4 na Iniciativa e localizam o grupo.'], [3, 'Magia de Mapeamento', 'Fogo das Fadas sem espaço e salto curto por portal.'], [5, 'Precisão Guiada', 'Ataques e conjuração guiados pelos mapas.'], [9, 'Movimento Engenhoso', 'Teleporte com os mapas.'], [15, 'Atlas Superior', 'Mapas protegem e ampliam o portal.']], acoes: [ACAO('atlas', 'Atlas do Aventureiro', 'Descanso Longo', null, 0, 3, 'Prepara os mapas.', ['arcano:ouro', 'O mapa mostra onde cada um está', ['aparecer', { art: '@treasure-map', s: .4 }], ['aparecer', { art: '@compass', em: [.5, .62], s: .18, giro: 1 }]], () => [{ t: 'aux', d: '1d4', label: 'Soma à Iniciativa' }])] }
+  }
+};
+
+/* Opções de escolha que aparecem ao subir de nível. Nomes do livro. */
+const INVOCACOES = ['Armadura de Sombras', 'Explosão Agonizante', 'Explosão Repulsiva', 'Investimento do Mestre da Corrente', 'Lamento das Sepulturas', 'Lâmina Devoradora', 'Lâmina Sedenta', 'Lança Mística', 'Lições dos Grandes Antigos', 'Máscara das Muitas Faces', 'Mente Mística', 'Mestre das Infindáveis Formas', 'Olhar de Duas Mentes', 'Pacto da Corrente', 'Pacto da Lâmina', 'Pacto do Tomo', 'Passo Ascendente', 'Presente das Profundezas', 'Presente dos Protetores', 'Punição Mística', 'Salto Sobrenatural', 'Sorvedouro de Vida', 'Uno com as Sombras', 'Vigor Ínfero', 'Visão da Bruxa', 'Visão Diabólica', 'Visões de Reinos Distantes', 'Visões Nebulosas'];
+const MANOBRAS = ['Aparar', 'Ataque Ameaçador', 'Ataque de Varredura', 'Ataque Estendido', 'Ataque para Distrair', 'Ataque Preciso', 'Ataque Provocante', 'Avaliação Tática', 'Desarme', 'Emboscada', 'Encontrão', 'Finta', 'Gato Por Lebre', 'Golpe do Comandante', 'Manobrar', 'Movimentação Evasiva', 'Presença de Autoridade', 'Prostrar', 'Recuperar Energia'];
+const ESTILOS = ['Arquearia', 'Combate com Armas de Arremesso', 'Combate com Armas Grandes', 'Combate com Duas Armas', 'Combate Desarmado', 'Defensivo', 'Duelismo', 'Interceptação', 'Luta às Cegas', 'Protetivo'];
+const ORDENS = { cleric: ['Protetor', 'Taumaturgo'], druid: ['Protetor', 'Xamã'] };
+
+/* Armas: [nome, dano, tipo, propriedades, maestria, simples?, distância?] */
+const ARMAS = [
+  ['Adaga', '1d4', 'Perfurante', 'Acuidade, Arremesso 6/18, Leve', 'Ágil', 1, 0], ['Azagaia', '1d6', 'Perfurante', 'Arremesso 9/36', 'Lentidão', 1, 0], ['Cajado', '1d6', 'Contundente', 'Versátil (1d8)', 'Derrubar', 1, 0], ['Clava', '1d4', 'Contundente', 'Leve', 'Lentidão', 1, 0], ['Clava Grande', '1d8', 'Contundente', 'Duas Mãos', 'Empurrar', 1, 0], ['Foice', '1d4', 'Cortante', 'Leve', 'Ágil', 1, 0], ['Lança', '1d6', 'Perfurante', 'Arremesso 6/18, Versátil (1d8)', 'Drenar', 1, 0], ['Maça', '1d6', 'Contundente', '', 'Drenar', 1, 0], ['Machadinha', '1d6', 'Cortante', 'Arremesso 6/18, Leve', 'Afligir', 1, 0], ['Martelo Leve', '1d4', 'Contundente', 'Arremesso 6/18, Leve', 'Ágil', 1, 0],
+  ['Arco Curto', '1d6', 'Perfurante', 'Duas Mãos, Munição 24/96', 'Afligir', 1, 1], ['Besta Leve', '1d8', 'Perfurante', 'Duas Mãos, Munição 24/96, Recarga', 'Lentidão', 1, 1], ['Dardo', '1d4', 'Perfurante', 'Acuidade, Arremesso 6/18', 'Afligir', 1, 1], ['Funda', '1d4', 'Contundente', 'Munição 9/36, Recarga', 'Lentidão', 1, 1],
+  ['Alabarda', '1d10', 'Cortante', 'Duas Mãos, Extensão, Pesada', 'Trespassar', 0, 0], ['Chicote', '1d4', 'Cortante', 'Acuidade, Extensão', 'Lentidão', 0, 0], ['Cimitarra', '1d6', 'Cortante', 'Acuidade, Leve', 'Ágil', 0, 0], ['Espada Curta', '1d6', 'Perfurante', 'Acuidade, Leve', 'Afligir', 0, 0], ['Espada Grande', '2d6', 'Cortante', 'Duas Mãos, Pesada', 'Garantido', 0, 0], ['Espada Longa', '1d8', 'Cortante', 'Versátil (1d10)', 'Drenar', 0, 0], ['Glaive', '1d10', 'Cortante', 'Duas Mãos, Extensão, Pesada', 'Garantido', 0, 0], ['Lança de Montaria', '1d10', 'Perfurante', 'Extensão, Pesada', 'Derrubar', 0, 0], ['Lança Longa', '1d10', 'Perfurante', 'Duas Mãos, Extensão, Pesada', 'Empurrar', 0, 0], ['Maça Estrela', '1d8', 'Perfurante', '', 'Drenar', 0, 0], ['Machado de Batalha', '1d8', 'Cortante', 'Versátil (1d10)', 'Derrubar', 0, 0], ['Machado Grande', '1d12', 'Cortante', 'Duas Mãos, Pesada', 'Trespassar', 0, 0], ['Malho', '2d6', 'Contundente', 'Duas Mãos, Pesada', 'Derrubar', 0, 0], ['Mangual', '1d8', 'Contundente', '', 'Drenar', 0, 0], ['Martelo de Guerra', '1d8', 'Contundente', 'Versátil (1d10)', 'Empurrar', 0, 0], ['Picareta de Guerra', '1d8', 'Perfurante', 'Versátil (1d10)', 'Drenar', 0, 0], ['Rapieira', '1d8', 'Perfurante', 'Acuidade', 'Afligir', 0, 0], ['Tridente', '1d8', 'Perfurante', 'Arremesso 6/18, Versátil (1d10)', 'Derrubar', 0, 0],
+  ['Arco Longo', '1d8', 'Perfurante', 'Duas Mãos, Munição 45/180, Pesada', 'Lentidão', 0, 1], ['Besta de Mão', '1d6', 'Perfurante', 'Leve, Munição 9/36, Recarga', 'Afligir', 0, 1], ['Besta Pesada', '1d10', 'Perfurante', 'Duas Mãos, Munição 30/120, Pesada, Recarga', 'Empurrar', 0, 1], ['Mosquete', '1d12', 'Perfurante', 'Duas Mãos, Munição 12/36, Recarga', 'Lentidão', 0, 1], ['Pistola', '1d10', 'Perfurante', 'Munição 9/27, Recarga', 'Afligir', 0, 1], ['Zarabatana', '1d1', 'Perfurante', 'Munição 7,5/30, Recarga', 'Afligir', 0, 1]
+];
+/* Armaduras: [nome, CA base, limite de DES (99 = sem limite, 0 = não soma), tipo] */
+const ARMADURAS = [['Armadura Acolchoada', 11, 99, 'leve'], ['Armadura de Couro', 11, 99, 'leve'], ['Armadura de Couro Batido', 12, 99, 'leve'], ['Gibão de Peles', 12, 2, 'media'], ['Cota de Malha Parcial', 13, 2, 'media'], ['Loriga de Escamas', 14, 2, 'media'], ['Couraça Peitoral', 14, 2, 'media'], ['Armadura de Placas Parcial', 15, 2, 'media'], ['Cota de Anéis', 14, 0, 'pesada'], ['Cota de Malha', 16, 0, 'pesada'], ['Armadura de Talas', 17, 0, 'pesada'], ['Armadura de Placas', 18, 0, 'pesada']];
+/* =====================================================================
    MOTOR DE REGRAS — calcula a ficha a partir do nível, dos atributos e
-   das escolhas. Por enquanto cobre o Feiticeiro de D&D 2024.
+   das escolhas, para todas as classes de D&D 2024.
    ===================================================================== */
 const modScore = v => Math.floor((v - 10) / 2);
 const pbOf = n => Math.ceil(n / 4) + 1;
@@ -1392,63 +1683,162 @@ const spd = ft => String(ft * 0.3).replace('.', ',') + ' m';
 function sorenBuild() {
   return {
     classId: 'sorcerer', subclassId: 'draconic', level: 4, speciesId: 'goliath', lineage: 'cloud', backgroundId: 'wayfarer',
-    scores: Object.fromEntries(SOREN.abilities.map(a => [a.k, a.s])), hpRolls: [4, 4, 4], feats: ['lucky', 'war-caster'], metamagic: ['quick', 'subtle'], planned: {},
+    scores: Object.fromEntries(SOREN.abilities.map(a => [a.k, a.s])), hpRolls: [4, 4, 4], feats: ['lucky', 'war-caster'], metamagic: ['quick', 'subtle'], planned: {}, expertise: [], escolhas: {}, multi: [],
     skills: Object.fromEntries(SOREN.skills.filter(s => s[2]).map(s => [s[0], s[2]]))
   };
 }
-function blankBuild(level = 1) {
-  return { classId: 'sorcerer', subclassId: level >= 3 ? 'draconic' : null, level, speciesId: null, lineage: null, backgroundId: null, scores: Object.fromEntries(ATTR.map(([k]) => [k, 10])), hpRolls: [], feats: [], metamagic: [], planned: {}, skills: {} };
+function blankBuild(level = 1, classId = 'sorcerer') {
+  return { classId, subclassId: classId === 'sorcerer' && level >= 3 ? 'draconic' : null, level, speciesId: null, lineage: null, backgroundId: null, scores: Object.fromEntries(ATTR.map(([k]) => [k, 10])), hpRolls: [], feats: [], metamagic: [], planned: {}, skills: {}, expertise: [], escolhas: {}, multi: [] };
 }
 const buildOf = c => c.build || (c.build = c.template === 'soren' ? sorenBuild() : blankBuild(c.level || 1));
 
-function hpMaxOf(b, con = modScore(b.scores.CON)) {
-  const n = b.level, rolls = b.hpRolls.slice(0, n - 1).reduce((a, r) => a + r + con, 0);
-  return { base: 6 + con, rolls, resil: b.subclassId === 'draconic' && n >= 3 ? n : 0, total: Math.max(1, 6 + con + rolls + (b.subclassId === 'draconic' && n >= 3 ? n : 0)) };
+/** Classes do personagem, a principal primeiro. */
+function classesOf(b) {
+  const extras = b.multi || [], soma = extras.reduce((a, x) => a + x.level, 0);
+  return [{ id: b.classId || 'sorcerer', lv: b.level - soma, sub: b.subclassId }, ...extras.map(x => ({ id: x.classId, lv: x.level, sub: x.subclassId }))];
+}
+const subDe = x => CLASSES[x.id]?.subs?.[x.sub] || null;
+const nivelDe = (b, id) => classesOf(b).find(x => x.id === id)?.lv || 0;
+const notas = n => (n >= 17 ? 4 : n >= 11 ? 3 : n >= 5 ? 2 : 1);
+function scoresOf(b) {
+  const s = { ...b.scores };
+  if (nivelDe(b, 'barbarian') >= 20) for (const k of ['FOR', 'CON']) s[k] = Math.min(25, s[k] + 4);
+  if (nivelDe(b, 'monk') >= 20) for (const k of ['DES', 'SAB']) s[k] = Math.min(25, s[k] + 4);
+  return s;
+}
+function hpMaxOf(b, con = modScore(scoresOf(b).CON)) {
+  const n = b.level, cl = classesOf(b), hd = CLASSES[cl[0].id].hd, rolls = b.hpRolls.slice(0, n - 1).reduce((a, r) => a + r + con, 0);
+  const lvS = nivelDe(b, 'sorcerer'), resil = cl.some(x => x.sub === 'draconic') && lvS >= 3 ? lvS : 0, anao = b.speciesId === 'dwarf' ? n : 0, vig = b.feats.some(x => x === 'vigoroso') ? 2 * n : 0;
+  return { base: hd + con, rolls, resil, anao, vig, hd, total: Math.max(1, hd + con + rolls + resil + anao + vig) };
 }
 function featuresOf(b) {
-  const sub = b.subclassId === 'draconic' ? DRACONIC_FEATURES : [];
-  return [...SORCERER_FEATURES.map(f => [...f, 'Feiticeiro']), ...sub.map(f => [...f, 'Feitiçaria Dracônica'])].sort((x, y) => x[0] - y[0]);
+  return classesOf(b).flatMap(x => {
+    const C = CLASSES[x.id], s = subDe(x), fim = (lista, nome, off = 0) => lista.map(f => [f[0] + off, f[1], f[2], nome]);
+    return [...fim(C.feats, C.name), ...(s ? fim(s.feats, s.name) : [])];
+  }).sort((x, y) => x[0] - y[0]);
+}
+/** Espaços de magia: classe única usa a própria tabela; multiclasse soma os níveis de conjurador. */
+function conjuracaoDe(b) {
+  const cl = classesOf(b).map(x => ({ ...x, caster: subDe(x)?.caster && x.lv >= 3 ? subDe(x).caster : CLASSES[x.id].caster })).filter(x => x.caster);
+  const regulares = cl.filter(x => x.caster.tipo !== 'pact'), pacto = cl.find(x => x.caster.tipo === 'pact');
+  const tabela = x => (x.caster.tipo === 'third' ? TERCO_SLOTS[x.lv - 1] : CLASS_LEVELS[x.id][x.lv - 1].slots);
+  let base = Array(9).fill(0);
+  if (regulares.length === 1) base = tabela(regulares[0]) || base;
+  else if (regulares.length > 1) {
+    const ef = regulares.reduce((a, x) => a + (x.caster.tipo === 'full' ? x.lv : x.caster.tipo === 'half' ? Math.ceil(x.lv / 2) : Math.floor(x.lv / 3)), 0);
+    base = CLASS_LEVELS.wizard[Math.min(20, Math.max(1, ef)) - 1].slots;
+  }
+  const slots = Object.fromEntries(base.map((v, i) => [i + 1, v]).filter(([, v]) => v > 0)), pact = {};
+  if (pacto) CLASS_LEVELS.warlock[pacto.lv - 1].slots.forEach((v, i) => { if (v) { slots[i + 1] = (slots[i + 1] || 0) + v; pact[i + 1] = v; } });
+  const principal = cl[0] || null;
+  const lim = cl.reduce((a, x) => {
+    const L = CLASS_LEVELS[x.id][x.lv - 1];
+    return { cantrips: a.cantrips + (x.caster.truques ? x.caster.truques(x.lv) : L.cantrips || 0), prepared: a.prepared + (x.caster.tipo === 'third' ? TERCO_PREP[x.lv - 1] : L.prepared || 0) };
+  }, { cantrips: 0, prepared: 0 });
+  return { slots, pact, attr: principal?.caster.attr || null, lista: principal ? principal.caster.lista || principal.id : null, limits: lim };
+}
+function caDe(b, M, cl) {
+  const dex = M.DES, escudo = b.shield ? 2 : 0, arm = ARMADURAS.find(a => a[0] === b.armor);
+  const opc = [{ v: 10 + dex, txt: `10 + DES ${num(dex)}` }];
+  if (arm) return { v: arm[1] + (arm[2] ? Math.min(dex, arm[2]) : 0) + escudo, txt: `${arm[0]}${arm[2] ? ` + DES ${num(Math.min(dex, arm[2]))}` : ''}${escudo ? ' + Escudo 2' : ''}` };
+  for (const x of cl) {
+    const un = CLASSES[x.id].unarmored;
+    if (un && !(CLASSES[x.id].semEscudo && b.shield)) opc.push({ v: 10 + dex + M[un], txt: `10 + DES ${num(dex)} + ${un} ${num(M[un])} (Defesa sem Armadura)` });
+    if (x.sub === 'draconic' && x.lv >= 3) opc.push({ v: 10 + dex + M.CAR, txt: `10 + DES ${num(dex)} + CAR ${num(M.CAR)} (Resiliência Dracônica)` });
+    if (x.sub === 'dance' && x.lv >= 3 && !b.shield) opc.push({ v: 10 + dex + M.CAR, txt: `10 + DES ${num(dex)} + CAR ${num(M.CAR)} (Ginga Fascinante)` });
+  }
+  const m = opc.reduce((a, o) => (o.v > a.v ? o : a));
+  return { v: m.v + escudo, txt: m.txt + (escudo ? ' + Escudo 2' : '') };
+}
+function deslocamentoDe(b, sp, cl) {
+  let ft = sp?.speed || 30;
+  const pesada = ARMADURAS.find(a => a[0] === b.armor)?.[3] === 'pesada', sem = !b.armor;
+  for (const x of cl) {
+    if (x.id === 'barbarian' && x.lv >= 5 && !pesada) ft += 10;
+    if (x.id === 'ranger' && x.lv >= 6 && !pesada) ft += 10;
+    if (x.id === 'monk' && sem && !b.shield) ft += CLASS_LEVELS.monk[x.lv - 1].unarmored_movement_bonus || 0;
+  }
+  return ft;
+}
+function ataquesDe(c, b, M, pb, cl) {
+  const itens = [...(c.state?.items || c.sheet?.items || [])], pegou = new Set();
+  return itens.flatMap(i => {
+    const a = ARMAS.find(w => w[0] === i.name);
+    if (!a || pegou.has(a[0])) return [];
+    pegou.add(a[0]);
+    const [nome, dado, tipo, props, maestria, , dist] = a, acu = /Acuidade/.test(props), k = dist ? 'DES' : acu ? (M.DES >= M.FOR ? 'DES' : 'FOR') : 'FOR', m = M[k];
+    return [{ id: 'w-' + nome, name: nome, sub: [props, maestria && cl.some(x => CLASSES[x.id].mastery) ? 'Maestria: ' + maestria : ''].filter(Boolean).join(' · '), atk: m + pb, calc: `${k} ${num(m)} + BP ${pb}`, dmg: dado === '1' ? '1d1' : dado + (m ? (m < 0 ? '-' : '+') + Math.abs(m) : ''), type: tipo }];
+  });
+}
+function ataquesPorAcao(cl) {
+  let n = 1;
+  for (const x of cl) {
+    if (['barbarian', 'monk', 'paladin', 'ranger'].includes(x.id) && x.lv >= 5) n = Math.max(n, 2);
+    if (x.id === 'fighter') n = Math.max(n, x.lv >= 20 ? 4 : x.lv >= 11 ? 3 : x.lv >= 5 ? 2 : 1);
+    if (['armorer', 'battle-smith'].includes(x.sub) && x.lv >= 5) n = Math.max(n, 2);
+    if (x.sub === 'valor' && x.lv >= 6) n = Math.max(n, 2);
+  }
+  return n;
+}
+/** Ações de classe disponíveis, já com os dados do nível. */
+function acoesDe(b, M, pb) {
+  return classesOf(b).flatMap(x => {
+    const C = CLASSES[x.id], L = { ...CLASS_LEVELS[x.id][x.lv - 1], pb }, s = subDe(x);
+    return [...(C.acoes || []), ...(s?.acoes || [])].filter(a => x.lv >= a.min).map(a => ({ ...a, classe: C.name, r: a.r ? a.r(x.lv, L, M) : [] }));
+  });
 }
 
 /** Monta a ficha completa no formato que as telas usam. */
 function deriveSheet(c) {
-  const b = buildOf(c), base = c.template === 'soren' ? SOREN : blankSheet(), n = b.level, L = SORCERER_LEVELS[n - 1];
-  const mod = k => modScore(b.scores[k]), pb = L.pb, cha = mod('CAR'), con = mod('CON'), dex = mod('DES'), str = mod('FOR');
-  const drac = b.subclassId === 'draconic' && n >= 3, hp = hpMaxOf(b), has = id => b.feats.includes(id), sp = speciesById(b.speciesId);
-  const stats = { ac: 10 + dex + (drac ? cha : 0), shieldBonus: 5, hpMax: hp.total, dc: 8 + pb + cha, atk: pb + cha, init: dex + (has('alert') ? pb : 0), speed: spd(sp?.speed || 30), pb, cha, conSave: con + pb };
-  const slots = Object.fromEntries(L.slots.map((v, i) => [i + 1, v]).filter(([, v]) => v > 0));
+  const b = buildOf(c), base = c.template === 'soren' ? SOREN : blankSheet(), n = b.level, cl = classesOf(b), C0 = CLASSES[cl[0].id], sc = scoresOf(b);
+  const mod = k => modScore(sc[k]), M = Object.fromEntries(ATTR.map(([k]) => [k, mod(k)])), pb = pbOf(n), con = M.CON, dex = M.DES;
+  const lvS = nivelDe(b, 'sorcerer'), hp = hpMaxOf(b), has = id => b.feats.includes(id), sp = speciesById(b.speciesId), conj = conjuracaoDe(b), attr = conj.attr, mc = attr ? M[attr] : 0, marcial = Math.max(M.FOR, dex);
+  const ca = caDe(b, M, cl), ft = deslocamentoDe(b, sp, cl), savs = C0.saves;
+  const stats = { ac: ca.v, shieldBonus: 5, hpMax: hp.total, dc: 8 + pb + (attr ? mc : C0.cdAttr ? M[C0.cdAttr] : marcial), atk: pb + (attr ? mc : marcial), init: dex + (has('alert') ? pb : 0), speed: spd(ft), pb, cha: attr ? mc : M.CAR, conSave: con + (savs.includes('CON') ? pb : 0), attr };
   const res = id => base.resources?.find(r => r.id === id) || SOREN.resources.find(r => r.id === id);
-  const resources = [{ ...res('sp'), max: n >= 2 ? n : 0, desc: res('sp').desc.replace(/Máximo de \d+/, `Máximo de ${n >= 2 ? n : 0}`) }, { ...res('innate'), desc: res('innate').desc.replace(/\(fica \d+\)/, `(fica ${stats.dc + 1})`) }];
+  const resources = [];
+  if (lvS) resources.push({ ...res('sp'), max: lvS >= 2 ? lvS : 0, desc: res('sp').desc.replace(/Máximo de \d+/, `Máximo de ${lvS >= 2 ? lvS : 0}`) }, { ...res('innate'), desc: res('innate').desc.replace(/\(fica \d+\)/, `(fica ${stats.dc + 1})`) });
+  for (const x of cl) {
+    const K = CLASSES[x.id], L = { ...CLASS_LEVELS[x.id][x.lv - 1], wis: M.SAB }, s = subDe(x);
+    resources.push(...K.recursos(x.lv, L, M), ...(s?.recursos ? s.recursos(x.lv, L, M) : []));
+  }
   if (b.speciesId === 'goliath' && b.lineage === 'cloud') resources.push({ ...res('jaunt'), max: pb });
   if (has('lucky')) resources.push({ ...res('luck'), max: pb });
-  if (b.speciesId === 'goliath' && n >= 5) resources.push({ id: 'large', name: 'Forma Grande', icon: 'i-shield', c: 'lv0', max: 1, meta: 'Golias · Ação Bônus · 10 minutos · Descanso Longo', desc: 'Fica <b>Grande</b>, com Vantagem em testes de Força e <b>+3 m</b> de Deslocamento.' });
-  resources.push({ ...res('hd'), max: n, meta: 'd6 · Descanso Curto para gastar', desc: `Cada dado gasto num Descanso Curto cura <b>1d6 ${con < 0 ? '−' : '+'} ${Math.abs(con)}</b>. Todos voltam no Descanso Longo (regra 2024).` });
-  const attacks = (c.template === 'soren' ? SOREN.attacks : []).map(a => {
+  if (b.speciesId === 'goliath' && n >= 5) resources.push({ id: 'large', name: 'Forma Grande', icon: 'i-shield', c: 'lv0', max: 1, meta: 'Golias · Ação Bônus · 10 minutos · Descanso Longo', desc: 'Fica <b>Grande</b>, com Vantagem em testes de Força e <b>+3 m</b> de Deslocamento.', action: { label: 'Usar' } });
+  resources.push({ ...res('hd'), max: n, meta: `d${hp.hd} · Descanso Curto para gastar`, desc: `Cada dado gasto num Descanso Curto cura <b>1d${hp.hd} ${con < 0 ? '−' : '+'} ${Math.abs(con)}</b>. Todos voltam no Descanso Longo (regra 2024).` });
+  const attacks = c.template === 'soren' ? SOREN.attacks.map(a => {
     const k = a.id.startsWith('ts-') || a.id === 'natural' ? 'CAR' : a.id === 'dagger' ? 'DES' : 'FOR', m = mod(k), die = a.dmg.match(/^\d+d\d+/)[0], ts = a.id.startsWith('ts-');
     return { ...a, atk: m + pb, calc: `${k} ${num(m)} + BP ${pb}`, dmg: `${die}${m < 0 ? '-' : '+'}${Math.abs(m)}`, ...(ts && n >= 5 ? { sub: `${a.sub} · +${n >= 17 ? 3 : n >= 11 ? 2 : 1}d6 Radiante` } : {}) };
-  });
+  }) : ataquesDe(c, b, M, pb, cl);
   const chosen = b.metamagic.map(id => (c.template === 'soren' && SOREN.metamagic.find(m => m.id === id)) || METAMAGIC.find(m => m.id === id)).filter(Boolean);
-  const lin = sp?.lineages?.[b.lineage]?.[0], carry = Math.round(b.scores.FOR * 7.5 * (b.speciesId === 'goliath' ? 2 : 1));
-  const passives = (c.template === 'soren' ? SOREN.passives : []).map(p => ({
-    ...p, items: p.t === 'Resiliência Dracônica' ? [`+${n} PV máximos (já incluídos nos ${hp.total}).`, `Sem armadura, CA = 10 + DES ${num(dex)} + CAR ${num(cha)} = <b>${stats.ac}</b>.`]
+  const lin = sp?.lineages?.[b.lineage]?.[0], carry = Math.round(sc.FOR * 7.5 * (b.speciesId === 'goliath' ? 2 : 1));
+  const atq = ataquesPorAcao(cl);
+  const passives = c.template === 'soren' ? SOREN.passives.map(p => ({
+    ...p, items: p.t === 'Resiliência Dracônica' ? [`+${n} PV máximos (já incluídos nos ${hp.total}).`, `Sem armadura, CA = 10 + DES ${num(dex)} + CAR ${num(M.CAR)} = <b>${stats.ac}</b>.`]
       : p.items.map(i => i.replace(/\(\+4\)\./, `(${signed(stats.conSave)}).`).replace(/<b>120 kg<\/b>|120 kg/, m => m.replace('120', carry)))
-  }));
+  })) : [{ t: 'Em combate', items: [`Ataques por ação Atacar: <b>${atq}</b>.`, ...escolhasTexto(b)] }];
+  const acoes = acoesDe(b, M, pb);
   return {
-    ...base, stats, hitDie: 6, conMod: con, slots, createSlotCost: Object.fromEntries(Object.keys(slots).filter(l => SLOT_COST[l]).map(l => [l, SLOT_COST[l]])),
-    carry: `${carry} kg`, resources, attacks, metamagic: chosen, passives, warCaster: has('war-caster'), limits: { cantrips: L.cantrips, prepared: L.prepared }, level: n, items: c.template === 'soren' ? SOREN.items : startingItems(c),
-    abilities: ATTR.map(([k, nome]) => ({ k, n: nome, s: b.scores[k], ...(k === 'CON' || k === 'CAR' ? { prof: true } : {}), ...(k === 'CON' && has('war-caster') ? { note: 'Vantagem em Concentração' } : {}) })),
-    skills: SKILLS.map(([nome, a]) => (b.skills[nome] ? [nome, a, b.skills[nome]] : [nome, a])), tools: c.template === 'soren' ? SOREN.tools : (b.tools || []),
+    ...base, stats, hitDie: hp.hd, conMod: con, slots: conj.slots, pactSlots: conj.pact, createSlotCost: lvS ? Object.fromEntries(Object.keys(conj.slots).filter(l => SLOT_COST[l]).map(l => [l, SLOT_COST[l]])) : {},
+    carry: `${carry} kg`, resources, acoes, attacks, metamagic: chosen, passives, warCaster: has('war-caster'), limits: conj.limits, level: n, items: c.template === 'soren' ? SOREN.items : startingItems(c), lista: conj.lista, ataques: atq, classes: cl,
+    abilities: ATTR.map(([k, nome]) => ({ k, n: nome, s: sc[k], ...(savs.includes(k) ? { prof: true } : {}), ...(k === 'CON' && has('war-caster') ? { note: 'Vantagem em Concentração' } : {}) })),
+    skills: SKILLS.map(([nome, a]) => (b.skills[nome] ? [nome, a, b.skills[nome], ...((b.expertise || []).includes(nome) ? [true] : [])] : [nome, a])), tools: c.template === 'soren' ? SOREN.tools : (b.tools || []),
     calc: {
-      ac: drac ? `10 + DES ${num(dex)} + CAR ${num(cha)} (Resiliência Dracônica)` : `10 + DES ${num(dex)}`,
-      hp: `${hp.base} (nv 1: 6 + CON ${num(con)})` + (n > 1 ? ` + ${hp.rolls} (${n - 1} × [${b.hpRolls.length && b.hpRolls.every(r => r === b.hpRolls[0]) ? b.hpRolls[0] : 'dado'} + CON ${num(con)}])` : '') + (hp.resil ? ` + ${hp.resil} (Resiliência Dracônica)` : ''),
-      dc: `8 + BP ${pb} + CAR ${num(cha)}`, atk: `BP ${pb} + CAR ${num(cha)}`, ...(has('war-caster') ? { concNote: '<small>(V em conc.)</small>' } : {})
+      ac: ca.txt,
+      hp: `${hp.base} (nv 1: ${hp.hd} + CON ${num(con)})` + (n > 1 ? ` + ${hp.rolls} (${n - 1} × [${b.hpRolls.length && b.hpRolls.every(r => r === b.hpRolls[0]) ? b.hpRolls[0] : 'dado'} + CON ${num(con)}])` : '') + (hp.resil ? ` + ${hp.resil} (Resiliência Dracônica)` : '') + (hp.anao ? ` + ${hp.anao} (Tenacidade Anã)` : '') + (hp.vig ? ` + ${hp.vig} (Vigoroso)` : ''),
+      dc: `8 + BP ${pb} + ${attr || C0.cdAttr || (M.FOR >= dex ? 'FOR' : 'DES')} ${num(attr ? mc : C0.cdAttr ? M[C0.cdAttr] : marcial)}`, atk: `BP ${pb} + ${attr || (M.FOR >= dex ? 'FOR' : 'DES')} ${num(attr ? mc : marcial)}`, ...(has('war-caster') ? { concNote: '<small>(V em conc.)</small>' } : {})
     },
     subText: subTextOf(b, lin)
   };
 }
+function escolhasTexto(b) {
+  const e = b.escolhas || {}, nomes = { invocacoes: 'Invocações', manobras: 'Manobras', estilos: 'Estilos de Luta', maestrias: 'Maestrias', ordem: 'Ordem' };
+  return Object.entries(nomes).filter(([k]) => e[k]?.length).map(([k, t]) => `${t}: ${[].concat(e[k]).join(', ')}.`);
+}
 function subTextOf(b, lin) {
   const sp = speciesById(b.speciesId), ori = sp ? (lin ? `${sp.name} (${lin})` : sp.name) + ' · ' : '';
-  return `${ori}Feiticeiro${b.subclassId === 'draconic' ? ' Dracônico' : ''} · Nível ${b.level}`;
+  const nomes = classesOf(b).map(x => { const s = subDe(x), C = CLASSES[x.id]; return C.name + (s ? (s.adj ? ' ' + s.adj : ` (${s.name})`) : '') + ((b.multi || []).length ? ' ' + x.lv : ''); });
+  return `${ori}${nomes.join(' / ')} · Nível ${b.level}`;
 }
 function startingItems(c) { return (c.sheet?.items || []); }
 
@@ -1470,24 +1860,46 @@ function levelDiff(c) {
   featuresOf(d.__b || futuro.build).filter(f => f[0] === n).forEach(f => out.push(`Nova: ${f[1]}`));
   return out;
 }
-function levelNeeds(c) {
-  const b = buildOf(c), n = b.level + 1, cur = SORCERER_LEVELS[n - 2], nx = SORCERER_LEVELS[n - 1];
+/** Nomes de magias de subclasse resolvidos na biblioteca. */
+function magiasDeSub(s, nivel) {
+  const nomes = s?.magias?.[nivel] || [];
+  const achar = n => libraryAll().find(x => norm(x.name) === norm(n));
+  return nomes.map(achar).filter(Boolean).map(x => x.id);
+}
+function levelNeeds(c, classId = null, subId = null) {
+  const b = buildOf(c), id = classId || b.classId, nl = nivelDe(b, id) + 1, n = b.level + 1, C = CLASSES[id], x = classesOf(b).find(y => y.id === id) || { id, lv: 0, sub: null };
+  const conjOf = (lv, sub) => {
+    const cst = (CLASSES[id].subs?.[sub]?.caster && lv >= 3) ? CLASSES[id].subs[sub].caster : C.caster;
+    if (!cst) return { cantrips: 0, prepared: 0 };
+    const L = CLASS_LEVELS[id][lv - 1];
+    return { cantrips: cst.truques ? cst.truques(lv) : L.cantrips || 0, prepared: cst.tipo === 'third' ? TERCO_PREP[lv - 1] : L.prepared || 0 };
+  };
+  const sub = subId || x.sub, nx = conjOf(nl, sub), cur = nl > 1 ? conjOf(nl - 1, x.sub) : { cantrips: 0, prepared: 0 }, S = C.subs?.[sub];
+  const invoc = id === 'warlock' ? (CLASS_LEVELS.warlock[nl - 1].eldritch_invocations || 0) - (nl > 1 ? CLASS_LEVELS.warlock[nl - 2].eldritch_invocations || 0 : 0) : 0;
+  const manobras = sub === 'battle-master' ? (nl === 3 ? 3 : [7, 10, 15].includes(nl) ? 2 : 0) : 0;
   return {
-    n, asi: ASI_LEVELS.includes(n), boon: n === 19, subclass: n === 3 && !b.subclassId,
-    metamagic: metamagicKnown(n) - metamagicKnown(n - 1), cantrips: nx.cantrips - cur.cantrips, prepared: nx.prepared - cur.prepared, draconic: b.subclassId === 'draconic' || n === 3 ? DRACONIC_SPELLS[n] || [] : []
+    n, nl, classId: id, novaClasse: !x.lv, asi: (C.asi || ASI_PADRAO).includes(nl), boon: nl === 19, subclass: nl >= 3 && !x.sub, subs: C.subs,
+    metamagic: id === 'sorcerer' ? metamagicKnown(nl) - metamagicKnown(nl - 1) : 0, cantrips: nx.cantrips - cur.cantrips, prepared: nx.prepared - cur.prepared,
+    draconic: sub === 'draconic' ? DRACONIC_SPELLS[nl] || [] : magiasDeSub(S, nl), expertise: C.expertise?.[nl] || 0, estilo: (C.style?.[nl] || 0) + (sub === 'champion' && nl === 7 ? 1 : 0), invocacoes: invoc, manobras
   };
 }
 /** Aplica um nível. `ch` traz o dado de PV e as escolhas do assistente. */
 function applyLevel(c, ch) {
-  const b = buildOf(c), g = c.grimoire || (c.grimoire = { added: [], removed: [] }), antes = deriveSheet(c);
+  const b = buildOf(c), g = c.grimoire || (c.grimoire = { added: [], removed: [] }), antes = deriveSheet(c), id = ch.classId || b.classId;
   (c.history || (c.history = [])).push(JSON.stringify({ build: b, grimoire: g, level: c.level, sub: c.sub, sheet: c.sheet ? 1 : 0, gain: 0 }));
-  const need = levelNeeds(c);
+  const pre = levelNeeds(c, id), escolhida = ch.subclass || (pre.subclass && id === 'sorcerer' ? 'draconic' : null), need = levelNeeds(c, id, escolhida);
   b.level = need.n; c.level = need.n; b.hpRolls = [...b.hpRolls, ch.hp];
-  if (need.subclass) b.subclassId = 'draconic';
+  if (id !== b.classId) { b.multi = b.multi || []; const m = b.multi.find(x => x.classId === id); if (m) m.level++; else b.multi.push({ classId: id, level: 1, subclassId: null }); }
+  if (need.subclass && escolhida) {
+    if (id === b.classId) b.subclassId = escolhida; else b.multi.find(x => x.classId === id).subclassId = escolhida;
+  }
   if (ch.asi) for (const [k, v] of Object.entries(ch.asi)) b.scores[k] = Math.min(20, b.scores[k] + v);
   if (ch.feat) b.feats = [...b.feats, ch.feat];
   if (ch.metamagic?.length) b.metamagic = [...b.metamagic, ...ch.metamagic];
-  const spellsToAdd = [...(ch.spells || []), ...need.draconic.map(id => ({ id, draconic: true }))];
+  if (ch.expertise?.length) b.expertise = [...(b.expertise || []), ...ch.expertise];
+  b.escolhas = b.escolhas || {};
+  for (const k of ['invocacoes', 'manobras', 'estilos']) if (ch[k]?.length) b.escolhas[k] = [...(b.escolhas[k] || []), ...ch[k]];
+  const spellsToAdd = [...(ch.spells || []), ...need.draconic.map(sid => ({ id: sid, draconic: true }))];
   for (const e of spellsToAdd) {
     const s = typeof e === 'string' ? libGet(e) : { ...libGet(e.id), draconic: e.draconic };
     if (!s?.id || g.added.some(x => x.id === s.id)) continue;
@@ -1548,7 +1960,7 @@ function blankSheet() {
 
 function newCharacter(name, build = null) {
   return {
-    id: newId('c'), name, sub: 'Feiticeiro · Nível 1', template: 'blank', classId: 'sorcerer', subclassId: null, level: build?.level || 1,
+    id: newId('c'), name, sub: 'Feiticeiro · Nível 1', template: 'blank', classId: build?.classId || 'sorcerer', subclassId: null, level: build?.level || 1,
     sheet: blankSheet(), spells: [], state: null, notes: null, build: build || blankBuild(1), identity: {}, grimoire: { added: [], removed: [] }
   };
 }
@@ -1645,7 +2057,7 @@ function defaultState() {
     res:   Object.fromEntries(CHAR.resources.map(r => [r.id, r.max])),
     hp: CHAR.stats.hpMax, temp: 0,
     conc: null,
-    fx: { innate: false, shield: false, mirror: 0 },
+    fx: { innate: false, shield: false, mirror: 0, rage: false },
     spLog: [],
     items: CHAR.items.map((it, i) => ({ id: 'it' + i, ...it })),
     ui: { tab: 'magia', filter: 'all' }
@@ -1665,8 +2077,8 @@ function sanitize(raw) {
   d.temp = int(raw.temp, 0, 999, 0);
   d.conc = SPELL[raw.conc]?.conc ? raw.conc : null;
   if (Array.isArray(raw.spLog)) d.spLog = raw.spLog.filter(e => e && typeof e.txt === 'string').slice(0, 8)
-    .map(e => ({ t: String(e.t || '').slice(0, 5), d: int(e.d, -99, 99, 0), txt: e.txt.slice(0, 160), sp: int(e.sp, 0, RES.sp.max, 0) }));
-  d.fx.innate = !!raw.fx?.innate; d.fx.shield = !!raw.fx?.shield; d.fx.mirror = int(raw.fx?.mirror, 0, 3, 0);
+    .map(e => ({ t: String(e.t || '').slice(0, 5), d: int(e.d, -99, 99, 0), txt: e.txt.slice(0, 160), sp: int(e.sp, 0, RES.sp?.max ?? 0, 0) }));
+  d.fx.rage = !!raw.fx?.rage; d.fx.innate = !!raw.fx?.innate; d.fx.shield = !!raw.fx?.shield; d.fx.mirror = int(raw.fx?.mirror, 0, 3, 0);
   // v1 tinha um inventário genérico: a partir da v2 usa-se o inventário exato da ficha.
   if ((raw.v || 1) >= 2 && Array.isArray(raw.items)) {
     const cats = ITEM_CATS.map(c => c.id);
@@ -1969,6 +2381,7 @@ function impacto(res, nivel = 0) {
 /* =====================================================================
    CABEÇALHO E EFEITOS ATIVOS
    ===================================================================== */
+const ATTR_NOME = Object.fromEntries(ATTR);
 function renderStats() {
   const s = CHAR.stats, hpPct = Math.round(100 * state.hp / s.hpMax);
   $('#stats').innerHTML = `
@@ -1977,15 +2390,17 @@ function renderStats() {
       <div class="lbl">PV</div><div class="val num">${state.hp}<small>/${s.hpMax}</small></div>
       <div class="hpbar"><i style="width:${hpPct}%;background-position:${100 - hpPct}% 0"></i></div>
       <div class="hint">${state.temp ? `+${state.temp} temp.` : 'ajustar'}</div></div>
-    <div class="stat ${state.fx.innate ? 'boost' : ''}"><div class="lbl">CD Magia</div><div class="val num">${dc()}</div><div class="hint">${state.fx.innate ? 'F. Inata' : 'Carisma'}</div></div>
-    <div class="stat ${state.fx.innate ? 'boost' : ''}"><div class="lbl">Ataque</div><div class="val num">${sign(s.atk)}</div><div class="hint">${state.fx.innate ? 'Vantagem' : 'mágico'}</div></div>`;
-  $('#substats').innerHTML = `<span>Iniciativa <b>${sign(s.init)}</b></span><span>Desloc. <b>${s.speed}</b></span><span>BP <b>${sign(s.pb)}</b></span><span>PF <b>${state.res.sp}/${RES.sp.max}</b></span><span>Salv. CON <b>${sign(s.conSave)}</b>${CHAR.calc.concNote ? ' ' + CHAR.calc.concNote : ''}</span>`;
+    <div class="stat ${state.fx.innate ? 'boost' : ''}"><div class="lbl">${s.attr ? 'CD Magia' : 'CD'}</div><div class="val num">${dc()}</div><div class="hint">${state.fx.innate ? 'F. Inata' : ATTR_NOME[s.attr] || 'física'}</div></div>
+    <div class="stat ${state.fx.innate ? 'boost' : ''}"><div class="lbl">Ataque</div><div class="val num">${sign(s.atk)}</div><div class="hint">${state.fx.innate ? 'Vantagem' : s.attr ? 'mágico' : 'físico'}</div></div>`;
+  $('#substats').innerHTML = `<span>Iniciativa <b>${sign(s.init)}</b></span><span>Desloc. <b>${s.speed}</b></span><span>BP <b>${sign(s.pb)}</b></span>${RES.sp ? `<span>PF <b>${state.res.sp}/${RES.sp.max}</b></span>` : ''}<span>Salv. CON <b>${sign(s.conSave)}</b>${CHAR.calc.concNote ? ' ' + CHAR.calc.concNote : ''}</span>`;
 }
 
 function renderEffects() {
   const f = state.fx, out = [];
   if (state.conc) out.push(`<span class="fx" style="--c:#ffd28a">${icon('i-conc')}<span>Concentração: <b>${esc(SPELL[state.conc].name)}</b></span>
       <button class="act" data-action="conc-check">Teste</button><button class="x" data-action="conc-end" aria-label="Encerrar concentração">${icon('i-x')}</button></span>`);
+  if (f.rage) out.push(`<span class="fx" style="--c:#ff8a8a">${icon('i-flame')}<span><b>Fúria</b> · +${CLASS_LEVELS.barbarian[nivelDe(buildOf(activeChar()), 'barbarian') - 1]?.rage_damage_bonus ?? 2} de dano</span>
+      <button class="x" data-action="fx-end" data-fx="rage" aria-label="Encerrar Fúria">${icon('i-x')}</button></span>`);
   if (f.innate) out.push(`<span class="fx" style="--c:var(--frost)">${icon('i-snow')}<span><b>Feitiçaria Inata</b> · CD ${dc()} · Vantagem</span>
       <button class="x" data-action="fx-end" data-fx="innate" aria-label="Encerrar Feitiçaria Inata">${icon('i-x')}</button></span>`);
   if (f.shield) out.push(`<span class="fx" style="--c:var(--arcane)">${icon('i-shield')}<span><b>Escudo Arcano</b> · CA ${ac()}</span>
@@ -2002,6 +2417,7 @@ function renderEffects() {
    ABA MAGIA: ESPAÇOS, FONTE DE MAGIA, LEMBRETES
    ===================================================================== */
 function renderSlots() {
+  if (!LEVELS.length) { $('#slots').innerHTML = '<p class="note">Sem espaços de magia neste nível.</p>'; $('#badge-slots').hidden = true; return; }
   $('#slots').innerHTML = LEVELS.map(l => {
     const max = CHAR.slots[l], av = avail(l), ex = state.extra[l];
     let gems = '';
@@ -2022,6 +2438,8 @@ function renderSlots() {
 
 let spRulesOpen = false;
 function renderSpHub() {
+  $('#sp-hub').hidden = !RES.sp;
+  if (!RES.sp) return;
   const sp = state.res.sp, max = RES.sp.max;
   let gems = '';
   for (let i = 0; i < max; i++) gems += gem('', i >= sp, 'res-gem', { id: 'sp', i }, `Ponto de Feitiçaria ${i + 1}: ${i >= sp ? 'gasto, tocar para recuperar' : 'disponível, tocar para gastar'}`);
@@ -2084,6 +2502,11 @@ function renderSpHub() {
 }
 
 function renderReminders() {
+  if (activeChar().template !== 'soren') {
+    const grupos = [['Ação', 'a', x => /Usar Magia|^Ataque$/.test(x.tempo)], ['Ação Bônus', 'b', x => /Ação Bônus/.test(x.tempo)], ['Reação', 'r', x => /Reação/.test(x.tempo)], ['Outros', 'm', x => !/Usar Magia|^Ataque$|Ação Bônus|Reação/.test(x.tempo)]];
+    $('#reminders').innerHTML = `<div class="turn">${grupos.map(([n, k, f]) => { const l = CHAR.acoes.filter(f); return l.length ? `<div class="tr"><span class="tk ${k}">${n}</span><p>${l.map(a => `<i>${esc(a.name)}</i>`).join(' · ')}</p></div>` : ''; }).join('')}</div>`;
+    return;
+  }
   const sp = state.res.sp, s1 = totalAvail(1);
   $('#reminders').innerHTML = `<div class="turn">
     <div class="tr"><span class="tk a">Ação</span><p>Magia ou truque: ataque <b>${sign(CHAR.stats.atk)}</b>${state.fx.innate ? ' <b>com Vantagem</b>' : ''} ou <b>CD ${dc()}</b>. <i>Talho Mental</i> 1d6 (−1d4) · <i>Explosão Elemental</i> 1d8 · <i>Faca de Gelo</i> 1d10 + 2d6 · <i>Golpe Certeiro</i> 1d8 + 4.</p></div>
@@ -2110,30 +2533,31 @@ function renderFicha() {
       ${a.note ? `<span class="ab-note">${a.note}</span>` : ''}</div>`;
   }).join('');
 
-  $('#atk-hint').textContent = state.fx.innate ? 'Golpe Certeiro com Vantagem' : 'toque para rolar';
+  $('#atk-hint').textContent = state.fx.innate ? 'Ataques de magia com Vantagem' : 'toque para rolar';
   $('#attacks').innerHTML = CHAR.attacks.map(w => `<div class="atk-row">
       <div class="atk-t"><b>${w.name}</b><span>${w.sub}</span></div>
       ${rollBtn({ kind: 'd20', bonus: w.atk, atk: 1, src: w.id, adv: w.spell ? 'spell' : null, label: `${w.name} · ataque` }, `<small>ATQ</small><b class="num">${sign(w.atk)}</b>`, 'rb atk')}
       ${rollBtn({ kind: 'dmg', expr: w.dmg, crit: 1, src: w.id, type: w.type, label: `${w.name} · dano` }, `<small>DANO</small><b class="num">${showDice(w.dmg)}</b>`, 'rb dmg')}
       <div class="atk-c">Acerto: ${w.calc} · ${w.type} · média ${decimal(avgOf(w.dmg))}</div></div>`).join('');
 
+  const soren = activeChar().template === 'soren', inata = !!RES.innate, carga = soren ? `FOR ${abil('FOR').s} · Porte Poderoso (conta como Grande)` : `FOR ${abil('FOR').s}`;
   const rows = [
-    ['Classe de Armadura', ac(), `${CHAR.calc.ac}${state.fx.shield ? ` + ${s.shieldBonus} Escudo Arcano` : ` · ${s.ac + s.shieldBonus} com Escudo Arcano`}`, state.fx.shield],
+    ['Classe de Armadura', ac(), `${CHAR.calc.ac}${state.fx.shield ? ` + ${s.shieldBonus} Escudo Arcano` : SPELL.shield ? ` · ${s.ac + s.shieldBonus} com Escudo Arcano` : ''}`, state.fx.shield],
     ['Pontos de Vida', s.hpMax, CHAR.calc.hp],
-    ['CD de Magia', dc(), `${CHAR.calc.dc}${state.fx.innate ? ' + 1 Feitiçaria Inata' : ` · ${s.dc + 1} com Feitiçaria Inata`}`, state.fx.innate],
-    ['Ataque Mágico', sign(s.atk), `${CHAR.calc.atk}${state.fx.innate ? ' · com Vantagem' : ' · Vantagem com Feitiçaria Inata'}`, state.fx.innate],
-    ['Iniciativa', sign(s.init), 'DES 2'],
-    ['Percepção Passiva', 10 + modOf(abil('SAB').s), '10 + SAB 0'],
-    ['Deslocamento', s.speed, '35 pés · Salto das Nuvens: 9 m'],
-    ['Bônus de Proficiência', sign(pb), 'Nível de personagem 4'],
-    ['Carga Máxima', CHAR.carry, 'FOR 8 · Constituição Poderosa (conta como Grande)']
+    [s.attr ? 'CD de Magia' : 'CD de Característica', dc(), `${CHAR.calc.dc}${state.fx.innate ? ' + 1 Feitiçaria Inata' : inata ? ` · ${s.dc + 1} com Feitiçaria Inata` : ''}`, state.fx.innate],
+    [s.attr ? 'Ataque Mágico' : 'Ataque', sign(s.atk), `${CHAR.calc.atk}${state.fx.innate ? ' · com Vantagem' : inata ? ' · Vantagem com Feitiçaria Inata' : ''}`, state.fx.innate],
+    ['Iniciativa', sign(s.init), `DES ${sign(modOf(abil('DES').s))}`],
+    ['Percepção Passiva', 10 + modOf(abil('SAB').s), `10 + SAB ${modOf(abil('SAB').s)}`],
+    ['Deslocamento', s.speed, soren ? 'Salto da Nuvem: 9 m' : ''],
+    ['Bônus de Proficiência', sign(pb), `Nível de personagem ${CHAR.level}`],
+    ['Carga Máxima', CHAR.carry, carga]
   ];
   $('#calc').innerHTML = rows.map(([n, v, f, boost]) => `<div class="calc-row ${boost ? 'boost' : ''}"><b>${n}</b><span class="cv num">${v}</span><span>${f}</span></div>`).join('');
 
-  const line = ([n, k, src]) => {
-    const v = modOf(abil(k).s) + (src ? pb : 0);
+  const line = ([n, k, src, esp]) => {
+    const v = modOf(abil(k).s) + (src ? pb : 0) + (esp ? pb : 0);
     return rollBtn({ kind: 'd20', bonus: v, label: `${n} (${k})` },
-      `<span class="sk-n"><i class="pdot ${src ? '' : 'off'}"></i>${n} <small>${k}${src ? ' · ' + src : ''}</small></span><b class="num">${sign(v)}</b>`, `skill ${src ? 'prof' : ''}`);
+      `<span class="sk-n"><i class="pdot ${src ? '' : 'off'}"></i>${n} <small>${k}${src ? ' · ' + src : ''}${esp ? ' · Especialista' : ''}</small></span><b class="num">${sign(v)}</b>`, `skill ${src ? 'prof' : ''}`);
   };
   $('#skills').innerHTML = CHAR.skills.map(line).join('') + `<p class="sub-h" style="grid-column:1/-1">Ferramentas</p>` + CHAR.tools.map(line).join('');
 }
@@ -2232,13 +2656,19 @@ function renderHp() {
 }
 
 function renderRes() {
-  $('#res-list').innerHTML = CHAR.resources.map(r => {
+  const acoes = CHAR.acoes || [];
+  const painel = acoes.length ? `<div class="panel span2 acoes-classe"><div class="panel-h"><h2>Ações de classe</h2><span class="rule"></span><span class="aside">${acoes.length}</span></div><div class="acoes-lista">${acoes.map(a => {
+    const falta = a.res && (state.res[a.res] ?? 0) < a.custo;
+    return `<div class="acao"><div><b>${esc(a.name)}</b> <small>${esc(a.tempo)}${a.res && a.custo ? ` · ${a.custo} de ${esc(RES[a.res]?.name || a.res)}` : ''}</small><p>${esc(a.desc)}</p></div><div class="acao-b"><button class="btn sm" data-action="acao-ver" data-id="${esc(a.id)}">Ver</button><button class="btn sm gold" data-action="acao-usar" data-id="${esc(a.id)}" ${falta ? 'disabled' : ''}>Usar</button></div></div>`;
+  }).join('')}</div></div>` : '';
+  $('#res-list').innerHTML = painel + CHAR.resources.map(r => {
     const cur = state.res[r.id];
     let gems = '';
     for (let i = 0; i < r.max; i++) gems += gem('', i >= cur, 'res-gem', { id: r.id, i }, `${r.name} ${i + 1}: ${i >= cur ? 'gasto' : 'disponível'}`);
     let act = '';
     if (r.action) {
       if (r.action.goto) act = `<button class="btn sm" data-action="goto-sp">${r.action.label}</button>`;
+      else if (r.action.acao) act = `<button class="btn sm" data-action="acao-usar" data-id="${esc(r.action.acao)}" ${cur ? '' : 'disabled'}>${r.action.label}</button>`;
       else if (r.action.fx === 'innate' && state.fx.innate) act = `<button class="btn sm" data-action="fx-end" data-fx="innate">Encerrar</button>`;
       else act = `<button class="btn sm ${r.action.fx === 'innate' ? 'frost' : ''}" data-action="res-use" data-id="${r.id}" ${cur ? '' : 'disabled'}>${r.action.label}</button>`;
     }
@@ -2484,9 +2914,18 @@ function shortRestModal() {
       <button class="btn frost block" data-action="hd-roll" ${can ? '' : 'disabled'}>${icon('i-die')}${full ? 'PV já estão no máximo' : hd ? 'Rolar e gastar 1 Dado de Ponto de Vida' : 'Sem Dados de Pontos de Vida'}</button>
       <p class="note" style="margin:12px 0 6px">Rolou um d${CHAR.hitDie} físico? Toque no resultado:</p>
       <div class="fom-btns">${Array.from({ length: CHAR.hitDie }, (_, i) => `<button class="chipbtn" style="min-width:46px;justify-content:center" data-action="hd-roll" data-v="${i + 1}" ${can ? '' : 'disabled'}><b>${i + 1}</b></button>`).join('')}</div>
-      ${box('Feiticeiro nível 4', 'Nenhum recurso de classe volta no Descanso Curto. A <b>Restauração Feiticeira</b> (recuperar PF no descanso curto) chega no nível 5.', 'warn')}
-      <div class="m-actions"><button class="btn gold" data-action="close">Concluir descanso</button></div>`;
+      ${voltaCurto().length ? box('Ao concluir', `Voltam: ${voltaCurto().join(', ')}.`) : RES.sp && CHAR.level < 5 ? box('Feiticeiro', 'Nenhum recurso de classe volta no Descanso Curto. A <b>Restauração Feiticeira</b> (recuperar PF no descanso curto) chega no nível 5.', 'warn') : ''}
+      <div class="m-actions"><button class="btn gold" data-action="${voltaCurto().length ? 'short-go' : 'close'}">Concluir descanso</button></div>`;
   });
+}
+/** O que volta no Descanso Curto: recursos marcados e espaços de Pacto. */
+const voltaCurto = () => [...(Object.keys(CHAR.pactSlots || {}).length ? ['espaços de Pacto'] : []), ...CHAR.resources.filter(r => r.rest && r.rest !== 'longo' && state.res[r.id] < r.max).map(r => (r.rest === 'curto' ? r.name : `1 uso de ${r.name}`))];
+function descansoCurto() {
+  commit('Descanso Curto concluído', st => {
+    for (const l of Object.keys(CHAR.pactSlots || {})) st.used[l] = 0;
+    CHAR.resources.forEach(r => { if (r.rest === 'curto') st.res[r.id] = r.max; else if (r.rest && r.rest !== 'longo') st.res[r.id] = Math.min(r.max, st.res[r.id] + 1); });
+  });
+  closeModal();
 }
 function spendHitDie(v) {
   const die = v || d(CHAR.hitDie), heal = Math.max(1, die + CHAR.conMod);
@@ -2517,7 +2956,7 @@ function longRest() {
     LEVELS.forEach(l => { st.used[l] = 0; st.extra[l] = 0; });
     CHAR.resources.forEach(r => { st.res[r.id] = r.max; });
     st.hp = CHAR.stats.hpMax; st.temp = 0; st.conc = null;
-    st.fx = { innate: false, shield: false, mirror: 0 };
+    st.fx = { innate: false, shield: false, mirror: 0, rage: false };
   });
   closeModal();
 }
@@ -2589,7 +3028,26 @@ function exportData() {
   toast('Backup exportado', false);
 }
 const clampRes = (id, v) => Math.min(RES[id].max, Math.max(0, v));
-const FX_NAME = { innate: 'Feitiçaria Inata', shield: 'Escudo Arcano', mirror: 'Reflexos' };
+const FX_NAME = { innate: 'Feitiçaria Inata', shield: 'Escudo Arcano', mirror: 'Reflexos', rage: 'Fúria' };
+
+/* Ações de classe viram uma magia sem círculo: usam a mesma mesa e o mesmo motor de cena. */
+const acaoSpell = a => ({ id: 'cl-' + a.id, name: a.name, en: '', level: 0, school: 'Evocação', r: a.r, cena: a.cena, desc: [a.desc], time: a.tempo });
+function usarAcao(id, ver = false) {
+  const a = (CHAR.acoes || []).find(x => x.id === id);
+  if (!a) return;
+  if (!ver && a.res && a.custo) {
+    const r = RES[a.res], ok = commit(`${a.name}: ${state.res[a.res] - a.custo}/${r.max}`, st => {
+      if ((st.res[a.res] ?? 0) < a.custo) return false;
+      st.res[a.res] -= a.custo;
+      if (a.id === 'rage') st.fx.rage = true;
+      if (a.id === 'cunning') { const p = CHAR.pactSlots || {}; for (const l of Object.keys(p)) st.used[l] = Math.max(0, st.used[l] - (CHAR.level >= 20 ? p[l] : Math.ceil(p[l] / 2))); }
+    });
+    if (!ok) { toast('Recurso esgotado', false); return; }
+  }
+  const s = acaoSpell(a);
+  if (!ver && (a.r || []).some(x => x.t === 'dmg' || x.t === 'aux')) openMesa(s, 0, { modo: 'livre' });
+  else playSpell(s, null, CHAR.level);
+}
 
 function handle(a, el) {
   const ds = el.dataset, lv = +ds.lv, i = +ds.i;
@@ -2652,6 +3110,9 @@ function handle(a, el) {
       commit(`${r.name} usado (${state.res[r.id] - 1}/${r.max})`, st => { if (!st.res[r.id]) return false; st.res[r.id]--; });
       break;
     }
+    case 'acao-usar': usarAcao(ds.id); break;
+    case 'acao-ver': usarAcao(ds.id, true); break;
+    case 'short-go': descansoCurto(); break;
     case 'meta-use': { const m = META[ds.id]; commit(`${m.name}: −${m.cost} PF`, st => { if (st.res.sp < m.cost) return false; st.res.sp -= m.cost; }); break; }
     case 'fx-end': commit(`${FX_NAME[ds.fx]} encerrado`, st => { st.fx[ds.fx] = ds.fx === 'mirror' ? 0 : false; }); break;
     case 'mirror-hit': { const m = state.fx.mirror, hit = i < m;
@@ -3398,7 +3859,9 @@ function libGrupos(list) {
   }).join('');
 }
 
+let libDono = null;
 function renderLibrary() {
+  if (libDono !== store.activeId) { libDono = store.activeId; libFilters.cls = CHAR.lista || ''; }
   const box = $('#lib-view');
   if (libStatus === 'idle' || libStatus === 'loading') {
     box.innerHTML = '<p class="empty">Abrindo a biblioteca…</p>';
@@ -3414,7 +3877,7 @@ function renderLibrary() {
       <div class="lib-filters">
         ${sel('level', 'Círculo', [['', 'Todos'], ['0', 'Truques'], ...[1, 2, 3, 4, 5, 6, 7, 8, 9].map(n => [String(n), n + 'º'])])}
         ${sel('school', 'Escola', [['', 'Todas'], ...SCHOOLS.map(x => [x, x])])}
-        ${sel('cls', 'Classe', [['', 'Todas'], ...Object.entries(CLASS_NAMES).filter(([k]) => k !== 'barbarian' && k !== 'fighter' && k !== 'monk' && k !== 'rogue')])}
+        ${sel('cls', 'Classe', [['', 'Todas'], ...Object.entries(CLASS_NAMES).filter(([k]) => !['barbarian', 'fighter', 'monk', 'rogue'].includes(k))])}
         ${sel('dmg', 'Dano', [['', 'Todos'], ...DMG_TYPES.map(x => [x, x])])}
         ${sel('conc', 'Concentração', [['', 'Tanto faz'], ['true', 'Sim'], ['false', 'Não']])}
         ${sel('ritual', 'Ritual', [['', 'Tanto faz'], ['true', 'Sim'], ['false', 'Não']])}
@@ -3605,7 +4068,7 @@ document.addEventListener('click', e => {
     case 'lib-add': addToGrimoire(id); break;
     case 'lib-remove': removeFromGrimoire(id); break;
     case 'lib-more': libLimit += LIB_PAGE; renderLibrary(); break;
-    case 'lib-clear': libFilters = { ...LIB_FILTERS_DEFAULT }; libLimit = LIB_PAGE; renderLibrary(); break;
+    case 'lib-clear': libFilters = { ...LIB_FILTERS_DEFAULT, cls: CHAR.lista || '' }; libLimit = LIB_PAGE; renderLibrary(); break;
     case 'lib-import': $('#lib-file').click(); break;
     case 'spell-new': openEditor(null); break;
     case 'spell-edit': openEditor(id); break;
@@ -3754,7 +4217,9 @@ function sprite(nome, cor, tam, brilho = 1) {
   if (brilho) { c.shadowColor = cor; c.shadowBlur = q * .16 * brilho; }
   c.fillStyle = cor; c.fill(p);
   if (brilho) c.fill(p);
-  if (fxArtes.sprite.size > 90) fxArtes.sprite.clear();
+  // Limite por área: celulares têm pouca memória para canvas.
+  fxArtes.area = (fxArtes.area || 0) + cv.width * cv.height;
+  if (fxArtes.area > 12e6) { fxArtes.sprite.clear(); fxArtes.area = cv.width * cv.height; }
   fxArtes.sprite.set(k, cv);
   return cv;
 }
@@ -4876,7 +5341,7 @@ function cenaDe(s) {
    Casa vazia é rolada pelo app; a cena recebe o resultado fechado.
    ===================================================================== */
 let lance = null, mesaCtx = null;
-const spellById = id => SPELL[id] || libGet(id);
+const spellById = id => { const a = String(id).startsWith('cl-') ? CHAR.acoes?.find(x => 'cl-' + x.id === id) : null; return a ? acaoSpell(a) : SPELL[id] || libGet(id); };
 const refazLimite = () => Math.max(1, CHAR.stats.cha);
 
 function openMesa(s, lv, ctx = {}) {
@@ -5076,6 +5541,7 @@ function renderPersonagem() {
     </div>
     <div class="panel"><div class="panel-h"><h2>Nível ${n}</h2><span class="rule"></span></div>
       <p class="note">${esc(CHAR.subText)}</p>
+      ${c.template === 'soren' ? '' : `<div class="field-row"><div class="field"><label for="id-armor">Armadura vestida</label><select id="id-armor"><option value="">Nenhuma</option>${ARMADURAS.map(a => `<option ${b.armor === a[0] ? 'selected' : ''}>${esc(a[0])}</option>`).join('')}</select></div><div class="field"><label class="ck"><input type="checkbox" id="id-shield" ${b.shield ? 'checked' : ''}>Escudo</label></div></div>`}
       <div class="m-actions"><button class="btn gold" data-action="lv-open" ${n >= 20 ? 'disabled' : ''}>${icon('i-plus')}${n >= 20 ? 'Nível máximo' : 'Subir de nível'}</button>${c.history?.length ? `<button class="btn ghost" data-action="lv-undo">Desfazer último nível</button>` : ''}</div>
     </div>
     <div class="panel"><div class="panel-h"><h2>Espécie</h2><span class="rule"></span><span class="aside">${esc(sp ? sp.name + (lin ? ' · ' + lin[0] : '') : '—')}</span></div>${tracos}</div>
@@ -5084,7 +5550,7 @@ function renderPersonagem() {
     <div class="panel"><div class="panel-h"><h2>Talentos</h2><span class="rule"></span><button class="btn sm" data-action="feat-catalog">Catálogo</button></div>
       ${feats.length ? `<ul class="plist">${feats.map(f => `<li><b>${esc(f.name)}.</b> ${esc(f.desc)}</li>`).join('')}</ul>` : '<p class="note">Nenhum talento ainda.</p>'}
       ${planos ? `<h4 class="ed-h">Planejados</h4><ul class="plist">${planos}</ul>` : ''}</div>
-    <div class="panel"><div class="panel-h"><h2>Características</h2><span class="rule"></span><span class="aside">${feitos.length} obtidas · ${proximos.length} por vir</span></div>
+    <div class="panel"><div class="panel-h"><h2>Características</h2><span class="rule"></span><button class="btn sm" data-action="comp-open">Compêndio</button><span class="aside">${feitos.length} obtidas · ${proximos.length} por vir</span></div>
       <ul class="timeline">${feitos.map(f => linha(f, true)).join('')}${proximos.map(f => linha(f, false)).join('')}</ul></div>`;
 }
 
@@ -5113,6 +5579,12 @@ document.addEventListener('input', e => {
   idTimer = setTimeout(() => { persistStore(); renderHero(); renderNotesScope(); }, 250);
 });
 document.addEventListener('change', e => {
+  if (e.target.id === 'id-armor' || e.target.id === 'id-shield') {
+    const c = activeChar(), b = buildOf(c);
+    if (e.target.id === 'id-armor') b.armor = e.target.value || null; else b.shield = e.target.checked;
+    bindSheet(c); save(); render();
+    return;
+  }
   const fid = e.target.dataset?.plan;
   if (fid === undefined) return;
   const b = buildOf(activeChar());
@@ -5134,6 +5606,46 @@ document.addEventListener('submit', e => {
   store.library.feats = [...(store.library.feats || []), { id: newId('f-'), name, desc: $('#ft-desc').value.trim(), src: 'minha' }];
   persistStore(); modalRefresh?.(); toast(`${name} adicionado ao catálogo`, false);
 });
+
+/* =====================================================================
+   COMPÊNDIO — classes, subclasses, itens e o que veio da biblioteca pessoal
+   ===================================================================== */
+let compFiltro = '', compAba = 'classes';
+function compEntradas() {
+  const P = privateRaw || {}, q = norm(compFiltro);
+  const inteiro = (cl, sub, nome) => (P.caracteristicas || []).find(f => f.classe === cl && f.sub === sub && f.nome === nome)?.texto;
+  const abas = {
+    classes: Object.entries(CLASSES).flatMap(([id, C]) => [{ t: C.name, s: `d${C.hd} · ${C.armadura}${C.fonte ? ' · ' + C.fonte : ''}`, itens: C.feats.map(f => [f[0], f[1], inteiro(id, null, f[1]) || f[2]]) }, ...Object.entries(C.subs).map(([k, s]) => ({ t: s.name, s: C.name, itens: s.feats.map(f => [f[0], f[1], inteiro(id, k, f[1]) || f[2]]) }))]),
+    antigas: Object.entries((P.subclassesAntigas || []).reduce((a, f) => { (a[f.sub] = a[f.sub] || []).push(f); return a; }, {})).map(([sub, fs]) => ({ t: sub, s: 'Anterior a 2024', itens: fs.map(f => [f.nivel, f.nome, f.texto]) })),
+    itens: (P.itens || []).map(x => ({ t: x.nome, s: x.tipo, itens: [['', '', x.texto]], item: 1 })),
+    armas: ARMAS.map(a => ({ t: a[0], s: `${a[1]} ${a[2]} · ${a[3] || 'sem propriedades'} · Maestria: ${a[4]}`, itens: [], arma: 1 }))
+  };
+  const lista = abas[compAba] || [];
+  return q ? lista.filter(e => norm(e.t + ' ' + e.s + ' ' + e.itens.map(i => i[1] + ' ' + i[2]).join(' ')).includes(q)) : lista;
+}
+function compendio() {
+  openModal(() => {
+    const abas = [['classes', 'Classes'], ['armas', 'Armas'], ['antigas', 'Subclasses antigas'], ['itens', 'Itens mágicos']], l = compEntradas();
+    return `${mHead('Consulta', 'Compêndio')}
+      <div class="ck-row">${abas.map(([k, n]) => `<button class="btn sm ${compAba === k ? 'gold' : ''}" data-action="comp-aba" data-a="${k}">${n}</button>`).join('')}</div>
+      <div class="field"><label for="comp-q">Buscar</label><input id="comp-q" value="${esc(compFiltro)}"></div>
+      <p class="note">${l.length} resultado(s).${privateRaw ? '' : ' Importe a biblioteca pessoal para ver os textos integrais, as subclasses antigas e os itens mágicos.'}</p>
+      ${l.slice(0, 60).map((e, i) => `<details class="passive"><summary>${esc(e.t)} <small>${esc(e.s)}</small></summary>${e.itens.length ? `<ul>${e.itens.map(f => `<li>${f[0] ? `<b>${f[0]} · ${esc(f[1])}.</b> ` : ''}${esc(f[2])}</li>`).join('')}</ul>` : ''}${e.item || e.arma ? `<button class="btn sm" data-action="comp-add" data-n="${esc(e.t)}" data-c="${e.arma ? 'arma' : 'equip'}">Pôr na mochila</button>` : ''}</details>`).join('')}
+      <div class="m-actions"><button class="btn gold" data-action="close">Fechar</button></div>`;
+  });
+}
+document.addEventListener('click', e => {
+  const b = e.target.closest('[data-action]');
+  if (!b) return;
+  if (b.dataset.action === 'comp-open') compendio();
+  else if (b.dataset.action === 'comp-aba') { compAba = b.dataset.a; modalRefresh?.(); }
+  else if (b.dataset.action === 'comp-add') {
+    const nome = b.dataset.n, cat = b.dataset.c;
+    commit(`${nome} na mochila`, st => { st.items.push({ id: 'it' + Date.now(), name: nome, note: '', qty: 1, cat, unit: '' }); });
+    const c = activeChar(); bindSheet(c); render();
+  }
+});
+document.addEventListener('input', e => { if (e.target.id === 'comp-q') { compFiltro = e.target.value; const p = e.target.selectionStart; modalRefresh?.(); const n = $('#comp-q'); n?.focus(); n?.setSelectionRange(p, p); } });
 /* =====================================================================
    SUBIR DE NÍVEL — assistente com PV, mudanças, escolhas e revisão
    ===================================================================== */
@@ -5144,24 +5656,29 @@ async function openLevelUp() {
   const c = activeChar();
   if (buildOf(c).level >= 20) return;
   await ensureLibrary();
-  lv = { step: 0, need: levelNeeds(c), hp: null, src: '', mode: 'asi2', a1: 'CAR', a2: 'CON', feat: '', meta: [], spells: [], swapOut: '', swapIn: '' };
+  lv = { step: 0, classId: buildOf(c).classId, sub: '', exp: [], estilos: [], inv: [], man: [], need: levelNeeds(c), hp: null, src: '', mode: 'asi2', a1: CLASSES[buildOf(c).classId].prim[0], a2: 'CON', feat: '', meta: [], spells: [], swapOut: '', swapIn: '' };
   // Talento planejado para este nível já vem marcado.
   const plan = Object.entries(buildOf(c).planned || {}).find(([, l]) => l === lv.need.n);
   if (plan && (lv.need.asi || lv.need.boon)) { lv.mode = 'feat'; lv.feat = plan[0]; }
   if (lv.need.boon) lv.mode = 'feat';
   openModal(levelBody);
 }
-const hasChoices = () => { const n = lv.need; return n.asi || n.boon || n.metamagic > 0 || n.cantrips > 0 || n.prepared > 0; };
+const hasChoices = () => { const n = lv.need; return n.asi || n.boon || n.metamagic > 0 || n.cantrips > 0 || n.prepared > 0 || n.subclass || n.expertise || n.estilo || n.invocacoes > 0 || n.manobras; };
+const podeMulti = (b, id) => { const C = CLASSES[id], ok = k => b.scores[k] >= 13; return C.multiAlgum ? C.multi.some(ok) : C.multi.every(ok); };
+const classesNoNivel = b => Object.entries(CLASSES).filter(([id]) => nivelDe(b, id) > 0 || (podeMulti(b, id) && podeMulti(b, b.classId)));
+const dadoPV = () => CLASSES[lv.classId].hd;
+const mediaPV = () => Math.floor(dadoPV() / 2) + 1;
 const steps = () => [0, 1, ...(hasChoices() ? [2] : []), 3];
 
 function levelBody() {
-  const c = activeChar(), b = buildOf(c), n = lv.need, con = modScore(b.scores.CON), resil = (b.subclassId === 'draconic' || n.subclass) && n.n >= 3 ? (n.n === 3 ? 3 : 1) : 0, st = steps(), i = st.indexOf(lv.step);
+  const c = activeChar(), b = buildOf(c), n = lv.need, con = modScore(b.scores.CON), lvS = lv.classId === 'sorcerer' ? n.nl : 0, drac = classesOf(b).some(x => x.sub === 'draconic') || (lv.classId === 'sorcerer' && n.subclass && (lv.sub || 'draconic') === 'draconic'), resil = drac && lvS >= 3 ? (lvS === 3 ? 3 : 1) : 0, st = steps(), i = st.indexOf(lv.step);
   const nav = (ok, label = 'Continuar') => `<div class="m-actions">${i ? '<button class="btn ghost" data-action="lv-back">Voltar</button>' : '<button class="btn ghost" data-action="close">Cancelar</button>'}<button class="btn gold" data-action="${lv.step === 3 ? 'lv-apply' : 'lv-next'}" ${ok ? '' : 'disabled'}>${label}</button></div>`;
   const head = mHead(`Nível ${b.level} → ${n.n} · etapa ${i + 1} de ${st.length}`, ['Pontos de Vida', 'O que muda', 'Suas escolhas', 'Revisão'][lv.step]);
   if (lv.step === 0) return `${head}
-    <p class="note" style="margin-top:12px">Ganho de PV: 1d6 ${sign(con)} (CON)${resil ? ` + ${resil} (Resiliência Dracônica)` : ''}, com mínimo de 1.</p>
-    <div class="m-actions"><button class="btn frost" data-action="lv-roll">${icon('i-d20')}Rolar 1d6</button><button class="btn" data-action="lv-avg">Usar a média (4)</button></div>
-    <div class="field" style="margin-top:12px"><label for="lv-die">Ou digite o dado físico</label><input id="lv-die" type="number" min="1" max="6" inputmode="numeric" value="${lv.src === 'dado físico' ? lv.hp : ''}"></div>
+    ${classesNoNivel(b).length > 1 ? `<div class="field" style="margin-top:12px"><label for="lv-class">Classe deste nível</label><select id="lv-class">${classesNoNivel(b).map(([id, C]) => `<option value="${id}" ${lv.classId === id ? 'selected' : ''}>${esc(C.name)}${nivelDe(b, id) ? ` (nível ${nivelDe(b, id)})` : ' · nova classe'}</option>`).join('')}</select></div>` : ''}
+    <p class="note" style="margin-top:12px">Ganho de PV: 1d${dadoPV()} ${sign(con)} (CON)${resil ? ` + ${resil} (Resiliência Dracônica)` : ''}, com mínimo de 1.</p>
+    <div class="m-actions"><button class="btn frost" data-action="lv-roll">${icon('i-d20')}Rolar 1d${dadoPV()}</button><button class="btn" data-action="lv-avg">Usar a média (${mediaPV()})</button></div>
+    <div class="field" style="margin-top:12px"><label for="lv-die">Ou digite o dado físico</label><input id="lv-die" type="number" min="1" max="${dadoPV()}" inputmode="numeric" value="${lv.src === 'dado físico' ? lv.hp : ''}"></div>
     ${lv.hp ? `<p class="note">Dado: <b>${lv.hp}</b> (${lv.src}) · ganho de <b>${Math.max(1, lv.hp + con) + resil} PV</b></p>` : ''}${nav(!!lv.hp)}`;
   if (lv.step === 1) return `${head}<ul class="plist" style="margin-top:12px">${levelDiff(c).map(t => `<li>${esc(t)}</li>`).join('') || '<li>Nenhuma mudança além dos PV.</li>'}${n.draconic.length ? `<li>Sempre preparadas: ${n.draconic.map(x => esc(libGet(x)?.name || x)).join(', ')}</li>` : ''}</ul>${nav(true)}`;
   if (lv.step === 2) {
@@ -5173,12 +5690,16 @@ function levelBody() {
       ${lv.mode === 'feat' ? `<div class="field"><label for="lv-feat">Talento</label><select id="lv-feat"><option value="">Escolha…</option>${op('', lv.feat, feats.map(f => [f.id, f.name]))}</select></div>${lv.feat ? `<p class="note">${esc(String(featById(lv.feat)?.desc || '').slice(0, 240))}</p>` : ''}`
         : `<div class="field-row"><div class="field"><label for="lv-a1">Atributo</label><select id="lv-a1">${op('', lv.a1, attrs)}</select></div>${lv.mode === 'asi11' ? `<div class="field"><label for="lv-a2">Segundo atributo</label><select id="lv-a2">${op('', lv.a2, attrs)}</select></div>` : ''}</div>`}` : '';
     const meta = n.metamagic > 0 ? `<h4 class="ed-h">Metamagia: escolha ${n.metamagic}</h4><div class="pick">${METAMAGIC.filter(m => !b.metamagic.includes(m.id)).map(m => `<label class="ck"><input type="checkbox" data-meta="${m.id}" ${lv.meta.includes(m.id) ? 'checked' : ''}><span><b>${esc(m.name)}</b> · ${m.cost} PF<br><small>${esc(m.desc)}</small></span></label>`).join('')}</div>` : '';
-    const maxC = Math.max(...Object.keys(deriveSheetAt(c, n.n).slots).map(Number));
-    const lista = libraryAll().filter(s => (s.classes || []).includes('sorcerer') && s.level <= maxC && !inGrimoire(s));
+    const maxC = Math.max(0, ...Object.keys(deriveSheetAt(c, n.n).slots).map(Number)), listaId = CLASSES[lv.classId].subs[lv.sub || classesOf(b).find(x => x.id === lv.classId)?.sub]?.caster?.lista || lv.classId;
+    const lista = libraryAll().filter(s => (s.classes || []).includes(listaId) && s.level <= maxC && !inGrimoire(s));
+    const marca = (lista2, sel, attr, q, titulo) => (q > 0 ? `<h4 class="ed-h">${titulo}: escolha ${q}</h4><div class="pick">${lista2.map(x => `<label class="ck"><input type="checkbox" data-lvpick="${attr}" data-v="${esc(x)}" ${sel.includes(x) ? 'checked' : ''}>${esc(x)}</label>`).join('')}</div>` : '');
+    const subEl = n.subclass ? `<div class="field"><label for="lv-sub">Subclasse</label><select id="lv-sub"><option value="">Escolha…</option>${Object.entries(n.subs).map(([k, s]) => `<option value="${k}" ${lv.sub === k ? 'selected' : ''}>${esc(s.name)}</option>`).join('')}</select></div>` : '';
+    const prof = SKILLS.map(s => s[0]).filter(s => b.skills[s] && !(b.expertise || []).includes(s));
+    const extras = subEl + marca(prof, lv.exp, 'exp', n.expertise, 'Especialização') + marca(ESTILOS.filter(s => !(b.escolhas?.estilos || []).includes(s)), lv.estilos, 'estilos', n.estilo, 'Estilo de Luta') + marca(INVOCACOES.filter(s => !(b.escolhas?.invocacoes || []).includes(s)), lv.inv, 'inv', n.invocacoes, 'Invocações Místicas') + marca(MANOBRAS.filter(s => !(b.escolhas?.manobras || []).includes(s)), lv.man, 'man', n.manobras, 'Manobras');
     const grupo = (titulo, q, filtro) => (q > 0 ? `<h4 class="ed-h">${titulo}: escolha até ${q} <small>(ou depois, na Biblioteca)</small></h4><div class="pick">${lista.filter(filtro).sort((x, y) => x.level - y.level || x.name.localeCompare(y.name, 'pt-BR')).map(s => `<label class="ck"><input type="checkbox" data-sp="${esc(s.id)}" ${lv.spells.includes(s.id) ? 'checked' : ''}><span>${esc(s.name)} <small>${s.level ? s.level + 'º' : 'truque'}</small></span></label>`).join('')}</div>` : '');
     const troca = `<h4 class="ed-h">Trocar uma magia (opcional)</h4><div class="field"><label for="lv-swap">Sair do grimório</label><select id="lv-swap"><option value="">Nenhuma</option>${SPELLS.filter(s => !s.draconic).map(s => `<option value="${esc(s.id)}" ${lv.swapOut === s.id ? 'selected' : ''}>${esc(s.name)}</option>`).join('')}</select></div>`;
     const okMeta = lv.meta.length === n.metamagic || n.metamagic <= 0, okFeat = !(n.asi || n.boon) || lv.mode !== 'feat' || !!lv.feat;
-    return `${head}${asi}${meta}${grupo('Novos truques', n.cantrips, s => !s.level)}${grupo('Novas magias', n.prepared, s => s.level)}${troca}${nav(okMeta && okFeat)}`;
+    return `${head}${extras}${asi}${meta}${grupo('Novos truques', n.cantrips, s => !s.level)}${grupo('Novas magias', n.prepared, s => s.level)}${troca}${nav(okMeta && okFeat && (!n.subclass || !!lv.sub))}`;
   }
   const ganho = Math.max(1, lv.hp + con) + resil, itens = [`+${ganho} PV (dado ${lv.hp}, ${lv.src})`];
   if (lv.mode === 'feat' && lv.feat) itens.push(`Talento: ${featById(lv.feat)?.name}`);
@@ -5195,7 +5716,7 @@ function choicesFromWizard() {
   if ((n.asi || n.boon) && lv.mode !== 'feat') {
     if (lv.mode === 'asi2') asi[lv.a1] = 2; else { asi[lv.a1] = (asi[lv.a1] || 0) + 1; asi[lv.a2] = (asi[lv.a2] || 0) + 1; }
   }
-  return { hp: lv.hp, asi, feat: lv.mode === 'feat' ? lv.feat : '', metamagic: lv.meta, spells: lv.spells, swapOut: lv.swapOut };
+  return { classId: lv.classId, subclass: lv.sub || undefined, hp: lv.hp, asi, feat: lv.mode === 'feat' ? lv.feat : '', metamagic: lv.meta, spells: lv.spells, swapOut: lv.swapOut, expertise: lv.exp, estilos: lv.estilos, invocacoes: lv.inv, manobras: lv.man };
 }
 /** Aplica o nível no personagem ativo e atualiza recursos, PV e telas. */
 function commitLevel(ch) {
@@ -5230,8 +5751,8 @@ document.addEventListener('click', e => {
   switch (b.dataset.action) {
     case 'lv-open': openLevelUp(); break;
     case 'lv-undo': undoLastLevel(); break;
-    case 'lv-roll': lv.hp = d(6); lv.src = 'rolado'; modalRefresh(); break;
-    case 'lv-avg': lv.hp = 4; lv.src = 'média'; modalRefresh(); break;
+    case 'lv-roll': lv.hp = d(dadoPV()); lv.src = 'rolado'; modalRefresh(); break;
+    case 'lv-avg': lv.hp = mediaPV(); lv.src = 'média'; modalRefresh(); break;
     case 'lv-next': { const s = steps(); lv.step = s[s.indexOf(lv.step) + 1]; modalRefresh(); $('#sheet').scrollTop = 0; break; }
     case 'lv-back': { const s = steps(); lv.step = s[s.indexOf(lv.step) - 1]; modalRefresh(); break; }
     case 'lv-apply': {
@@ -5245,7 +5766,14 @@ document.addEventListener('click', e => {
 document.addEventListener('change', e => {
   if (!lv || $('#modal').hidden) return;
   const t = e.target;
-  if (t.id === 'lv-die') { const v = +t.value; if (v >= 1 && v <= 6) { lv.hp = v; lv.src = 'dado físico'; modalRefresh(); } }
+  if (t.id === 'lv-die') { const v = +t.value; if (v >= 1 && v <= dadoPV()) { lv.hp = v; lv.src = 'dado físico'; modalRefresh(); } }
+  else if (t.id === 'lv-class') { lv.classId = t.value; lv.sub = ''; lv.hp = null; lv.need = levelNeeds(activeChar(), lv.classId); lv.a1 = CLASSES[lv.classId].prim[0]; modalRefresh(); }
+  else if (t.id === 'lv-sub') { lv.sub = t.value; lv.need = levelNeeds(activeChar(), lv.classId, lv.sub || null); lv.need.subclass = true; modalRefresh(); }
+  else if (t.dataset.lvpick) {
+    const k = t.dataset.lvpick, q = { exp: lv.need.expertise, estilos: lv.need.estilo, inv: lv.need.invocacoes, man: lv.need.manobras }[k];
+    if (t.checked && lv[k].length >= q) { t.checked = false; toast(`Escolha só ${q}`, false); return; }
+    lv[k] = t.checked ? [...lv[k], t.dataset.v] : lv[k].filter(x => x !== t.dataset.v);
+  }
   else if (t.name === 'lv-mode') { lv.mode = t.value; modalRefresh(); }
   else if (t.id === 'lv-feat') { lv.feat = t.value; modalRefresh(); }
   else if (t.id === 'lv-a1') lv.a1 = t.value;
@@ -5261,18 +5789,20 @@ document.addEventListener('change', e => {
   }
 });
 /* =====================================================================
-   CRIAR PERSONAGEM — assistente guiado (Feiticeiro, D&D 2024)
+   CRIAR PERSONAGEM — assistente guiado, todas as classes de D&D 2024
    ===================================================================== */
 const STANDARD_ARRAY = [15, 14, 13, 12, 10, 8];
 const POINT_COST = { 8: 0, 9: 1, 10: 2, 11: 3, 12: 4, 13: 5, 14: 7, 15: 9 };
 let cw = null;
-const CW_TITLES = ['Espécie', 'Antecedente', 'Atributos', 'Perícias', 'Talento de origem', 'Equipamento', 'Truques e magias', 'Nível inicial'];
+const CW_TITLES = ['Classe', 'Espécie', 'Antecedente', 'Atributos', 'Perícias', 'Talento de origem', 'Equipamento', 'Truques e magias', 'Nível inicial'];
 
 function freshWizard(name) {
-  return { step: 0, name, speciesId: 'human', lineage: 'cloud', customSpecies: '', customSpeed: 30, backgroundId: 'acolyte', customBg: '', attrs: ['CAR', 'CON', 'DES'], bonusMode: '21', bonus: { plus2: 'CAR', plus1: 'SAB' }, method: 'padrao', scores: Object.fromEntries(ATTR.map(([k]) => [k, 10])), pool: [...STANDARD_ARRAY], assign: { CAR: 15, CON: 14, DES: 13, SAB: 12, INT: 10, FOR: 8 }, skills: [], feat: '', gear: 'a', spells: [], level: 1 };
+  return { step: 0, name, classId: 'sorcerer', sub: '', speciesId: 'human', lineage: 'cloud', customSpecies: '', customSpeed: 30, backgroundId: 'acolyte', customBg: '', attrs: ['CAR', 'CON', 'DES'], bonusMode: '21', bonus: { plus2: 'CAR', plus1: 'SAB' }, method: 'padrao', scores: Object.fromEntries(ATTR.map(([k]) => [k, 10])), pool: [...STANDARD_ARRAY], assign: { CAR: 15, CON: 14, DES: 13, SAB: 12, INT: 10, FOR: 8 }, skills: [], feat: '', gear: 'a', spells: [], level: 1, expertise: [] };
 }
 async function openCreator(name) { await ensureLibrary(); cw = freshWizard(name); openModal(creatorBody); }
 
+const cwClasse = () => CLASSES[cw.classId];
+const cwLista = () => (cwClasse().skills[1] || SKILLS.map(s => s[0]));
 const cwSpecies = () => (cw.speciesId === 'custom' ? { id: 'custom', name: cw.customSpecies || 'Personalizada', speed: cw.customSpeed, traits: [] } : speciesById(cw.speciesId));
 const cwBackground = () => (cw.backgroundId === 'custom' ? { id: 'custom', name: cw.customBg || 'Personalizado', attrs: cw.attrs, feat: '', skills: [], tool: '', desc: '' } : backgroundById(cw.backgroundId));
 function baseScores() {
@@ -5290,11 +5820,11 @@ const pointsUsed = () => Object.values(cw.scores).reduce((a, v) => a + (POINT_CO
 function stepValid() {
   const bg = cwBackground();
   switch (cw.step) {
-    case 0: return cw.speciesId !== 'custom' || !!cw.customSpecies.trim();
-    case 1: return (cw.backgroundId !== 'custom' || !!cw.customBg.trim()) && (cw.bonusMode === '111' || (cw.bonus.plus2 !== cw.bonus.plus1 && bg.attrs.includes(cw.bonus.plus2) && bg.attrs.includes(cw.bonus.plus1)));
-    case 2: { if (cw.method === 'compra') return pointsUsed() <= 27; const v = Object.values(cw.assign); return new Set(ATTR.map(([k]) => k)).size === 6 && [...v].sort().join() === [...cw.pool].sort().join(); }
-    case 3: return cw.skills.length === 2;
-    case 5: return !!cw.gear;
+    case 1: return cw.speciesId !== 'custom' || !!cw.customSpecies.trim();
+    case 2: return (cw.backgroundId !== 'custom' || !!cw.customBg.trim()) && (cw.bonusMode === '111' || (cw.bonus.plus2 !== cw.bonus.plus1 && bg.attrs.includes(cw.bonus.plus2) && bg.attrs.includes(cw.bonus.plus1)));
+    case 3: { if (cw.method === 'compra') return pointsUsed() <= 27; const v = Object.values(cw.assign); return new Set(ATTR.map(([k]) => k)).size === 6 && [...v].sort().join() === [...cw.pool].sort().join(); }
+    case 4: return cw.skills.length === cwClasse().skills[0];
+    case 6: return !!cw.gear;
     default: return true;
   }
 }
@@ -5305,43 +5835,49 @@ function creatorBody() {
   const P = privateCatalog();
   let b = '';
   if (i === 0) {
+    const C = cwClasse();
+    b = `<div class="field"><label for="cw-cl">Classe</label><select id="cw-cl">${opts(Object.entries(CLASSES).sort((x, y) => x[1].name.localeCompare(y[1].name, 'pt-BR')).map(([k, v]) => [k, v.name]), cw.classId)}</select></div>
+      <ul class="plist"><li><b>Dado de Ponto de Vida:</b> d${C.hd}</li><li><b>Atributo primário:</b> ${C.prim.join(' e ')}</li><li><b>Salvaguardas:</b> ${C.saves.join(' e ')}</li><li><b>Armas:</b> ${esc(C.armas)}</li><li><b>Armadura:</b> ${esc(C.armadura)}</li>${C.ferr ? `<li><b>Ferramentas:</b> ${esc(C.ferr)}</li>` : ''}${C.caster ? `<li><b>Conjuração:</b> ${C.caster.attr}</li>` : ''}</ul>
+      <p class="note">Subclasses: ${esc(Object.values(C.subs).map(s => s.name).join(', '))}.</p>`;
+  } else if (i === 1) {
     const sp = cwSpecies();
     b = `<div class="field"><label for="cw-sp">Espécie</label><select id="cw-sp">${opts([...SPECIES.map(s => [s.id, s.name]), ...P.especies.map(s => [s.id, s.name + ' (pessoal)']), ['custom', 'Personalizada']], cw.speciesId)}</select></div>
       ${cw.speciesId === 'custom' ? `<div class="field-row"><div class="field"><label for="cw-spn">Nome</label><input id="cw-spn" maxlength="40" value="${esc(cw.customSpecies)}"></div><div class="field"><label for="cw-spd">Deslocamento (pés)</label><input id="cw-spd" type="number" min="5" max="60" step="5" value="${cw.customSpeed}"></div></div>` : ''}
       ${sp.lineages ? `<div class="field"><label for="cw-lin">Ascendência</label><select id="cw-lin">${opts(Object.entries(sp.lineages).map(([k, v]) => [k, v[0]]), cw.lineage)}</select></div>` : ''}
       <ul class="plist">${(sp.traits || []).map(([t, d]) => `<li><b>${esc(t)}.</b> ${esc(String(d).slice(0, 240))}</li>`).join('')}</ul>`;
-  } else if (i === 1) {
+  } else if (i === 2) {
     const bg = cwBackground(), a = bg.attrs.map(k => [k, ATTR.find(x => x[0] === k)[1]]);
     b = `<div class="field"><label for="cw-bg">Antecedente</label><select id="cw-bg">${opts([...BACKGROUNDS.filter(x => x.id !== 'wayfarer').map(x => [x.id, x.name]), ...P.antecedentes.map(x => [x.id, x.name + ' (pessoal)']), ['custom', 'Personalizado']], cw.backgroundId)}</select></div>
       ${cw.backgroundId === 'custom' ? `<div class="field"><label for="cw-bgn">Nome</label><input id="cw-bgn" maxlength="40" value="${esc(cw.customBg)}"></div><div class="field-row">${[0, 1, 2].map(n => `<div class="field"><label>Atributo ${n + 1}</label><select data-cwattr="${n}">${opts(ATTR, cw.attrs[n])}</select></div>`).join('')}</div>` : `<p class="note">${esc(bg.desc || '')} Perícias: ${esc((bg.skills || []).join(', '))}.</p>`}
       <div class="ck-row"><label class="ck"><input type="radio" name="cw-bonus" value="21" ${cw.bonusMode === '21' ? 'checked' : ''}>+2 e +1</label><label class="ck"><input type="radio" name="cw-bonus" value="111" ${cw.bonusMode === '111' ? 'checked' : ''}>+1, +1 e +1</label></div>
       ${cw.bonusMode === '21' ? `<div class="field-row"><div class="field"><label for="cw-p2">+2 em</label><select id="cw-p2">${opts(a, cw.bonus.plus2)}</select></div><div class="field"><label for="cw-p1">+1 em</label><select id="cw-p1">${opts(a, cw.bonus.plus1)}</select></div></div>${cw.bonus.plus2 === cw.bonus.plus1 ? '<p class="note">Escolha atributos diferentes.</p>' : ''}` : ''}`;
-  } else if (i === 2) {
+  } else if (i === 3) {
     const metodo = `<div class="ck-row">${[['padrao', 'Conjunto padrão'], ['compra', 'Compra de pontos (27)'], ['rolar', 'Rolar 4d6']].map(([v, t]) => `<label class="ck"><input type="radio" name="cw-method" value="${v}" ${cw.method === v ? 'checked' : ''}>${t}</label>`).join('')}</div>`;
     const fim = finalScores();
     if (cw.method === 'compra') b = `${metodo}<p class="note">Pontos usados: <b>${pointsUsed()}</b> de 27</p><div class="scores">${ATTR.map(([k, n]) => `<div class="score"><span>${n}</span><div><button type="button" class="btn sm" data-action="cw-score" data-k="${k}" data-d="-1">−</button><b>${cw.scores[k]}</b><button type="button" class="btn sm" data-action="cw-score" data-k="${k}" data-d="1">+</button></div><small>com bônus: ${fim[k]}</small></div>`).join('')}</div>`;
     else b = `${metodo}${cw.method === 'rolar' ? `<div class="m-actions"><button type="button" class="btn frost" data-action="cw-roll">${icon('i-d20')}Rolar 4d6 seis vezes</button></div>` : ''}<p class="note">Valores: ${cw.pool.join(', ')}</p><div class="scores">${ATTR.map(([k, n]) => `<div class="score"><span>${n}</span><select data-cwassign="${k}">${[...new Set(cw.pool)].sort((x, y) => y - x).map(v => `<option ${cw.assign[k] === v ? 'selected' : ''}>${v}</option>`).join('')}</select><small>com bônus: ${fim[k]}</small></div>`).join('')}</div>${stepValid() ? '' : '<p class="note">Use cada valor uma vez só.</p>'}`;
-  } else if (i === 3) {
-    const bgS = cwBackground().skills || [];
-    b = `<p class="note" style="margin-top:12px">Do antecedente: ${esc(bgS.join(', ') || 'nenhuma')}. Escolha 2 perícias de Feiticeiro.</p><div class="pick">${SORCERER_SKILLS.filter(s => !bgS.includes(s)).map(s => `<label class="ck"><input type="checkbox" data-cwskill="${s}" ${cw.skills.includes(s) ? 'checked' : ''}>${s}</label>`).join('')}</div>`;
   } else if (i === 4) {
+    const bgS = cwBackground().skills || [];
+    b = `<p class="note" style="margin-top:12px">Do antecedente: ${esc(bgS.join(', ') || 'nenhuma')}. Escolha ${cwClasse().skills[0]} perícias de ${esc(cwClasse().name)}.</p><div class="pick">${cwLista().filter(s => !bgS.includes(s)).map(s => `<label class="ck"><input type="checkbox" data-cwskill="${s}" ${cw.skills.includes(s) ? 'checked' : ''}>${s}</label>`).join('')}</div>`;
+  } else if (i === 5) {
     const bg = cwBackground(), fixo = bg.feat && featById(bg.feat), origem = allFeats().filter(f => f.cat === 'origem');
     b = fixo && cw.backgroundId !== 'custom' ? `<p style="margin-top:12px"><b>${esc(fixo.name)}</b>, do antecedente.</p><p class="note">${esc(String(fixo.desc).slice(0, 260))}</p>` : `<div class="field"><label for="cw-feat">Talento</label><select id="cw-feat"><option value="">Nenhum</option>${opts(origem.map(f => [f.id, f.name]), cw.feat)}</select></div>`;
-  } else if (i === 5) {
-    b = `<div class="pick" style="margin-top:12px">${Object.entries(STARTING_GEAR).map(([k, g]) => `<label class="ck"><input type="radio" name="cw-gear" value="${k}" ${cw.gear === k ? 'checked' : ''}>${esc(g.label)}</label>`).join('')}</div>`;
   } else if (i === 6) {
-    const L1 = SORCERER_LEVELS[0], lista = libraryAll().filter(s => (s.classes || []).includes('sorcerer') && s.level <= 1);
+    b = `<div class="pick" style="margin-top:12px">${Object.entries(cwClasse().gear).map(([k, g]) => `<label class="ck"><input type="radio" name="cw-gear" value="${k}" ${cw.gear === k ? 'checked' : ''}>${esc(g.label)}</label>`).join('')}</div>`;
+  } else if (i === 7) {
+    const L1 = CLASS_LEVELS[cw.classId][0], lista = cwClasse().caster ? libraryAll().filter(s => (s.classes || []).includes(cw.classId) && s.level <= 1) : [];
     const q = nivel => cw.spells.filter(id => { const s = libGet(id); return nivel ? s.level > 0 : s.level === 0; }).length;
     const box = (titulo, max, f, nv) => `<h4 class="ed-h">${titulo} (${q(nv)} de ${max})</h4><div class="pick">${lista.filter(f).sort((x, y) => x.name.localeCompare(y.name, 'pt-BR')).map(s => `<label class="ck"><input type="checkbox" data-cwsp="${esc(s.id)}" ${cw.spells.includes(s.id) ? 'checked' : ''}>${esc(s.name)}</label>`).join('')}</div>`;
-    b = lista.length ? box('Truques', L1.cantrips, s => !s.level, false) + box('Magias preparadas', L1.prepared, s => s.level, true) : '<p class="note">A biblioteca não está disponível. Você pode escolher as magias depois.</p>';
+    b = !cwClasse().caster ? '<p class="note" style="margin-top:12px">Esta classe não conjura magias no nível 1.</p>' : lista.length ? (L1.cantrips ? box('Truques', L1.cantrips, s => !s.level, false) : '') + box('Magias preparadas', L1.prepared, s => s.level, true) : '<p class="note">A biblioteca não está disponível. Você pode escolher as magias depois.</p>';
   } else {
     b = `<div class="field" style="margin-top:12px"><label for="cw-level">Nível inicial</label><select id="cw-level">${Array.from({ length: 20 }, (_, n) => n + 1).map(n => `<option ${cw.level === n ? 'selected' : ''}>${n}</option>`).join('')}</select></div>
-      <p class="note">Acima do nível 1, o app usa a média de PV e soma os aumentos de atributo em Carisma. Depois você ajusta magias e talentos pela Biblioteca e pela aba Personagem.</p>`;
+      ${cw.level >= 3 ? `<div class="field"><label for="cw-sub">Subclasse</label><select id="cw-sub"><option value="">Escolher depois</option>${opts(Object.entries(cwClasse().subs).map(([k, v]) => [k, v.name]), cw.sub)}</select></div>` : ''}
+      <p class="note">Acima do nível 1, o app usa a média de PV e soma os aumentos de atributo no atributo primário. Depois você ajusta magias e talentos pela Biblioteca e pela aba Personagem.</p>`;
   }
   return head + b + nav;
 }
 function buildFromWizard() {
-  const bg = cwBackground(), sp = cwSpecies(), b = blankBuild(1);
+  const bg = cwBackground(), sp = cwSpecies(), b = blankBuild(1, cw.classId);
   b.speciesId = sp.id === 'custom' ? null : sp.id;
   b.lineage = sp.lineages ? cw.lineage : null;
   b.backgroundId = bg.id === 'custom' ? null : bg.id;
@@ -5354,15 +5890,18 @@ function buildFromWizard() {
 }
 function finishCreator() {
   const b = buildFromWizard(), c = newCharacter(cw.name, b);
-  c.sheet.items = STARTING_GEAR[cw.gear].items.map(([name, qty, cat]) => ({ name, note: '', qty, cat, unit: '' }));
+  const gear = cwClasse().gear[cw.gear].items, cats = { arm: 'arma', eq: 'equip' }, arm = gear.find(g => ARMADURAS.some(a => a[0] === g[0]));
+  c.sheet.items = gear.map(([name, qty, cat]) => ({ name, note: ARMAS.find(a => a[0] === name)?.slice(1, 3).join(' ') || '', qty, cat: cats[cat] || cat, unit: '' }));
+  if (arm) b.armor = arm[0];
+  if (gear.some(g => g[0] === 'Escudo')) b.shield = true;
   c.grimoire.added = cw.spells.map(id => { const { base: _b, _hay, ...s } = libGet(id); return s; });
   c.sub = deriveSheet(c).subText;
   closeModal();
   addCharacter(c);
   const meta = METAMAGIC.map(m => m.id);
   while (buildOf(c).level < cw.level) {
-    const need = levelNeeds(c), attr = buildOf(c).scores.CAR < 20 ? 'CAR' : 'CON';
-    commitLevel({ hp: 4, asi: need.asi ? { [attr]: 2 } : {}, feat: need.boon ? 'boon-fate' : '', metamagic: meta.filter(m => !buildOf(c).metamagic.includes(m)).slice(0, Math.max(0, need.metamagic)) });
+    const need = levelNeeds(c, cw.classId, cw.sub || null), p0 = cwClasse().prim[0], attr = buildOf(c).scores[p0] < 20 ? p0 : 'CON';
+    commitLevel({ classId: cw.classId, subclass: cw.sub || undefined, hp: Math.floor(cwClasse().hd / 2) + 1, asi: need.asi ? { [attr]: 2 } : {}, feat: need.boon ? 'boon-fate' : '', metamagic: meta.filter(m => !buildOf(c).metamagic.includes(m)).slice(0, Math.max(0, need.metamagic)) });
   }
   state.hp = CHAR.stats.hpMax;
   save(); renderHero(); render(); renderPassives();
@@ -5385,7 +5924,9 @@ document.addEventListener('click', e => {
 document.addEventListener('change', e => {
   if (!cw || $('#modal').hidden) return;
   const t = e.target, set = (f, v) => { cw[f] = v; modalRefresh(); };
-  if (t.id === 'cw-sp') set('speciesId', t.value);
+  if (t.id === 'cw-cl') { cw.classId = t.value; cw.skills = []; cw.spells = []; cw.sub = ''; cw.gear = 'a'; modalRefresh(); }
+  else if (t.id === 'cw-sub') set('sub', t.value);
+  else if (t.id === 'cw-sp') set('speciesId', t.value);
   else if (t.id === 'cw-lin') set('lineage', t.value);
   else if (t.id === 'cw-spn') set('customSpecies', t.value);
   else if (t.id === 'cw-spd') set('customSpeed', +t.value || 30);
@@ -5404,13 +5945,14 @@ document.addEventListener('change', e => {
     modalRefresh();
   } else if (t.dataset.cwassign) { cw.assign[t.dataset.cwassign] = +t.value; modalRefresh(); }
   else if (t.dataset.cwskill) {
-    if (t.checked && cw.skills.length >= 2) { t.checked = false; toast('Escolha 2 perícias', false); return; }
+    const q = cwClasse().skills[0];
+    if (t.checked && cw.skills.length >= q) { t.checked = false; toast(`Escolha ${q} perícias`, false); return; }
     cw.skills = t.checked ? [...cw.skills, t.dataset.cwskill] : cw.skills.filter(s => s !== t.dataset.cwskill); modalRefresh();
   } else if (t.id === 'cw-feat') set('feat', t.value);
   else if (t.name === 'cw-gear') set('gear', t.value);
   else if (t.id === 'cw-level') set('level', +t.value);
   else if (t.dataset.cwsp) {
-    const s = libGet(t.dataset.cwsp), L1 = SORCERER_LEVELS[0], max = s.level ? L1.prepared : L1.cantrips;
+    const s = libGet(t.dataset.cwsp), L1 = CLASS_LEVELS[cw.classId][0], max = s.level ? L1.prepared : L1.cantrips;
     const n = cw.spells.filter(id => (libGet(id).level > 0) === (s.level > 0)).length;
     if (t.checked && n >= max) { t.checked = false; toast(`Escolha até ${max}`, false); return; }
     cw.spells = t.checked ? [...cw.spells, s.id] : cw.spells.filter(x => x !== s.id); modalRefresh();

@@ -61,7 +61,8 @@
   "school": "Evocação",
   "classes": [
    "sorcerer",
-   "wizard"
+   "wizard",
+   "artificer"
   ],
   "time": "1 Ação",
   "range": "18 m (60 pés)",
@@ -113,7 +114,8 @@
    "cleric",
    "druid",
    "paladin",
-   "ranger"
+   "ranger",
+   "artificer"
   ],
   "time": "1 Ação",
   "range": "9 m (30 pés)",
@@ -146,7 +148,8 @@
   "school": "Abjuração",
   "classes": [
    "ranger",
-   "wizard"
+   "wizard",
+   "artificer"
   ],
   "time": "1 minuto",
   "range": "9 m (30 pés)",
@@ -185,7 +188,8 @@
   "school": "Transmutação",
   "classes": [
    "sorcerer",
-   "wizard"
+   "wizard",
+   "artificer"
   ],
   "time": "1 Ação",
   "range": "Pessoal",
@@ -384,7 +388,8 @@
   "classes": [
    "bard",
    "sorcerer",
-   "wizard"
+   "wizard",
+   "artificer"
   ],
   "time": "1 Ação",
   "range": "36 m (120 pés)",
@@ -566,7 +571,8 @@
   "level": 4,
   "school": "Adivinhação",
   "classes": [
-   "wizard"
+   "wizard",
+   "artificer"
   ],
   "time": "1 Ação",
   "range": "9 m (30 pés)",
@@ -600,7 +606,8 @@
   "school": "Evocação",
   "classes": [
    "sorcerer",
-   "wizard"
+   "wizard",
+   "artificer"
   ],
   "time": "1 Ação",
   "range": "36 m (120 pés)",
@@ -671,7 +678,8 @@
   "level": 2,
   "school": "Abjuração",
   "classes": [
-   "wizard"
+   "wizard",
+   "artificer"
   ],
   "time": "1 Ação",
   "range": "Toque",
@@ -1417,7 +1425,8 @@
   "school": "Transmutação",
   "classes": [
    "sorcerer",
-   "wizard"
+   "wizard",
+   "artificer"
   ],
   "time": "1 Ação",
   "range": "Pessoal",
@@ -1457,7 +1466,8 @@
   "school": "Ilusão",
   "classes": [
    "sorcerer",
-   "wizard"
+   "wizard",
+   "artificer"
   ],
   "time": "1 Ação",
   "range": "Pessoal",
@@ -2837,7 +2847,8 @@
   "classes": [
    "cleric",
    "druid",
-   "wizard"
+   "wizard",
+   "artificer"
   ],
   "time": "1 Ação",
   "range": "Toque",
@@ -3020,7 +3031,8 @@
   "school": "Invocação",
   "classes": [
    "cleric",
-   "paladin"
+   "paladin",
+   "artificer"
   ],
   "time": "1 Ação",
   "range": "9 m (30 pés)",
@@ -3131,7 +3143,8 @@
   "school": "Ilusão",
   "classes": [
    "sorcerer",
-   "wizard"
+   "wizard",
+   "artificer"
   ],
   "time": "1 minuto",
   "range": "9 m (30 pés)",
@@ -3174,7 +3187,8 @@
    "cleric",
    "druid",
    "paladin",
-   "ranger"
+   "ranger",
+   "artificer"
   ],
   "time": "1 Ação",
   "range": "Toque",
@@ -3217,7 +3231,8 @@
   "classes": [
    "bard",
    "sorcerer",
-   "wizard"
+   "wizard",
+   "artificer"
   ],
   "time": "1 Ação",
   "range": "36 m (120 pés)",
@@ -3295,7 +3310,8 @@
    "druid",
    "ranger",
    "sorcerer",
-   "wizard"
+   "wizard",
+   "artificer"
   ],
   "time": "1 Ação",
   "range": "Toque",
@@ -3536,7 +3552,8 @@
    "ranger",
    "sorcerer",
    "warlock",
-   "wizard"
+   "wizard",
+   "artificer"
   ],
   "time": "1 Ação",
   "range": "Pessoal",
@@ -3697,7 +3714,8 @@
   "classes": [
    "bard",
    "sorcerer",
-   "wizard"
+   "wizard",
+   "artificer"
   ],
   "time": "1 Ação",
   "range": "Pessoal",
@@ -3833,7 +3851,8 @@
    "ranger",
    "sorcerer",
    "warlock",
-   "wizard"
+   "wizard",
+   "artificer"
   ],
   "time": "1 Ação",
   "range": "36 m (120 pés)",
@@ -4195,7 +4214,8 @@
   "school": "Transmutação",
   "classes": [
    "sorcerer",
-   "wizard"
+   "wizard",
+   "artificer"
   ],
   "time": "1 Ação Bônus",
   "range": "Toque",
@@ -4455,7 +4475,8 @@
   "classes": [
    "druid",
    "sorcerer",
-   "wizard"
+   "wizard",
+   "artificer"
   ],
   "time": "1 Ação",
   "range": "9 m (30 pés)",
@@ -4505,7 +4526,8 @@
    "druid",
    "ranger",
    "sorcerer",
-   "wizard"
+   "wizard",
+   "artificer"
   ],
   "time": "1 Ação",
   "range": "Toque",
@@ -4540,7 +4562,8 @@
    "bard",
    "druid",
    "sorcerer",
-   "wizard"
+   "wizard",
+   "artificer"
   ],
   "time": "1 Ação",
   "range": "9 m (30 pés)",
@@ -4756,7 +4779,8 @@
   "classes": [
    "sorcerer",
    "warlock",
-   "wizard"
+   "wizard",
+   "artificer"
   ],
   "time": "1 Ação Bônus",
   "range": "Pessoal",
@@ -4831,7 +4855,8 @@
   "level": 4,
   "school": "Transmutação",
   "classes": [
-   "wizard"
+   "wizard",
+   "artificer"
   ],
   "time": "10 minutos",
   "range": "36 m (120 pés)",
@@ -4871,7 +4896,8 @@
   "school": "Evocação",
   "classes": [
    "bard",
-   "druid"
+   "druid",
+   "artificer"
   ],
   "time": "1 Ação",
   "range": "18 m (60 pés)",
@@ -4913,7 +4939,8 @@
   "level": 4,
   "school": "Invocação",
   "classes": [
-   "wizard"
+   "wizard",
+   "artificer"
   ],
   "time": "1 Ação",
   "range": "9 m (30 pés)",
@@ -4964,7 +4991,8 @@
   "school": "Necromancia",
   "classes": [
    "sorcerer",
-   "wizard"
+   "wizard",
+   "artificer"
   ],
   "time": "1 Ação",
   "range": "Pessoal",
@@ -5053,7 +5081,8 @@
   "classes": [
    "bard",
    "sorcerer",
-   "wizard"
+   "wizard",
+   "artificer"
   ],
   "time": "Reação, quando você ou uma criatura a até 18 m entra em queda",
   "range": "18 m (60 pés)",
@@ -5360,7 +5389,8 @@
   "school": "Evocação",
   "classes": [
    "sorcerer",
-   "wizard"
+   "wizard",
+   "artificer"
   ],
   "time": "1 Ação",
   "range": "36 m (120 pés)",
@@ -5736,7 +5766,8 @@
   "classes": [
    "sorcerer",
    "warlock",
-   "wizard"
+   "wizard",
+   "artificer"
   ],
   "time": "1 Ação",
   "range": "Toque",
@@ -5938,7 +5969,8 @@
    "bard",
    "cleric",
    "druid",
-   "ranger"
+   "ranger",
+   "artificer"
   ],
   "time": "1 Ação",
   "range": "Toque",
@@ -6325,7 +6357,8 @@
   "classes": [
    "bard",
    "cleric",
-   "wizard"
+   "wizard",
+   "artificer"
   ],
   "time": "1 hora",
   "range": "Toque",
@@ -6430,7 +6463,8 @@
   "school": "Invocação",
   "classes": [
    "sorcerer",
-   "wizard"
+   "wizard",
+   "artificer"
   ],
   "time": "1 Ação",
   "range": "18 m (60 pés)",
@@ -6504,7 +6538,8 @@
    "cleric",
    "druid",
    "paladin",
-   "ranger"
+   "ranger",
+   "artificer"
   ],
   "time": "1 Ação",
   "range": "Toque",
@@ -6621,7 +6656,8 @@
   "school": "Adivinhação",
   "classes": [
    "cleric",
-   "druid"
+   "druid",
+   "artificer"
   ],
   "time": "1 Ação",
   "range": "Toque",
@@ -6867,7 +6903,8 @@
   "school": "Transmutação",
   "classes": [
    "sorcerer",
-   "wizard"
+   "wizard",
+   "artificer"
   ],
   "time": "1 Ação",
   "range": "9 m (30 pés)",
@@ -6981,7 +7018,8 @@
   "school": "Transmutação",
   "classes": [
    "bard",
-   "druid"
+   "druid",
+   "artificer"
   ],
   "time": "1 Ação",
   "range": "18 m (60 pés)",
@@ -7570,7 +7608,8 @@
   "school": "Adivinhação",
   "classes": [
    "bard",
-   "wizard"
+   "wizard",
+   "artificer"
   ],
   "time": "1 minuto",
   "range": "Toque",
@@ -7927,7 +7966,8 @@
    "bard",
    "sorcerer",
    "warlock",
-   "wizard"
+   "wizard",
+   "artificer"
   ],
   "time": "1 Ação",
   "range": "Toque",
@@ -7962,7 +8002,8 @@
    "druid",
    "ranger",
    "sorcerer",
-   "wizard"
+   "wizard",
+   "artificer"
   ],
   "time": "1 Ação Bônus",
   "range": "Toque",
@@ -8075,7 +8116,8 @@
    "cleric",
    "druid",
    "paladin",
-   "ranger"
+   "ranger",
+   "artificer"
   ],
   "time": "1 Ação Bônus",
   "range": "Toque",
@@ -8106,7 +8148,8 @@
   "school": "Transmutação",
   "classes": [
    "sorcerer",
-   "wizard"
+   "wizard",
+   "artificer"
   ],
   "time": "1 Ação",
   "range": "18 m (60 pés)",
@@ -8149,7 +8192,8 @@
    "bard",
    "cleric",
    "sorcerer",
-   "wizard"
+   "wizard",
+   "artificer"
   ],
   "time": "1 Ação",
   "range": "Toque",
@@ -8349,7 +8393,8 @@
    "bard",
    "druid",
    "ranger",
-   "wizard"
+   "wizard",
+   "artificer"
   ],
   "time": "1 Ação",
   "range": "Toque",
@@ -8416,7 +8461,8 @@
    "bard",
    "sorcerer",
    "warlock",
-   "wizard"
+   "wizard",
+   "artificer"
   ],
   "time": "1 Ação",
   "range": "9 m (30 pés)",
@@ -8600,7 +8646,8 @@
   "school": "Ilusão",
   "classes": [
    "bard",
-   "wizard"
+   "wizard",
+   "artificer"
   ],
   "time": "1 minuto",
   "range": "9 m (30 pés)",
@@ -8640,7 +8687,8 @@
    "paladin",
    "ranger",
    "sorcerer",
-   "wizard"
+   "wizard",
+   "artificer"
   ],
   "time": "1 Ação Bônus",
   "range": "Toque",
@@ -9042,7 +9090,8 @@
    "bard",
    "druid",
    "sorcerer",
-   "wizard"
+   "wizard",
+   "artificer"
   ],
   "time": "1 Ação",
   "range": "36 m (120 pés)",
@@ -9937,7 +9986,8 @@
    "druid",
    "sorcerer",
    "warlock",
-   "wizard"
+   "wizard",
+   "artificer"
   ],
   "time": "1 Ação",
   "range": "9 m (30 pés)",
@@ -10180,7 +10230,8 @@
    "bard",
    "sorcerer",
    "warlock",
-   "wizard"
+   "wizard",
+   "artificer"
   ],
   "time": "1 Ação",
   "range": "3 m (10 pés)",
@@ -10355,7 +10406,8 @@
   "level": 4,
   "school": "Abjuração",
   "classes": [
-   "wizard"
+   "wizard",
+   "artificer"
   ],
   "time": "10 minutos",
   "range": "36 m (120 pés)",
@@ -10523,7 +10575,8 @@
    "druid",
    "ranger",
    "sorcerer",
-   "wizard"
+   "wizard",
+   "artificer"
   ],
   "time": "1 Ação",
   "range": "Toque",
@@ -10600,7 +10653,8 @@
    "cleric",
    "druid",
    "paladin",
-   "ranger"
+   "ranger",
+   "artificer"
   ],
   "time": "1 Ação",
   "range": "Toque",
@@ -10632,7 +10686,8 @@
   "classes": [
    "cleric",
    "druid",
-   "paladin"
+   "paladin",
+   "artificer"
   ],
   "time": "1 Ação",
   "range": "3 m (10 pés)",
@@ -10753,7 +10808,8 @@
   "school": "Evocação",
   "classes": [
    "sorcerer",
-   "wizard"
+   "wizard",
+   "artificer"
   ],
   "time": "1 Ação",
   "range": "18 m (60 pés)",
@@ -10956,7 +11012,8 @@
   "level": 4,
   "school": "Abjuração",
   "classes": [
-   "wizard"
+   "wizard",
+   "artificer"
   ],
   "time": "1 Ação",
   "range": "9 m (30 pés)",
@@ -10999,7 +11056,8 @@
   "school": "Abjuração",
   "classes": [
    "cleric",
-   "druid"
+   "druid",
+   "artificer"
   ],
   "time": "1 Ação",
   "range": "Toque",
@@ -11119,7 +11177,8 @@
    "cleric",
    "druid",
    "paladin",
-   "ranger"
+   "ranger",
+   "artificer"
   ],
   "time": "1 Ação",
   "range": "Toque",
@@ -11152,7 +11211,8 @@
   "level": 2,
   "school": "Transmutação",
   "classes": [
-   "wizard"
+   "wizard",
+   "artificer"
   ],
   "time": "1 Ação",
   "range": "Toque",
@@ -11228,7 +11288,8 @@
   "level": 1,
   "school": "Abjuração",
   "classes": [
-   "cleric"
+   "cleric",
+   "artificer"
   ],
   "time": "1 Ação Bônus",
   "range": "9 m (30 pés)",
@@ -11406,7 +11467,8 @@
   "level": 4,
   "school": "Invocação",
   "classes": [
-   "wizard"
+   "wizard",
+   "artificer"
   ],
   "time": "1 Ação",
   "range": "Toque",
@@ -11445,7 +11507,8 @@
   "classes": [
    "bard",
    "sorcerer",
-   "wizard"
+   "wizard",
+   "artificer"
   ],
   "time": "1 Ação",
   "range": "Pessoal",
@@ -11845,7 +11908,8 @@
   "school": "Evocação",
   "classes": [
    "sorcerer",
-   "wizard"
+   "wizard",
+   "artificer"
   ],
   "time": "1 Ação",
   "range": "Toque",
@@ -12205,7 +12269,8 @@
   "school": "Necromancia",
   "classes": [
    "cleric",
-   "druid"
+   "druid",
+   "artificer"
   ],
   "time": "1 Ação",
   "range": "4,5 m (15 pés)",
@@ -12351,7 +12416,8 @@
   "classes": [
    "sorcerer",
    "warlock",
-   "wizard"
+   "wizard",
+   "artificer"
   ],
   "time": "1 Ação",
   "range": "Toque",
@@ -12624,7 +12690,8 @@
   "classes": [
    "cleric",
    "druid",
-   "wizard"
+   "wizard",
+   "artificer"
   ],
   "time": "1 Ação",
   "range": "Toque",
@@ -12658,7 +12725,8 @@
    "druid",
    "ranger",
    "sorcerer",
-   "wizard"
+   "wizard",
+   "artificer"
   ],
   "time": "1 Ação",
   "range": "Toque",
@@ -13653,7 +13721,8 @@
    "bard",
    "sorcerer",
    "warlock",
-   "wizard"
+   "wizard",
+   "artificer"
   ],
   "time": "1 Ação",
   "range": "Pessoal",
@@ -14131,7 +14200,8 @@
   "classes": [
    "druid",
    "sorcerer",
-   "wizard"
+   "wizard",
+   "artificer"
   ],
   "time": "1 Ação",
   "range": "36 m (120 pés)",
@@ -14272,7 +14342,8 @@
    "druid",
    "ranger",
    "sorcerer",
-   "wizard"
+   "wizard",
+   "artificer"
   ],
   "time": "1 Ação",
   "range": "9 m (30 pés)",
@@ -14306,7 +14377,8 @@
    "cleric",
    "druid",
    "ranger",
-   "sorcerer"
+   "sorcerer",
+   "artificer"
   ],
   "time": "1 Ação",
   "range": "9 m (30 pés)",
@@ -14340,7 +14412,8 @@
   "school": "Invocação",
   "classes": [
    "sorcerer",
-   "wizard"
+   "wizard",
+   "artificer"
   ],
   "time": "1 Ação",
   "range": "18 m (60 pés)",

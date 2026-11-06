@@ -3,7 +3,7 @@
    Casa vazia é rolada pelo app; a cena recebe o resultado fechado.
    ===================================================================== */
 let lance = null, mesaCtx = null;
-const spellById = id => SPELL[id] || libGet(id);
+const spellById = id => { const a = String(id).startsWith('cl-') ? CHAR.acoes?.find(x => 'cl-' + x.id === id) : null; return a ? acaoSpell(a) : SPELL[id] || libGet(id); };
 const refazLimite = () => Math.max(1, CHAR.stats.cha);
 
 function openMesa(s, lv, ctx = {}) {

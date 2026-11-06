@@ -505,3 +505,11 @@ footer.foot{margin-top:28px;text-align:center;color:var(--faint);font-size:14px}
 .mesa-foot{position:sticky;bottom:-1px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;justify-content:space-between;padding:10px 0 2px;background:linear-gradient(to top,var(--bg2) 75%,transparent)}
 .mesa-foot .m-actions{margin:0;flex:1;justify-content:flex-end}
 .mesa-t{display:flex;flex-direction:column;line-height:1}.mesa-t small{font-size:11px;color:var(--muted)}.mesa-t b{font-size:30px}
+
+/* Ações de classe */
+.acoes-lista{display:grid;gap:8px}
+.acao{display:flex;justify-content:space-between;gap:10px;align-items:center;padding:8px 0;border-top:1px solid color-mix(in srgb,var(--faint) 30%,transparent)}
+.acao:first-child{border-top:0}
+.acao small{color:var(--muted)}
+.acao p{margin:2px 0 0;color:var(--muted);font-size:14px}
+.acao-b{display:flex;gap:6px;flex:none}

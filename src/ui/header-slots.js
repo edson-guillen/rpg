@@ -1,6 +1,7 @@
 /* =====================================================================
    CABEÇALHO E EFEITOS ATIVOS
    ===================================================================== */
+const ATTR_NOME = Object.fromEntries(ATTR);
 function renderStats() {
   const s = CHAR.stats, hpPct = Math.round(100 * state.hp / s.hpMax);
   $('#stats').innerHTML = `
@@ -9,15 +10,17 @@ function renderStats() {
       <div class="lbl">PV</div><div class="val num">${state.hp}<small>/${s.hpMax}</small></div>
       <div class="hpbar"><i style="width:${hpPct}%;background-position:${100 - hpPct}% 0"></i></div>
       <div class="hint">${state.temp ? `+${state.temp} temp.` : 'ajustar'}</div></div>
-    <div class="stat ${state.fx.innate ? 'boost' : ''}"><div class="lbl">CD Magia</div><div class="val num">${dc()}</div><div class="hint">${state.fx.innate ? 'F. Inata' : 'Carisma'}</div></div>
-    <div class="stat ${state.fx.innate ? 'boost' : ''}"><div class="lbl">Ataque</div><div class="val num">${sign(s.atk)}</div><div class="hint">${state.fx.innate ? 'Vantagem' : 'mágico'}</div></div>`;
-  $('#substats').innerHTML = `<span>Iniciativa <b>${sign(s.init)}</b></span><span>Desloc. <b>${s.speed}</b></span><span>BP <b>${sign(s.pb)}</b></span><span>PF <b>${state.res.sp}/${RES.sp.max}</b></span><span>Salv. CON <b>${sign(s.conSave)}</b>${CHAR.calc.concNote ? ' ' + CHAR.calc.concNote : ''}</span>`;
+    <div class="stat ${state.fx.innate ? 'boost' : ''}"><div class="lbl">${s.attr ? 'CD Magia' : 'CD'}</div><div class="val num">${dc()}</div><div class="hint">${state.fx.innate ? 'F. Inata' : ATTR_NOME[s.attr] || 'física'}</div></div>
+    <div class="stat ${state.fx.innate ? 'boost' : ''}"><div class="lbl">Ataque</div><div class="val num">${sign(s.atk)}</div><div class="hint">${state.fx.innate ? 'Vantagem' : s.attr ? 'mágico' : 'físico'}</div></div>`;
+  $('#substats').innerHTML = `<span>Iniciativa <b>${sign(s.init)}</b></span><span>Desloc. <b>${s.speed}</b></span><span>BP <b>${sign(s.pb)}</b></span>${RES.sp ? `<span>PF <b>${state.res.sp}/${RES.sp.max}</b></span>` : ''}<span>Salv. CON <b>${sign(s.conSave)}</b>${CHAR.calc.concNote ? ' ' + CHAR.calc.concNote : ''}</span>`;
 }
 
 function renderEffects() {
   const f = state.fx, out = [];
   if (state.conc) out.push(`<span class="fx" style="--c:#ffd28a">${icon('i-conc')}<span>Concentração: <b>${esc(SPELL[state.conc].name)}</b></span>
       <button class="act" data-action="conc-check">Teste</button><button class="x" data-action="conc-end" aria-label="Encerrar concentração">${icon('i-x')}</button></span>`);
+  if (f.rage) out.push(`<span class="fx" style="--c:#ff8a8a">${icon('i-flame')}<span><b>Fúria</b> · +${CLASS_LEVELS.barbarian[nivelDe(buildOf(activeChar()), 'barbarian') - 1]?.rage_damage_bonus ?? 2} de dano</span>
+      <button class="x" data-action="fx-end" data-fx="rage" aria-label="Encerrar Fúria">${icon('i-x')}</button></span>`);
   if (f.innate) out.push(`<span class="fx" style="--c:var(--frost)">${icon('i-snow')}<span><b>Feitiçaria Inata</b> · CD ${dc()} · Vantagem</span>
       <button class="x" data-action="fx-end" data-fx="innate" aria-label="Encerrar Feitiçaria Inata">${icon('i-x')}</button></span>`);
   if (f.shield) out.push(`<span class="fx" style="--c:var(--arcane)">${icon('i-shield')}<span><b>Escudo Arcano</b> · CA ${ac()}</span>
@@ -34,6 +37,7 @@ function renderEffects() {
    ABA MAGIA: ESPAÇOS, FONTE DE MAGIA, LEMBRETES
    ===================================================================== */
 function renderSlots() {
+  if (!LEVELS.length) { $('#slots').innerHTML = '<p class="note">Sem espaços de magia neste nível.</p>'; $('#badge-slots').hidden = true; return; }
   $('#slots').innerHTML = LEVELS.map(l => {
     const max = CHAR.slots[l], av = avail(l), ex = state.extra[l];
     let gems = '';
@@ -54,6 +58,8 @@ function renderSlots() {
 
 let spRulesOpen = false;
 function renderSpHub() {
+  $('#sp-hub').hidden = !RES.sp;
+  if (!RES.sp) return;
   const sp = state.res.sp, max = RES.sp.max;
   let gems = '';
   for (let i = 0; i < max; i++) gems += gem('', i >= sp, 'res-gem', { id: 'sp', i }, `Ponto de Feitiçaria ${i + 1}: ${i >= sp ? 'gasto, tocar para recuperar' : 'disponível, tocar para gastar'}`);
@@ -116,6 +122,11 @@ function renderSpHub() {
 }
 
 function renderReminders() {
+  if (activeChar().template !== 'soren') {
+    const grupos = [['Ação', 'a', x => /Usar Magia|^Ataque$/.test(x.tempo)], ['Ação Bônus', 'b', x => /Ação Bônus/.test(x.tempo)], ['Reação', 'r', x => /Reação/.test(x.tempo)], ['Outros', 'm', x => !/Usar Magia|^Ataque$|Ação Bônus|Reação/.test(x.tempo)]];
+    $('#reminders').innerHTML = `<div class="turn">${grupos.map(([n, k, f]) => { const l = CHAR.acoes.filter(f); return l.length ? `<div class="tr"><span class="tk ${k}">${n}</span><p>${l.map(a => `<i>${esc(a.name)}</i>`).join(' · ')}</p></div>` : ''; }).join('')}</div>`;
+    return;
+  }
   const sp = state.res.sp, s1 = totalAvail(1);
   $('#reminders').innerHTML = `<div class="turn">
     <div class="tr"><span class="tk a">Ação</span><p>Magia ou truque: ataque <b>${sign(CHAR.stats.atk)}</b>${state.fx.innate ? ' <b>com Vantagem</b>' : ''} ou <b>CD ${dc()}</b>. <i>Talho Mental</i> 1d6 (−1d4) · <i>Explosão Elemental</i> 1d8 · <i>Faca de Gelo</i> 1d10 + 2d6 · <i>Golpe Certeiro</i> 1d8 + 4.</p></div>

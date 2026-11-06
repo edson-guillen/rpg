@@ -40,7 +40,7 @@ function blankSheet() {
 
 function newCharacter(name, build = null) {
   return {
-    id: newId('c'), name, sub: 'Feiticeiro · Nível 1', template: 'blank', classId: 'sorcerer', subclassId: null, level: build?.level || 1,
+    id: newId('c'), name, sub: 'Feiticeiro · Nível 1', template: 'blank', classId: build?.classId || 'sorcerer', subclassId: null, level: build?.level || 1,
     sheet: blankSheet(), spells: [], state: null, notes: null, build: build || blankBuild(1), identity: {}, grimoire: { added: [], removed: [] }
   };
 }

@@ -18,7 +18,26 @@ function exportData() {
   toast('Backup exportado', false);
 }
 const clampRes = (id, v) => Math.min(RES[id].max, Math.max(0, v));
-const FX_NAME = { innate: 'Feitiçaria Inata', shield: 'Escudo Arcano', mirror: 'Reflexos' };
+const FX_NAME = { innate: 'Feitiçaria Inata', shield: 'Escudo Arcano', mirror: 'Reflexos', rage: 'Fúria' };
+
+/* Ações de classe viram uma magia sem círculo: usam a mesma mesa e o mesmo motor de cena. */
+const acaoSpell = a => ({ id: 'cl-' + a.id, name: a.name, en: '', level: 0, school: 'Evocação', r: a.r, cena: a.cena, desc: [a.desc], time: a.tempo });
+function usarAcao(id, ver = false) {
+  const a = (CHAR.acoes || []).find(x => x.id === id);
+  if (!a) return;
+  if (!ver && a.res && a.custo) {
+    const r = RES[a.res], ok = commit(`${a.name}: ${state.res[a.res] - a.custo}/${r.max}`, st => {
+      if ((st.res[a.res] ?? 0) < a.custo) return false;
+      st.res[a.res] -= a.custo;
+      if (a.id === 'rage') st.fx.rage = true;
+      if (a.id === 'cunning') { const p = CHAR.pactSlots || {}; for (const l of Object.keys(p)) st.used[l] = Math.max(0, st.used[l] - (CHAR.level >= 20 ? p[l] : Math.ceil(p[l] / 2))); }
+    });
+    if (!ok) { toast('Recurso esgotado', false); return; }
+  }
+  const s = acaoSpell(a);
+  if (!ver && (a.r || []).some(x => x.t === 'dmg' || x.t === 'aux')) openMesa(s, 0, { modo: 'livre' });
+  else playSpell(s, null, CHAR.level);
+}
 
 function handle(a, el) {
   const ds = el.dataset, lv = +ds.lv, i = +ds.i;
@@ -81,6 +100,9 @@ function handle(a, el) {
       commit(`${r.name} usado (${state.res[r.id] - 1}/${r.max})`, st => { if (!st.res[r.id]) return false; st.res[r.id]--; });
       break;
     }
+    case 'acao-usar': usarAcao(ds.id); break;
+    case 'acao-ver': usarAcao(ds.id, true); break;
+    case 'short-go': descansoCurto(); break;
     case 'meta-use': { const m = META[ds.id]; commit(`${m.name}: −${m.cost} PF`, st => { if (st.res.sp < m.cost) return false; st.res.sp -= m.cost; }); break; }
     case 'fx-end': commit(`${FX_NAME[ds.fx]} encerrado`, st => { st.fx[ds.fx] = ds.fx === 'mirror' ? 0 : false; }); break;
     case 'mirror-hit': { const m = state.fx.mirror, hit = i < m;

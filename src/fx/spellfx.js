@@ -120,7 +120,9 @@ function sprite(nome, cor, tam, brilho = 1) {
   if (brilho) { c.shadowColor = cor; c.shadowBlur = q * .16 * brilho; }
   c.fillStyle = cor; c.fill(p);
   if (brilho) c.fill(p);
-  if (fxArtes.sprite.size > 90) fxArtes.sprite.clear();
+  // Limite por área: celulares têm pouca memória para canvas.
+  fxArtes.area = (fxArtes.area || 0) + cv.width * cv.height;
+  if (fxArtes.area > 12e6) { fxArtes.sprite.clear(); fxArtes.area = cv.width * cv.height; }
   fxArtes.sprite.set(k, cv);
   return cv;
 }

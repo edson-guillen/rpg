@@ -84,7 +84,9 @@ Ficha de controle de **magias e recursos limitados** para **Søren Frostgaard**,
 ### 🧙 Personagens
 - Toque no **nome** no topo para trocar de personagem, criar um novo, duplicar, exportar ou excluir (com **Desfazer**).
 - Cada personagem tem ficha, recursos, inventário e anotações próprios. As anotações podem ser do personagem ou da campanha, compartilhadas entre todos.
-- **Criação guiada** pelas regras de 2024: espécie, antecedente, atributos (conjunto padrão, compra de pontos ou 4d6), perícias, talento, equipamento, magias e nível inicial.
+- **Treze classes e 53 subclasses:** as 12 do Livro do Jogador 2024 e o Artífice de Eberron: Forge of the Artificer, com recursos, Ações de classe, multiclasse, armaduras, armas e maestrias. Cada ação que gasta recurso ou rola dado usa a mesa de dados e tem cena própria.
+- **Compêndio** na aba Personagem: características, armas e, com a biblioteca pessoal, textos integrais, subclasses antigas e itens mágicos.
+- **Criação guiada** pelas regras de 2024: classe, espécie, antecedente, atributos (conjunto padrão, compra de pontos ou 4d6), perícias, talento, equipamento, magias e nível inicial.
 - Por enquanto, só a classe **Feiticeiro** está disponível.
 
 ### 🎭 Aba Personagem

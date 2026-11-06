@@ -126,13 +126,16 @@ const { _legenda, ...overrides } = ler('srd-overrides.json', {});
 const pt = ler('i18n/spells.pt.json', {});
 const srd = ler('srd/Spells.json', []);
 
+/* Lista de magias do Artífice, de Eberron: Forge of the Artificer. */
+const ARTIFICE = new Set(['Acid Splash', 'Dancing Lights', 'Elementalism', 'Fire Bolt', 'Guidance', 'Light', 'Mage Hand', 'Message', 'Poison Spray', 'Prestidigitation', 'Ray of Frost', 'Resistance', 'Shocking Grasp', 'Spare the Dying', 'Thorn Whip', 'Thunderclap', 'True Strike', 'Alarm', 'Cure Wounds', 'Detect Magic', 'Disguise Self', 'Expeditious Retreat', 'Faerie Fire', 'False Life', 'Feather Fall', 'Grease', 'Identify', 'Jump', 'Longstrider', 'Purify Food and Drink', 'Sanctuary', 'Aid', 'Alter Self', 'Arcane Lock', 'Blur', 'Continual Flame', 'Darkvision', "Dragon's Breath", 'Enhance Ability', 'Enlarge/Reduce', 'Heat Metal', 'Invisibility', 'Lesser Restoration', 'Levitate', 'Magic Mouth', 'Magic Weapon', 'Protection from Poison', 'Rope Trick', 'See Invisibility', 'Spider Climb', 'Web', 'Blink', 'Create Food and Water', 'Dispel Magic', 'Elemental Weapon', 'Fly', 'Glyph of Warding', 'Haste', 'Protection from Energy', 'Revivify', 'Water Breathing', 'Water Walk', 'Arcane Eye', 'Fabricate', 'Freedom of Movement', 'Secret Chest', 'Faithful Hound', 'Private Sanctum', 'Resilient Sphere', 'Stone Shape', 'Stoneskin', 'Animate Objects', 'Arcane Hand', 'Creation', 'Greater Restoration', 'Wall of Stone']);
+
 const magias = srd.map(s => {
   const ov = overrides[s.index] || {};
   const tx = separarTexto(s), t = pt[s.index] || {}, r = rolagens(s, tx, ov);
   const area = tx.desc.join(' ').match(new RegExp(`(\\d+)-foot(?:-radius|-long|-wide|-tall|-high)?[ -](?:[\\w-]+ )?(${Object.keys(FORMA).join('|')})`));
   const dano = r.find(x => x.t === 'dmg');
   const out = {
-    id: s.index, name: t.name || s.name, en: s.name, level: s.level, school: ESCOLA[s.school.index], classes: s.classes.map(c => c.index),
+    id: s.index, name: t.name || s.name, en: s.name, level: s.level, school: ESCOLA[s.school.index], classes: [...s.classes.map(c => c.index), ...(ARTIFICE.has(s.name) ? ['artificer'] : [])],
     time: tempo(s.casting_time), range: alcance(s.range), comp: s.components.join(', '), dur: duracao(s.duration, s.concentration),
     conc: s.concentration, ritual: s.ritual, r,
     desc: t.desc || tx.desc, src: 'srd', orig: { desc: tx.desc, higher: tx.higher, upgrade: tx.upgrade, time: s.casting_time }, ptOk: !!t.desc

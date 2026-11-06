@@ -16,13 +16,19 @@ function renderHp() {
 }
 
 function renderRes() {
-  $('#res-list').innerHTML = CHAR.resources.map(r => {
+  const acoes = CHAR.acoes || [];
+  const painel = acoes.length ? `<div class="panel span2 acoes-classe"><div class="panel-h"><h2>Ações de classe</h2><span class="rule"></span><span class="aside">${acoes.length}</span></div><div class="acoes-lista">${acoes.map(a => {
+    const falta = a.res && (state.res[a.res] ?? 0) < a.custo;
+    return `<div class="acao"><div><b>${esc(a.name)}</b> <small>${esc(a.tempo)}${a.res && a.custo ? ` · ${a.custo} de ${esc(RES[a.res]?.name || a.res)}` : ''}</small><p>${esc(a.desc)}</p></div><div class="acao-b"><button class="btn sm" data-action="acao-ver" data-id="${esc(a.id)}">Ver</button><button class="btn sm gold" data-action="acao-usar" data-id="${esc(a.id)}" ${falta ? 'disabled' : ''}>Usar</button></div></div>`;
+  }).join('')}</div></div>` : '';
+  $('#res-list').innerHTML = painel + CHAR.resources.map(r => {
     const cur = state.res[r.id];
     let gems = '';
     for (let i = 0; i < r.max; i++) gems += gem('', i >= cur, 'res-gem', { id: r.id, i }, `${r.name} ${i + 1}: ${i >= cur ? 'gasto' : 'disponível'}`);
     let act = '';
     if (r.action) {
       if (r.action.goto) act = `<button class="btn sm" data-action="goto-sp">${r.action.label}</button>`;
+      else if (r.action.acao) act = `<button class="btn sm" data-action="acao-usar" data-id="${esc(r.action.acao)}" ${cur ? '' : 'disabled'}>${r.action.label}</button>`;
       else if (r.action.fx === 'innate' && state.fx.innate) act = `<button class="btn sm" data-action="fx-end" data-fx="innate">Encerrar</button>`;
       else act = `<button class="btn sm ${r.action.fx === 'innate' ? 'frost' : ''}" data-action="res-use" data-id="${r.id}" ${cur ? '' : 'disabled'}>${r.action.label}</button>`;
     }

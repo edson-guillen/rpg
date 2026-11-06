@@ -9,7 +9,7 @@ const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const src = f => fs.readFileSync(path.join(root, 'src', f), 'utf8');
 
 export const APP_FILES = [
-  'rules/progressao.js', 'rules/regras.js', 'rules/motor.js', 'core/store.js', 'core/state.js', 'core/utils.js', 'core/dice.js', 'core/lancamento.js',
+  'rules/progressao.js', 'rules/regras.js', 'rules/classes-a.js', 'rules/classes-b.js', 'rules/motor.js', 'core/store.js', 'core/state.js', 'core/utils.js', 'core/dice.js', 'core/lancamento.js',
   'ui/header-slots.js', 'ui/ficha.js', 'ui/grimorio.js', 'ui/recursos-mochila.js',
   'ui/modais.js', 'ui/acoes.js', 'ui/init.js', 'notes/notes.js', 'ui/personagens.js', 'library/library.js', 'fx/spellfx.js', 'fx/cena-atos.js', 'fx/cenas.js', 'ui/mesa.js', 'ui/personagem.js', 'ui/nivel.js', 'ui/criacao.js', 'ui/boot.js',
 ];

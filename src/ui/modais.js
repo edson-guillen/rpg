@@ -190,9 +190,18 @@ function shortRestModal() {
       <button class="btn frost block" data-action="hd-roll" ${can ? '' : 'disabled'}>${icon('i-die')}${full ? 'PV já estão no máximo' : hd ? 'Rolar e gastar 1 Dado de Ponto de Vida' : 'Sem Dados de Pontos de Vida'}</button>
       <p class="note" style="margin:12px 0 6px">Rolou um d${CHAR.hitDie} físico? Toque no resultado:</p>
       <div class="fom-btns">${Array.from({ length: CHAR.hitDie }, (_, i) => `<button class="chipbtn" style="min-width:46px;justify-content:center" data-action="hd-roll" data-v="${i + 1}" ${can ? '' : 'disabled'}><b>${i + 1}</b></button>`).join('')}</div>
-      ${box('Feiticeiro nível 4', 'Nenhum recurso de classe volta no Descanso Curto. A <b>Restauração Feiticeira</b> (recuperar PF no descanso curto) chega no nível 5.', 'warn')}
-      <div class="m-actions"><button class="btn gold" data-action="close">Concluir descanso</button></div>`;
+      ${voltaCurto().length ? box('Ao concluir', `Voltam: ${voltaCurto().join(', ')}.`) : RES.sp && CHAR.level < 5 ? box('Feiticeiro', 'Nenhum recurso de classe volta no Descanso Curto. A <b>Restauração Feiticeira</b> (recuperar PF no descanso curto) chega no nível 5.', 'warn') : ''}
+      <div class="m-actions"><button class="btn gold" data-action="${voltaCurto().length ? 'short-go' : 'close'}">Concluir descanso</button></div>`;
   });
+}
+/** O que volta no Descanso Curto: recursos marcados e espaços de Pacto. */
+const voltaCurto = () => [...(Object.keys(CHAR.pactSlots || {}).length ? ['espaços de Pacto'] : []), ...CHAR.resources.filter(r => r.rest && r.rest !== 'longo' && state.res[r.id] < r.max).map(r => (r.rest === 'curto' ? r.name : `1 uso de ${r.name}`))];
+function descansoCurto() {
+  commit('Descanso Curto concluído', st => {
+    for (const l of Object.keys(CHAR.pactSlots || {})) st.used[l] = 0;
+    CHAR.resources.forEach(r => { if (r.rest === 'curto') st.res[r.id] = r.max; else if (r.rest && r.rest !== 'longo') st.res[r.id] = Math.min(r.max, st.res[r.id] + 1); });
+  });
+  closeModal();
 }
 function spendHitDie(v) {
   const die = v || d(CHAR.hitDie), heal = Math.max(1, die + CHAR.conMod);
@@ -223,7 +232,7 @@ function longRest() {
     LEVELS.forEach(l => { st.used[l] = 0; st.extra[l] = 0; });
     CHAR.resources.forEach(r => { st.res[r.id] = r.max; });
     st.hp = CHAR.stats.hpMax; st.temp = 0; st.conc = null;
-    st.fx = { innate: false, shield: false, mirror: 0 };
+    st.fx = { innate: false, shield: false, mirror: 0, rage: false };
   });
   closeModal();
 }

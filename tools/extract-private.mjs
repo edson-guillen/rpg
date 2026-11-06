@@ -302,6 +302,78 @@ function especiesPT(fonte, pgs) {
   });
 }
 
+// ---------- classes, livros antigos e itens mágicos ----------
+
+const LIVRO_CLASSES = [['barbarian', 56, 63, ['world-tree', 'berserker', 'wild-heart', 'zealot']], ['bard', 64, 73, ['valor', 'dance', 'lore', 'glamour']], ['warlock', 74, 85, ['archfey', 'celestial', 'great-old-one', 'fiend']], ['cleric', 86, 95, ['war', 'light', 'trickery', 'life']], ['druid', 96, 107, ['moon', 'land', 'stars', 'sea']], ['sorcerer', 108, 120, ['aberrant', 'draconic', 'clockwork', 'wild']], ['ranger', 122, 131, ['fey-wanderer', 'hunter', 'beast-master', 'gloom-stalker']], ['fighter', 132, 140, ['champion', 'eldritch-knight', 'psi-warrior', 'battle-master']], ['rogue', 142, 151, ['soulknife', 'assassin', 'thief', 'arcane-trickster']], ['wizard', 152, 163, ['abjurer', 'diviner', 'evoker', 'illusionist']], ['monk', 164, 171, ['open-hand', 'mercy', 'shadow', 'elements']], ['paladin', 172, 181, ['devotion', 'glory', 'vengeance', 'ancients']]];
+/** Texto integral das características do Livro do Jogador, por classe e subclasse. */
+function caracteristicasPT(pgs) {
+  const out = [];
+  for (const [classe, a, b, subs] of LIVRO_CLASSES) {
+    let modo = 'base', i = -1, ultimo = 0, cur = null;
+    for (const x of linhas(pgs, a, b).filter(y => y.l)) {
+      const m = x.l.match(/^Nível (\d+): (.+)$/);
+      if (/^(CAPÍTULO \d|\d{1,3}$|Subclasse |Traços Básicos)/.test(x.l) || /^[A-ZÀ-Ý .'-]{4,30}$/.test(x.l)) continue;
+      if (m) {
+        const n = +m[1];
+        if (modo === 'base' && ultimo >= 18 && n <= 3) { modo = 'sub'; i = 0; } else if (modo === 'sub' && n < ultimo) i++;
+        ultimo = n;
+        cur = { classe, sub: modo === 'sub' ? subs[Math.min(i, 3)] : null, nivel: n, nome: m[2], texto: '' };
+        out.push(cur);
+      } else if (cur) cur.texto += x.l + '\n';
+    }
+  }
+  return out.map(f => ({ ...f, texto: juntar(f.texto.split('\n').filter(Boolean)).trim() }));
+}
+/** Subclasses de Tasha, anteriores a 2024: agrupa pelo nome em "6th-level Genie feature". */
+function subclassesTasha(fonte, pgs) {
+  const ls = linhas(pgs, 8, 83).filter(x => x.l), inicios = [];
+  ls.forEach((x, i) => { const m = x.l.match(/(\d+)\s*(?:st|nd|rd|th)-level (.+?) feature/i); if (m) inicios.push({ i, n: +m[1], sub: m[2].trim() }); });
+  const antes = i => ls[i].l.replace(/\d+\s*(?:st|nd|rd|th)-level .*$/i, '').trim() || ls[i - 1]?.l || '';
+  return inicios.map((x, k) => ({ sub: x.sub, nivel: x.n, nome: titulo(antes(x.i)).replace(/\s+/g, ' '), texto: juntar(ls.slice(x.i + 1, inicios[k + 1]?.i ?? x.i + 12).map(y => y.l).filter(l => !ruido(l))).trim(), fonte: { id: fonte.id, pagina: ls[x.i].p } }));
+}
+/** Espécies de Monsters of the Multiverse. */
+function especiesMotM(fonte, pgs) {
+  const ls = linhas(pgs, 1, 60).filter(x => x.l), inicios = [];
+  ls.forEach((x, i) => { const m = x.l.match(/^As an? ([\w' -]+?), you have the following racial traits/i); if (m) inicios.push({ i, nome: m[1] }); });
+  return inicios.map((x, k) => {
+    const texto = juntar(ls.slice(x.i, inicios[k + 1]?.i ?? x.i + 20).map(y => y.l).filter(l => !ruido(l))).trim(), desl = texto.match(/walking speed of (\d+) feet/i)?.[1];
+    return { id: slug('motm-' + x.nome), nome: titulo(x.nome), tipo: '', tamanho: '', deslocamento: desl ? (+desl * .3).toString().replace('.', ',') + ' metros' : '9 metros', texto, fonte: { id: fonte.id, pagina: ls[x.i].p } };
+  });
+}
+/** Espécies de Eberron: Forge of the Artificer, com ficha "Creature Type". */
+function especiesFotA(fonte, pgs) {
+  const ls = linhas(pgs, 1).filter(x => x.l), inicios = [];
+  ls.forEach((x, i) => { if (/^Creature Type:/.test(x.l)) inicios.push(i); });
+  return inicios.map((i, k) => {
+    const nome = titulo(ls.slice(Math.max(0, i - 12), i).map(x => x.l).find(l => /^[A-Z][A-Z ]{3,20}$/.test(l)) || 'Espécie ' + (k + 1));
+    return { id: slug('fota-' + nome), nome, tipo: '', tamanho: '', deslocamento: '9 metros', texto: juntar(ls.slice(i, inicios[k + 1] ?? i + 22).map(x => x.l).filter(l => !/^(https|\d+\/\d+|=== |11\/25)/.test(l))).trim(), fonte: { id: fonte.id, pagina: ls[i].p } };
+  });
+}
+/** Talentos de outros livros: o nome vem na linha antes de "Prerequisite". */
+function talentosIngles(fonte, pgs) {
+  const ls = linhas(pgs, 1).filter(x => x.l), out = [];
+  ls.forEach((x, i) => {
+    if (!/^Prerequisite/.test(x.l)) return;
+    const nome = titulo(ls[i - 1]?.l || '').replace(/\s+/g, ' ');
+    if (!nome || nome.length > 40) return;
+    let j = i + 1; const corpo = [];
+    while (j < ls.length && corpo.length < 14 && !/^Prerequisite/.test(ls[j + 1]?.l || '')) corpo.push(ls[j++].l);
+    out.push({ id: slug(fonte.id + '-' + nome), nome, categoria: 'geral', prerequisito: x.l.replace(/^Prerequisites?:\s*/, ''), texto: juntar(corpo.filter(l => !ruido(l))).trim(), fonte: { id: fonte.id, pagina: x.p } });
+  });
+  return out;
+}
+/** Itens mágicos do Dungeon Master's Guide 2024. */
+function itensMagicos(fonte, pgs) {
+  const tudo = linhas(pgs, 217, 337).filter(x => x.l);
+  const RE = /^(.*?)\s*((?:Wondrous Item|Weapon|Armor|Ring|Rod|Staff|Wand|Potion|Scroll)[^,]{0,50}, (?:Common|Uncommon|Rare|Very Rare|Legendary|Artifact|Rarity Varies)[^.‘']{0,40})(.*)$/;
+  const inicios = [];
+  tudo.forEach((x, i) => { const m = x.l.match(RE); if (m) inicios.push({ i, m }); });
+  return inicios.map(({ i, m }, k) => {
+    const nome = (m[1] || tudo[i - 1]?.l || '').replace(/[^A-Za-zÀ-ÿ'’,+\d -]/g, ' ').replace(/\s+/g, ' ').trim();
+    return { id: slug('item-' + nome), nome: titulo(nome), tipo: m[2].trim(), texto: juntar([m[3].replace(/^[\s‘']+/, ''), ...tudo.slice(i + 1, inicios[k + 1]?.i ? inicios[k + 1].i - 1 : i + 8).map(x => x.l)].filter(l => l && !ruido(l))).trim(), fonte: { id: fonte.id, pagina: tudo[i].p } };
+  }).filter(x => x.nome.length > 2);
+}
+
 // ---------- inventário ----------
 
 async function infoPdf(arquivo) {
@@ -376,12 +448,20 @@ async function main() {
   const talentos = fonteP ? talentosPT(fonteP, textos['phb24-pt']) : [];
   const antecedentes = fonteP ? antecedentesPT(fonteP, textos['phb24-pt']) : [];
   const especies = fonteP ? especiesPT(fonteP, textos['phb24-pt']) : [];
+  if (textos.motm) especies.push(...especiesMotM(fontes.get('motm').fonte, textos.motm));
+  if (textos.efota) especies.push(...especiesFotA(fontes.get('efota').fonte, textos.efota).filter(e => /Traits$/.test(e.nome)).map(e => ({ ...e, nome: e.nome.replace(/ Traits$/, '') + ' (Eberron)' })));
+  especies.forEach(e => { if (e.nome === 'Ore') e.nome = 'Orc'; e.nome = e.nome.trim(); });
+  for (const id of ['tce', 'erftlw', 'efota']) if (textos[id]) { const novos = talentosIngles(fontes.get(id).fonte, textos[id]).filter(x => !talentos.some(p => p.id === x.id) && !/Bastion|Facility|House|Species|Level \d/.test(x.nome)); talentos.push(...novos); }
+  const caracteristicas = fonteP ? caracteristicasPT(textos['phb24-pt']) : [];
+  const limpaSub = s => s.replace(/of ?the ?/g, 'of the ').replace(/of(?=[A-Z])/g, 'of ').replace('KniSht', 'Knight').trim();
+  const subclassesAntigas = textos.tce ? subclassesTasha(fontes.get('tce').fonte, textos.tce).map(f => ({ ...f, sub: limpaSub(f.sub) })).filter(f => /^[A-Z]/.test(f.sub) && !/^(Alchemist|Armorer|Artillerist|Battle Smith|Aberrant Mind|Clockwork Soul|Psi Warrior|Soulknife|Fey Wanderer|Beast Master|Circle of the Stars|Way of Mercy|Oath of Glory)$/.test(f.sub)) : [];
+  const itens = textos.dmg24 ? itensMagicos(fontes.get('dmg24').fonte, textos.dmg24) : [];
 
   const salvar = (f, d) => fs.writeFileSync(path.join(PRIVATE, f), JSON.stringify(d, null, 1));
   salvar('inventario.json', inventario);
   salvar('biblioteca-pessoal.json', {
     app: 'grimorio', tipo: 'biblioteca-pessoal', schema: SCHEMA, gerado: new Date().toISOString(),
-    fontes: [...fontes.values()].map(({ fonte: { re, ...f } }) => f), magias, talentos, antecedentes, especies
+    fontes: [...fontes.values()].map(({ fonte: { re, ...f } }) => f), magias, talentos, antecedentes, especies, caracteristicas, subclassesAntigas, itens
   });
 
   const semTexto = magias.filter(s => !s.texto).length;
@@ -389,7 +469,7 @@ async function main() {
   const rel = {
     arquivos: inventario.length, pdfs: inventario.filter(i => i.tipo === 'pdf').length, pagas: inventario.filter(i => i.licenca === 'paga').length,
     magias: magias.length, magiasPT: magiasBase.length, magiasEN: en.length, ligadasPTEN: ligadas, magiasOutrosLivros: novas.length,
-    semTexto, semClasse, talentos: talentos.length, antecedentes: antecedentes.length, especies: especies.length,
+    semTexto, semClasse, caracteristicas: caracteristicas.length, subclassesAntigas: subclassesAntigas.length, itens: itens.length, talentos: talentos.length, antecedentes: antecedentes.length, especies: especies.length,
     aFeiticeiro: magiasBase.filter(s => s.classes.includes('sorcerer')).length
   };
   salvar('relatorio.json', rel);

@@ -13,7 +13,7 @@ const PADRAO = ['person', 'spinning-blades'];
 
 export function buildArt() {
   const fontes = ['src/fx/cenas.js', 'private/cenas-pessoais.json'].map(f => path.join(root, f)).filter(f => fs.existsSync(f));
-  const texto = fs.readFileSync(path.join(root, 'src/fx/cenas.js'), 'utf8');
+  const texto = ['src/fx/cenas.js', 'src/rules/classes-a.js', 'src/rules/classes-b.js'].map(f => fs.readFileSync(path.join(root, f), 'utf8')).join('\n');
   const nomes = new Set(PADRAO);
   for (const m of texto.matchAll(/'@([a-z0-9-]+)'/g)) nomes.add(m[1]);
   // As cenas pessoais citam só silhuetas; o nome delas pode entrar no arquivo público.

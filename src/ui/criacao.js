@@ -116,6 +116,7 @@ function finishCreator() {
   state.hp = CHAR.stats.hpMax;
   save(); renderHero(); render(); renderPassives();
   toast(`${c.name} criado`, false);
+  aposCriar(c);
 }
 document.addEventListener('click', e => {
   const b = e.target.closest('[data-action]');

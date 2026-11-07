@@ -2,7 +2,7 @@
    ESTADO, PERSISTÊNCIA E DESFAZER
    ===================================================================== */
 const ORD = n => n + 'º';
-const TABS = ['ficha', 'personagem', 'magia', 'grimorio', 'recursos', 'mochila', 'notas'];
+const TABS = ['mesas', 'ficha', 'personagem', 'magia', 'grimorio', 'recursos', 'mochila', 'notas', 'sugestoes'];
 
 function defaultState() {
   return {
@@ -13,6 +13,7 @@ function defaultState() {
     hp: CHAR.stats.hpMax, temp: 0,
     conc: null,
     fx: { innate: false, shield: false, mirror: 0, rage: false, on: {}, usado: {} },
+    morte: { s: 0, f: 0, estavel: false, morto: false, causa: '' },
     spLog: [],
     items: CHAR.items.map((it, i) => ({ id: 'it' + i, ...it })),
     ui: { tab: 'magia', filter: 'all' }
@@ -30,6 +31,8 @@ function sanitize(raw) {
   for (const r of CHAR.resources) d.res[r.id] = int(raw.res?.[r.id], 0, r.max, r.max);
   d.hp = int(raw.hp, 0, CHAR.stats.hpMax, CHAR.stats.hpMax);
   d.temp = int(raw.temp, 0, 999, 0);
+  if (raw.morte) d.morte = { s: int(raw.morte.s, 0, 2, 0), f: int(raw.morte.f, 0, 3, 0), estavel: !!raw.morte.estavel, morto: !!raw.morte.morto, causa: String(raw.morte.causa || '').slice(0, 300) };
+  if (d.morte.morto) d.hp = 0;
   d.conc = SPELL[raw.conc]?.conc ? raw.conc : null;
   if (Array.isArray(raw.spLog)) d.spLog = raw.spLog.filter(e => e && typeof e.txt === 'string').slice(0, 8)
     .map(e => ({ t: String(e.t || '').slice(0, 5), d: int(e.d, -99, 99, 0), txt: e.txt.slice(0, 160), sp: int(e.sp, 0, RES.sp?.max ?? 0, 0) }));
@@ -45,7 +48,7 @@ function sanitize(raw) {
       ...(it.key ? { key: String(it.key) } : {})
     }));
   }
-  if (TABS.includes(raw.ui?.tab)) d.ui.tab = raw.ui.tab;
+  if (TABS.includes(raw.ui?.tab) && (NUVEM_CFG || !['mesas', 'sugestoes'].includes(raw.ui.tab))) d.ui.tab = raw.ui.tab;
   if (typeof raw.ui?.filter === 'string') d.ui.filter = raw.ui.filter;
   return d;
 }
@@ -68,6 +71,8 @@ function commit(label, fn, opts = {}) {
   const snap = JSON.stringify(state), sp0 = state.res.sp;
   const res = fn(state);
   if (res === false) return false;
+  if (state.morte.morto) state.hp = 0;
+  else if (state.hp > 0 && (state.morte.s || state.morte.f || state.morte.estavel)) state.morte = { s: 0, f: 0, estavel: false, morto: false, causa: '' };
   if (state.res.sp !== sp0) {
     const t = new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
     state.spLog = [{ t, d: state.res.sp - sp0, txt: label || 'Ajuste manual', sp: state.res.sp }, ...(state.spLog || [])].slice(0, 8);

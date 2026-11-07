@@ -11,12 +11,12 @@ const src = f => fs.readFileSync(path.join(root, 'src', f), 'utf8');
 export const APP_FILES = [
   'rules/progressao.js', 'rules/regras.js', 'rules/classes-a.js', 'rules/classes-b.js', 'rules/bonus.js', 'rules/motor.js', 'core/store.js', 'core/state.js', 'core/utils.js', 'core/dice.js', 'core/lancamento.js',
   'ui/header-slots.js', 'ui/ficha.js', 'ui/grimorio.js', 'ui/recursos-mochila.js',
-  'ui/modais.js', 'ui/acoes.js', 'ui/init.js', 'notes/notes.js', 'ui/personagens.js', 'library/library.js', 'fx/spellfx.js', 'fx/cena-atos.js', 'fx/cenas.js', 'ui/mesa.js', 'ui/personagem.js', 'ui/nivel.js', 'ui/criacao.js', 'ui/boot.js',
+  'ui/modais.js', 'ui/acoes.js', 'ui/init.js', 'notes/notes.js', 'ui/personagens.js', 'library/library.js', 'fx/spellfx.js', 'fx/cena-atos.js', 'fx/cenas.js', 'ui/mesa.js', 'ui/personagem.js', 'ui/nivel.js', 'ui/criacao.js', 'ui/morte.js', 'nuvem/nuvem.js', 'nuvem/mesas.js', 'nuvem/sugestoes.js', 'ui/boot.js',
 ];
 
-export function build() {
+export function build(nuvem = null) {
   const app = APP_FILES.map(src).join('');
-  return src('index.template.html').replace(/<!--inject:([^>]+)-->\r?\n?/g, (_, f) => (f === 'app' ? app : src(f)));
+  return src('index.template.html').replace(/<!--inject:([^>]+)-->\r?\n?/g, (_, f) => (f === 'app' ? app : f === 'nuvem' ? JSON.stringify(nuvem).replace(/</g, '\\u003c') : src(f)));
 }
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {

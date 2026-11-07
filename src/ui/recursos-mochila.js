@@ -12,7 +12,7 @@ function renderHp() {
       <button class="btn danger" data-action="hp" data-op="dmg">Dano</button>
       <button class="btn" data-action="hp" data-op="heal" style="color:var(--ok)">Curar</button>
       <button class="btn ghost" data-action="hp" data-op="temp" style="color:var(--frost)">Temp.</button>
-    </div>`;
+    </div>${painelMorte()}`;
 }
 
 function renderRes() {

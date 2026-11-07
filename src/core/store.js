@@ -8,6 +8,8 @@
 const STORE_KEY = 'grimorio-v3';
 const LEGACY_KEY = 'soren-frostgaard-nv4';
 const LEGACY_NOTES_KEY = LEGACY_KEY + '-notas';
+const NUVEM_CFG = window.GRIMORIO_NUVEM || null;
+let aoPersistir = null;
 
 const newId = p => p + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
 const clone = o => JSON.parse(JSON.stringify(o));
@@ -85,19 +87,36 @@ function sanitizeStore(raw) {
   s.campaignNotes = raw.campaignNotes || null;
   s.library = { ...s.library, ...raw.library };
   s.settings = { ...s.settings, ...raw.settings };
+  if (raw.conta) s.conta = raw.conta;
+  if (raw.sinc) s.sinc = raw.sinc;
   return atualizaTermos(s);
 }
 
+/** No site com contas, quem chega pela primeira vez começa do zero, sem a ficha do Søren. */
+function lojaRascunho() {
+  const s = emptyStore(), c = newCharacter('Sem personagem');
+  c.rascunho = true;
+  s.characters.push(c); s.activeId = c.id;
+  return s;
+}
+
 function migrateStore() {
+  if (NUVEM_CFG && !localStorage.getItem(LEGACY_KEY)) return lojaRascunho();
   const s = emptyStore();
   s.characters.push(sorenCharacter(readJSON(LEGACY_KEY), readJSON(LEGACY_NOTES_KEY)));
   s.activeId = 'soren';
   return s;
 }
 
-function persistStore() {
+/** Grava só no navegador, sem agendar envio. */
+function gravaLocal() {
   try { localStorage.setItem(STORE_KEY, JSON.stringify(store)); return true; }
   catch (e) { return false; }
+}
+function persistStore() {
+  const ok = gravaLocal();
+  aoPersistir?.();
+  return ok;
 }
 
 let store = sanitizeStore(readJSON(STORE_KEY));

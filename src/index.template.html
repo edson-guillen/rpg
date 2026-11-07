@@ -5,9 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#0b0e14">
 <meta name="color-scheme" content="dark">
-<meta name="description" content="Ficha interativa de magias e recursos de Søren Frostgaard — Feiticeiro Dracônico nível 4 (D&D 2024).">
+<meta name="description" content="Grimório, fichas e campanhas online para D&D 2024.">
 <link rel="manifest" href="manifest.webmanifest">
-<title>Søren Frostgaard · Grimório</title>
+<title>Grimório</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cpath d='M32 4 54 32 32 60 10 32Z' fill='%239fdcff' stroke='%23d9b46c' stroke-width='4'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -95,6 +95,7 @@
   </header>
 
   <nav class="tabs" role="tablist" aria-label="Seções da ficha">
+    <button class="tab so-nuvem" role="tab" data-action="tab" data-tab="mesas" id="t-mesas" aria-controls="tab-mesas"><svg class="ic"><use href="#i-camp"/></svg>Mesas</button>
     <button class="tab" role="tab" data-action="tab" data-tab="ficha" id="t-ficha" aria-controls="tab-ficha"><svg class="ic"><use href="#i-scroll"/></svg>Ficha</button>
     <button class="tab" role="tab" data-action="tab" data-tab="personagem" id="t-personagem" aria-controls="tab-personagem"><svg class="ic"><use href="#i-eye"/></svg><span class="t-long">Personagem</span><span class="t-short">Perfil</span></button>
     <button class="tab" role="tab" data-action="tab" data-tab="magia" id="t-magia" aria-controls="tab-magia"><svg class="ic"><use href="#i-gem"/></svg>Magia<span class="badge num" id="badge-slots" hidden></span></button>
@@ -102,6 +103,7 @@
     <button class="tab" role="tab" data-action="tab" data-tab="recursos" id="t-recursos" aria-controls="tab-recursos"><svg class="ic"><use href="#i-flame"/></svg>Recursos</button>
     <button class="tab" role="tab" data-action="tab" data-tab="mochila" id="t-mochila" aria-controls="tab-mochila"><svg class="ic"><use href="#i-bag"/></svg>Mochila</button>
     <button class="tab" role="tab" data-action="tab" data-tab="notas" id="t-notas" aria-controls="tab-notas"><svg class="ic"><use href="#i-quill"/></svg>Notas</button>
+    <button class="tab so-nuvem" role="tab" data-action="tab" data-tab="sugestoes" id="t-sugestoes" aria-controls="tab-sugestoes"><svg class="ic"><use href="#i-spark"/></svg>Sugestões</button>
   </nav>
 
   <div class="effects" id="effects" aria-live="polite"></div>
@@ -192,6 +194,10 @@
       </div>
     </section>
 
+    <!-- ======================= MESAS E SUGESTÕES ======================= -->
+    <section class="panel-tab" id="tab-mesas" role="tabpanel" aria-labelledby="t-mesas"><div id="mesas-view" class="mesas"></div></section>
+    <section class="panel-tab" id="tab-sugestoes" role="tabpanel" aria-labelledby="t-sugestoes"><div id="sugestoes-view" class="mesas"></div></section>
+
     <!-- ======================= NOTAS ======================= -->
     <section class="panel-tab" id="tab-notas" role="tabpanel" aria-labelledby="t-notas">
       <div class="notes" id="notes">
@@ -220,6 +226,7 @@
 <div class="rollpop" id="roll" role="status" aria-live="polite" data-action="roll-hide" title="Toque para fechar"></div>
 <input type="file" id="file" accept="application/json,.json" hidden>
 
+<script>window.GRIMORIO_NUVEM = <!--inject:nuvem-->;</script>
 <script>
 <!--inject:data/soren.js-->
 </script>

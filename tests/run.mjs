@@ -212,7 +212,7 @@ const cenarios = {
 
   async 'as sete abas cabem na tela'({ browser, opts }) {
     const { ctx, page, erros } = await abrir(browser, opts);
-    const m = await page.evaluate(() => { const t = [...document.querySelectorAll('.tab')].map(x => x.getBoundingClientRect()); return { n: t.length, topo: new Set(t.map(r => Math.round(r.top))).size, dentro: t.every(r => r.right <= innerWidth + 1 && r.left >= -1), vaza: [...document.querySelectorAll('.tab')].some(x => x.scrollWidth > x.clientWidth + 1) }; });
+    const m = await page.evaluate(() => { const t = [...document.querySelectorAll('.tab:not(.so-nuvem)')].map(x => x.getBoundingClientRect()); return { n: t.length, topo: new Set(t.map(r => Math.round(r.top))).size, dentro: t.every(r => r.right <= innerWidth + 1 && r.left >= -1), vaza: [...document.querySelectorAll('.tab')].some(x => x.scrollWidth > x.clientWidth + 1) }; });
     ok(m.n === 7 && m.topo === 1, `sete abas numa linha só (${m.topo})`);
     ok(m.dentro && !m.vaza, 'nenhuma aba corta o texto');
     ok(!erros.length, `sem erros de JS: ${erros}`);
@@ -905,6 +905,56 @@ const cenarios = {
     await page.click('[data-action="bonus-turno"]');
     await page.waitForTimeout(100);
     ok(await page.evaluate(() => !state.fx.usado.frenesi && !bonusMarcado('imprudente')), 'Novo turno libera os bônus');
+    ok(!erros.length, `sem erros de JS: ${erros}`);
+    await ctx.close();
+  },
+  'salvaguardas contra morte seguem o Livro do Jogador': async ({ browser, opts }) => {
+    const { ctx, page, erros } = await abrir(browser, opts);
+    const r = await page.evaluate(() => {
+      store.settings.anim = 'off';
+      const o = {}, zera = hp => { state.hp = hp; state.temp = 0; state.morte = morteVazia(); };
+      const dano = n => { $('#hp-amt') || setTab('recursos'); $('#hp-amt').value = n; document.querySelector('[data-action="hp"][data-op="dmg"]').click(); };
+      const dado = v => { $('#morte-val').value = v; document.querySelector('[data-action="morte-dado"]').click(); };
+      setTab('recursos'); const max = CHAR.stats.hpMax;
+      zera(5); render(); dano(5);
+      o.painel = !!$('[data-action="morte-rolar"]'); o.hpZero = state.hp === 0 && !state.morte.morto; o.chip = /0 PV/.test($('#effects').textContent);
+      dano(1); o.falhaDano = state.morte.f;
+      dado(10); o.dez = state.morte.s; dado(9); o.nove = state.morte.f;
+      zera(0); render(); dado(1); o.umDuasFalhas = state.morte.f;
+      zera(0); render(); dado(20); o.vinte = [state.hp, state.morte.f];
+      zera(0); render(); dado(12); dado(15); dado(18); o.estavel = [state.morte.estavel, state.morte.s, state.morte.f];
+      dano(1); o.estavelDano = [state.morte.estavel, state.morte.f];
+      zera(0); render(); document.querySelector('[data-action="morte-critico"]').click(); o.critico = state.morte.f;
+      zera(0); render(); document.querySelector('[data-action="morte-critico"]').click(); dado(5); o.morreu = state.morte.morto;
+      closeModal(); o.causa = state.morte.causa;
+      $('#hp-amt').value = 5; document.querySelector('[data-action="hp"][data-op="heal"]').click(); o.curaMorto = state.hp;
+      longRest(); o.descansoMorto = [state.hp, state.morte.morto];
+      closeModal(); document.querySelector('[data-action="morte-reviver"]').click(); o.reviveu = [state.hp, state.morte.morto];
+      zera(10); render(); dano(10 + max); o.macico = [state.morte.morto, state.morte.causa]; closeModal();
+      zera(10); render(); dano(9 + max); o.quaseMacico = state.morte.morto;
+      zera(0); render(); dano(max); o.danoMaximo = state.morte.morto; closeModal();
+      zera(0); render(); dano(2); $('#hp-amt').value = 3; document.querySelector('[data-action="hp"][data-op="heal"]').click(); o.curaZera = [state.morte.f, state.hp];
+      return o;
+    });
+    ok(r.painel && r.hpZero && r.chip, 'a 0 PV aparece o painel de Salvaguardas');
+    ok(r.falhaDano === 1, 'dano a 0 PV soma uma falha');
+    ok(r.dez === 1 && r.nove === 2, '10 é sucesso e 9 é falha');
+    ok(r.umDuasFalhas === 2, '1 no dado conta duas falhas');
+    ok(r.vinte[0] === 1 && r.vinte[1] === 0, '20 no dado devolve 1 PV e zera a contagem');
+    ok(r.estavel[0] && !r.estavel[1] && !r.estavel[2], 'três sucessos estabilizam e zeram a contagem');
+    ok(!r.estavelDano[0] && r.estavelDano[1] === 1, 'dano tira a estabilidade');
+    ok(r.critico === 2, 'crítico soma duas falhas');
+    ok(r.morreu && /Morte/.test(r.causa), 'três falhas matam');
+    ok(r.curaMorto === 0 && r.descansoMorto[0] === 0 && r.descansoMorto[1], 'cura e descanso não trazem um morto de volta');
+    ok(r.reviveu[0] === 1 && !r.reviveu[1], 'Reviver devolve 1 PV');
+    ok(r.macico[0] && r.macico[1] === 'Dano Maciço', 'Dano Maciço mata na hora');
+    ok(!r.quaseMacico, 'excedente menor que os PV máximos não mata');
+    ok(r.danoMaximo, 'dano a 0 PV igual aos PV máximos mata');
+    ok(r.curaZera[0] === 0 && r.curaZera[1] === 3, 'recuperar PV zera as falhas');
+    await page.reload();
+    await page.waitForFunction(() => document.querySelector('#stats')?.children.length > 0);
+    ok(await page.evaluate(() => state.morte && state.morte.morto === false), 'estado de morte sobrevive ao recarregar');
+    ok(await page.locator('.so-nuvem:visible').count() === 0, 'sem configuração, Mesas e Sugestões ficam ocultas');
     ok(!erros.length, `sem erros de JS: ${erros}`);
     await ctx.close();
   },

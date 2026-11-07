@@ -22,3 +22,8 @@ private/
 *.pdf
 *.epub
 DnD/
+
+# Site montado para a Netlify e estado local do Supabase
+dist/
+supabase/.branches
+supabase/.temp

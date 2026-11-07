@@ -46,6 +46,8 @@ $('#file').addEventListener('change', async e => {
       if (!next) throw new Error('formato');
       flushNote(); save();
       localStorage.setItem(STORE_KEY + '-antes-de-importar', JSON.stringify(store));
+      next.characters.forEach(c => { delete c.nv; delete c.nh; });
+      next.conta = store.conta; next.sinc = { ...next.sinc, ids: store.sinc?.ids || [] };
       store = next;
       activateCharacter(store.activeId);
       toast('Backup importado', false);

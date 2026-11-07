@@ -7,6 +7,8 @@ function renderHero() {
   $('#char-name-txt').textContent = c.name;
   $('#char-sub').textContent = c.sub = CHAR.subText || c.sub;
   $('#char-eyebrow').textContent = `D&D 2024 · Grimório${c.subclassId === 'draconic' ? ' Dracônico' : ''}`;
+  document.body.classList.toggle('personagem-morto', !!state.morte?.morto);
+  document.body.classList.toggle('sem-personagem', !!c.rascunho);
   $('#carry-aside').textContent = (CHAR.carry ? `Carga máx. ${CHAR.carry} · ` : '') + 'toque no nome para editar';
   document.title = `${c.name} · Grimório`;
   $('#anim-label').textContent = `Animações: ${ANIM_LABEL[store.settings.anim || 'full']}`;
@@ -47,13 +49,16 @@ const fileSlug = s => norm(s).replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') 
 function exportCharacter(id) {
   flushNote(); save();
   const c = store.characters.find(x => x.id === id);
-  downloadJSON(`${fileSlug(c.name)}-${today()}.json`, { app: 'grimorio', tipo: 'personagem', exported: new Date().toISOString(), character: c });
+  const { nv: _v, nh: _h, ...limpo } = c;
+  downloadJSON(`${fileSlug(c.name)}-${today()}.json`, { app: 'grimorio', tipo: 'personagem', exported: new Date().toISOString(), character: limpo });
   toast(`${c.name} exportado`, false);
 }
 
 function addCharacter(c) {
+  delete c.nv; delete c.nh;
   store.characters.push(c);
   flushNote(); save();
+  store.characters = store.characters.filter(x => !x.rascunho);
   activateCharacter(c.id);
 }
 
@@ -73,6 +78,7 @@ function deleteCharacter(id) {
   store.characters.splice(i, 1);
   if (wasActive) activateCharacter(store.characters[0].id); else persistStore();
   toast(`${c.name} excluído`, true, () => {
+    delete c.nh;
     store.characters.splice(i, 0, c);
     if (wasActive) { flushNote(); save(); activateCharacter(c.id); } else persistStore();
     if (modalRefresh) modalRefresh();
@@ -84,7 +90,7 @@ function charsModal() {
     <div class="char-list" style="margin-top:14px">${store.characters.map(c => {
       const on = c.id === store.activeId, id = esc(c.id);
       return `<div class="char-row ${on ? 'on' : ''}">
-        <button class="char-pick" data-action="char-switch" data-id="${id}" ${on ? 'aria-current="true"' : ''}><b>${esc(c.name)}</b><small>${esc(c.sub)}</small></button>
+        <button class="char-pick" data-action="char-switch" data-id="${id}" ${on ? 'aria-current="true"' : ''}><b>${esc(c.name)}</b><small>${esc(c.sub)}${(on ? state.morte : c.state?.morte)?.morto ? ' · Morto' : ''}</small></button>
         <button class="icon-btn" data-action="char-dup" data-id="${id}" aria-label="Duplicar ${esc(c.name)}" title="Duplicar">${icon('i-copy')}</button>
         <button class="icon-btn" data-action="char-export" data-id="${id}" aria-label="Exportar ${esc(c.name)}" title="Exportar">${icon('i-down')}</button>
         ${store.characters.length > 1 ? `<button class="icon-btn" data-action="char-del" data-id="${id}" aria-label="Excluir ${esc(c.name)}" title="Excluir">${icon('i-trash')}</button>` : ''}

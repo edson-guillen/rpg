@@ -5,9 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#0b0e14">
 <meta name="color-scheme" content="dark">
-<meta name="description" content="Ficha interativa de magias e recursos de Søren Frostgaard — Feiticeiro Dracônico nível 4 (D&D 2024).">
+<meta name="description" content="Grimório, fichas e campanhas online para D&D 2024.">
 <link rel="manifest" href="manifest.webmanifest">
-<title>Søren Frostgaard · Grimório</title>
+<title>Grimório</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cpath d='M32 4 54 32 32 60 10 32Z' fill='%239fdcff' stroke='%23d9b46c' stroke-width='4'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -743,6 +743,57 @@ footer.foot{margin-top:28px;text-align:center;color:var(--faint);font-size:14px}
 .acao small{color:var(--muted)}
 .acao p{margin:2px 0 0;color:var(--muted);font-size:14px}
 .acao-b{display:flex;gap:6px;flex:none}
+
+/* ---------- salvaguardas contra morte ---------- */
+.morte-box{margin-top:16px;padding-top:14px;border-top:1px solid var(--line)}
+.morte-box.morto h2{color:#ff8a8a}
+.morte-trilha{display:flex;align-items:center;gap:8px;margin:6px 0}
+.morte-trilha span{flex:0 0 76px;font-size:15px;color:var(--muted)}
+.morte-trilha.f .gem:not(.spent){filter:hue-rotate(150deg) saturate(1.6)}
+.morte-ctrl{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:8px;margin-top:12px}
+.morte-ctrl input{min-width:0;min-height:46px;border-radius:12px;border:1px solid var(--line);background:var(--bg2);padding:6px 10px;font-size:18px;text-align:center}
+.cena-morte{position:fixed;inset:0;z-index:90;display:grid;place-items:center;background:#000;color:#f2e6e6;text-align:center;cursor:pointer;animation:morte-entra .9s ease both}
+.cena-morte.reduced{animation-duration:.2s}
+.cena-morte div{display:grid;gap:6px;justify-items:center}
+.cena-morte i svg{width:54px;height:54px;color:#a33;opacity:.75}
+.cena-morte b{font-family:Cinzel,serif;font-size:clamp(28px,8vw,48px);font-weight:600}
+.cena-morte span{font-size:20px;color:#b9a6a6;letter-spacing:.2em;text-transform:uppercase}
+.cena-morte.full i{animation:morte-apaga 2.6s ease both}
+@keyframes morte-entra{from{opacity:0}to{opacity:1}}
+@keyframes morte-apaga{0%{transform:scale(1.15)}20%{transform:scale(1)}100%{transform:scale(.8);opacity:.15}}
+body.personagem-morto .hero h1{color:var(--muted)}
+/* ---------- mesas e sugestões ---------- */
+.so-nuvem{display:none}
+body.com-nuvem .so-nuvem{display:flex}
+body.com-nuvem .tabs{grid-template-columns:none;grid-auto-flow:column;grid-auto-columns:minmax(62px,1fr);overflow-x:auto;scrollbar-width:none}
+body.com-nuvem .tabs::-webkit-scrollbar{display:none}
+body.com-nuvem .t-long{display:none}
+body.com-nuvem .t-short{display:inline}
+body.com-nuvem #t-sugestoes{min-width:72px}
+body.sem-personagem #stats,body.sem-personagem #substats{display:none}
+.mesas{display:grid;gap:14px}
+.mesa-conta{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.mesa-conta small,.mesa-card small,.elenco small{display:block;color:var(--muted);font-size:15px}
+.mesa-lista,.elenco-lista{display:grid;gap:10px}
+.mesa-card{display:block;width:100%;text-align:left;padding:12px 14px;border-radius:12px;border:1px solid var(--line);background:var(--bg2);color:inherit;font:inherit;cursor:pointer}
+.mesa-card b{font-size:19px}
+.mesa-topo{display:flex;justify-content:space-between;gap:10px}
+.mesa-convite{margin-top:10px;padding:12px;border:1px dashed var(--line);border-radius:12px}
+.mesa-convite small{display:block;color:var(--muted);font-size:15px}
+.mesa-convite b{display:block;font-size:24px;letter-spacing:.06em;margin-top:2px}
+.elenco{padding:12px;border-radius:12px;border:1px solid var(--line);background:var(--bg2)}
+.elenco-t{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+.elenco-t b{font-size:18px}
+.elenco-s{font-size:14px;color:var(--faint);white-space:nowrap}
+.elenco.morto .elenco-t b{color:var(--muted);text-decoration:line-through}
+.elenco.morto .elenco-s{color:#ff8a8a}
+.elenco .field{margin:8px 0 0}
+.elenco .m-actions{margin-top:8px}
+.mesa-nota{padding:10px 0;border-bottom:1px solid var(--line)}
+.mesa-nota:last-of-type{border-bottom:0}
+.mesa-part{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:6px 0}
+.mesa-part small{color:var(--muted)}
+.pre{white-space:pre-wrap;overflow-wrap:anywhere}
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <style id="fx-css">
@@ -912,6 +963,7 @@ body::after{content:"";position:fixed;inset:0;z-index:300;pointer-events:none;op
   </header>
 
   <nav class="tabs" role="tablist" aria-label="Seções da ficha">
+    <button class="tab so-nuvem" role="tab" data-action="tab" data-tab="mesas" id="t-mesas" aria-controls="tab-mesas"><svg class="ic"><use href="#i-camp"/></svg>Mesas</button>
     <button class="tab" role="tab" data-action="tab" data-tab="ficha" id="t-ficha" aria-controls="tab-ficha"><svg class="ic"><use href="#i-scroll"/></svg>Ficha</button>
     <button class="tab" role="tab" data-action="tab" data-tab="personagem" id="t-personagem" aria-controls="tab-personagem"><svg class="ic"><use href="#i-eye"/></svg><span class="t-long">Personagem</span><span class="t-short">Perfil</span></button>
     <button class="tab" role="tab" data-action="tab" data-tab="magia" id="t-magia" aria-controls="tab-magia"><svg class="ic"><use href="#i-gem"/></svg>Magia<span class="badge num" id="badge-slots" hidden></span></button>
@@ -919,6 +971,7 @@ body::after{content:"";position:fixed;inset:0;z-index:300;pointer-events:none;op
     <button class="tab" role="tab" data-action="tab" data-tab="recursos" id="t-recursos" aria-controls="tab-recursos"><svg class="ic"><use href="#i-flame"/></svg>Recursos</button>
     <button class="tab" role="tab" data-action="tab" data-tab="mochila" id="t-mochila" aria-controls="tab-mochila"><svg class="ic"><use href="#i-bag"/></svg>Mochila</button>
     <button class="tab" role="tab" data-action="tab" data-tab="notas" id="t-notas" aria-controls="tab-notas"><svg class="ic"><use href="#i-quill"/></svg>Notas</button>
+    <button class="tab so-nuvem" role="tab" data-action="tab" data-tab="sugestoes" id="t-sugestoes" aria-controls="tab-sugestoes"><svg class="ic"><use href="#i-spark"/></svg>Sugestões</button>
   </nav>
 
   <div class="effects" id="effects" aria-live="polite"></div>
@@ -1009,6 +1062,10 @@ body::after{content:"";position:fixed;inset:0;z-index:300;pointer-events:none;op
       </div>
     </section>
 
+    <!-- ======================= MESAS E SUGESTÕES ======================= -->
+    <section class="panel-tab" id="tab-mesas" role="tabpanel" aria-labelledby="t-mesas"><div id="mesas-view" class="mesas"></div></section>
+    <section class="panel-tab" id="tab-sugestoes" role="tabpanel" aria-labelledby="t-sugestoes"><div id="sugestoes-view" class="mesas"></div></section>
+
     <!-- ======================= NOTAS ======================= -->
     <section class="panel-tab" id="tab-notas" role="tabpanel" aria-labelledby="t-notas">
       <div class="notes" id="notes">
@@ -1037,6 +1094,7 @@ body::after{content:"";position:fixed;inset:0;z-index:300;pointer-events:none;op
 <div class="rollpop" id="roll" role="status" aria-live="polite" data-action="roll-hide" title="Toque para fechar"></div>
 <input type="file" id="file" accept="application/json,.json" hidden>
 
+<script>window.GRIMORIO_NUVEM = null;</script>
 <script>
 /* =====================================================================
    DADOS DO PERSONAGEM — edite aqui para adaptar a outra ficha.
@@ -2107,6 +2165,8 @@ function undoLevel(c) {
 const STORE_KEY = 'grimorio-v3';
 const LEGACY_KEY = 'soren-frostgaard-nv4';
 const LEGACY_NOTES_KEY = LEGACY_KEY + '-notas';
+const NUVEM_CFG = window.GRIMORIO_NUVEM || null;
+let aoPersistir = null;
 
 const newId = p => p + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
 const clone = o => JSON.parse(JSON.stringify(o));
@@ -2184,19 +2244,36 @@ function sanitizeStore(raw) {
   s.campaignNotes = raw.campaignNotes || null;
   s.library = { ...s.library, ...raw.library };
   s.settings = { ...s.settings, ...raw.settings };
+  if (raw.conta) s.conta = raw.conta;
+  if (raw.sinc) s.sinc = raw.sinc;
   return atualizaTermos(s);
 }
 
+/** No site com contas, quem chega pela primeira vez começa do zero, sem a ficha do Søren. */
+function lojaRascunho() {
+  const s = emptyStore(), c = newCharacter('Sem personagem');
+  c.rascunho = true;
+  s.characters.push(c); s.activeId = c.id;
+  return s;
+}
+
 function migrateStore() {
+  if (NUVEM_CFG && !localStorage.getItem(LEGACY_KEY)) return lojaRascunho();
   const s = emptyStore();
   s.characters.push(sorenCharacter(readJSON(LEGACY_KEY), readJSON(LEGACY_NOTES_KEY)));
   s.activeId = 'soren';
   return s;
 }
 
-function persistStore() {
+/** Grava só no navegador, sem agendar envio. */
+function gravaLocal() {
   try { localStorage.setItem(STORE_KEY, JSON.stringify(store)); return true; }
   catch (e) { return false; }
+}
+function persistStore() {
+  const ok = gravaLocal();
+  aoPersistir?.();
+  return ok;
 }
 
 let store = sanitizeStore(readJSON(STORE_KEY));
@@ -2226,7 +2303,7 @@ bindSheet(activeChar());
    ESTADO, PERSISTÊNCIA E DESFAZER
    ===================================================================== */
 const ORD = n => n + 'º';
-const TABS = ['ficha', 'personagem', 'magia', 'grimorio', 'recursos', 'mochila', 'notas'];
+const TABS = ['mesas', 'ficha', 'personagem', 'magia', 'grimorio', 'recursos', 'mochila', 'notas', 'sugestoes'];
 
 function defaultState() {
   return {
@@ -2237,6 +2314,7 @@ function defaultState() {
     hp: CHAR.stats.hpMax, temp: 0,
     conc: null,
     fx: { innate: false, shield: false, mirror: 0, rage: false, on: {}, usado: {} },
+    morte: { s: 0, f: 0, estavel: false, morto: false, causa: '' },
     spLog: [],
     items: CHAR.items.map((it, i) => ({ id: 'it' + i, ...it })),
     ui: { tab: 'magia', filter: 'all' }
@@ -2254,6 +2332,8 @@ function sanitize(raw) {
   for (const r of CHAR.resources) d.res[r.id] = int(raw.res?.[r.id], 0, r.max, r.max);
   d.hp = int(raw.hp, 0, CHAR.stats.hpMax, CHAR.stats.hpMax);
   d.temp = int(raw.temp, 0, 999, 0);
+  if (raw.morte) d.morte = { s: int(raw.morte.s, 0, 2, 0), f: int(raw.morte.f, 0, 3, 0), estavel: !!raw.morte.estavel, morto: !!raw.morte.morto, causa: String(raw.morte.causa || '').slice(0, 300) };
+  if (d.morte.morto) d.hp = 0;
   d.conc = SPELL[raw.conc]?.conc ? raw.conc : null;
   if (Array.isArray(raw.spLog)) d.spLog = raw.spLog.filter(e => e && typeof e.txt === 'string').slice(0, 8)
     .map(e => ({ t: String(e.t || '').slice(0, 5), d: int(e.d, -99, 99, 0), txt: e.txt.slice(0, 160), sp: int(e.sp, 0, RES.sp?.max ?? 0, 0) }));
@@ -2269,7 +2349,7 @@ function sanitize(raw) {
       ...(it.key ? { key: String(it.key) } : {})
     }));
   }
-  if (TABS.includes(raw.ui?.tab)) d.ui.tab = raw.ui.tab;
+  if (TABS.includes(raw.ui?.tab) && (NUVEM_CFG || !['mesas', 'sugestoes'].includes(raw.ui.tab))) d.ui.tab = raw.ui.tab;
   if (typeof raw.ui?.filter === 'string') d.ui.filter = raw.ui.filter;
   return d;
 }
@@ -2292,6 +2372,8 @@ function commit(label, fn, opts = {}) {
   const snap = JSON.stringify(state), sp0 = state.res.sp;
   const res = fn(state);
   if (res === false) return false;
+  if (state.morte.morto) state.hp = 0;
+  else if (state.hp > 0 && (state.morte.s || state.morte.f || state.morte.estavel)) state.morte = { s: 0, f: 0, estavel: false, morto: false, causa: '' };
   if (state.res.sp !== sp0) {
     const t = new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
     state.spLog = [{ t, d: state.res.sp - sp0, txt: label || 'Ajuste manual', sp: state.res.sp }, ...(state.spLog || [])].slice(0, 8);
@@ -2610,6 +2692,8 @@ function renderStats() {
 
 function renderEffects() {
   const f = state.fx, out = [];
+  const morte = chipMorte();
+  if (morte) out.push(morte);
   if (state.conc) out.push(`<span class="fx" style="--c:#ffd28a">${icon('i-conc')}<span>Concentração: <b>${esc(SPELL[state.conc].name)}</b></span>
       <button class="act" data-action="conc-check">Teste</button><button class="x" data-action="conc-end" aria-label="Encerrar concentração">${icon('i-x')}</button></span>`);
   if (f.rage) out.push(`<span class="fx" style="--c:#ff8a8a">${icon('i-flame')}<span><b>Fúria</b> · +${CLASS_LEVELS.barbarian[nivelDe(buildOf(activeChar()), 'barbarian') - 1]?.rage_damage_bonus ?? 2} de dano</span>
@@ -2885,7 +2969,7 @@ function renderHp() {
       <button class="btn danger" data-action="hp" data-op="dmg">Dano</button>
       <button class="btn" data-action="hp" data-op="heal" style="color:var(--ok)">Curar</button>
       <button class="btn ghost" data-action="hp" data-op="temp" style="color:var(--frost)">Temp.</button>
-    </div>`;
+    </div>${painelMorte()}`;
 }
 
 function renderRes() {
@@ -3186,6 +3270,7 @@ function longRestModal() {
   });
 }
 function longRest() {
+  if (state.morte.morto) { closeModal(); toast(`${activeChar().name} está morto`, false); return; }
   commit('Descanso Longo concluído — tudo recuperado', st => {
     LEVELS.forEach(l => { st.used[l] = 0; st.extra[l] = 0; });
     CHAR.resources.forEach(r => { st.res[r.id] = r.max; });
@@ -3251,6 +3336,9 @@ function setTab(t) {
   setUI('tab', t);
   document.querySelectorAll('.tab').forEach(b => { const on = b.dataset.tab === t; b.setAttribute('aria-selected', on); b.tabIndex = on ? 0 : -1; });
   document.querySelectorAll('.panel-tab').forEach(p => p.classList.toggle('on', p.id === 'tab-' + t));
+  document.querySelector('.tab[aria-selected="true"]')?.scrollIntoView?.({ inline: 'nearest', block: 'nearest' });
+  if (t === 'mesas' && nuvem.user) mesasCarregar();
+  if (t === 'sugestoes' && nuvem.user) sugestoesCarregar();
   const top = $('main').getBoundingClientRect().top + window.scrollY - 70;
   if (window.scrollY > top) window.scrollTo({ top: Math.max(0, top) });
 }
@@ -3364,10 +3452,12 @@ function handle(a, el) {
     case 'hp': {
       const inp = $('#hp-amt'), amt = Math.round(+inp.value);
       if (!amt || amt < 0) { toast('Digite um valor de PV primeiro', false); inp.focus(); break; }
+      if (state.morte.morto) { toast(`${activeChar().name} está morto. Use Reviver para trazê-lo de volta`, false); break; }
       if (ds.op === 'dmg') {
-        const absorbed = Math.min(state.temp, amt), rest = amt - absorbed, hadConc = state.conc;
-        commit(`−${amt} PV${absorbed ? ` (${absorbed} absorvido${absorbed > 1 ? 's' : ''} pelos temporários)` : ''}`, st => {
+        const absorbed = Math.min(state.temp, amt), rest = amt - absorbed, hadConc = state.conc, hp0 = state.hp;
+        commitMorte(`−${amt} PV${absorbed ? ` (${absorbed} absorvido${absorbed > 1 ? 's' : ''} pelos temporários)` : ''}`, st => {
           st.temp -= absorbed; st.hp = Math.max(0, st.hp - rest); if (!st.hp) st.conc = null;
+          danoEmMorte(st, hp0, rest);
         });
         if (hadConc && !state.conc) toast(`0 PV — concentração em ${SPELL[hadConc].name} perdida`);
         else if (state.conc) concModal(amt);
@@ -3449,6 +3539,8 @@ $('#file').addEventListener('change', async e => {
       if (!next) throw new Error('formato');
       flushNote(); save();
       localStorage.setItem(STORE_KEY + '-antes-de-importar', JSON.stringify(store));
+      next.characters.forEach(c => { delete c.nv; delete c.nh; });
+      next.conta = store.conta; next.sinc = { ...next.sinc, ids: store.sinc?.ids || [] };
       store = next;
       activateCharacter(store.activeId);
       toast('Backup importado', false);
@@ -3794,6 +3886,8 @@ function renderHero() {
   $('#char-name-txt').textContent = c.name;
   $('#char-sub').textContent = c.sub = CHAR.subText || c.sub;
   $('#char-eyebrow').textContent = `D&D 2024 · Grimório${c.subclassId === 'draconic' ? ' Dracônico' : ''}`;
+  document.body.classList.toggle('personagem-morto', !!state.morte?.morto);
+  document.body.classList.toggle('sem-personagem', !!c.rascunho);
   $('#carry-aside').textContent = (CHAR.carry ? `Carga máx. ${CHAR.carry} · ` : '') + 'toque no nome para editar';
   document.title = `${c.name} · Grimório`;
   $('#anim-label').textContent = `Animações: ${ANIM_LABEL[store.settings.anim || 'full']}`;
@@ -3834,13 +3928,16 @@ const fileSlug = s => norm(s).replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') 
 function exportCharacter(id) {
   flushNote(); save();
   const c = store.characters.find(x => x.id === id);
-  downloadJSON(`${fileSlug(c.name)}-${today()}.json`, { app: 'grimorio', tipo: 'personagem', exported: new Date().toISOString(), character: c });
+  const { nv: _v, nh: _h, ...limpo } = c;
+  downloadJSON(`${fileSlug(c.name)}-${today()}.json`, { app: 'grimorio', tipo: 'personagem', exported: new Date().toISOString(), character: limpo });
   toast(`${c.name} exportado`, false);
 }
 
 function addCharacter(c) {
+  delete c.nv; delete c.nh;
   store.characters.push(c);
   flushNote(); save();
+  store.characters = store.characters.filter(x => !x.rascunho);
   activateCharacter(c.id);
 }
 
@@ -3860,6 +3957,7 @@ function deleteCharacter(id) {
   store.characters.splice(i, 1);
   if (wasActive) activateCharacter(store.characters[0].id); else persistStore();
   toast(`${c.name} excluído`, true, () => {
+    delete c.nh;
     store.characters.splice(i, 0, c);
     if (wasActive) { flushNote(); save(); activateCharacter(c.id); } else persistStore();
     if (modalRefresh) modalRefresh();
@@ -3871,7 +3969,7 @@ function charsModal() {
     <div class="char-list" style="margin-top:14px">${store.characters.map(c => {
       const on = c.id === store.activeId, id = esc(c.id);
       return `<div class="char-row ${on ? 'on' : ''}">
-        <button class="char-pick" data-action="char-switch" data-id="${id}" ${on ? 'aria-current="true"' : ''}><b>${esc(c.name)}</b><small>${esc(c.sub)}</small></button>
+        <button class="char-pick" data-action="char-switch" data-id="${id}" ${on ? 'aria-current="true"' : ''}><b>${esc(c.name)}</b><small>${esc(c.sub)}${(on ? state.morte : c.state?.morte)?.morto ? ' · Morto' : ''}</small></button>
         <button class="icon-btn" data-action="char-dup" data-id="${id}" aria-label="Duplicar ${esc(c.name)}" title="Duplicar">${icon('i-copy')}</button>
         <button class="icon-btn" data-action="char-export" data-id="${id}" aria-label="Exportar ${esc(c.name)}" title="Exportar">${icon('i-down')}</button>
         ${store.characters.length > 1 ? `<button class="icon-btn" data-action="char-del" data-id="${id}" aria-label="Excluir ${esc(c.name)}" title="Excluir">${icon('i-trash')}</button>` : ''}
@@ -6148,6 +6246,7 @@ function finishCreator() {
   state.hp = CHAR.stats.hpMax;
   save(); renderHero(); render(); renderPassives();
   toast(`${c.name} criado`, false);
+  aposCriar(c);
 }
 document.addEventListener('click', e => {
   const b = e.target.closest('[data-action]');
@@ -6200,11 +6299,860 @@ document.addEventListener('change', e => {
     cw.spells = t.checked ? [...cw.spells, s.id] : cw.spells.filter(x => x !== s.id); modalRefresh();
   }
 });
+/* =====================================================================
+   SALVAGUARDAS CONTRA MORTE (Livro do Jogador 2024, cap. 1)
+   Dano a 0 PV soma uma falha; acerto crítico soma duas. Três sucessos
+   estabilizam, três falhas matam. O resultado 1 conta duas falhas e o 20
+   devolve 1 PV. Dano Maciço mata na hora.
+   ===================================================================== */
+const morteVazia = () => ({ s: 0, f: 0, estavel: false, morto: false, causa: '' });
+
+function morrer(st, causa) {
+  st.morte = { ...morteVazia(), morto: true, causa, f: 3 };
+  st.hp = 0; st.temp = 0; st.conc = null;
+}
+
+function somaFalhas(st, n, causa) {
+  st.morte.estavel = false;
+  st.morte.f = Math.min(3, st.morte.f + n);
+  if (st.morte.f >= 3) morrer(st, causa);
+}
+
+/** Aplica o d20 e devolve o texto do resultado. */
+function aplicaSalvaguarda(st, v) {
+  if (v === 20) { st.hp = 1; st.morte = morteVazia(); return `20 natural: ${activeChar().name} recupera 1 PV`; }
+  if (v < 10) { somaFalhas(st, v === 1 ? 2 : 1, 'Falhou em três Salvaguardas contra Morte'); return st.morte.morto ? `${v}: terceira falha` : `${v}: ${v === 1 ? 'duas falhas' : 'falha'}`; }
+  st.morte.s++;
+  if (st.morte.s >= 3) { st.morte = { ...morteVazia(), estavel: true }; return `${v}: terceiro sucesso, personagem Estável`; }
+  return `${v}: sucesso`;
+}
+
+/** Dano recebido depois dos PV temporários. hp0 é o PV antes do golpe. */
+function danoEmMorte(st, hp0, dano, critico = false) {
+  if (st.morte.morto || dano <= 0) return;
+  const max = CHAR.stats.hpMax;
+  if (hp0 === 0) {
+    if (dano >= max) morrer(st, 'Dano igual ou maior que os PV máximos');
+    else somaFalhas(st, critico ? 2 : 1, 'Dano com 0 Pontos de Vida');
+  } else if (st.hp === 0 && dano - hp0 >= max) morrer(st, 'Dano Maciço');
+}
+
+/** Commit que dispara a cena quando o personagem acaba de morrer. */
+function commitMorte(label, fn) {
+  const antes = state.morte.morto, r = commit(label, fn);
+  if (r && !antes && state.morte.morto) cenaMorte();
+  return r;
+}
+
+function painelMorte() {
+  const m = state.morte;
+  if (m.morto) return `<div class="morte-box morto">
+    <div class="panel-h"><h2>Morto</h2><span class="rule"></span></div>
+    <p class="note">${esc(m.causa || 'Causa não registrada.')}</p>
+    <div class="m-actions"><button class="btn" data-action="morte-modal">Registrar causa</button><button class="btn" data-action="morte-reviver">Reviver com 1 PV</button><button class="btn gold" data-action="morte-novo">${icon('i-plus')}Novo personagem</button></div></div>`;
+  if (state.hp) return '';
+  if (m.estavel) return `<div class="morte-box">
+    <div class="panel-h"><h2>Estável</h2><span class="rule"></span></div>
+    <p class="note">Inconsciente, sem Salvaguardas. Sem cura, recupera 1 PV depois de 1d4 horas. Se sofrer dano, volta a fazer Salvaguardas.</p>
+    <div class="m-actions"><button class="btn" data-action="morte-recupera">Recuperou 1 PV</button></div></div>`;
+  const trilha = (tipo, nome, n) => `<div class="morte-trilha ${tipo}"><span>${nome}</span>${[0, 1, 2].map(i => gem('morte-gem', i >= n, 'morte-marca', { t: tipo, i }, `${nome} ${i + 1}: ${i < n ? 'marcado' : 'vazio'}`)).join('')}</div>`;
+  return `<div class="morte-box">
+    <div class="panel-h"><h2>Salvaguardas contra Morte</h2><span class="rule"></span><span class="aside">no início do turno</span></div>
+    ${trilha('s', 'Sucessos', m.s)}${trilha('f', 'Falhas', m.f)}
+    <div class="morte-ctrl">
+      <button class="btn gold" data-action="morte-rolar">${icon('i-d20')}Rolar d20</button>
+      <input id="morte-val" type="number" inputmode="numeric" min="1" max="20" placeholder="1 a 20" aria-label="Valor do dado físico">
+      <button class="btn" data-action="morte-dado">Usar dado</button>
+    </div>
+    <p class="note">10 ou mais é sucesso. 1 conta duas falhas. 20 devolve 1 PV. O campo Dano acima já soma uma falha.</p>
+    <div class="m-actions"><button class="btn danger" data-action="morte-critico">Acerto crítico: 2 falhas</button><button class="btn" data-action="morte-estavel">Estabilizado</button></div>
+  </div>`;
+}
+
+function chipMorte() {
+  const m = state.morte;
+  if (m.morto) return `<span class="fx" style="--c:#ff8a8a">${icon('i-heart')}<span><b>Morto</b></span><button class="act" data-action="goto-hp">Ver</button></span>`;
+  if (state.hp) return '';
+  return `<span class="fx" style="--c:#ff8a8a">${icon('i-heart')}<span><b>${m.estavel ? 'Estável' : '0 PV'}</b>${m.estavel ? '' : ` · ${m.s} sucessos, ${m.f} falhas`}</span><button class="act" data-action="goto-hp">${m.estavel ? 'Ver' : 'Testar'}</button></span>`;
+}
+
+function morteModal() {
+  const c = activeChar();
+  openModal(() => `${mHead('Fim da jornada', `${esc(c.name)} morreu`)}
+    <form id="morte-form" style="margin-top:14px" autocomplete="off">
+      <div class="field"><label for="morte-causa">Como foi?</label><textarea id="morte-causa" rows="3" maxlength="300">${esc(state.morte.causa)}</textarea></div>
+      <p class="note">A ficha continua guardada. Magias como Revivificar devolvem o personagem por Reviver com 1 PV, na aba Recursos.</p>
+      <div class="m-actions"><button class="btn">Salvar</button><button type="button" class="btn gold" data-action="morte-novo">${icon('i-plus')}Novo personagem</button></div>
+    </form>`);
+}
+
+function cenaMorte() {
+  const modo = fxMode();
+  if (modo === 'off') { morteModal(); return; }
+  const el = document.createElement('div');
+  el.className = `cena-morte ${modo}`; el.setAttribute('role', 'status');
+  el.innerHTML = `<div><i>${icon('i-heart')}</i><b>${esc(activeChar().name)}</b><span>caiu</span></div>`;
+  let fim = false;
+  const fecha = () => { if (fim) return; fim = true; el.remove(); morteModal(); };
+  el.addEventListener('click', fecha);
+  document.body.appendChild(el);
+  setTimeout(fecha, modo === 'full' ? 3000 : 1200);
+}
+
+document.addEventListener('click', e => {
+  const b = e.target.closest('[data-action]');
+  if (!b) return;
+  const ds = b.dataset;
+  switch (ds.action) {
+    case 'morte-rolar': { const v = d(20); let t = ''; commitMorte(`Salvaguarda contra Morte: ${v}`, st => { t = aplicaSalvaguarda(st, v); }); toast(t, true); break; }
+    case 'morte-dado': {
+      const i = $('#morte-val'), v = Math.round(+i.value);
+      if (!(v >= 1 && v <= 20)) { toast('Digite um valor de 1 a 20', false); i.focus(); break; }
+      let t = ''; commitMorte(`Salvaguarda contra Morte: ${v}`, st => { t = aplicaSalvaguarda(st, v); }); toast(t, true); break;
+    }
+    case 'morte-critico': commitMorte('Acerto crítico: duas falhas', st => { somaFalhas(st, 2, 'Acerto crítico com 0 Pontos de Vida'); }); break;
+    case 'morte-marca': commitMorte(null, st => {
+      const k = ds.t, i = +ds.i, n = st.morte[k] === i + 1 ? i : i + 1;
+      st.morte[k] = n;
+      if (k === 'f' && n >= 3) morrer(st, 'Falhou em três Salvaguardas contra Morte');
+      if (k === 's' && n >= 3) st.morte = { ...morteVazia(), estavel: true };
+    }); break;
+    case 'morte-estavel': commit('Personagem Estável', st => { st.morte = { ...morteVazia(), estavel: true }; }); break;
+    case 'morte-recupera': commit('+1 PV', st => { st.hp = 1; }); break;
+    case 'morte-reviver': commit(`${activeChar().name} voltou com 1 PV`, st => { st.morte = morteVazia(); st.hp = 1; }); closeModal(); break;
+    case 'morte-modal': morteModal(); break;
+    case 'morte-novo': closeModal(); if (typeof mesaDeSubstituicao === 'function') mesaDeSubstituicao(activeChar().id); newCharModal(); break;
+  }
+});
+document.addEventListener('submit', e => {
+  if (e.target.id !== 'morte-form') return;
+  e.preventDefault();
+  const causa = $('#morte-causa').value.trim().slice(0, 300);
+  commit(null, st => { st.morte.causa = causa; });
+  closeModal();
+});
+/* =====================================================================
+   CONTA E SINCRONIZAÇÃO
+   Sem configuração (GitHub Pages, arquivo local) nada aqui é ativado.
+   O navegador continua sendo a cópia de trabalho: cada personagem sobe
+   quando muda, e a versão do servidor detecta edição em dois aparelhos.
+   ===================================================================== */
+const nuvem = { sb: null, user: null, perfil: null, dev: false, estado: 'off', enviando: false, denovo: false, timer: 0, retry: 0, puxado: 0 };
+const CONVITE_KEY = 'grimorio-convite';
+const AVISO_TEXTO = 'Texto na biblioteca pessoal: importe-a neste aparelho para ler.';
+
+/* A biblioteca pessoal nunca sai do aparelho: a ficha sobe só com o nome e a mecânica dessas magias. */
+function semTextoPessoal(s) {
+  if (!/pessoal/.test(s?.src || '')) return s;
+  const { desc: _d, higher: _h, upgrade: _u, material: _m, orig: _o, ...resto } = s;
+  return { ...resto, desc: [AVISO_TEXTO], semTexto: true };
+}
+function paraNuvem(c) {
+  const { nv: _v, nh: _h, rascunho: _r, ...x } = c;
+  const out = clone(x);
+  if (out.state) delete out.state.ui;
+  if (out.spells) out.spells = out.spells.map(semTextoPessoal);
+  if (out.grimoire?.added) out.grimoire.added = out.grimoire.added.map(semTextoPessoal);
+  return out;
+}
+/** Mantém o texto completo que este aparelho já tinha. */
+function reidrata(remoto, local) {
+  const achar = s => [...(local?.grimoire?.added || []), ...(local?.spells || [])].find(l => l.id === s.id && !l.semTexto);
+  const volta = l => (l || []).map(s => (s.semTexto && achar(s)) || s);
+  if (remoto.spells) remoto.spells = volta(remoto.spells);
+  if (remoto.grimoire?.added) remoto.grimoire.added = volta(remoto.grimoire.added);
+  return remoto;
+}
+
+/* O banco reordena as chaves do JSON: o hash precisa ignorar a ordem. */
+const canon = o => Array.isArray(o) ? `[${o.map(canon).join()}]`
+  : o && typeof o === 'object' ? `{${Object.keys(o).sort().filter(k => o[k] !== undefined).map(k => `${JSON.stringify(k)}:${canon(o[k])}`).join()}}`
+  : JSON.stringify(o) ?? 'null';
+function resumo(s) { let h = 5381; for (let i = 0; i < s.length; i++) h = (h * 33 ^ s.charCodeAt(i)) >>> 0; return `${s.length}.${h.toString(36)}`; }
+const hashDe = c => resumo(canon(paraNuvem(c)));
+const dadosConta = () => ({ settings: store.settings, campaignNotes: store.campaignNotes, library: { custom: store.library.custom, overrides: store.library.overrides } });
+
+function nuvemEstado(e) {
+  nuvem.estado = e;
+  const el = $('#nuvem-status');
+  if (el) el.textContent = { ok: 'Fichas salvas na sua conta', enviando: 'Salvando…', pendente: 'Sem conexão: salva neste aparelho e envia depois', erro: 'Não foi possível salvar na conta' }[e] || '';
+}
+
+function nuvemAgendar() {
+  if (!nuvem.user) return;
+  clearTimeout(nuvem.timer);
+  nuvem.timer = setTimeout(nuvemEnviar, 1500);
+}
+
+function adotar(c, remoto) {
+  const local = { nv: c.nv, grimoire: c.grimoire, spells: c.spells, ui: c.state?.ui };
+  const novo = reidrata(clone(remoto.dados), local);
+  Object.keys(c).forEach(k => delete c[k]);
+  Object.assign(c, novo, { id: remoto.id, name: remoto.nome, nv: remoto.versao });
+  if (c.state && local.ui) c.state.ui = local.ui;
+  c.nh = hashDe(c);
+  return sanitizeCharacter(c) ? c : null;
+}
+
+async function enviarPersonagens() {
+  const lista = store.characters.filter(c => !c.rascunho);
+  for (const c of lista) {
+    const h = hashDe(c);
+    if (h === c.nh) continue;
+    const dados = paraNuvem(c);
+    const { data, error } = await nuvem.sb.rpc('salvar_personagem', { p_id: c.id, p_nome: c.name, p_dados: dados, p_versao: c.nv ?? null });
+    if (error) throw error;
+    if (data.ok) { c.nv = data.versao; c.nh = h; continue; }
+    if (data.erro === 'grande' || data.erro === 'limite') { toast(data.erro === 'limite' ? 'Limite de 60 personagens na conta' : `${c.name} é grande demais para salvar na conta`, false); c.nh = h; continue; }
+    // Editado em dois aparelhos. Fica a versão do servidor, e esta vira cópia, salvo se forem iguais.
+    if (resumo(canon({ ...data.dados })) !== resumo(canon(dados))) {
+      const copia = { ...clone(c), id: newId('c'), name: `${c.name} (conflito)`.slice(0, 60) };
+      delete copia.nv; delete copia.nh;
+      store.characters.push(copia); nuvem.denovo = true;
+      toast(`${c.name} mudou em outro aparelho: esta versão virou uma cópia`, false);
+    }
+    adotar(c, { id: c.id, nome: data.nome, versao: data.versao, dados: data.dados });
+    if (c.id === store.activeId) { bindSheet(c); state = load(); undoStack.length = 0; refreshAll(); }
+  }
+  const atuais = new Set(store.characters.filter(c => !c.rascunho).map(c => c.id));
+  for (const id of store.sinc?.ids || []) if (!atuais.has(id)) {
+    const { error } = await nuvem.sb.from('personagens').delete().eq('dono', nuvem.user.id).eq('id', id);
+    if (error) throw error;
+  }
+  store.sinc = { ...store.sinc, ids: [...atuais] };
+  const conta = dadosConta(), hc = resumo(canon(conta));
+  if (hc !== store.sinc.conta) {
+    const { error } = await nuvem.sb.from('contas').upsert({ user_id: nuvem.user.id, dados: conta, atualizado_em: new Date().toISOString() });
+    if (error) throw error;
+    store.sinc.conta = hc;
+  }
+}
+
+async function nuvemEnviar() {
+  if (!nuvem.user) return true;
+  if (nuvem.enviando) { nuvem.denovo = true; return false; }
+  nuvem.enviando = true; nuvemEstado('enviando');
+  let ok = true;
+  try {
+    await enviarPersonagens();
+    gravaLocal();
+    nuvemEstado('ok');
+  } catch (e) {
+    ok = false;
+    nuvemEstado(navigator.onLine === false ? 'pendente' : 'erro');
+    clearTimeout(nuvem.retry); nuvem.retry = setTimeout(nuvemEnviar, 20000);
+  }
+  nuvem.enviando = false;
+  if (nuvem.denovo) { nuvem.denovo = false; return nuvemEnviar(); }
+  return ok;
+}
+
+function trocarLoja(s) {
+  store = s;
+  activateCharacter(store.activeId);
+}
+
+function removerLocal(ids) {
+  if (!ids.length) return;
+  const eraAtivo = ids.includes(store.activeId);
+  store.characters = store.characters.filter(c => !ids.includes(c.id));
+  if (!store.characters.length) { const r = lojaRascunho(); store.characters = r.characters; store.activeId = r.activeId; }
+  if (eraAtivo) activateCharacter(store.characters[0].id);
+}
+
+async function nuvemPuxar() {
+  if (!nuvem.user) return;
+  const { data, error } = await nuvem.sb.from('personagens').select('id,versao');
+  if (error) throw error;
+  const remotos = new Map(data.map(r => [r.id, r.versao])), locais = new Map(store.characters.map(c => [c.id, c]));
+  removerLocal(store.characters.filter(c => c.nv && !c.rascunho && !remotos.has(c.id)).map(c => c.id));
+  const buscar = data.filter(r => { const c = locais.get(r.id); return !c || (c.nv !== r.versao && hashDe(c) === c.nh); }).map(r => r.id);
+  if (buscar.length) {
+    const { data: fichas, error: e2 } = await nuvem.sb.from('personagens').select('id,nome,dados,versao').in('id', buscar);
+    if (e2) throw e2;
+    for (const r of fichas) {
+      const c = locais.get(r.id);
+      if (c) { adotar(c, r); if (r.id === store.activeId) { flushNote(); bindSheet(c); state = load(); undoStack.length = 0; refreshAll(); } }
+      else { const n = adotar({}, r); if (n) store.characters.push(n); }
+    }
+    const real = store.characters.find(c => !c.rascunho);
+    if (real && activeChar()?.rascunho) { store.characters = store.characters.filter(c => !c.rascunho); activateCharacter(real.id); }
+    else renderHero();
+  }
+  store.sinc = { ...store.sinc, ids: store.characters.filter(c => c.nv).map(c => c.id) };
+  const { data: conta } = await nuvem.sb.from('contas').select('dados').eq('user_id', nuvem.user.id).maybeSingle();
+  if (conta?.dados && store.sinc.conta !== resumo(canon(conta.dados)) && (!store.sinc.conta || store.sinc.conta === resumo(canon(dadosConta())))) {
+    const d = conta.dados;
+    store.settings = { ...store.settings, ...d.settings };
+    store.library = { ...store.library, custom: d.library?.custom || [], overrides: d.library?.overrides || {} };
+    if (d.campaignNotes) store.campaignNotes = d.campaignNotes;
+    store.sinc.conta = resumo(canon(dadosConta()));
+  }
+  gravaLocal();
+  nuvem.puxado = Date.now();
+}
+
+async function aoEntrar(user) {
+  if (nuvem.user?.id === user.id) return;
+  nuvem.user = user;
+  document.body.classList.add('logado');
+  // Outra pessoa neste navegador: nada da conta anterior pode ir para esta.
+  if (store.conta && store.conta !== user.id) { const r = lojaRascunho(); r.settings = store.settings; trocarLoja(r); }
+  store.conta = user.id; gravaLocal();
+  const [{ data: perfil }, { data: dev }] = await Promise.all([
+    nuvem.sb.from('perfis').select('nome').eq('id', user.id).maybeSingle(),
+    nuvem.sb.rpc('sou_dev')
+  ]);
+  nuvem.perfil = perfil; nuvem.dev = !!dev;
+  try { await nuvemEnviar(); await nuvemPuxar(); nuvemEstado('ok'); } catch (e) { nuvemEstado('erro'); }
+  await mesasCarregar();
+  sugestoesRender();
+  const conv = localStorage.getItem(CONVITE_KEY);
+  if (conv) { localStorage.removeItem(CONVITE_KEY); entrarModal(conv); }
+}
+
+function aoSair() {
+  nuvem.user = null; nuvem.perfil = null; nuvem.dev = false;
+  document.body.classList.remove('logado');
+  mesas.lista = null; mesas.det = null; mesas.aberta = null;
+  mesasRender(); sugestoesRender();
+}
+
+async function nuvemLogin() {
+  const { error } = await nuvem.sb.auth.signInWithOAuth({ provider: 'google', options: { redirectTo: location.origin + location.pathname } });
+  if (error) toast('Não foi possível abrir o login do Google', false);
+}
+
+async function nuvemSair() {
+  if (!(await nuvemEnviar())) { toast('Sem conexão com a conta: tente sair de novo para não perder alterações', false); return; }
+  await nuvem.sb.auth.signOut();
+  const r = lojaRascunho(); r.settings = store.settings;
+  trocarLoja(r);
+  aoSair();
+  toast('Você saiu da conta', false);
+}
+
+function carregarCliente() {
+  return new Promise((ok, falha) => {
+    const s = document.createElement('script');
+    s.src = 'data/supabase.js'; s.onload = ok; s.onerror = falha;
+    document.head.appendChild(s);
+  });
+}
+
+async function nuvemIniciar() {
+  if (!NUVEM_CFG) return;
+  document.body.classList.add('com-nuvem');
+  const convite = new URLSearchParams(location.search).get('c');
+  if (convite) { localStorage.setItem(CONVITE_KEY, convite); history.replaceState(null, '', location.pathname); }
+  mesasRender(); sugestoesRender();
+  if (convite || activeChar().rascunho) setTab('mesas');
+  try {
+    await carregarCliente();
+    nuvem.sb = window.supabase.createClient(NUVEM_CFG.url, NUVEM_CFG.key, { auth: { flowType: 'pkce', persistSession: true, autoRefreshToken: true, detectSessionInUrl: true } });
+  } catch (e) { mesas.erro = 'Sem conexão: conta e campanhas indisponíveis agora.'; mesasRender(); return; }
+  aoPersistir = nuvemAgendar;
+  // O cliente segura uma trava durante este aviso: outra chamada ao banco aqui travaria tudo.
+  nuvem.sb.auth.onAuthStateChange((ev, sessao) => {
+    setTimeout(() => {
+      if (sessao?.user) aoEntrar(sessao.user);
+      else if (ev === 'SIGNED_OUT' && nuvem.user) aoSair();
+    });
+  });
+  const { data } = await nuvem.sb.auth.getSession();
+  if (!data.session) { mesasRender(); sugestoesRender(); if (localStorage.getItem(CONVITE_KEY)) toast('Entre com sua conta para aceitar o convite', false); }
+  window.addEventListener('online', nuvemEnviar);
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'hidden') nuvemEnviar();
+    else if (nuvem.user && Date.now() - nuvem.puxado > 60000) nuvemPuxar().catch(() => {});
+  });
+}
+/* =====================================================================
+   CAMPANHAS
+   Fora da própria ficha, a mesa só enxerga nome e situação. O banco
+   garante isso: a tela apenas mostra o que ele entrega.
+   ===================================================================== */
+const mesas = { lista: null, meus: [], aberta: null, det: null, carregando: false, erro: null, destino: null, ordem: 0 };
+const ERRO_MESA = {
+  senha: 'Senha incorreta.', codigo: 'Código não encontrado. Confira com o mestre.', muitas_tentativas: 'Muitas tentativas. Espere 15 minutos.', cheia: 'Esta campanha está cheia.', sem_login: 'Entre com sua conta primeiro.',
+  ja_tem_ativo: 'Você já tem um personagem ativo nesta campanha.', em_outra_mesa: 'Este personagem já está em outra campanha.', personagem_morto: 'Personagem morto: reviva-o na aba Recursos ou use outro.', personagem_inexistente: 'Este personagem ainda não subiu para a conta. Tente de novo em instantes.',
+  senha_invalida: 'A senha precisa ter de 4 a 72 caracteres.', sem_nome: 'Dê um nome à campanha.', limite: 'Você chegou ao limite de 30 campanhas.'
+};
+const erroMesa = e => { const m = e?.message || e || ''; return ERRO_MESA[Object.keys(ERRO_MESA).find(k => m.includes(k))] || 'Não foi possível concluir. Tente de novo.'; };
+const linkMesa = c => `${location.origin}${location.pathname}?c=${c}`;
+const codigoFmt = c => `${c.slice(0, 5)}-${c.slice(5)}`;
+const SITUACAO = { ativo: 'Em jogo', morto: 'Morto', saiu: 'Fora da mesa' };
+
+async function mesasCarregar() {
+  if (!nuvem.user) return;
+  mesas.carregando = true;
+  const ordem = ++mesas.ordem;
+  const [camp, meus] = await Promise.all([
+    nuvem.sb.from('campanhas').select('id,nome,descricao,mestre,tem_senha,participantes(count)').order('criada_em', { ascending: false }),
+    nuvem.sb.from('elenco').select('id,campanha_id,personagem_id,nome,situacao,causa').eq('jogador', nuvem.user.id)
+  ]);
+  if (ordem !== mesas.ordem) return;
+  mesas.carregando = false;
+  mesas.erro = camp.error ? 'Não foi possível carregar as campanhas.' : null;
+  mesas.lista = camp.data || [];
+  mesas.meus = meus.data || [];
+  seguirSituacao();
+  if (mesas.aberta) await mesaCarregar(mesas.aberta); else mesasRender();
+}
+
+/* O mestre pode declarar a morte ou desfazê-la: a ficha acompanha, se não houver edição por enviar. */
+function seguirSituacao() {
+  let mudou = false;
+  for (const e of mesas.meus) {
+    const c = store.characters.find(x => x.id === e.personagem_id);
+    if (!c || c.rascunho || hashDe(c) !== c.nh || e.situacao === 'saiu') continue;
+    const morto = !!(c.id === store.activeId ? state.morte : c.state?.morte)?.morto;
+    if ((e.situacao === 'morto') === morto) continue;
+    const m = e.situacao === 'morto' ? { ...morteVazia(), morto: true, f: 3, causa: e.causa || 'Declarado pelo mestre' } : morteVazia(), hp = e.situacao === 'morto' ? 0 : 1;
+    if (c.id === store.activeId) { state.morte = m; state.hp = hp; save(); render(); }
+    else c.state = { ...(c.state || {}), morte: m, hp };
+    mudou = true;
+  }
+  if (mudou) persistStore();
+}
+
+async function mesaCarregar(id) {
+  const ordem = ++mesas.ordem;
+  const [c, part, elenco, notas] = await Promise.all([
+    nuvem.sb.from('campanhas').select('*').eq('id', id).maybeSingle(),
+    nuvem.sb.from('participantes').select('user_id,papel').eq('campanha_id', id),
+    nuvem.sb.from('elenco').select('*').eq('campanha_id', id).order('entrou_em'),
+    nuvem.sb.from('anotacoes').select('*').eq('campanha_id', id).order('atualizado_em', { ascending: false })
+  ]);
+  if (ordem !== mesas.ordem) return;
+  if (!c.data) { mesas.aberta = null; mesas.det = null; toast('Você não participa mais desta campanha', false); await mesasCarregar(); return; }
+  const ids = (part.data || []).map(p => p.user_id);
+  const { data: perfis } = await nuvem.sb.from('perfis').select('id,nome').in('id', ids);
+  mesas.det = { c: c.data, part: part.data || [], elenco: elenco.data || [], notas: notas.data || [], nomes: Object.fromEntries((perfis || []).map(p => [p.id, p.nome])) };
+  mesasRender();
+}
+
+const digitando = () => document.activeElement?.closest?.('#mesas-view') && /INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName);
+
+function vistaLogin() {
+  return `<div class="panel mesa-intro">
+    <div class="panel-h"><h2>Mesas</h2><span class="rule"></span></div>
+    ${mesas.erro ? `<p class="note">${esc(mesas.erro)}</p>` : ''}
+    <p>Entre com o Google para guardar suas fichas na conta, criar campanhas e jogar com seus amigos.</p>
+    <p class="note">Sem entrar, o app continua funcionando e salva apenas neste navegador.</p>
+    <div class="m-actions"><button class="btn gold" data-action="nuvem-login" ${nuvem.sb ? '' : 'disabled'}>Entrar com Google</button></div>
+  </div>`;
+}
+
+function contaHtml() {
+  return `<div class="panel mesa-conta">
+    <div><b>${esc(nuvem.perfil?.nome || 'Sua conta')}</b><small id="nuvem-status">${nuvem.estado === 'enviando' ? 'Salvando…' : 'Fichas salvas na sua conta'}</small></div>
+    <button class="btn sm" data-action="nuvem-conta">Conta</button>
+  </div>`;
+}
+
+function vistaLista() {
+  const rascunho = activeChar().rascunho, l = mesas.lista;
+  const cards = (l || []).map(c => {
+    const meu = mesas.meus.find(e => e.campanha_id === c.id && e.situacao === 'ativo'), mestre = c.mestre === nuvem.user.id, n = c.participantes?.[0]?.count || 1;
+    return `<button class="mesa-card" data-action="mesa-abrir" data-id="${esc(c.id)}">
+      <b>${esc(c.nome)}</b>
+      <small>${mestre ? 'Você é o mestre' : meu ? `Jogando com ${esc(meu.nome)}` : 'Sem personagem ativo'} · ${n} ${n === 1 ? 'participante' : 'participantes'}</small>
+    </button>`;
+  }).join('');
+  return `${contaHtml()}
+    ${rascunho ? `<div class="panel"><p>Você ainda não tem personagem. Crie o primeiro ou importe um arquivo .json pelo menu de opções.</p><div class="m-actions"><button class="btn gold" data-action="char-new">${icon('i-plus')}Criar personagem</button></div></div>` : ''}
+    <div class="panel">
+      <div class="panel-h"><h2>Suas campanhas</h2><span class="rule"></span></div>
+      ${mesas.erro ? `<p class="note">${esc(mesas.erro)}</p>` : ''}
+      ${l === null ? '<p class="note">Carregando…</p>' : cards ? `<div class="mesa-lista">${cards}</div>` : '<p class="empty">Nenhuma campanha ainda.</p>'}
+      <div class="m-actions"><button class="btn gold" data-action="mesa-criar">${icon('i-plus')}Criar campanha</button><button class="btn" data-action="mesa-entrar">Entrar com código</button></div>
+    </div>`;
+}
+
+function cartaoElenco(e, d, mestre) {
+  const nota = d.notas.find(n => n.autor === nuvem.user.id && n.alvo === e.id), meu = e.jogador === nuvem.user.id, id = esc(e.id);
+  const acoesMestre = mestre ? `<div class="m-actions">${e.situacao === 'ativo' ? `<button class="btn sm danger" data-action="mesa-morte" data-id="${id}">Declarar morte</button>` : e.situacao === 'morto' ? `<button class="btn sm" data-action="mesa-reverter" data-id="${id}">Desfazer morte</button>` : ''}</div>` : '';
+  return `<div class="elenco ${e.situacao}">
+    <div class="elenco-t"><b>${esc(e.nome)}</b><span class="elenco-s">${SITUACAO[e.situacao]}</span></div>
+    <small>${meu ? 'Seu personagem' : `Jogador: ${esc(d.nomes[e.jogador] || 'saiu da mesa')}`}</small>
+    ${e.situacao === 'morto' && e.causa ? `<p class="note">${esc(e.causa)}</p>` : ''}
+    ${meu ? '' : `<div class="field"><label for="an-${id}">Suas anotações, só você lê</label><textarea id="an-${id}" rows="2" maxlength="20000" data-nota-alvo="${id}" data-nota="${esc(nota?.id || '')}">${esc(nota?.texto || '')}</textarea></div>`}
+    ${acoesMestre}
+  </div>`;
+}
+
+function blocoMeuPersonagem(d) {
+  const meu = d.elenco.find(e => e.jogador === nuvem.user.id && e.situacao === 'ativo');
+  if (meu) {
+    const local = store.characters.some(c => c.id === meu.personagem_id);
+    return `<div class="panel"><div class="panel-h"><h2>Seu personagem</h2><span class="rule"></span></div>
+      <p><b>${esc(meu.nome)}</b></p>
+      <div class="m-actions">${local ? `<button class="btn gold" data-action="mesa-ficha" data-id="${esc(meu.personagem_id)}">Abrir ficha</button>` : ''}<button class="btn" data-action="mesa-retirar" data-id="${esc(meu.id)}">Retirar da campanha</button></div></div>`;
+  }
+  const emUso = new Set(mesas.meus.filter(e => e.situacao === 'ativo').map(e => e.personagem_id));
+  const livres = store.characters.filter(c => !c.rascunho && !emUso.has(c.id) && !(c.id === store.activeId ? state.morte : c.state?.morte)?.morto);
+  const caiu = d.elenco.some(e => e.jogador === nuvem.user.id && e.situacao === 'morto');
+  return `<div class="panel"><div class="panel-h"><h2>${caiu ? 'Volte para a mesa' : 'Escolha seu personagem'}</h2><span class="rule"></span></div>
+    ${caiu ? '<p class="note">Seu personagem caiu. Traga outro para continuar nesta campanha.</p>' : ''}
+    ${livres.length ? `<div class="field"><label for="mesa-pc">Personagem</label><select id="mesa-pc">${livres.map(c => `<option value="${esc(c.id)}">${esc(c.name)}</option>`).join('')}</select></div>` : '<p class="note">Nenhum personagem disponível.</p>'}
+    <div class="m-actions">${livres.length ? '<button class="btn gold" data-action="mesa-add">Adicionar à campanha</button>' : ''}<button class="btn" data-action="mesa-novo-pc">${icon('i-plus')}Criar personagem</button></div></div>`;
+}
+
+function blocoNotas(d, mestre) {
+  const minhas = d.notas.filter(n => n.autor === nuvem.user.id && !n.alvo), mesa = d.notas.filter(n => n.autor !== nuvem.user.id && n.compartilhada);
+  return `<div class="panel"><div class="panel-h"><h2>${mestre ? 'Notas do mestre' : 'Suas notas da campanha'}</h2><span class="rule"></span></div>
+    ${minhas.map(n => `<div class="mesa-nota">
+      <div class="field"><label for="nt-${esc(n.id)}">Título</label><input id="nt-${esc(n.id)}" maxlength="120" value="${esc(n.titulo)}" data-nota-campo="titulo" data-nota="${esc(n.id)}"></div>
+      <div class="field"><label for="nx-${esc(n.id)}">Texto</label><textarea id="nx-${esc(n.id)}" rows="4" maxlength="20000" data-nota-campo="texto" data-nota="${esc(n.id)}">${esc(n.texto)}</textarea></div>
+      <div class="m-actions">${mestre ? `<button class="btn sm" data-action="mesa-nota-mesa" data-id="${esc(n.id)}" aria-pressed="${n.compartilhada}">${n.compartilhada ? 'Visível para a mesa' : 'Só para o mestre'}</button>` : ''}<button class="btn sm danger" data-action="mesa-nota-del" data-id="${esc(n.id)}">Apagar</button></div>
+    </div>`).join('') || '<p class="note">Nenhuma nota ainda.</p>'}
+    <div class="m-actions"><button class="btn" data-action="mesa-nota-nova">${icon('i-plus')}Nova nota</button></div></div>
+    ${mesa.length ? `<div class="panel"><div class="panel-h"><h2>Do mestre para a mesa</h2><span class="rule"></span></div>${mesa.map(n => `<div class="mesa-nota"><b>${esc(n.titulo || 'Sem título')}</b><p class="pre">${esc(n.texto)}</p></div>`).join('')}</div>` : ''}`;
+}
+
+function vistaMesa() {
+  const d = mesas.det, c = d.c, mestre = c.mestre === nuvem.user.id;
+  const ativos = d.elenco.filter(e => e.situacao === 'ativo'), caidos = d.elenco.filter(e => e.situacao === 'morto'), fora = d.elenco.filter(e => e.situacao === 'saiu');
+  const jogadores = d.part.filter(p => p.papel === 'jogador');
+  return `<div class="mesa-topo"><button class="btn sm" data-action="mesa-voltar">Voltar</button><button class="btn sm" data-action="mesa-atualizar">Atualizar</button></div>
+    <div class="panel">
+      <div class="panel-h"><h2>${esc(c.nome)}</h2><span class="rule"></span>${mestre ? '<span class="aside">você é o mestre</span>' : `<span class="aside">Mestre: ${esc(d.nomes[c.mestre] || '')}</span>`}</div>
+      ${c.descricao ? `<p class="pre">${esc(c.descricao)}</p>` : ''}
+      ${mestre ? `<div class="mesa-convite">
+        <small>Código de entrada · ${c.tem_senha ? 'com senha' : 'sem senha: quem tiver o link entra'}</small>
+        <b class="num">${esc(codigoFmt(c.codigo))}</b>
+        <div class="m-actions"><button class="btn gold" data-action="mesa-link">Copiar link</button><button class="btn" data-action="mesa-codigo">Copiar código</button><button class="btn" data-action="mesa-senha">${c.tem_senha ? 'Trocar senha' : 'Colocar senha'}</button><button class="btn" data-action="mesa-novo-codigo">Gerar novo código</button></div>
+      </div>` : ''}
+    </div>
+    ${mestre ? '' : blocoMeuPersonagem(d)}
+    <div class="panel"><div class="panel-h"><h2>Na mesa</h2><span class="rule"></span><span class="aside">${ativos.length}</span></div>
+      <div class="elenco-lista">${ativos.map(e => cartaoElenco(e, d, mestre)).join('') || '<p class="empty">Nenhum personagem ainda.</p>'}</div></div>
+    ${caidos.length ? `<div class="panel"><div class="panel-h"><h2>Caídos</h2><span class="rule"></span><span class="aside">${caidos.length}</span></div><div class="elenco-lista">${caidos.map(e => cartaoElenco(e, d, mestre)).join('')}</div></div>` : ''}
+    ${fora.length ? `<div class="panel"><div class="panel-h"><h2>Fora da mesa</h2><span class="rule"></span></div><div class="elenco-lista">${fora.map(e => cartaoElenco(e, d, mestre)).join('')}</div></div>` : ''}
+    ${blocoNotas(d, mestre)}
+    <div class="panel"><div class="panel-h"><h2>Participantes</h2><span class="rule"></span></div>
+      <div class="mesa-part"><span>${esc(d.nomes[c.mestre] || 'Mestre')} <small>mestre</small></span></div>
+      ${jogadores.map(p => `<div class="mesa-part"><span>${esc(d.nomes[p.user_id] || 'Jogador')}</span>${mestre ? `<button class="btn sm danger" data-action="mesa-remover" data-id="${esc(p.user_id)}">Remover</button>` : ''}</div>`).join('')}
+      <div class="m-actions">${mestre ? '<button class="btn" data-action="mesa-editar">Editar campanha</button><button class="btn danger" data-action="mesa-apagar">Apagar campanha</button>' : '<button class="btn danger" data-action="mesa-sair">Sair da campanha</button>'}</div>
+    </div>`;
+}
+
+function mesasRender() {
+  const el = $('#mesas-view');
+  if (!el || !NUVEM_CFG) return;
+  el.innerHTML = !nuvem.user ? vistaLogin() : mesas.aberta && mesas.det ? vistaMesa() : vistaLista();
+}
+
+/* ---------- ações ---------- */
+function entrarModal(cod = '') {
+  const prev = { dado: null, erro: '' };
+  const buscar = async c => {
+    if (c.replace(/[^a-zA-Z0-9]/g, '').length < 10) { prev.dado = null; return; }
+    const { data } = await nuvem.sb.rpc('previa_campanha', { p_codigo: c });
+    prev.dado = data; prev.erro = data ? '' : ERRO_MESA.codigo;
+    const box = $('#mesa-previa');
+    if (box) box.innerHTML = previa();
+  };
+  const previa = () => prev.dado ? `<p class="note"><b>${esc(prev.dado.nome)}</b>, mestre ${esc(prev.dado.mestre)}. ${prev.dado.ja_participo ? 'Você já participa.' : prev.dado.tem_senha ? 'Precisa de senha.' : 'Sem senha.'}</p>` : prev.erro ? `<p class="note">${esc(prev.erro)}</p>` : '';
+  openModal(() => `${mHead('Campanhas', 'Entrar em uma campanha')}
+    <form id="mesa-entrar-form" style="margin-top:14px" autocomplete="off">
+      <div class="field"><label for="mesa-cod">Código</label><input id="mesa-cod" required maxlength="20" value="${esc(cod)}" autocapitalize="characters" ${cod ? '' : 'autofocus'}></div>
+      <div id="mesa-previa">${previa()}</div>
+      <div class="field"><label for="mesa-sen">Senha, se houver</label><input id="mesa-sen" type="password" maxlength="72" autocomplete="off" ${cod ? 'autofocus' : ''}></div>
+      <p class="note" id="mesa-msg" role="alert"></p>
+      <div class="m-actions"><button type="button" class="btn ghost" data-action="close">Cancelar</button><button class="btn gold">Entrar</button></div>
+    </form>`);
+  mesas.previa = buscar;
+  if (cod) buscar(cod);
+}
+
+function criarModal() {
+  openModal(() => `${mHead('Campanhas', 'Nova campanha')}
+    <form id="mesa-criar-form" style="margin-top:14px" autocomplete="off">
+      <div class="field"><label for="mc-nome">Nome</label><input id="mc-nome" required maxlength="80" autofocus></div>
+      <div class="field"><label for="mc-desc">Descrição</label><textarea id="mc-desc" rows="2" maxlength="1000"></textarea></div>
+      <div class="field"><label for="mc-sen">Senha para entrar</label><input id="mc-sen" type="password" minlength="4" maxlength="72" autocomplete="new-password"></div>
+      <p class="note">Com senha, o jogador precisa do código e da senha. Sem senha, basta o link. O código não dá para adivinhar, e você pode trocá-lo depois.</p>
+      <p class="note" id="mesa-msg" role="alert"></p>
+      <div class="m-actions"><button type="button" class="btn ghost" data-action="close">Cancelar</button><button class="btn gold">Criar campanha</button></div>
+    </form>`);
+}
+
+function editarModal() {
+  const c = mesas.det.c;
+  openModal(() => `${mHead('Campanhas', 'Editar campanha')}
+    <form id="mesa-editar-form" style="margin-top:14px" autocomplete="off">
+      <div class="field"><label for="me-nome">Nome</label><input id="me-nome" required maxlength="80" value="${esc(c.nome)}"></div>
+      <div class="field"><label for="me-desc">Descrição</label><textarea id="me-desc" rows="3" maxlength="1000">${esc(c.descricao)}</textarea></div>
+      <div class="m-actions"><button type="button" class="btn ghost" data-action="close">Cancelar</button><button class="btn gold">Salvar</button></div>
+    </form>`);
+}
+
+function senhaModal() {
+  const tem = mesas.det.c.tem_senha;
+  openModal(() => `${mHead('Campanhas', tem ? 'Trocar senha' : 'Colocar senha')}
+    <form id="mesa-senha-form" style="margin-top:14px" autocomplete="off">
+      <div class="field"><label for="ms-sen">Nova senha</label><input id="ms-sen" type="password" required minlength="4" maxlength="72" autofocus autocomplete="new-password"></div>
+      <p class="note">Quem já entrou continua na campanha.</p>
+      <p class="note" id="mesa-msg" role="alert"></p>
+      <div class="m-actions">${tem ? '<button type="button" class="btn" data-action="mesa-sem-senha">Tirar senha</button>' : ''}<button class="btn gold">Salvar</button></div>
+    </form>`);
+}
+
+function confirmaModal(titulo, texto, acao, rotulo, extra = '') {
+  openModal(() => `${mHead('Confirmar', titulo)}<p style="margin-top:14px">${texto}</p>${extra}
+    <div class="m-actions"><button class="btn ghost" data-action="close">Cancelar</button><button class="btn danger" data-action="${acao}">${rotulo}</button></div>`);
+}
+
+function contaModal() {
+  openModal(() => `${mHead('Conta', esc(nuvem.perfil?.nome || 'Sua conta'))}
+    <form id="conta-form" style="margin-top:14px" autocomplete="off">
+      <div class="field"><label for="ct-nome">Nome mostrado nas campanhas</label><input id="ct-nome" required maxlength="60" value="${esc(nuvem.perfil?.nome || '')}"></div>
+      <div class="m-actions"><button class="btn gold">Salvar nome</button></div>
+    </form>
+    <div class="m-actions"><button class="btn" data-action="nuvem-sair">Sair da conta</button><button class="btn danger" data-action="nuvem-excluir">Excluir conta</button></div>`);
+}
+
+async function copiar(txt, msg) {
+  try { await navigator.clipboard.writeText(txt); toast(msg, false); }
+  catch (e) { toast(txt, false); }
+}
+
+async function chamar(f, args, msg) {
+  const { data, error } = await nuvem.sb.rpc(f, args);
+  if (error) { toast(erroMesa(error), false); return null; }
+  if (msg) toast(msg, false);
+  return data ?? true;
+}
+
+function abrirMesa(id) {
+  mesas.aberta = id; mesas.det = null;
+  setTab('mesas');
+  return mesaCarregar(id);
+}
+
+/** Depois da morte, o personagem novo já nasce indo para a mesma campanha. */
+function mesaDeSubstituicao(id) {
+  mesas.destino = mesas.meus.find(e => e.personagem_id === id && e.situacao !== 'saiu')?.campanha_id || mesas.destino;
+}
+
+async function aposCriar(c) {
+  if (!mesas.destino || !nuvem.user) return;
+  const camp = mesas.destino;
+  mesas.destino = null;
+  await nuvemEnviar();
+  if (await chamar('adicionar_personagem', { p_campanha: camp, p_personagem: c.id }, `${c.name} entrou na campanha`)) { await mesasCarregar(); await abrirMesa(camp); }
+}
+
+const notaTimers = {};
+function salvarNota(el) {
+  const k = el.id;
+  clearTimeout(notaTimers[k]);
+  notaTimers[k] = setTimeout(async () => {
+    const d = mesas.det;
+    if (el.dataset.notaAlvo) {
+      if (el.dataset.nota) await nuvem.sb.from('anotacoes').update({ texto: el.value, atualizado_em: new Date().toISOString() }).eq('id', el.dataset.nota);
+      else {
+        const { data } = await nuvem.sb.from('anotacoes').insert({ campanha_id: d.c.id, autor: nuvem.user.id, alvo: el.dataset.notaAlvo, texto: el.value }).select().single();
+        if (data) { el.dataset.nota = data.id; d.notas.push(data); }
+      }
+      const n = d.notas.find(x => x.id === el.dataset.nota);
+      if (n) n.texto = el.value;
+    } else {
+      const campo = el.dataset.notaCampo, n = d.notas.find(x => x.id === el.dataset.nota);
+      await nuvem.sb.from('anotacoes').update({ [campo]: el.value, atualizado_em: new Date().toISOString() }).eq('id', el.dataset.nota);
+      if (n) n[campo] = el.value;
+    }
+  }, 600);
+}
+
+document.addEventListener('input', e => {
+  if (e.target.id === 'mesa-cod') mesas.previa?.(e.target.value);
+  if (e.target.dataset?.notaAlvo !== undefined || e.target.dataset?.notaCampo) salvarNota(e.target);
+});
+
+document.addEventListener('click', async e => {
+  const b = e.target.closest('[data-action]');
+  if (!b || !b.dataset.action.match(/^(mesa|nuvem)-/)) return;
+  const id = b.dataset.id, d = mesas.det;
+  switch (b.dataset.action) {
+    case 'nuvem-login': nuvemLogin(); break;
+    case 'nuvem-conta': contaModal(); break;
+    case 'nuvem-sair': closeModal(); nuvemSair(); break;
+    case 'nuvem-excluir': confirmaModal('Excluir conta', 'Suas fichas salvas na conta, anotações, sugestões e as campanhas em que você é mestre serão apagadas para sempre. Exporte antes o que quiser guardar.', 'nuvem-excluir-ok', 'Excluir para sempre'); break;
+    case 'nuvem-excluir-ok':
+      closeModal();
+      if (await chamar('excluir_minha_conta', {})) { await nuvem.sb.auth.signOut({ scope: 'local' }); const r = lojaRascunho(); r.settings = store.settings; trocarLoja(r); aoSair(); toast('Conta excluída', false); }
+      break;
+    case 'mesa-criar': criarModal(); break;
+    case 'mesa-entrar': entrarModal(); break;
+    case 'mesa-abrir': abrirMesa(id); break;
+    case 'mesa-voltar': mesas.aberta = null; mesas.det = null; mesasRender(); mesasCarregar(); break;
+    case 'mesa-atualizar': await mesasCarregar(); toast('Campanha atualizada', false); break;
+    case 'mesa-link': copiar(linkMesa(d.c.codigo), d.c.tem_senha ? 'Link copiado. Envie a senha aos jogadores à parte' : 'Link copiado'); break;
+    case 'mesa-codigo': copiar(codigoFmt(d.c.codigo), 'Código copiado'); break;
+    case 'mesa-senha': senhaModal(); break;
+    case 'mesa-sem-senha': closeModal(); if (await chamar('definir_senha', { p_id: d.c.id, p_senha: null }, 'Senha removida')) await mesaCarregar(d.c.id); break;
+    case 'mesa-novo-codigo': confirmaModal('Gerar novo código', 'O link e o código atuais deixam de funcionar. Quem já entrou continua na campanha.', 'mesa-novo-codigo-ok', 'Gerar'); break;
+    case 'mesa-novo-codigo-ok': closeModal(); if (await chamar('trocar_codigo', { p_id: d.c.id }, 'Novo código gerado')) await mesaCarregar(d.c.id); break;
+    case 'mesa-editar': editarModal(); break;
+    case 'mesa-apagar': confirmaModal('Apagar campanha', `${esc(d.c.nome)} e todas as anotações dela serão apagadas para sempre. As fichas dos jogadores continuam com eles.`, 'mesa-apagar-ok', 'Apagar para sempre'); break;
+    case 'mesa-apagar-ok': {
+      closeModal();
+      const { error } = await nuvem.sb.from('campanhas').delete().eq('id', d.c.id);
+      if (error) toast(erroMesa(error), false); else { mesas.aberta = null; mesas.det = null; await mesasCarregar(); toast('Campanha apagada', false); }
+      break;
+    }
+    case 'mesa-sair': confirmaModal('Sair da campanha', 'Seu personagem deixa a mesa, mas a ficha continua com você.', 'mesa-sair-ok', 'Sair'); break;
+    case 'mesa-sair-ok': closeModal(); if (await chamar('sair_campanha', { p_id: d.c.id }, 'Você saiu da campanha')) { mesas.aberta = null; mesas.det = null; await mesasCarregar(); } break;
+    case 'mesa-add': {
+      const pid = $('#mesa-pc').value;
+      await nuvemEnviar();
+      if (await chamar('adicionar_personagem', { p_campanha: d.c.id, p_personagem: pid }, 'Personagem adicionado')) await mesasCarregar();
+      break;
+    }
+    case 'mesa-novo-pc': mesas.destino = d.c.id; newCharModal(); break;
+    case 'mesa-ficha': closeModal(); switchCharacter(id); setTab('ficha'); break;
+    case 'mesa-retirar': if (await chamar('retirar_personagem', { p_elenco: id }, 'Personagem retirado')) await mesasCarregar(); break;
+    case 'mesa-morte':
+      mesas.alvo = id;
+      confirmaModal('Declarar morte', `${esc(d.elenco.find(x => x.id === id).nome)} será marcado como morto na ficha do jogador e na mesa.`, 'mesa-morte-ok', 'Declarar morte', '<div class="field" style="margin-top:12px"><label for="mm-causa">Causa</label><input id="mm-causa" maxlength="300"></div>');
+      break;
+    case 'mesa-morte-ok': { const causa = $('#mm-causa').value.trim(); closeModal(); if (await chamar('definir_situacao', { p_elenco: mesas.alvo, p_situacao: 'morto', p_causa: causa }, 'Morte registrada')) await mesasCarregar(); break; }
+    case 'mesa-reverter': if (await chamar('definir_situacao', { p_elenco: id, p_situacao: 'ativo', p_causa: '' }, 'Morte desfeita')) await mesasCarregar(); break;
+    case 'mesa-remover': mesas.alvo = id; confirmaModal('Remover jogador', `${esc(d.nomes[id] || 'Este jogador')} perderá o acesso à campanha.`, 'mesa-remover-ok', 'Remover'); break;
+    case 'mesa-remover-ok': closeModal(); if (await chamar('remover_participante', { p_id: d.c.id, p_user: mesas.alvo }, 'Jogador removido')) await mesasCarregar(); break;
+    case 'mesa-nota-nova': {
+      const { error } = await nuvem.sb.from('anotacoes').insert({ campanha_id: d.c.id, autor: nuvem.user.id, titulo: '', texto: '' });
+      if (error) toast(erroMesa(error), false); else await mesaCarregar(d.c.id);
+      break;
+    }
+    case 'mesa-nota-del': await nuvem.sb.from('anotacoes').delete().eq('id', id); await mesaCarregar(d.c.id); break;
+    case 'mesa-nota-mesa': {
+      const n = d.notas.find(x => x.id === id);
+      const { error } = await nuvem.sb.from('anotacoes').update({ compartilhada: !n.compartilhada }).eq('id', id);
+      if (error) toast(erroMesa(error), false); else await mesaCarregar(d.c.id);
+      break;
+    }
+  }
+});
+
+document.addEventListener('submit', async e => {
+  const f = e.target.id, msg = t => { const m = $('#mesa-msg'); if (m) m.textContent = t; };
+  if (!/^(mesa-|conta-form)/.test(f)) return;
+  e.preventDefault();
+  if (f === 'mesa-criar-form') {
+    const senha = $('#mc-sen').value;
+    const { data, error } = await nuvem.sb.rpc('criar_campanha', { p_nome: $('#mc-nome').value, p_descricao: $('#mc-desc').value, p_senha: senha || null });
+    if (error) { msg(erroMesa(error)); return; }
+    closeModal(); await mesasCarregar(); await abrirMesa(data); toast('Campanha criada', false);
+  } else if (f === 'mesa-entrar-form') {
+    const { data, error } = await nuvem.sb.rpc('entrar_campanha', { p_codigo: $('#mesa-cod').value, p_senha: $('#mesa-sen').value || null });
+    if (error || !data.ok) { msg(ERRO_MESA[data?.erro] || erroMesa(error)); return; }
+    closeModal(); await mesasCarregar(); await abrirMesa(data.id); toast('Você entrou na campanha', false);
+  } else if (f === 'mesa-senha-form') {
+    const { error } = await nuvem.sb.rpc('definir_senha', { p_id: mesas.det.c.id, p_senha: $('#ms-sen').value });
+    if (error) { msg(erroMesa(error)); return; }
+    closeModal(); await mesaCarregar(mesas.det.c.id); toast('Senha salva', false);
+  } else if (f === 'mesa-editar-form') {
+    if (await chamar('editar_campanha', { p_id: mesas.det.c.id, p_nome: $('#me-nome').value, p_descricao: $('#me-desc').value }, 'Campanha atualizada')) { closeModal(); await mesasCarregar(); }
+  } else if (f === 'conta-form') {
+    const nome = $('#ct-nome').value.trim();
+    const { error } = await nuvem.sb.from('perfis').update({ nome }).eq('id', nuvem.user.id);
+    if (error) { toast('Não foi possível salvar o nome', false); return; }
+    nuvem.perfil = { ...nuvem.perfil, nome };
+    closeModal(); mesasRender(); toast('Nome salvo', false);
+  }
+});
+
+/* Mesa aberta na tela: acompanha os outros jogadores sem atrapalhar quem está digitando. */
+setInterval(() => {
+  if (nuvem.user && state.ui.tab === 'mesas' && document.visibilityState === 'visible' && !digitando() && $('#modal').hidden) mesasCarregar();
+}, 30000);
+/* =====================================================================
+   SUGESTÕES
+   Cada pessoa vê as próprias. Quem está na lista de desenvolvedores do
+   banco vê todas e pode responder.
+   ===================================================================== */
+const sug = { lista: null, filtro: 'nova' };
+const TIPO_SUG = { ideia: 'Ideia', erro: 'Erro', regra: 'Regra errada' };
+const SIT_SUG = { nova: 'Nova', lida: 'Lida', feita: 'Feita', recusada: 'Recusada' };
+const dataCurta = t => new Date(t).toLocaleDateString('pt-BR');
+
+async function sugestoesCarregar() {
+  if (!nuvem.user) return;
+  const { data, error } = await nuvem.sb.from('sugestoes').select('*').order('criada_em', { ascending: false }).limit(300);
+  sug.lista = error ? [] : data;
+  sugestoesRender(true);
+}
+
+function cartaoSug(s) {
+  const id = esc(s.id);
+  if (!nuvem.dev) return `<div class="elenco"><div class="elenco-t"><b>${TIPO_SUG[s.tipo]}</b><span class="elenco-s">${SIT_SUG[s.situacao]}</span></div>
+    <small>${dataCurta(s.criada_em)}</small><p class="pre">${esc(s.texto)}</p>${s.resposta ? `<p class="note">Resposta: ${esc(s.resposta)}</p>` : ''}</div>`;
+  return `<div class="elenco"><div class="elenco-t"><b>${TIPO_SUG[s.tipo]}</b><span class="elenco-s">${SIT_SUG[s.situacao]}</span></div>
+    <small>${esc(s.autor_nome)} · ${dataCurta(s.criada_em)}</small><p class="pre">${esc(s.texto)}</p>
+    <div class="field"><label for="sg-${id}">Situação</label><select id="sg-${id}" data-sug-sit="${id}">${Object.entries(SIT_SUG).map(([k, v]) => `<option value="${k}" ${k === s.situacao ? 'selected' : ''}>${v}</option>`).join('')}</select></div>
+    <div class="field"><label for="sr-${id}">Resposta ao autor</label><textarea id="sr-${id}" rows="2" maxlength="1000" data-sug-resp="${id}">${esc(s.resposta)}</textarea></div>
+    <div class="m-actions"><button class="btn sm danger" data-action="sug-apagar" data-id="${id}">Apagar</button></div></div>`;
+}
+
+function sugestoesRender(carregado = false) {
+  const el = $('#sugestoes-view');
+  if (!el || !NUVEM_CFG) return;
+  if (!nuvem.user) { sug.lista = null; el.innerHTML = '<div class="panel"><div class="panel-h"><h2>Sugestões</h2><span class="rule"></span></div><p>Entre na aba Mesas para enviar ideias, erros e correções de regras.</p></div>'; return; }
+  if (!carregado && !sug.lista) sugestoesCarregar();
+  const todas = sug.lista || [], lista = nuvem.dev && sug.filtro !== 'todas' ? todas.filter(s => s.situacao === sug.filtro) : todas;
+  const filtros = nuvem.dev ? `<div class="nscope" role="group" aria-label="Filtrar sugestões">${[['nova', 'Novas'], ['lida', 'Lidas'], ['feita', 'Feitas'], ['recusada', 'Recusadas'], ['todas', 'Todas']].map(([k, v]) => `<button class="filter" data-action="sug-filtro" data-f="${k}" aria-pressed="${sug.filtro === k}">${v} (${k === 'todas' ? todas.length : todas.filter(s => s.situacao === k).length})</button>`).join('')}</div>` : '';
+  el.innerHTML = `<div class="panel">
+      <div class="panel-h"><h2>Enviar sugestão</h2><span class="rule"></span></div>
+      <form id="sug-form" autocomplete="off">
+        <div class="field"><label for="sg-tipo">Tipo</label><select id="sg-tipo">${Object.entries(TIPO_SUG).map(([k, v]) => `<option value="${k}">${v}</option>`).join('')}</select></div>
+        <div class="field"><label for="sg-texto">O que você gostaria?</label><textarea id="sg-texto" required minlength="3" maxlength="2000" rows="4"></textarea></div>
+        <div class="m-actions"><button class="btn gold">Enviar</button></div>
+      </form>
+    </div>
+    <div class="panel">
+      <div class="panel-h"><h2>${nuvem.dev ? 'Painel do desenvolvedor' : 'Suas sugestões'}</h2><span class="rule"></span></div>
+      ${filtros}
+      ${sug.lista === null ? '<p class="note">Carregando…</p>' : lista.length ? `<div class="elenco-lista">${lista.map(cartaoSug).join('')}</div>` : '<p class="empty">Nada por aqui.</p>'}
+    </div>`;
+}
+
+document.addEventListener('submit', async e => {
+  if (e.target.id !== 'sug-form') return;
+  e.preventDefault();
+  const texto = $('#sg-texto').value.trim();
+  if (texto.length < 3) return;
+  const { error } = await nuvem.sb.from('sugestoes').insert({ autor: nuvem.user.id, tipo: $('#sg-tipo').value, texto, autor_nome: '-' });
+  if (error) { toast(/limite/.test(error.message) ? 'Limite de 10 sugestões por dia' : 'Não foi possível enviar', false); return; }
+  toast('Sugestão enviada. Obrigado!', false);
+  await sugestoesCarregar();
+});
+
+document.addEventListener('click', async e => {
+  const b = e.target.closest('[data-action]');
+  if (!b) return;
+  if (b.dataset.action === 'sug-filtro') { sug.filtro = b.dataset.f; sugestoesRender(true); }
+  if (b.dataset.action === 'sug-apagar') { await nuvem.sb.from('sugestoes').delete().eq('id', b.dataset.id); await sugestoesCarregar(); }
+});
+
+document.addEventListener('change', async e => {
+  const { sugSit, sugResp } = e.target.dataset || {};
+  if (!sugSit && !sugResp) return;
+  const campos = sugSit ? { situacao: e.target.value } : { resposta: e.target.value };
+  const { error } = await nuvem.sb.from('sugestoes').update(campos).eq('id', sugSit || sugResp);
+  if (error) { toast('Não foi possível salvar', false); return; }
+  Object.assign(sug.lista.find(s => s.id === (sugSit || sugResp)), campos);
+  if (sugSit) sugestoesRender(true); else toast('Resposta salva', false);
+});
 /* Início do app: roda depois de todos os módulos carregados. */
 refreshAll();
 if ('serviceWorker' in navigator && location.protocol === 'https:') navigator.serviceWorker.register('sw.js').catch(() => {});
 
 setTimeout(() => ensureArt(), 1200);
+nuvemIniciar();
 </script>
 <script>
 /* =====================================================================

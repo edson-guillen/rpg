@@ -9,12 +9,16 @@
     "extract": "node tools/extract-private.mjs",
     "cenas": "node tools/cenas-pessoais.mjs",
     "test": "node tools/build-art.mjs && node tools/build.mjs && node tests/run.mjs",
-    "srd": "node tools/build-srd.mjs"
+    "srd": "node tools/build-srd.mjs",
+    "test:nuvem": "node tests/nuvem-regras.mjs && node tests/nuvem-site.mjs"
   },
   "devDependencies": {
     "@iconify-json/game-icons": "^1.2.4",
     "gsap": "^3.12.5",
     "pdfjs-dist": "^4.10.38",
     "playwright": "^1.65.0"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.119.0"
   }
 }

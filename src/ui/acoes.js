@@ -5,6 +5,9 @@ function setTab(t) {
   setUI('tab', t);
   document.querySelectorAll('.tab').forEach(b => { const on = b.dataset.tab === t; b.setAttribute('aria-selected', on); b.tabIndex = on ? 0 : -1; });
   document.querySelectorAll('.panel-tab').forEach(p => p.classList.toggle('on', p.id === 'tab-' + t));
+  document.querySelector('.tab[aria-selected="true"]')?.scrollIntoView?.({ inline: 'nearest', block: 'nearest' });
+  if (t === 'mesas' && nuvem.user) mesasCarregar();
+  if (t === 'sugestoes' && nuvem.user) sugestoesCarregar();
   const top = $('main').getBoundingClientRect().top + window.scrollY - 70;
   if (window.scrollY > top) window.scrollTo({ top: Math.max(0, top) });
 }
@@ -118,10 +121,12 @@ function handle(a, el) {
     case 'hp': {
       const inp = $('#hp-amt'), amt = Math.round(+inp.value);
       if (!amt || amt < 0) { toast('Digite um valor de PV primeiro', false); inp.focus(); break; }
+      if (state.morte.morto) { toast(`${activeChar().name} está morto. Use Reviver para trazê-lo de volta`, false); break; }
       if (ds.op === 'dmg') {
-        const absorbed = Math.min(state.temp, amt), rest = amt - absorbed, hadConc = state.conc;
-        commit(`−${amt} PV${absorbed ? ` (${absorbed} absorvido${absorbed > 1 ? 's' : ''} pelos temporários)` : ''}`, st => {
+        const absorbed = Math.min(state.temp, amt), rest = amt - absorbed, hadConc = state.conc, hp0 = state.hp;
+        commitMorte(`−${amt} PV${absorbed ? ` (${absorbed} absorvido${absorbed > 1 ? 's' : ''} pelos temporários)` : ''}`, st => {
           st.temp -= absorbed; st.hp = Math.max(0, st.hp - rest); if (!st.hp) st.conc = null;
+          danoEmMorte(st, hp0, rest);
         });
         if (hadConc && !state.conc) toast(`0 PV — concentração em ${SPELL[hadConc].name} perdida`);
         else if (state.conc) concModal(amt);

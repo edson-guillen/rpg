@@ -86,6 +86,8 @@ Ficha de controle de **magias e recursos limitados** para **Søren Frostgaard**,
 - Cada personagem tem ficha, recursos, inventário e anotações próprios. As anotações podem ser do personagem ou da campanha, compartilhadas entre todos.
 - **Treze classes e 53 subclasses:** as 12 do Livro do Jogador 2024 e o Artífice de Eberron: Forge of the Artificer, com recursos, Ações de classe, multiclasse, armaduras, armas e maestrias. Cada ação que gasta recurso ou rola dado usa a mesa de dados e tem cena própria.
 - **Bônus de classe nos ataques:** Fúria, Ataque Furtivo, Frenesi, Golpes Radiantes, Estilos de Luta, crítico do Campeão, Artes Marciais, invocações e bônus de magia entram sozinhos no ataque e no dano. O que depende da situação fica em botões acima das armas, com controle de uma vez por turno.
+- **Salvaguardas contra Morte:** a 0 PV, sucessos e falhas por dado do app ou físico, Dano Maciço, personagem morto e Reviver.
+- **Mesas online** (site na Netlify): login com Google, fichas salvas na conta, campanhas com link ou senha, elenco só com nomes, anotações privadas, notas do mestre e sugestões. Veja [docs/publicar-netlify.md](docs/publicar-netlify.md).
 - **Compêndio** na aba Personagem: características, armas e, com a biblioteca pessoal, textos integrais, subclasses antigas e itens mágicos.
 - **Criação guiada** pelas regras de 2024: classe, espécie, antecedente, atributos (conjunto padrão, compra de pontos ou 4d6), perícias, talento, equipamento, magias e nível inicial.
 - Por enquanto, só a classe **Feiticeiro** está disponível.

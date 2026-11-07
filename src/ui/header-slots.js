@@ -17,6 +17,8 @@ function renderStats() {
 
 function renderEffects() {
   const f = state.fx, out = [];
+  const morte = chipMorte();
+  if (morte) out.push(morte);
   if (state.conc) out.push(`<span class="fx" style="--c:#ffd28a">${icon('i-conc')}<span>Concentração: <b>${esc(SPELL[state.conc].name)}</b></span>
       <button class="act" data-action="conc-check">Teste</button><button class="x" data-action="conc-end" aria-label="Encerrar concentração">${icon('i-x')}</button></span>`);
   if (f.rage) out.push(`<span class="fx" style="--c:#ff8a8a">${icon('i-flame')}<span><b>Fúria</b> · +${CLASS_LEVELS.barbarian[nivelDe(buildOf(activeChar()), 'barbarian') - 1]?.rage_damage_bonus ?? 2} de dano</span>

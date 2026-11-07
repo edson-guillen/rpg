@@ -229,6 +229,7 @@ function longRestModal() {
   });
 }
 function longRest() {
+  if (state.morte.morto) { closeModal(); toast(`${activeChar().name} está morto`, false); return; }
   commit('Descanso Longo concluído — tudo recuperado', st => {
     LEVELS.forEach(l => { st.used[l] = 0; st.extra[l] = 0; });
     CHAR.resources.forEach(r => { st.res[r.id] = r.max; });

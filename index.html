@@ -441,6 +441,14 @@ details.passive ul{padding-left:18px}
 .calc-row .cv{font-size:22px;font-weight:700;color:var(--gold-l);grid-row:span 2;align-self:center;text-align:right}
 .calc-row span{font-size:14px;color:var(--muted);line-height:1.3}
 .calc-row.boost .cv{color:var(--frost)}
+.bonus-bar{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
+.bchip{display:inline-flex;align-items:center;gap:6px;min-height:36px;padding:5px 11px;border:1px solid var(--line);border-radius:999px;background:transparent;color:var(--muted);font:inherit;font-size:13.5px}
+.bchip small{font-size:12px;opacity:.85}
+button.bchip{cursor:pointer}
+.bchip.on{border-color:var(--gold);color:var(--gold-l);background:rgba(217,180,108,.1)}
+.bchip.usado{opacity:.55;text-decoration:line-through}
+.bchip.turno{margin-left:auto;border-style:dashed}
+.bchip:disabled{opacity:.45;cursor:default}
 .atk-list{display:grid;gap:8px}
 @media (min-width:760px){ .atk-list{grid-template-columns:1fr 1fr} }
 .atk-row{display:grid;grid-template-columns:1fr auto auto;gap:6px 8px;align-items:center;padding:10px 10px 10px 12px;border:1px solid var(--line);border-radius:14px;background:rgba(0,0,0,.18)}
@@ -925,6 +933,7 @@ body::after{content:"";position:fixed;inset:0;z-index:300;pointer-events:none;op
         </div>
         <div class="panel span2">
           <div class="panel-h"><h2>Ataques e Armas</h2><span class="rule"></span><span class="aside" id="atk-hint"></span></div>
+          <div id="atk-bonus"></div>
           <div class="atk-list" id="attacks"></div>
         </div>
         <div class="panel">
@@ -1671,6 +1680,152 @@ const ARMAS = [
 /* Armaduras: [nome, CA base, limite de DES (99 = sem limite, 0 = não soma), tipo] */
 const ARMADURAS = [['Armadura Acolchoada', 11, 99, 'leve'], ['Armadura de Couro', 11, 99, 'leve'], ['Armadura de Couro Batido', 12, 99, 'leve'], ['Gibão de Peles', 12, 2, 'media'], ['Cota de Malha Parcial', 13, 2, 'media'], ['Loriga de Escamas', 14, 2, 'media'], ['Couraça Peitoral', 14, 2, 'media'], ['Armadura de Placas Parcial', 15, 2, 'media'], ['Cota de Anéis', 14, 0, 'pesada'], ['Cota de Malha', 16, 0, 'pesada'], ['Armadura de Talas', 17, 0, 'pesada'], ['Armadura de Placas', 18, 0, 'pesada']];
 /* =====================================================================
+   BÔNUS DE ATAQUE E DANO
+   Regras resumidas com palavras próprias, conferidas com o Livro do
+   Jogador 2024 e Eberron: Forge of the Artificer.
+
+   modo 'auto': entra sozinho quando a condição vale.
+   modo 'marca': depende da situação, então a Ficha mostra um botão.
+   uma: só uma vez por turno. res: gasta recurso. pacto: gasta espaço de
+   Pacto. magia: vale para magias, não para armas.
+   ===================================================================== */
+const TIPOS_ARMA = 'Da arma';
+const modDe = v => (v ? `${v > 0 ? '+' : '-'}${Math.abs(v)}` : '');
+
+function regrasBonus(b, M, cl) {
+  const R = [], estilos = new Set([...(b.escolhas?.estilos || []), ...(b.feats || []).map(id => FEATS.find(f => f.id === id)?.name)]), inv = new Set(b.escolhas?.invocacoes || []);
+  const ligada = id => bonusMarcado(id), comArma = a => !!a.arma, corpo = a => !!a.melee && !!a.arma, corpoOuMao = a => !!a.melee, forca = a => a.attr === 'FOR';
+  const add = (id, nome, r) => R.push({ id, nome, modo: 'auto', vale: () => true, ...r });
+
+  if (estilos.has('Arquearia')) add('arquearia', 'Arquearia', { atk: 2, vale: a => !!a.dist });
+  if (estilos.has('Combate com Armas de Arremesso')) add('arremesso', 'Arremessando', { modo: 'marca', mod: 2, info: '+2', vale: a => !!a.arremesso });
+  if (estilos.has('Duelismo')) add('duelismo', 'Duelismo', { mod: 2, vale: a => corpo(a) && !a.duas && !(a.versatil && ligada('duasmaos')) });
+  if (estilos.has('Combate com Armas Grandes')) add('gwf', 'Armas Grandes', { gwf: true, vale: a => corpo(a) && (a.duas || (a.versatil && ligada('duasmaos'))) });
+  if ((b.feats || []).includes('savage-attacker')) add('selvagem', 'Atacante Selvagem', { modo: 'marca', padrao: true, uma: true, melhor: true, info: '2× dados', vale: comArma });
+
+  for (const x of cl) {
+    const L = CLASS_LEVELS[x.id][x.lv - 1], s = x.sub, lv = x.lv;
+    if (x.id === 'barbarian') {
+      const f = L.rage_damage_bonus, raiva = st => st.fx.rage, impr = () => ligada('imprudente');
+      add('furia', 'Fúria', { mod: f, requer: raiva, vale: forca });
+      if (lv >= 2) add('imprudente', 'Ataque Imprudente', { modo: 'marca', adv: true, turno: true, dura: true, info: 'Vantagem', vale: forca });
+      if (lv >= 9) add('brutal', 'Golpe Brutal', { modo: 'marca', uma: true, semVant: true, dado: lv >= 17 ? '2d10' : '1d10', requer: impr, vale: forca });
+      if (s === 'berserker') add('frenesi', 'Frenesi', { uma: true, dado: `${f}d6`, requer: st => raiva(st) && impr(), vale: forca });
+      if (s === 'zealot') add('furia-divina', 'Fúria Divina', { uma: true, dado: `1d6${modDe(Math.floor(lv / 2))}`, tipo: 'Necrótico ou Radiante', requer: raiva, vale: corpoOuMao });
+    }
+    if (x.id === 'rogue') {
+      add('furtivo', 'Ataque Furtivo', { modo: 'marca', uma: true, dado: `${Math.ceil(lv / 2)}d6`, vale: a => !!a.acuidade || !!a.dist });
+      if (s === 'assassin') add('surpresa', 'Golpe Surpreendente', { modo: 'marca', uma: true, mod: lv, info: `+${lv}`, requer: () => ligada('furtivo') && !state.fx.usado?.furtivo, vale: a => !!a.acuidade || !!a.dist });
+    }
+    if (x.id === 'cleric' && lv >= 7) {
+      add('golpe-divino', 'Golpe Divino', { modo: 'marca', uma: true, dado: lv >= 14 ? '2d8' : '1d8', tipo: 'Necrótico ou Radiante', vale: comArma });
+      add('poder-clerigo', 'Conjuração Poderosa', { modo: 'marca', magia: true, info: 'truques', cadaAlvo: true, mod: M.SAB, valeMagia: sp => !sp.level && (sp.classes || []).includes('cleric') });
+    }
+    if (x.id === 'druid' && lv >= 7) {
+      add('ataque-primal', 'Ataque Primal', { modo: 'marca', uma: true, dado: lv >= 15 ? '2d8' : '1d8', tipo: 'Elétrico, Gélido, Ígneo ou Trovejante', vale: comArma });
+      add('poder-druida', 'Conjuração Poderosa', { modo: 'marca', magia: true, info: 'truques', cadaAlvo: true, mod: M.SAB, valeMagia: sp => !sp.level && (sp.classes || []).includes('druid') });
+    }
+    if (x.id === 'ranger') {
+      add('marca', 'Marca do Predador', { modo: 'marca', conc: 'hunters-mark', dura: true, dado: lv >= 20 ? '1d10' : '1d6', tipo: 'Energético', vale: comArma });
+      if (s === 'fey-wanderer' && lv >= 3) add('terriveis', 'Golpes Terríveis', { modo: 'marca', padrao: true, uma: true, dado: lv >= 11 ? '1d6' : '1d4', tipo: 'Psíquico', vale: comArma });
+      if (s === 'hunter' && lv >= 3) add('colosso', 'Assassino de Colossos', { modo: 'marca', uma: true, dado: '1d8', vale: comArma });
+      if (s === 'gloom-stalker' && lv >= 3) add('golpe-terrivel', 'Golpe Terrível', { modo: 'marca', uma: true, dado: lv >= 11 ? '2d8' : '2d6', tipo: 'Psíquico', vale: comArma });
+    }
+    if (x.id === 'fighter') {
+      if (s === 'champion' && lv >= 3) add('critico', lv >= 15 ? 'Crítico Superior' : 'Crítico Aprimorado', { crit: lv >= 15 ? 18 : 19, vale: a => !!a.arma || !!a.desarmado });
+      if (s === 'psi-warrior' && lv >= 3) add('psi-golpe', 'Golpe Psiônico', { modo: 'marca', uma: true, res: 'psi', dado: `1d${PSI(lv)[0]}${modDe(M.INT)}`, tipo: 'Energético', vale: comArma });
+      if (s === 'battle-master' && lv >= 3) add('manobra', 'Manobra', { modo: 'marca', res: 'superiority', solta: true, dado: `1d${lv >= 18 ? 12 : lv >= 10 ? 10 : 8}`, vale: a => !!a.arma || !!a.desarmado });
+    }
+    if (x.id === 'paladin') {
+      if (lv >= 11) add('radiantes', 'Golpes Radiantes', { dado: '1d8', tipo: 'Radiante', vale: corpoOuMao });
+      if (s === 'devotion' && lv >= 3) add('sagrada', 'Arma Sagrada', { modo: 'marca', dura: true, atk: Math.max(1, M.CAR), info: `+${Math.max(1, M.CAR)} ataque`, vale: corpo });
+    }
+    if (x.id === 'warlock') {
+      if (inv.has('Explosão Agonizante')) add('agonizante', 'Explosão Agonizante', { magia: true, cadaAlvo: true, mod: M.CAR, valeMagia: sp => sp.id === 'eldritch-blast' });
+      if (inv.has('Sorvedouro de Vida')) add('sorvedouro', 'Sorvedouro de Vida', { modo: 'marca', padrao: true, uma: true, dado: '1d6', tipo: 'Necrótico, Psíquico ou Radiante', vale: corpo });
+      if (inv.has('Punição Mística')) add('punicao', 'Punição Mística', { modo: 'marca', uma: true, pacto: true, solta: true, dado: `${1 + slotPactoDe(cl)}d8`, tipo: 'Energético', vale: corpo });
+      if (s === 'celestial' && lv >= 6) add('alma', 'Alma Radiante', { magia: true, mod: M.CAR, tipos: ['Ígneo', 'Radiante'], valeMagia: () => true });
+    }
+    if (x.id === 'sorcerer' && s === 'draconic' && lv >= 6) add('afinidade', 'Afinidade Elemental', { modo: 'marca', magia: true, opcoes: ['Ácido', 'Elétrico', 'Gélido', 'Ígneo', 'Venenoso'], mod: M.CAR, valeMagia: () => true });
+    if (x.id === 'wizard' && s === 'evoker' && lv >= 10) add('evocacao', 'Evocação Potencializada', { magia: true, mod: M.INT, valeMagia: sp => sp.school === 'Evocação' && (sp.classes || []).includes('wizard') });
+    if (x.id === 'artificer' && s === 'alchemist' && lv >= 5) add('alquimia', 'Sábio Alquímico', { magia: true, mod: Math.max(1, M.INT), tipos: ['Ácido', 'Ígneo', 'Venenoso'], curaTambem: true, valeMagia: () => true });
+  }
+  return R;
+}
+/** Círculo do espaço de Pacto no nível atual. */
+function slotPactoDe(cl) {
+  const x = cl.find(k => k.id === 'warlock');
+  return x ? CLASS_LEVELS.warlock[x.lv - 1].slots.findIndex(v => v) + 1 : 1;
+}
+const regraBonus = id => (CHAR.bonus || []).find(r => r.id === id);
+function bonusMarcado(id) {
+  const r = regraBonus(id) || (id === 'duasmaos' ? { padrao: false } : null), v = state.fx.on?.[id];
+  return v === undefined ? !!r?.padrao : !!v;
+}
+const pactoLivre = () => Object.keys(CHAR.pactSlots || {}).find(l => (state.used[l] || 0) < CHAR.pactSlots[l]);
+/** A regra pode valer agora? Só falta saber se serve para o ataque. */
+function bonusLigado(r) {
+  if (r.uma && state.fx.usado?.[r.id]) return false;
+  if (r.modo === 'marca' && !bonusMarcado(r.id) && !(r.conc && state.conc === r.conc)) return false;
+  if (r.requer && !r.requer(state)) return false;
+  if (r.res && (state.res[r.res] ?? 0) < 1) return false;
+  if (r.pacto && !pactoLivre()) return false;
+  return true;
+}
+const descBonus = r => r.info || r.dado?.replace('-', '−').replace('+', ' + ') || (r.mod ? sign(r.mod) : r.atk ? `${sign(r.atk)} ataque` : r.crit ? `crítico em ${r.crit}+` : '');
+
+function bonusDeAtaque(a) {
+  const lista = (CHAR.bonus || []).filter(r => !r.magia && r.vale(a) && bonusLigado(r)), soma = k => lista.reduce((t, r) => t + (r[k] || 0), 0);
+  return {
+    lista, atk: soma('atk'), mod: soma('mod'), adv: lista.some(r => r.adv) && !lista.some(r => r.semVant), gwf: lista.some(r => r.gwf), melhor: lista.some(r => r.melhor),
+    crit: Math.min(20, ...lista.map(r => r.crit || 20)), dados: lista.filter(r => r.dado).map(r => ({ ...parseDice(r.dado), nome: r.nome, tipo: r.tipo || null }))
+  };
+}
+/** Dano final de uma arma da Ficha, com os bônus de agora. */
+function danoDeArma(w) {
+  const B = bonusDeAtaque(w), p = parseDice(w.dmg), f = w.versatil && bonusMarcado('duasmaos') ? parseDice(w.versatil).f : p.f, mod = p.mod + B.mod;
+  return { ...B, expr: `${p.n}d${f}${modDe(mod)}` };
+}
+const textoDano = D => [showDice(D.expr), ...D.dados.map(x => showDice(`${x.n}d${x.f}${modDe(x.mod)}`))].join(' + ');
+const mediaDano = D => avgOf(D.expr) + D.dados.reduce((t, x) => t + x.n * (x.f + 1) / 2 + x.mod, 0);
+
+/** O que uma magia ganha. cadaAlvo soma em toda instância; os demais, em uma só jogada. */
+function bonusDeMagia(s, tipoDe) {
+  return (CHAR.bonus || []).filter(r => r.magia && r.valeMagia(s) && (r.modo !== 'marca' || bonusMarcado(r.id))).map(r => {
+    const tipos = r.opcoes ? [state.fx.on?.[r.id]].filter(x => typeof x === 'string') : r.tipos;
+    return { ...r, casa: g => !g.aux && (!tipos ? !g.heal : (r.curaTambem && g.heal) || tipos.some(t => tipoDe(g).includes(t))) };
+  });
+}
+
+/** Marca o que foi usado depois de o dano entrar. */
+function gastarBonus(lista) {
+  const usados = lista.filter(r => r.uma || r.res || r.pacto || r.solta);
+  if (!usados.length) return;
+  commit(null, st => {
+    for (const r of usados) {
+      if (r.uma) st.fx.usado[r.id] = true;
+      if (r.res) st.res[r.res] = Math.max(0, st.res[r.res] - 1);
+      if (r.pacto) { const l = pactoLivre(); if (l) st.used[l]++; }
+      if (r.solta) delete st.fx.on[r.id];
+    }
+  });
+}
+function novoTurno() {
+  commit('Novo turno: bônus liberados', st => {
+    st.fx.usado = {};
+    for (const r of CHAR.bonus || []) if (r.turno) delete st.fx.on[r.id];
+  }, { undo: false });
+}
+function alternarBonus(id) {
+  const r = regraBonus(id) || { id: 'duasmaos' };
+  commit(null, st => {
+    if (r.opcoes) {
+      const lista = [undefined, ...r.opcoes], i = lista.indexOf(st.fx.on[id]), v = lista[(i + 1) % lista.length];
+      if (v === undefined) delete st.fx.on[id]; else st.fx.on[id] = v;
+    } else st.fx.on[id] = !bonusMarcado(id);
+  });
+}
+/* =====================================================================
    MOTOR DE REGRAS — calcula a ficha a partir do nível, dos atributos e
    das escolhas, para todas as classes de D&D 2024.
    ===================================================================== */
@@ -1761,17 +1916,41 @@ function deslocamentoDe(b, sp, cl) {
   return ft;
 }
 function ataquesDe(c, b, M, pb, cl) {
-  const itens = [...(c.state?.items || c.sheet?.items || [])], pegou = new Set();
-  return itens.flatMap(i => {
+  const itens = [...(c.state?.items || c.sheet?.items || [])], pegou = new Set(), monge = cl.find(x => x.id === 'monk'), pacto = (b.escolhas?.invocacoes || []).includes('Pacto da Lâmina'), desarmado = desarmadoDe(b, M, pb, cl);
+  const armas = itens.flatMap(i => {
     const a = ARMAS.find(w => w[0] === i.name);
     if (!a || pegou.has(a[0])) return [];
     pegou.add(a[0]);
-    const [nome, dado, tipo, props, maestria, , dist] = a, acu = /Acuidade/.test(props), k = dist ? 'DES' : acu ? (M.DES >= M.FOR ? 'DES' : 'FOR') : 'FOR', m = M[k];
-    return [{ id: 'w-' + nome, name: nome, sub: [props, maestria && cl.some(x => CLASSES[x.id].mastery) ? 'Maestria: ' + maestria : ''].filter(Boolean).join(' · '), atk: m + pb, calc: `${k} ${num(m)} + BP ${pb}`, dmg: dado === '1' ? '1d1' : dado + (m ? (m < 0 ? '-' : '+') + Math.abs(m) : ''), type: tipo }];
+    const [nome, dado, tipo, props, maestria, simples, dist] = a, acu = /Acuidade/.test(props);
+    let k = dist ? 'DES' : acu ? (M.DES >= M.FOR ? 'DES' : 'FOR') : 'FOR', face = dado;
+    // Artes Marciais: Destreza e o dado do Monge, sem armadura nem Escudo.
+    if (monge && !dist && !b.armor && !b.shield && (simples || /Leve/.test(props))) {
+      if (M.DES > M[k]) k = 'DES';
+      const fm = CLASS_LEVELS.monk[monge.lv - 1].martial_arts_die;
+      if (fm > +String(dado).split('d')[1] || dado === '1') face = `1d${fm}`;
+    }
+    if (pacto && !dist && M.CAR > M[k]) k = 'CAR';
+    const m = M[k];
+    return [{ id: 'w-' + nome, name: nome, sub: [props, maestria && cl.some(x => CLASSES[x.id].mastery) ? 'Maestria: ' + maestria : ''].filter(Boolean).join(' · '), atk: m + pb, calc: `${k} ${num(m)} + BP ${pb}`, dmg: face === '1' ? '1d1' : face + modDe(m), type: tipo,
+      attr: k, arma: true, melee: !dist, dist: !!dist, acuidade: acu, arremesso: /Arremesso/.test(props), duas: /Duas Mãos/.test(props), versatil: /Versátil \((\d+d\d+)\)/.exec(props)?.[1] || null }];
   });
+  return desarmado ? [...armas, desarmado] : armas;
 }
-function ataquesPorAcao(cl) {
-  let n = 1;
+/** Linha de Ataque Desarmado para quem tem dado próprio nele. */
+function desarmadoDe(b, M, pb, cl) {
+  const monge = cl.find(x => x.id === 'monk'), danca = cl.find(x => x.sub === 'dance' && x.lv >= 3 && !b.armor && !b.shield), estilo = (b.escolhas?.estilos || []).includes('Combate Desarmado');
+  const opc = [];
+  if (monge) opc.push({ f: CLASS_LEVELS.monk[monge.lv - 1].martial_arts_die, k: M.DES > M.FOR ? 'DES' : 'FOR', txt: 'Artes Marciais' });
+  if (danca) opc.push({ f: CLASS_LEVELS.bard[danca.lv - 1].bardic_inspiration_die, k: 'DES', txt: 'Ginga Fascinante' });
+  if (estilo) opc.push({ f: b.shield ? 6 : 8, k: 'FOR', txt: 'Combate Desarmado' });
+  if (!opc.length) return null;
+  const o = opc.reduce((a, x) => (x.f + M[x.k] > a.f + M[a.k] ? x : a)), m = M[o.k];
+  return { id: 'w-desarmado', name: 'Ataque Desarmado', sub: o.txt, atk: m + pb, calc: `${o.k} ${num(m)} + BP ${pb}`, dmg: `1d${o.f}${modDe(m)}`, type: 'Contundente', attr: o.k, arma: false, desarmado: true, melee: true };
+}
+function ataquesPorAcao(cl, b) {
+  let n = 1, inv = b.escolhas?.invocacoes || [];
+  if (inv.includes('Lâmina Sedenta')) n = 2;
+  if (inv.includes('Lâmina Devoradora')) n = 3;
   for (const x of cl) {
     if (['barbarian', 'monk', 'paladin', 'ranger'].includes(x.id) && x.lv >= 5) n = Math.max(n, 2);
     if (x.id === 'fighter') n = Math.max(n, x.lv >= 20 ? 4 : x.lv >= 11 ? 3 : x.lv >= 5 ? 2 : 1);
@@ -1808,11 +1987,11 @@ function deriveSheet(c) {
   resources.push({ ...res('hd'), max: n, meta: `d${hp.hd} · Descanso Curto para gastar`, desc: `Cada dado gasto num Descanso Curto cura <b>1d${hp.hd} ${con < 0 ? '−' : '+'} ${Math.abs(con)}</b>. Todos voltam no Descanso Longo (regra 2024).` });
   const attacks = c.template === 'soren' ? SOREN.attacks.map(a => {
     const k = a.id.startsWith('ts-') || a.id === 'natural' ? 'CAR' : a.id === 'dagger' ? 'DES' : 'FOR', m = mod(k), die = a.dmg.match(/^\d+d\d+/)[0], ts = a.id.startsWith('ts-');
-    return { ...a, atk: m + pb, calc: `${k} ${num(m)} + BP ${pb}`, dmg: `${die}${m < 0 ? '-' : '+'}${Math.abs(m)}`, ...(ts && n >= 5 ? { sub: `${a.sub} · +${n >= 17 ? 3 : n >= 11 ? 2 : 1}d6 Radiante` } : {}) };
+    return { ...a, atk: m + pb, calc: `${k} ${num(m)} + BP ${pb}`, dmg: `${die}${m < 0 ? '-' : '+'}${Math.abs(m)}`, attr: k, arma: a.id !== 'natural', melee: true, acuidade: /dagger/.test(a.id), arremesso: /dagger|spear/.test(a.id), duas: /spear2/.test(a.id), ...(ts && n >= 5 ? { sub: `${a.sub} · +${n >= 17 ? 3 : n >= 11 ? 2 : 1}d6 Radiante` } : {}) };
   }) : ataquesDe(c, b, M, pb, cl);
   const chosen = b.metamagic.map(id => (c.template === 'soren' && SOREN.metamagic.find(m => m.id === id)) || METAMAGIC.find(m => m.id === id)).filter(Boolean);
   const lin = sp?.lineages?.[b.lineage]?.[0], carry = Math.round(sc.FOR * 7.5 * (b.speciesId === 'goliath' ? 2 : 1));
-  const atq = ataquesPorAcao(cl);
+  const atq = ataquesPorAcao(cl, b);
   const passives = c.template === 'soren' ? SOREN.passives.map(p => ({
     ...p, items: p.t === 'Resiliência Dracônica' ? [`+${n} PV máximos (já incluídos nos ${hp.total}).`, `Sem armadura, CA = 10 + DES ${num(dex)} + CAR ${num(M.CAR)} = <b>${stats.ac}</b>.`]
       : p.items.map(i => i.replace(/\(\+4\)\./, `(${signed(stats.conSave)}).`).replace(/<b>120 kg<\/b>|120 kg/, m => m.replace('120', carry)))
@@ -1820,7 +1999,7 @@ function deriveSheet(c) {
   const acoes = acoesDe(b, M, pb);
   return {
     ...base, stats, hitDie: hp.hd, conMod: con, slots: conj.slots, pactSlots: conj.pact, createSlotCost: lvS ? Object.fromEntries(Object.keys(conj.slots).filter(l => SLOT_COST[l]).map(l => [l, SLOT_COST[l]])) : {},
-    carry: `${carry} kg`, resources, acoes, attacks, metamagic: chosen, passives, warCaster: has('war-caster'), limits: conj.limits, level: n, items: c.template === 'soren' ? SOREN.items : startingItems(c), lista: conj.lista, ataques: atq, classes: cl,
+    carry: `${carry} kg`, resources, acoes, attacks, metamagic: chosen, passives, warCaster: has('war-caster'), limits: conj.limits, level: n, items: c.template === 'soren' ? SOREN.items : startingItems(c), lista: conj.lista, ataques: atq, classes: cl, bonus: regrasBonus(b, M, cl),
     abilities: ATTR.map(([k, nome]) => ({ k, n: nome, s: sc[k], ...(savs.includes(k) ? { prof: true } : {}), ...(k === 'CON' && has('war-caster') ? { note: 'Vantagem em Concentração' } : {}) })),
     skills: SKILLS.map(([nome, a]) => (b.skills[nome] ? [nome, a, b.skills[nome], ...((b.expertise || []).includes(nome) ? [true] : [])] : [nome, a])), tools: c.template === 'soren' ? SOREN.tools : (b.tools || []),
     calc: {
@@ -2057,7 +2236,7 @@ function defaultState() {
     res:   Object.fromEntries(CHAR.resources.map(r => [r.id, r.max])),
     hp: CHAR.stats.hpMax, temp: 0,
     conc: null,
-    fx: { innate: false, shield: false, mirror: 0, rage: false },
+    fx: { innate: false, shield: false, mirror: 0, rage: false, on: {}, usado: {} },
     spLog: [],
     items: CHAR.items.map((it, i) => ({ id: 'it' + i, ...it })),
     ui: { tab: 'magia', filter: 'all' }
@@ -2079,6 +2258,7 @@ function sanitize(raw) {
   if (Array.isArray(raw.spLog)) d.spLog = raw.spLog.filter(e => e && typeof e.txt === 'string').slice(0, 8)
     .map(e => ({ t: String(e.t || '').slice(0, 5), d: int(e.d, -99, 99, 0), txt: e.txt.slice(0, 160), sp: int(e.sp, 0, RES.sp?.max ?? 0, 0) }));
   d.fx.rage = !!raw.fx?.rage; d.fx.innate = !!raw.fx?.innate; d.fx.shield = !!raw.fx?.shield; d.fx.mirror = int(raw.fx?.mirror, 0, 3, 0);
+  for (const k of ['on', 'usado']) if (raw.fx?.[k] && typeof raw.fx[k] === 'object') for (const [id, v] of Object.entries(raw.fx[k])) if (typeof v === 'boolean' || typeof v === 'string') d.fx[k][id] = v;
   // v1 tinha um inventário genérico: a partir da v2 usa-se o inventário exato da ficha.
   if ((raw.v || 1) >= 2 && Array.isArray(raw.items)) {
     const cats = ITEM_CATS.map(c => c.id);
@@ -2186,14 +2366,16 @@ function showRoll(label, total, detail, extra = '', cls = '') {
 }
 function doRoll(ds) {
   if (ds.kind === 'd20') {
-    const bonus = +ds.bonus, adv = ds.adv === 'spell' && state.fx.innate, isAtk = ds.atk === '1';
+    const bonus = +ds.bonus, adv = (ds.adv === 'spell' && state.fx.innate) || ds.adv === 'sim', isAtk = ds.atk === '1', ameaca = +ds.critmin || 20;
     const a = d(20), b = adv ? d(20) : 0, k = adv ? Math.max(a, b) : a;
     let extra = '', cls = '';
-    if (isAtk) critSrc = k === 20 ? ds.src : null;
-    if (k === 20) { cls = 'crit'; extra = isAtk ? '20 natural — CRÍTICO! A próxima rolagem de dano desta arma/magia dobra os dados.' : '20 natural!'; }
+    const critico = isAtk && k >= ameaca;
+    if (isAtk) critSrc = critico ? ds.src : null;
+    if (critico || k === 20) { cls = 'crit'; extra = isAtk ? `${k} natural — CRÍTICO! A próxima rolagem de dano desta arma/magia dobra os dados.` : '20 natural!'; }
     else if (k === 1) { cls = 'fail'; extra = isAtk ? '1 natural — erro automático.' : '1 natural.'; }
     showRoll(esc(ds.label), k + bonus, `🎲 ${adv ? `${a} e ${b} → <b>${k}</b> (Vantagem)` : a} ${sign(bonus)}`, extra, cls);
-  } else {
+  } else if (ds.arma) rolarArma(ds);
+  else {
     const crit = ds.crit === '1' && !!critSrc && critSrc === ds.src;
     const r = rollDice(ds.expr, { crit, explode: +ds.explode || 0, max: +ds.max || 0 });
     if (crit) critSrc = null;
@@ -2203,6 +2385,20 @@ function doRoll(ds) {
     if (ds.orb === '1' && new Set(r.dice).size < r.dice.length) extras.push('Dados iguais: o orbe <b>salta</b> para outro alvo a até 9 m!');
     showRoll(esc(ds.label) + (ds.type ? ` · ${esc(ds.type)}` : ''), r.total, detail, extras.join(' '), crit ? 'crit' : '');
   }
+}
+/** Dano de arma com os bônus ativos. Crítico dobra todos os dados do ataque. */
+function rolarArma(ds) {
+  const w = CHAR.attacks.find(x => x.id === ds.arma);
+  if (!w) return;
+  const D = danoDeArma(w), crit = critSrc === w.id, p = parseDice(D.expr), trata = v => (D.gwf && v < 3 ? 3 : v), somar = a => a.reduce((t, v) => t + trata(v), 0);
+  const jogar = x => Array.from({ length: crit ? x.n * 2 : x.n }, () => d(x.f));
+  let base = jogar(p), nota = '';
+  if (D.melhor) { const outra = jogar(p), fica = somar(outra) > somar(base) ? outra : base, sai = fica === base ? outra : base; base = fica; nota = `Atacante Selvagem: a outra jogada foi [${sai.map(trata).join(', ')}].`; }
+  const partes = D.dados.map(x => ({ ...x, vals: jogar(x) })), total = Math.max(0, somar(base) + p.mod + partes.reduce((t, x) => t + somar(x.vals) + x.mod, 0));
+  const fixos = D.lista.filter(r => r.mod).map(r => `${r.nome} ${sign(r.mod)}`), linhas = [`🎲 ${crit ? 'crítico · ' : ''}[${base.map(trata).join(', ')}]${p.mod ? ` ${sign(p.mod)}` : ''}`, ...partes.map(x => `${esc(x.nome)}: [${x.vals.map(trata).join(', ')}]${x.mod ? ` ${sign(x.mod)}` : ''}${x.tipo ? ` ${esc(x.tipo)}` : ''}`)];
+  critSrc = null;
+  showRoll(`${esc(w.name)} · dano · ${esc(w.type)}`, total, linhas.join('<br>'), [fixos.length ? `Já somado: ${fixos.join(', ')}.` : '', nota].filter(Boolean).join(' '), crit ? 'crit' : '');
+  gastarBonus(D.lista);
 }
 /** Botão que rola dados. o = {kind:'d20'|'dmg', bonus, expr, label, src, atk, adv, crit, explode, max, half, orb, type} */
 function rollBtn(o, inner, cls = 'rb') {
@@ -2270,10 +2466,27 @@ function diceSpec(s, lv = s.level, ctx = {}) {
       crit: !!x.crit, half: !!x.half, gate: gateDe(x), missHalf: !!x.missHalf, orb: !!x.orb, acumula: x.acumula || null,
       explode: x.explode ? { v: +x.explode, max: x.maxMod ? Math.max(0, CHAR.stats.cha) : +x.max || 0 } : null };
   }).filter(g => g.n > 0 && g.f > 0);
-  const danos = grupos.filter(g => !g.aux), comAtk = danos.some(g => g.gate === 'atk');
+  const danos = grupos.filter(g => !g.aux), comAtk = danos.some(g => g.gate === 'atk'), golpe = String(s.id).startsWith('cl-') && atk?.spell === false;
+  const usados = [], somados = [];
+  let B = null;
+  if (golpe && danos.length) {
+    const fm = modScore(abil('FOR').s), dm = modScore(abil('DES').s);
+    B = bonusDeAtaque({ attr: fm >= dm || state.fx.rage ? 'FOR' : 'DES', melee: true, desarmado: true });
+    danos[0].mod += B.mod;
+    B.dados.forEach((x, j) => grupos.push({ id: `b${j}`, n: x.n, f: x.f, mod: x.mod, nBase: x.n, aux: false, label: x.nome, type: x.tipo || danos[0].type, heal: false, crit: true, half: false, gate: 'atk', missHalf: false, orb: false, acumula: null, explode: null }));
+    usados.push(...B.lista);
+    B.lista.filter(r => r.mod).forEach(r => somados.push(`${r.nome} ${sign(r.mod)}`));
+  } else if (danos.length && !golpe) {
+    for (const r of bonusDeMagia(s, g => g.type || '')) {
+      const g = danos.find(r.casa);
+      if (!g || !r.mod) continue;
+      if (r.cadaAlvo) g.mod += r.mod; else g.modUma = (g.modUma || 0) + r.mod;
+      somados.push(`${r.nome} ${sign(r.mod)}`);
+    }
+  }
   return {
     id: s.id, nome: s.name, lv, modo, alts, alt, tipo: ctx.tipo || null, grupos, inst: danos.length ? instCount(s, lv) : 1, rotulo: s.inst?.rotulo || '',
-    atk: comAtk ? { bonus: atk?.bonus ?? CHAR.stats.atk, adv: atk?.spell !== false && !!state.fx.innate } : null,
+    atk: comAtk ? { bonus: (atk?.bonus ?? CHAR.stats.atk) + (B?.atk || 0), adv: (atk?.spell !== false && !!state.fx.innate) || !!B?.adv, crit: B?.crit || 20 } : null, usados, somados,
     save: danos.some(g => g.gate === 'save'), saltos: danos.some(g => g.orb) ? Math.max(1, lv) : 0
   };
 }
@@ -2288,8 +2501,8 @@ function natural(L, i) {
   const [a, b] = L.d20[i] || [];
   return L.spec.atk?.adv ? Math.max(a || 0, b || 0) : a || 0;
 }
-const isCrit = (L, i) => natural(L, i) === 20;
-const isMiss = (L, i) => natural(L, i) === 1 || (natural(L, i) !== 20 && !!L.erro[i]);
+const isCrit = (L, i) => { const n = natural(L, i); return n === 20 || (!!n && n >= (L.spec.atk?.crit || 20)); };
+const isMiss = (L, i) => natural(L, i) === 1 || (!isCrit(L, i) && !!L.erro[i]);
 function dicePorGrupo(L, g, i) {
   const n = g.n + (g.acumula ? L.stack * parseDice(g.acumula).n : 0);
   return g.crit && L.spec.atk && isCrit(L, i) ? n * 2 : n;
@@ -2352,14 +2565,14 @@ function resolveLance(L) {
     sp.grupos.forEach(g => {
       const k = cellKey(i, g), f = faixaGrupo(L, g, i), informado = L.totais[k];
       const vals = informado != null ? partir(informado - g.mod, f.n, g.f) : [...(L.dados[k] || []).slice(0, dicePorGrupo(L, g, i)), ...(L.extras[k] || []).slice(0, extrasAbertos(L, g, i))].filter(Boolean);
-      const baseN = dicePorGrupo(L, g, i), rep = g.orb ? repetidos(vals.slice(0, baseN)) : [], valor = informado ?? vals.reduce((a, b) => a + b, 0) + g.mod;
+      const baseN = dicePorGrupo(L, g, i), rep = g.orb ? repetidos(vals.slice(0, baseN)) : [], um = i === 0 ? g.modUma || 0 : 0, valor = (informado ?? vals.reduce((a, b) => a + b, 0) + g.mod) + um;
       if (g.aux) { if (i === 0) aux.push({ label: g.label, f: g.f, mod: g.mod, vals, total: valor }); return; }
       vals.forEach((v, j) => dados.push({ v, f: g.f, tipo: g.type, extra: j >= baseN ? 'exp' : rep.includes(v) ? 'rep' : crit && g.crit && j >= baseN / 2 ? 'crit' : j >= g.nBase ? 'up' : null }));
       let parte = Math.max(0, valor);
       const antes = parte;
       if (g.gate === 'atk' && !hit) parte = g.missHalf ? Math.floor(parte / 2) : 0;
       if (g.gate === 'save' && passou) parte = g.half ? Math.floor(parte / 2) : 0;
-      soma += parte; bruto += antes; min += f.min; max += f.max;
+      soma += parte; bruto += antes; min += f.min + um; max += f.max + um;
       if (!g.heal) curaPura = false;
       tiposI.push(g.type); tipos.add(g.type);
     });
@@ -2523,6 +2736,22 @@ function renderReminders() {
 /* =====================================================================
    ABA FICHA
    ===================================================================== */
+/** Botões do que depende da situação. O que é sempre válido entra sem botão. */
+function barraBonus() {
+  const regras = (CHAR.bonus || []).filter(r => r.modo === 'marca' || (r.modo === 'auto' && r.requer)), versatil = CHAR.attacks.some(w => w.versatil);
+  const chip = r => {
+    const usado = r.uma && state.fx.usado?.[r.id], on = r.opcoes ? typeof state.fx.on?.[r.id] === 'string' : r.modo === 'auto' ? bonusLigado(r) : bonusMarcado(r.id) || (r.conc && state.conc === r.conc);
+    const falta = (r.res && (state.res[r.res] ?? 0) < 1) || (r.pacto && !pactoLivre()) || (r.requer && !r.requer(state));
+    const txt = r.opcoes ? state.fx.on?.[r.id] || 'escolher' : usado ? 'usado' : descBonus(r);
+    return r.modo === 'auto' ? `<span class="bchip ${on ? 'on' : ''} ${usado ? 'usado' : ''}">${r.nome} <small>${txt}</small></span>`
+      : `<button class="bchip ${on ? 'on' : ''} ${usado ? 'usado' : ''}" data-action="bonus-toggle" data-id="${r.id}" aria-pressed="${!!on}" ${falta ? 'disabled' : ''}>${r.nome} <small>${txt}</small></button>`;
+  };
+  const lista = regras.map(chip);
+  if (versatil) lista.unshift(`<button class="bchip ${bonusMarcado('duasmaos') ? 'on' : ''}" data-action="bonus-toggle" data-id="duasmaos" aria-pressed="${bonusMarcado('duasmaos')}">Duas mãos <small>Versátil</small></button>`);
+  if (!lista.length) return '';
+  const turno = (CHAR.bonus || []).some(r => r.uma || r.turno);
+  return `<div class="bonus-bar">${lista.join('')}${turno ? '<button class="bchip turno" data-action="bonus-turno">Novo turno</button>' : ''}</div>`;
+}
 function renderFicha() {
   const s = CHAR.stats, pb = s.pb;
   $('#abil').innerHTML = CHAR.abilities.map(a => {
@@ -2534,11 +2763,15 @@ function renderFicha() {
   }).join('');
 
   $('#atk-hint').textContent = state.fx.innate ? 'Ataques de magia com Vantagem' : 'toque para rolar';
-  $('#attacks').innerHTML = CHAR.attacks.map(w => `<div class="atk-row">
+  $('#atk-bonus').innerHTML = barraBonus();
+  $('#attacks').innerHTML = CHAR.attacks.map(w => {
+    const D = danoDeArma(w), atk = w.atk + D.atk, nomes = D.lista.map(r => r.nome), crit = D.crit < 20 ? ` · crítico em ${D.crit}+` : '';
+    return `<div class="atk-row">
       <div class="atk-t"><b>${w.name}</b><span>${w.sub}</span></div>
-      ${rollBtn({ kind: 'd20', bonus: w.atk, atk: 1, src: w.id, adv: w.spell ? 'spell' : null, label: `${w.name} · ataque` }, `<small>ATQ</small><b class="num">${sign(w.atk)}</b>`, 'rb atk')}
-      ${rollBtn({ kind: 'dmg', expr: w.dmg, crit: 1, src: w.id, type: w.type, label: `${w.name} · dano` }, `<small>DANO</small><b class="num">${showDice(w.dmg)}</b>`, 'rb dmg')}
-      <div class="atk-c">Acerto: ${w.calc} · ${w.type} · média ${decimal(avgOf(w.dmg))}</div></div>`).join('');
+      ${rollBtn({ kind: 'd20', bonus: atk, atk: 1, src: w.id, adv: D.adv ? 'sim' : w.spell ? 'spell' : null, critmin: D.crit < 20 ? D.crit : null, label: `${w.name} · ataque` }, `<small>ATQ${D.adv ? ' · V' : ''}</small><b class="num">${sign(atk)}</b>`, 'rb atk')}
+      ${rollBtn({ kind: 'dmg', arma: w.id, crit: 1, src: w.id, type: w.type, label: `${w.name} · dano` }, `<small>DANO</small><b class="num">${textoDano(D)}</b>`, 'rb dmg')}
+      <div class="atk-c">Acerto: ${w.calc} · ${w.type} · média ${decimal(mediaDano(D))}${crit}${nomes.length ? ` · <b>${nomes.join(', ')}</b>` : ''}</div></div>`;
+  }).join('');
 
   const soren = activeChar().template === 'soren', inata = !!RES.innate, carga = soren ? `FOR ${abil('FOR').s} · Porte Poderoso (conta como Grande)` : `FOR ${abil('FOR').s}`;
   const rows = [
@@ -2923,6 +3156,7 @@ const voltaCurto = () => [...(Object.keys(CHAR.pactSlots || {}).length ? ['espa�
 function descansoCurto() {
   commit('Descanso Curto concluído', st => {
     for (const l of Object.keys(CHAR.pactSlots || {})) st.used[l] = 0;
+    st.fx.usado = {};
     CHAR.resources.forEach(r => { if (r.rest === 'curto') st.res[r.id] = r.max; else if (r.rest && r.rest !== 'longo') st.res[r.id] = Math.min(r.max, st.res[r.id] + 1); });
   });
   closeModal();
@@ -2956,7 +3190,9 @@ function longRest() {
     LEVELS.forEach(l => { st.used[l] = 0; st.extra[l] = 0; });
     CHAR.resources.forEach(r => { st.res[r.id] = r.max; });
     st.hp = CHAR.stats.hpMax; st.temp = 0; st.conc = null;
-    st.fx = { innate: false, shield: false, mirror: 0, rage: false };
+    const on = {};
+    for (const [id, v] of Object.entries(st.fx.on || {})) if (!regraBonus(id)?.dura) on[id] = v;
+    st.fx = { innate: false, shield: false, mirror: 0, rage: false, on, usado: {} };
   });
   closeModal();
 }
@@ -3032,6 +3268,7 @@ const FX_NAME = { innate: 'Feitiçaria Inata', shield: 'Escudo Arcano', mirror: 
 
 /* Ações de classe viram uma magia sem círculo: usam a mesma mesa e o mesmo motor de cena. */
 const acaoSpell = a => ({ id: 'cl-' + a.id, name: a.name, en: '', level: 0, school: 'Evocação', r: a.r, cena: a.cena, desc: [a.desc], time: a.tempo });
+const LIGA_BONUS = { reckless: 'imprudente', sacred: 'sagrada', favored: 'marca' };
 function usarAcao(id, ver = false) {
   const a = (CHAR.acoes || []).find(x => x.id === id);
   if (!a) return;
@@ -3044,6 +3281,7 @@ function usarAcao(id, ver = false) {
     });
     if (!ok) { toast('Recurso esgotado', false); return; }
   }
+  if (!ver && LIGA_BONUS[a.id] && regraBonus(LIGA_BONUS[a.id])) commit(null, st => { st.fx.on[LIGA_BONUS[a.id]] = true; });
   const s = acaoSpell(a);
   if (!ver && (a.r || []).some(x => x.t === 'dmg' || x.t === 'aux')) openMesa(s, 0, { modo: 'livre' });
   else playSpell(s, null, CHAR.level);
@@ -3111,6 +3349,8 @@ function handle(a, el) {
       break;
     }
     case 'acao-usar': usarAcao(ds.id); break;
+    case 'bonus-toggle': alternarBonus(ds.id); break;
+    case 'bonus-turno': novoTurno(); break;
     case 'acao-ver': usarAcao(ds.id, true); break;
     case 'short-go': descansoCurto(); break;
     case 'meta-use': { const m = META[ds.id]; commit(`${m.name}: −${m.cost} PF`, st => { if (st.res.sp < m.cost) return false; st.res.sp -= m.cost; }); break; }
@@ -5373,11 +5613,11 @@ function grupoHtml(g, i) {
       ${n > 3 && r.max > r.min ? `<button class="mg-t" data-action="mesa-total" data-k="${k}" aria-pressed="${soTotal}">Só o total</button>` : ''}</div>${cells}${extraTxt}</div>`;
 }
 function ataqueHtml(i) {
-  const a = lance.spec.atk, d20 = lance.d20[i] || [], nat = natural(lance, i), travado = nat === 20 || nat === 1, miss = isMiss(lance, i);
+  const a = lance.spec.atk, d20 = lance.d20[i] || [], nat = natural(lance, i), critico = isCrit(lance, i), travado = critico || nat === 1, miss = isMiss(lance, i);
   const cell = j => `<input class="dc" inputmode="numeric" pattern="[0-9]*" autocomplete="off" maxlength="2" data-md="${i}" data-j="${j}" data-f="20" value="${d20[j] || ''}" aria-label="d20 ${j + 1} do ataque">`;
   return `<div class="mg atk"><div class="mg-h"><b>d20 ${sign(a.bonus)}</b><span>${a.adv ? 'Vantagem: vale o maior' : 'ataque'}${nat ? ` · total ${nat + a.bonus}` : ''}</span></div>
     <div class="dcs">${cell(0)}${a.adv ? cell(1) : ''}
-      <div class="seg" role="group" aria-label="Resultado do ataque"><button class="mt" data-action="mesa-erro" data-i="${i}" data-v="0" aria-pressed="${!miss}" ${travado ? 'disabled' : ''}>${nat === 20 ? 'Crítico' : 'Acertou'}</button><button class="mt" data-action="mesa-erro" data-i="${i}" data-v="1" aria-pressed="${miss}" ${travado ? 'disabled' : ''}>Errou</button></div></div></div>`;
+      <div class="seg" role="group" aria-label="Resultado do ataque"><button class="mt" data-action="mesa-erro" data-i="${i}" data-v="0" aria-pressed="${!miss}" ${travado ? 'disabled' : ''}>${critico ? 'Crítico' : 'Acertou'}</button><button class="mt" data-action="mesa-erro" data-i="${i}" data-v="1" aria-pressed="${miss}" ${travado ? 'disabled' : ''}>Errou</button></div></div></div>`;
 }
 function mesaBuild() {
   const { s, lv } = mesaCtx, sp = lance.spec, n = instanciasDe(lance), danos = sp.grupos.filter(g => !g.aux), aux = sp.grupos.filter(g => g.aux), acum = danos.find(g => g.acumula);
@@ -5386,7 +5626,7 @@ function mesaBuild() {
   return `<div class="${lvClass(s.level)}">${mHead(`Mesa de dados · ${s.level ? `${ORD(lv)} círculo` : 'Truque'}`, esc(s.name), sp.tipo ? esc(sp.tipo) : '')}
     ${faltaTipo ? `<div class="mt-group" role="group" aria-label="Elemento">${s.choice.map(t => `<button class="mt" data-action="mesa-tipo" data-t="${esc(t)}">${esc(t)}</button>`).join('')}</div>` : ''}
     ${sp.alts.length > 1 ? `<div class="mt-group" role="group" aria-label="Efeito">${sp.alts.map(a => `<button class="mt" data-action="mesa-alt" data-a="${esc(a)}" aria-pressed="${a === sp.alt}">${esc(a)}</button>`).join('')}</div>` : ''}
-    <p class="note">Digite o que saiu nos dados físicos. O que ficar vazio o app rola.</p>
+    <p class="note">Digite o que saiu nos dados físicos. O que ficar vazio o app rola.${sp.somados.length ? ` Já somado: ${esc(sp.somados.join(', '))}.` : ''}</p>
     ${acum ? `<div class="mg"><div class="mg-h"><b>${acum.acumula} acumulado</b><span>por turno sem explodir</span></div><div class="stepper"><button class="mt" data-action="mesa-stack" data-v="-1" aria-label="Menos um turno">−</button><b class="num">${lance.stack}</b><button class="mt" data-action="mesa-stack" data-v="1" aria-label="Mais um turno">+</button></div></div>` : ''}
     ${blocos}
     ${sp.save ? `<div class="mg"><div class="mg-h"><b>Salvaguarda do alvo</b></div><div class="seg" role="group" aria-label="Salvaguarda">${[['falhou', 'Falhou'], ['passou', danos.some(g => g.half) ? 'Passou (metade)' : 'Passou'], ['varios', 'Vários alvos']].map(([v, t]) => `<button class="mt" data-action="mesa-save" data-v="${v}" aria-pressed="${lance.save === v}">${t}</button>`).join('')}</div></div>` : ''}
@@ -5416,7 +5656,7 @@ function mesaResumo() {
   $('#mesa-total').textContent = cheias ? res.total : '–';
   $('#mesa-go-t').textContent = !cheias ? 'Rolar no app' : vazias ? `Rolar ${vazias === 1 ? 'o dado' : `os ${vazias} dados`} que falta${vazias === 1 ? '' : 'm'}` : 'Lançar';
 }
-const formaLance = L => { const out = [instanciasDe(L)]; for (let i = 0; i < out[0]; i++) { out.push(isMiss(L, i), natural(L, i) === 20, natural(L, i) === 1); L.spec.grupos.forEach(g => out.push(dicePorGrupo(L, g, i), extrasAbertos(L, g, i))); } return out.join(); };
+const formaLance = L => { const out = [instanciasDe(L)]; for (let i = 0; i < out[0]; i++) { out.push(isMiss(L, i), isCrit(L, i), natural(L, i) === 1); L.spec.grupos.forEach(g => out.push(dicePorGrupo(L, g, i), extrasAbertos(L, g, i))); } return out.join(); };
 function mesaAviso(t) { const m = $('#mesa-msg'); if (m) m.textContent = t; }
 function proximaCasa(el) {
   const casas = [...document.querySelectorAll('#sheet .dc')], i = casas.indexOf(el);
@@ -5473,7 +5713,8 @@ function mostrarResultado(s, res) {
     const valores = `[${x.dados.map(q => q.v).join(', ')}]`;
     linhas.push(`${x.salto ? 'Salto: ' : nome ? `${nome} ${x.i + 1}: ` : ''}${d20}${d20 ? ' · ' : '🎲 '}${x.hit ? `${valores} = <b>${x.total}</b>` : 'errou'}`);
   });
-  if (res.temDano && lance.spec.grupos.some(g => !g.aux && g.mod)) extras.push(`Modificador incluído: ${lance.spec.grupos.filter(g => !g.aux && g.mod).map(g => sign(g.mod)).join(', ')}.`);
+  if (lance.spec.somados.length) extras.push(`Já somado: ${esc(lance.spec.somados.join(', '))}.`);
+  else if (res.temDano && lance.spec.grupos.some(g => !g.aux && g.mod)) extras.push(`Modificador incluído: ${lance.spec.grupos.filter(g => !g.aux && g.mod).map(g => sign(g.mod)).join(', ')}.`);
   if (res.passou) extras.push('O alvo passou na salvaguarda.');
   if (res.varios) extras.push(`Quem passar sofre <b>${lance.spec.grupos.some(g => g.half) ? Math.floor(res.total / 2) : 0}</b>.`);
   if (res.saltos) extras.push(`O orbe saltou ${res.saltos} ${res.saltos > 1 ? 'vezes' : 'vez'}!`);
@@ -5488,6 +5729,7 @@ function mesaLancar() {
   const res = resolveLance(lance);
   closeModal();
   mostrarResultado(s, res);
+  if (!res.erro) gastarBonus(lance.spec.usados);
   playSpell(s, res.tipo || ctx.tipo || null, lv || s.level, res);
 }
 document.addEventListener('click', e => {

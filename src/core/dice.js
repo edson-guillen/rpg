@@ -29,14 +29,16 @@ function showRoll(label, total, detail, extra = '', cls = '') {
 }
 function doRoll(ds) {
   if (ds.kind === 'd20') {
-    const bonus = +ds.bonus, adv = ds.adv === 'spell' && state.fx.innate, isAtk = ds.atk === '1';
+    const bonus = +ds.bonus, adv = (ds.adv === 'spell' && state.fx.innate) || ds.adv === 'sim', isAtk = ds.atk === '1', ameaca = +ds.critmin || 20;
     const a = d(20), b = adv ? d(20) : 0, k = adv ? Math.max(a, b) : a;
     let extra = '', cls = '';
-    if (isAtk) critSrc = k === 20 ? ds.src : null;
-    if (k === 20) { cls = 'crit'; extra = isAtk ? '20 natural — CRÍTICO! A próxima rolagem de dano desta arma/magia dobra os dados.' : '20 natural!'; }
+    const critico = isAtk && k >= ameaca;
+    if (isAtk) critSrc = critico ? ds.src : null;
+    if (critico || k === 20) { cls = 'crit'; extra = isAtk ? `${k} natural — CRÍTICO! A próxima rolagem de dano desta arma/magia dobra os dados.` : '20 natural!'; }
     else if (k === 1) { cls = 'fail'; extra = isAtk ? '1 natural — erro automático.' : '1 natural.'; }
     showRoll(esc(ds.label), k + bonus, `🎲 ${adv ? `${a} e ${b} → <b>${k}</b> (Vantagem)` : a} ${sign(bonus)}`, extra, cls);
-  } else {
+  } else if (ds.arma) rolarArma(ds);
+  else {
     const crit = ds.crit === '1' && !!critSrc && critSrc === ds.src;
     const r = rollDice(ds.expr, { crit, explode: +ds.explode || 0, max: +ds.max || 0 });
     if (crit) critSrc = null;
@@ -46,6 +48,20 @@ function doRoll(ds) {
     if (ds.orb === '1' && new Set(r.dice).size < r.dice.length) extras.push('Dados iguais: o orbe <b>salta</b> para outro alvo a até 9 m!');
     showRoll(esc(ds.label) + (ds.type ? ` · ${esc(ds.type)}` : ''), r.total, detail, extras.join(' '), crit ? 'crit' : '');
   }
+}
+/** Dano de arma com os bônus ativos. Crítico dobra todos os dados do ataque. */
+function rolarArma(ds) {
+  const w = CHAR.attacks.find(x => x.id === ds.arma);
+  if (!w) return;
+  const D = danoDeArma(w), crit = critSrc === w.id, p = parseDice(D.expr), trata = v => (D.gwf && v < 3 ? 3 : v), somar = a => a.reduce((t, v) => t + trata(v), 0);
+  const jogar = x => Array.from({ length: crit ? x.n * 2 : x.n }, () => d(x.f));
+  let base = jogar(p), nota = '';
+  if (D.melhor) { const outra = jogar(p), fica = somar(outra) > somar(base) ? outra : base, sai = fica === base ? outra : base; base = fica; nota = `Atacante Selvagem: a outra jogada foi [${sai.map(trata).join(', ')}].`; }
+  const partes = D.dados.map(x => ({ ...x, vals: jogar(x) })), total = Math.max(0, somar(base) + p.mod + partes.reduce((t, x) => t + somar(x.vals) + x.mod, 0));
+  const fixos = D.lista.filter(r => r.mod).map(r => `${r.nome} ${sign(r.mod)}`), linhas = [`🎲 ${crit ? 'crítico · ' : ''}[${base.map(trata).join(', ')}]${p.mod ? ` ${sign(p.mod)}` : ''}`, ...partes.map(x => `${esc(x.nome)}: [${x.vals.map(trata).join(', ')}]${x.mod ? ` ${sign(x.mod)}` : ''}${x.tipo ? ` ${esc(x.tipo)}` : ''}`)];
+  critSrc = null;
+  showRoll(`${esc(w.name)} · dano · ${esc(w.type)}`, total, linhas.join('<br>'), [fixos.length ? `Já somado: ${fixos.join(', ')}.` : '', nota].filter(Boolean).join(' '), crit ? 'crit' : '');
+  gastarBonus(D.lista);
 }
 /** Botão que rola dados. o = {kind:'d20'|'dmg', bonus, expr, label, src, atk, adv, crit, explode, max, half, orb, type} */
 function rollBtn(o, inner, cls = 'rb') {

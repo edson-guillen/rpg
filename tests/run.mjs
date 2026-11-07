@@ -807,6 +807,107 @@ const cenarios = {
     ok(!erros.length, `sem erros de JS: ${erros}`);
     await ctx.close();
   },
+  'bônus de classe entram nos ataques': async ({ browser, opts }) => {
+    const { ctx, page, erros } = await abrir(browser, opts);
+    const r = await page.evaluate(async () => {
+      await ensureLibrary();
+      const itens = ['Machado Grande', 'Adaga', 'Arco Longo', 'Espada Longa'].map(name => ({ name }));
+      const monta = (id, sub, n, extra = {}) => {
+        const c = { template: 'blank', level: n, sheet: blankSheet(), state: { items: itens }, build: { ...blankBuild(1, id), scores: { FOR: 16, DES: 14, CON: 14, INT: 16, SAB: 16, CAR: 18 }, ...extra }, grimoire: { added: [], removed: [] }, spells: [] };
+        c.build.level = n; c.build.hpRolls = Array(n - 1).fill(4); c.build.subclassId = n >= 3 ? sub : null;
+        CHAR = deriveSheet(c);
+        state.fx = { innate: false, shield: false, mirror: 0, rage: false, on: {}, usado: {} };
+        state.conc = null;
+      };
+      const arma = n => CHAR.attacks.find(w => w.name === n), D = n => danoDeArma(arma(n)), o = {};
+      monta('barbarian', 'berserker', 5);
+      o.semFuria = D('Machado Grande').expr;
+      state.fx.rage = true; o.comFuria = D('Machado Grande').expr; o.arcoFuria = D('Arco Longo').expr;
+      state.fx.on.imprudente = true; const fr = D('Machado Grande'); o.adv = fr.adv; o.frenesi = fr.dados.map(x => `${x.n}d${x.f}`).join();
+      state.fx.usado.frenesi = true; o.frenesiUsado = D('Machado Grande').dados.length;
+      monta('barbarian', 'berserker', 9); state.fx.rage = true; state.fx.on.imprudente = true; state.fx.on.brutal = true;
+      const br = D('Machado Grande'); o.brutalAdv = br.adv; o.brutal = br.dados.length;
+      monta('rogue', 'thief', 5); state.fx.on.furtivo = true;
+      o.furtivo = D('Adaga').dados.map(x => `${x.n}d${x.f}`).join(); o.furtivoArco = D('Arco Longo').dados.length; o.furtivoMachado = D('Machado Grande').dados.length;
+      monta('fighter', 'champion', 3); o.c19 = D('Adaga').crit;
+      monta('fighter', 'champion', 15); o.c18 = D('Adaga').crit;
+      const L = novoLance({ atk: { adv: false, crit: 18 }, grupos: [], inst: 1 }); L.d20[0] = [18]; o.critico18 = isCrit(L, 0); L.d20[0] = [17]; o.critico17 = isCrit(L, 0);
+      monta('paladin', 'devotion', 11); o.radiante = D('Machado Grande').dados.map(x => x.tipo).join(); o.radianteArco = D('Arco Longo').dados.length;
+      state.fx.on.sagrada = true; o.sagrada = D('Machado Grande').atk; o.sagradaArco = D('Arco Longo').atk;
+      monta('fighter', 'champion', 3, { escolhas: { estilos: ['Arquearia', 'Duelismo', 'Combate com Armas Grandes'] } });
+      o.arquearia = D('Arco Longo').atk; o.duelo = D('Espada Longa').mod; o.gwfMachado = D('Machado Grande').gwf; o.gwfUmaMao = D('Espada Longa').gwf;
+      state.fx.on.duasmaos = true; const dm = D('Espada Longa'); o.duas = [dm.expr, dm.mod, dm.gwf].join();
+      monta('monk', 'open-hand', 5); o.monge = arma('Adaga').dmg; o.mongeMachado = arma('Machado Grande').dmg; o.desarmado = arma('Ataque Desarmado')?.dmg;
+      monta('rogue', 'assassin', 5); state.fx.on.furtivo = true; state.fx.on.surpresa = true; o.surpresa = D('Adaga').mod;
+      monta('cleric', 'life', 7); state.fx.on['golpe-divino'] = true; o.divino = D('Adaga').dados.length;
+      monta('warlock', 'fiend', 5, { escolhas: { invocacoes: ['Explosão Agonizante', 'Pacto da Lâmina', 'Lâmina Sedenta'] } });
+      o.pacto = arma('Machado Grande').attr; o.ataques = CHAR.ataques;
+      const eb = diceSpec(libGet('eldritch-blast'), 0); o.agonizante = eb.grupos[0].mod;
+      monta('sorcerer', 'draconic', 6); state.fx.on.afinidade = 'Ígneo';
+      const fb = diceSpec(libGet('fireball'), 3), lance = novoLance(fb); o.afinidade = fb.grupos[0].modUma;
+      lance.dados[cellKey(0, fb.grupos[0])] = Array(fb.grupos[0].n).fill(1); lance.save = 'falhou'; o.afinidadeTotal = resolveLance(lance).total;
+      state.fx.on.afinidade = 'Gélido'; o.afinidadeOutra = diceSpec(libGet('fireball'), 3).grupos[0].modUma || 0;
+      monta('wizard', 'evoker', 10); o.evocacao = diceSpec(libGet('fireball'), 3).grupos[0].modUma; o.evocacaoCura = diceSpec(libGet('cure-wounds'), 1).grupos[0]?.modUma || 0;
+      monta('paladin', 'devotion', 12, { multi: [{ classId: 'monk', level: 1 }] });
+      const mar = CHAR.acoes.find(a => a.id === 'martial'), sm = diceSpec(acaoSpell(mar), 0, { modo: 'livre' }); o.mesaGrupos = sm.grupos.length; o.mesaTipo = sm.grupos[1]?.type;
+      for (const [id, Cl] of Object.entries(CLASSES)) for (const sub of Object.keys(Cl.subs)) for (const n of [3, 7, 11, 20]) {
+        monta(id, sub, n, { escolhas: { invocacoes: id === 'warlock' ? INVOCACOES : [], estilos: ESTILOS } });
+        for (const r of CHAR.bonus) { if (r.modo === 'marca') state.fx.on[r.id] = r.opcoes ? r.opcoes[0] : true; }
+        CHAR.attacks.forEach(w => { const x = danoDeArma(w); if (!x.expr || /NaN|undefined/.test(textoDano(x))) o.ruim = `${id}/${sub}/${n}/${w.name}`; });
+        if (typeof barraBonus() !== 'string') o.ruim = `${id}/${sub}/barra`;
+      }
+      return o;
+    });
+    ok(r.semFuria === '1d12+3' && r.comFuria === '1d12+5', 'Fúria soma só enquanto ativa');
+    ok(r.arcoFuria === '1d8+2', 'Fúria não soma em ataque com Destreza');
+    ok(r.adv === true && r.frenesi === '2d6', 'Ataque Imprudente dá Vantagem e libera Frenesi');
+    ok(r.frenesiUsado === 0, 'Frenesi só uma vez por turno');
+    ok(r.brutalAdv === false && r.brutal === 2, 'Golpe Brutal troca a Vantagem pelo dado');
+    ok(r.furtivo === '3d6' && r.furtivoArco === 1 && r.furtivoMachado === 0, 'Ataque Furtivo só com Acuidade ou à Distância');
+    ok(r.c19 === 19 && r.c18 === 18 && r.critico18 && !r.critico17, 'crítico do Campeão aplicado');
+    ok(r.radiante === 'Radiante' && r.radianteArco === 0, 'Golpes Radiantes só corpo a corpo');
+    ok(r.sagrada === 4 && r.sagradaArco === 0, 'Arma Sagrada soma Carisma ao ataque corpo a corpo');
+    ok(r.arquearia === 2 && r.duelo === 2 && r.gwfMachado && !r.gwfUmaMao, 'Estilos de Luta aplicados');
+    ok(r.duas === '1d10+3,0,true', 'empunhar com duas mãos troca o dado e tira Duelismo');
+    ok(r.monge === '1d8+3' && r.mongeMachado === '1d12+3' && r.desarmado === '1d8+3', 'Artes Marciais trocam o dado das armas de Monge');
+    ok(r.surpresa === 5 && r.divino === 1, 'Assassinar e Golpe Divino');
+    ok(r.pacto === 'CAR' && r.ataques === 2 && r.agonizante === 4, 'invocações de Bruxo aplicadas');
+    ok(r.afinidade === 4 && r.afinidadeOutra === 0 && r.afinidadeTotal === 12, 'Afinidade Elemental só no tipo escolhido e uma vez');
+    ok(r.evocacao === 3 && r.evocacaoCura === 0, 'Evocação Potencializada');
+    ok(r.mesaGrupos === 2 && r.mesaTipo === 'Radiante', 'bônus entram na mesa de dados');
+    ok(!r.ruim, `dano legível em todas as subclasses ${r.ruim || ''}`);
+    await page.reload();
+    await page.waitForFunction(() => typeof openCreator === 'function');
+    await page.evaluate(() => { closeModal(); openCreator('Thora'); });
+    await page.waitForSelector('#cw-cl'); await page.selectOption('#cw-cl', 'barbarian');
+    for (let i = 0; i < 9; i++) {
+      await page.waitForTimeout(60);
+      if (i === 4) { const q = await page.evaluate(() => cwClasse().skills[0]), c = page.locator('[data-cwskill]'); for (let k = 0; k < q; k++) { await c.nth(k).check(); await page.waitForTimeout(40); } }
+      if (i === 8) { await page.selectOption('#cw-level', '5'); await page.waitForTimeout(60); await page.selectOption('#cw-sub', 'berserker'); await page.click('[data-action="cw-finish"]'); }
+      else await page.click('[data-action="cw-next"]');
+    }
+    await page.waitForFunction(() => activeChar().name === 'Thora');
+    await aba(page, 'ficha');
+    const dano = () => page.locator('.rb.dmg').first().textContent();
+    const antes = await dano();
+    await page.evaluate(() => { commit(null, st => { st.fx.rage = true; }); });
+    await page.waitForTimeout(150);
+    ok(await page.locator('.bchip.on', { hasText: 'Fúria' }).count() === 1, 'Fúria acesa na barra de bônus');
+    const comF = await dano();
+    ok(comF !== antes, `dano muda com a Fúria: ${antes} → ${comF}`);
+    await page.click('[data-action="bonus-toggle"][data-id="imprudente"]');
+    await page.waitForTimeout(100);
+    ok(/\dd6/.test(await page.locator('.rb.dmg').first().textContent()), 'Frenesi aparece no botão de dano');
+    await page.locator('.rb.dmg').first().click();
+    await page.waitForTimeout(150);
+    ok(await page.evaluate(() => state.fx.usado.frenesi === true), 'rolar o dano gasta o Frenesi do turno');
+    ok(/Frenesi/.test(await page.locator('#roll').textContent()), 'rolagem mostra a origem do dano extra');
+    await page.click('[data-action="bonus-turno"]');
+    await page.waitForTimeout(100);
+    ok(await page.evaluate(() => !state.fx.usado.frenesi && !bonusMarcado('imprudente')), 'Novo turno libera os bônus');
+    ok(!erros.length, `sem erros de JS: ${erros}`);
+    await ctx.close();
+  },
 };
 
 const browser = await chromium.launch();

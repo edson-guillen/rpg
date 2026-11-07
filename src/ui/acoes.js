@@ -22,6 +22,7 @@ const FX_NAME = { innate: 'Feitiçaria Inata', shield: 'Escudo Arcano', mirror: 
 
 /* Ações de classe viram uma magia sem círculo: usam a mesma mesa e o mesmo motor de cena. */
 const acaoSpell = a => ({ id: 'cl-' + a.id, name: a.name, en: '', level: 0, school: 'Evocação', r: a.r, cena: a.cena, desc: [a.desc], time: a.tempo });
+const LIGA_BONUS = { reckless: 'imprudente', sacred: 'sagrada', favored: 'marca' };
 function usarAcao(id, ver = false) {
   const a = (CHAR.acoes || []).find(x => x.id === id);
   if (!a) return;
@@ -34,6 +35,7 @@ function usarAcao(id, ver = false) {
     });
     if (!ok) { toast('Recurso esgotado', false); return; }
   }
+  if (!ver && LIGA_BONUS[a.id] && regraBonus(LIGA_BONUS[a.id])) commit(null, st => { st.fx.on[LIGA_BONUS[a.id]] = true; });
   const s = acaoSpell(a);
   if (!ver && (a.r || []).some(x => x.t === 'dmg' || x.t === 'aux')) openMesa(s, 0, { modo: 'livre' });
   else playSpell(s, null, CHAR.level);
@@ -101,6 +103,8 @@ function handle(a, el) {
       break;
     }
     case 'acao-usar': usarAcao(ds.id); break;
+    case 'bonus-toggle': alternarBonus(ds.id); break;
+    case 'bonus-turno': novoTurno(); break;
     case 'acao-ver': usarAcao(ds.id, true); break;
     case 'short-go': descansoCurto(); break;
     case 'meta-use': { const m = META[ds.id]; commit(`${m.name}: −${m.cost} PF`, st => { if (st.res.sp < m.cost) return false; st.res.sp -= m.cost; }); break; }

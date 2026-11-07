@@ -43,3 +43,7 @@ Cada nível ganho na classe também soma 1 PV pela Resiliência Dracônica e per
 | Cosmologia | Dungeon Master's Guide 2024 | 177 |
 | Glossário de lore | Dungeon Master's Guide 2024 | 358 |
 | Metamagias extras, anteriores a 2024 | Tasha's Cauldron of Everything | 67 |
+
+## Bônus automáticos no app
+
+`src/rules/bonus.js` guarda as regras de ataque e dano, resumidas com palavras próprias. O que sempre vale entra sozinho. O que depende da situação aparece como botão acima das armas, e o botão Novo turno libera o que é uma vez por turno. Para Søren, Afinidade Elemental passa a contar no nível 6: escolha o tipo no botão, e o Carisma soma em uma jogada de dano de magia desse tipo.

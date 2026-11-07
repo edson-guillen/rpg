@@ -35,11 +35,11 @@ function grupoHtml(g, i) {
       ${n > 3 && r.max > r.min ? `<button class="mg-t" data-action="mesa-total" data-k="${k}" aria-pressed="${soTotal}">Só o total</button>` : ''}</div>${cells}${extraTxt}</div>`;
 }
 function ataqueHtml(i) {
-  const a = lance.spec.atk, d20 = lance.d20[i] || [], nat = natural(lance, i), travado = nat === 20 || nat === 1, miss = isMiss(lance, i);
+  const a = lance.spec.atk, d20 = lance.d20[i] || [], nat = natural(lance, i), critico = isCrit(lance, i), travado = critico || nat === 1, miss = isMiss(lance, i);
   const cell = j => `<input class="dc" inputmode="numeric" pattern="[0-9]*" autocomplete="off" maxlength="2" data-md="${i}" data-j="${j}" data-f="20" value="${d20[j] || ''}" aria-label="d20 ${j + 1} do ataque">`;
   return `<div class="mg atk"><div class="mg-h"><b>d20 ${sign(a.bonus)}</b><span>${a.adv ? 'Vantagem: vale o maior' : 'ataque'}${nat ? ` · total ${nat + a.bonus}` : ''}</span></div>
     <div class="dcs">${cell(0)}${a.adv ? cell(1) : ''}
-      <div class="seg" role="group" aria-label="Resultado do ataque"><button class="mt" data-action="mesa-erro" data-i="${i}" data-v="0" aria-pressed="${!miss}" ${travado ? 'disabled' : ''}>${nat === 20 ? 'Crítico' : 'Acertou'}</button><button class="mt" data-action="mesa-erro" data-i="${i}" data-v="1" aria-pressed="${miss}" ${travado ? 'disabled' : ''}>Errou</button></div></div></div>`;
+      <div class="seg" role="group" aria-label="Resultado do ataque"><button class="mt" data-action="mesa-erro" data-i="${i}" data-v="0" aria-pressed="${!miss}" ${travado ? 'disabled' : ''}>${critico ? 'Crítico' : 'Acertou'}</button><button class="mt" data-action="mesa-erro" data-i="${i}" data-v="1" aria-pressed="${miss}" ${travado ? 'disabled' : ''}>Errou</button></div></div></div>`;
 }
 function mesaBuild() {
   const { s, lv } = mesaCtx, sp = lance.spec, n = instanciasDe(lance), danos = sp.grupos.filter(g => !g.aux), aux = sp.grupos.filter(g => g.aux), acum = danos.find(g => g.acumula);
@@ -48,7 +48,7 @@ function mesaBuild() {
   return `<div class="${lvClass(s.level)}">${mHead(`Mesa de dados · ${s.level ? `${ORD(lv)} círculo` : 'Truque'}`, esc(s.name), sp.tipo ? esc(sp.tipo) : '')}
     ${faltaTipo ? `<div class="mt-group" role="group" aria-label="Elemento">${s.choice.map(t => `<button class="mt" data-action="mesa-tipo" data-t="${esc(t)}">${esc(t)}</button>`).join('')}</div>` : ''}
     ${sp.alts.length > 1 ? `<div class="mt-group" role="group" aria-label="Efeito">${sp.alts.map(a => `<button class="mt" data-action="mesa-alt" data-a="${esc(a)}" aria-pressed="${a === sp.alt}">${esc(a)}</button>`).join('')}</div>` : ''}
-    <p class="note">Digite o que saiu nos dados físicos. O que ficar vazio o app rola.</p>
+    <p class="note">Digite o que saiu nos dados físicos. O que ficar vazio o app rola.${sp.somados.length ? ` Já somado: ${esc(sp.somados.join(', '))}.` : ''}</p>
     ${acum ? `<div class="mg"><div class="mg-h"><b>${acum.acumula} acumulado</b><span>por turno sem explodir</span></div><div class="stepper"><button class="mt" data-action="mesa-stack" data-v="-1" aria-label="Menos um turno">−</button><b class="num">${lance.stack}</b><button class="mt" data-action="mesa-stack" data-v="1" aria-label="Mais um turno">+</button></div></div>` : ''}
     ${blocos}
     ${sp.save ? `<div class="mg"><div class="mg-h"><b>Salvaguarda do alvo</b></div><div class="seg" role="group" aria-label="Salvaguarda">${[['falhou', 'Falhou'], ['passou', danos.some(g => g.half) ? 'Passou (metade)' : 'Passou'], ['varios', 'Vários alvos']].map(([v, t]) => `<button class="mt" data-action="mesa-save" data-v="${v}" aria-pressed="${lance.save === v}">${t}</button>`).join('')}</div></div>` : ''}
@@ -78,7 +78,7 @@ function mesaResumo() {
   $('#mesa-total').textContent = cheias ? res.total : '–';
   $('#mesa-go-t').textContent = !cheias ? 'Rolar no app' : vazias ? `Rolar ${vazias === 1 ? 'o dado' : `os ${vazias} dados`} que falta${vazias === 1 ? '' : 'm'}` : 'Lançar';
 }
-const formaLance = L => { const out = [instanciasDe(L)]; for (let i = 0; i < out[0]; i++) { out.push(isMiss(L, i), natural(L, i) === 20, natural(L, i) === 1); L.spec.grupos.forEach(g => out.push(dicePorGrupo(L, g, i), extrasAbertos(L, g, i))); } return out.join(); };
+const formaLance = L => { const out = [instanciasDe(L)]; for (let i = 0; i < out[0]; i++) { out.push(isMiss(L, i), isCrit(L, i), natural(L, i) === 1); L.spec.grupos.forEach(g => out.push(dicePorGrupo(L, g, i), extrasAbertos(L, g, i))); } return out.join(); };
 function mesaAviso(t) { const m = $('#mesa-msg'); if (m) m.textContent = t; }
 function proximaCasa(el) {
   const casas = [...document.querySelectorAll('#sheet .dc')], i = casas.indexOf(el);
@@ -135,7 +135,8 @@ function mostrarResultado(s, res) {
     const valores = `[${x.dados.map(q => q.v).join(', ')}]`;
     linhas.push(`${x.salto ? 'Salto: ' : nome ? `${nome} ${x.i + 1}: ` : ''}${d20}${d20 ? ' · ' : '🎲 '}${x.hit ? `${valores} = <b>${x.total}</b>` : 'errou'}`);
   });
-  if (res.temDano && lance.spec.grupos.some(g => !g.aux && g.mod)) extras.push(`Modificador incluído: ${lance.spec.grupos.filter(g => !g.aux && g.mod).map(g => sign(g.mod)).join(', ')}.`);
+  if (lance.spec.somados.length) extras.push(`Já somado: ${esc(lance.spec.somados.join(', '))}.`);
+  else if (res.temDano && lance.spec.grupos.some(g => !g.aux && g.mod)) extras.push(`Modificador incluído: ${lance.spec.grupos.filter(g => !g.aux && g.mod).map(g => sign(g.mod)).join(', ')}.`);
   if (res.passou) extras.push('O alvo passou na salvaguarda.');
   if (res.varios) extras.push(`Quem passar sofre <b>${lance.spec.grupos.some(g => g.half) ? Math.floor(res.total / 2) : 0}</b>.`);
   if (res.saltos) extras.push(`O orbe saltou ${res.saltos} ${res.saltos > 1 ? 'vezes' : 'vez'}!`);
@@ -150,6 +151,7 @@ function mesaLancar() {
   const res = resolveLance(lance);
   closeModal();
   mostrarResultado(s, res);
+  if (!res.erro) gastarBonus(lance.spec.usados);
   playSpell(s, res.tipo || ctx.tipo || null, lv || s.level, res);
 }
 document.addEventListener('click', e => {

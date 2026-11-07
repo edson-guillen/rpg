@@ -89,17 +89,41 @@ function deslocamentoDe(b, sp, cl) {
   return ft;
 }
 function ataquesDe(c, b, M, pb, cl) {
-  const itens = [...(c.state?.items || c.sheet?.items || [])], pegou = new Set();
-  return itens.flatMap(i => {
+  const itens = [...(c.state?.items || c.sheet?.items || [])], pegou = new Set(), monge = cl.find(x => x.id === 'monk'), pacto = (b.escolhas?.invocacoes || []).includes('Pacto da Lâmina'), desarmado = desarmadoDe(b, M, pb, cl);
+  const armas = itens.flatMap(i => {
     const a = ARMAS.find(w => w[0] === i.name);
     if (!a || pegou.has(a[0])) return [];
     pegou.add(a[0]);
-    const [nome, dado, tipo, props, maestria, , dist] = a, acu = /Acuidade/.test(props), k = dist ? 'DES' : acu ? (M.DES >= M.FOR ? 'DES' : 'FOR') : 'FOR', m = M[k];
-    return [{ id: 'w-' + nome, name: nome, sub: [props, maestria && cl.some(x => CLASSES[x.id].mastery) ? 'Maestria: ' + maestria : ''].filter(Boolean).join(' · '), atk: m + pb, calc: `${k} ${num(m)} + BP ${pb}`, dmg: dado === '1' ? '1d1' : dado + (m ? (m < 0 ? '-' : '+') + Math.abs(m) : ''), type: tipo }];
+    const [nome, dado, tipo, props, maestria, simples, dist] = a, acu = /Acuidade/.test(props);
+    let k = dist ? 'DES' : acu ? (M.DES >= M.FOR ? 'DES' : 'FOR') : 'FOR', face = dado;
+    // Artes Marciais: Destreza e o dado do Monge, sem armadura nem Escudo.
+    if (monge && !dist && !b.armor && !b.shield && (simples || /Leve/.test(props))) {
+      if (M.DES > M[k]) k = 'DES';
+      const fm = CLASS_LEVELS.monk[monge.lv - 1].martial_arts_die;
+      if (fm > +String(dado).split('d')[1] || dado === '1') face = `1d${fm}`;
+    }
+    if (pacto && !dist && M.CAR > M[k]) k = 'CAR';
+    const m = M[k];
+    return [{ id: 'w-' + nome, name: nome, sub: [props, maestria && cl.some(x => CLASSES[x.id].mastery) ? 'Maestria: ' + maestria : ''].filter(Boolean).join(' · '), atk: m + pb, calc: `${k} ${num(m)} + BP ${pb}`, dmg: face === '1' ? '1d1' : face + modDe(m), type: tipo,
+      attr: k, arma: true, melee: !dist, dist: !!dist, acuidade: acu, arremesso: /Arremesso/.test(props), duas: /Duas Mãos/.test(props), versatil: /Versátil \((\d+d\d+)\)/.exec(props)?.[1] || null }];
   });
+  return desarmado ? [...armas, desarmado] : armas;
 }
-function ataquesPorAcao(cl) {
-  let n = 1;
+/** Linha de Ataque Desarmado para quem tem dado próprio nele. */
+function desarmadoDe(b, M, pb, cl) {
+  const monge = cl.find(x => x.id === 'monk'), danca = cl.find(x => x.sub === 'dance' && x.lv >= 3 && !b.armor && !b.shield), estilo = (b.escolhas?.estilos || []).includes('Combate Desarmado');
+  const opc = [];
+  if (monge) opc.push({ f: CLASS_LEVELS.monk[monge.lv - 1].martial_arts_die, k: M.DES > M.FOR ? 'DES' : 'FOR', txt: 'Artes Marciais' });
+  if (danca) opc.push({ f: CLASS_LEVELS.bard[danca.lv - 1].bardic_inspiration_die, k: 'DES', txt: 'Ginga Fascinante' });
+  if (estilo) opc.push({ f: b.shield ? 6 : 8, k: 'FOR', txt: 'Combate Desarmado' });
+  if (!opc.length) return null;
+  const o = opc.reduce((a, x) => (x.f + M[x.k] > a.f + M[a.k] ? x : a)), m = M[o.k];
+  return { id: 'w-desarmado', name: 'Ataque Desarmado', sub: o.txt, atk: m + pb, calc: `${o.k} ${num(m)} + BP ${pb}`, dmg: `1d${o.f}${modDe(m)}`, type: 'Contundente', attr: o.k, arma: false, desarmado: true, melee: true };
+}
+function ataquesPorAcao(cl, b) {
+  let n = 1, inv = b.escolhas?.invocacoes || [];
+  if (inv.includes('Lâmina Sedenta')) n = 2;
+  if (inv.includes('Lâmina Devoradora')) n = 3;
   for (const x of cl) {
     if (['barbarian', 'monk', 'paladin', 'ranger'].includes(x.id) && x.lv >= 5) n = Math.max(n, 2);
     if (x.id === 'fighter') n = Math.max(n, x.lv >= 20 ? 4 : x.lv >= 11 ? 3 : x.lv >= 5 ? 2 : 1);
@@ -136,11 +160,11 @@ function deriveSheet(c) {
   resources.push({ ...res('hd'), max: n, meta: `d${hp.hd} · Descanso Curto para gastar`, desc: `Cada dado gasto num Descanso Curto cura <b>1d${hp.hd} ${con < 0 ? '−' : '+'} ${Math.abs(con)}</b>. Todos voltam no Descanso Longo (regra 2024).` });
   const attacks = c.template === 'soren' ? SOREN.attacks.map(a => {
     const k = a.id.startsWith('ts-') || a.id === 'natural' ? 'CAR' : a.id === 'dagger' ? 'DES' : 'FOR', m = mod(k), die = a.dmg.match(/^\d+d\d+/)[0], ts = a.id.startsWith('ts-');
-    return { ...a, atk: m + pb, calc: `${k} ${num(m)} + BP ${pb}`, dmg: `${die}${m < 0 ? '-' : '+'}${Math.abs(m)}`, ...(ts && n >= 5 ? { sub: `${a.sub} · +${n >= 17 ? 3 : n >= 11 ? 2 : 1}d6 Radiante` } : {}) };
+    return { ...a, atk: m + pb, calc: `${k} ${num(m)} + BP ${pb}`, dmg: `${die}${m < 0 ? '-' : '+'}${Math.abs(m)}`, attr: k, arma: a.id !== 'natural', melee: true, acuidade: /dagger/.test(a.id), arremesso: /dagger|spear/.test(a.id), duas: /spear2/.test(a.id), ...(ts && n >= 5 ? { sub: `${a.sub} · +${n >= 17 ? 3 : n >= 11 ? 2 : 1}d6 Radiante` } : {}) };
   }) : ataquesDe(c, b, M, pb, cl);
   const chosen = b.metamagic.map(id => (c.template === 'soren' && SOREN.metamagic.find(m => m.id === id)) || METAMAGIC.find(m => m.id === id)).filter(Boolean);
   const lin = sp?.lineages?.[b.lineage]?.[0], carry = Math.round(sc.FOR * 7.5 * (b.speciesId === 'goliath' ? 2 : 1));
-  const atq = ataquesPorAcao(cl);
+  const atq = ataquesPorAcao(cl, b);
   const passives = c.template === 'soren' ? SOREN.passives.map(p => ({
     ...p, items: p.t === 'Resiliência Dracônica' ? [`+${n} PV máximos (já incluídos nos ${hp.total}).`, `Sem armadura, CA = 10 + DES ${num(dex)} + CAR ${num(M.CAR)} = <b>${stats.ac}</b>.`]
       : p.items.map(i => i.replace(/\(\+4\)\./, `(${signed(stats.conSave)}).`).replace(/<b>120 kg<\/b>|120 kg/, m => m.replace('120', carry)))
@@ -148,7 +172,7 @@ function deriveSheet(c) {
   const acoes = acoesDe(b, M, pb);
   return {
     ...base, stats, hitDie: hp.hd, conMod: con, slots: conj.slots, pactSlots: conj.pact, createSlotCost: lvS ? Object.fromEntries(Object.keys(conj.slots).filter(l => SLOT_COST[l]).map(l => [l, SLOT_COST[l]])) : {},
-    carry: `${carry} kg`, resources, acoes, attacks, metamagic: chosen, passives, warCaster: has('war-caster'), limits: conj.limits, level: n, items: c.template === 'soren' ? SOREN.items : startingItems(c), lista: conj.lista, ataques: atq, classes: cl,
+    carry: `${carry} kg`, resources, acoes, attacks, metamagic: chosen, passives, warCaster: has('war-caster'), limits: conj.limits, level: n, items: c.template === 'soren' ? SOREN.items : startingItems(c), lista: conj.lista, ataques: atq, classes: cl, bonus: regrasBonus(b, M, cl),
     abilities: ATTR.map(([k, nome]) => ({ k, n: nome, s: sc[k], ...(savs.includes(k) ? { prof: true } : {}), ...(k === 'CON' && has('war-caster') ? { note: 'Vantagem em Concentração' } : {}) })),
     skills: SKILLS.map(([nome, a]) => (b.skills[nome] ? [nome, a, b.skills[nome], ...((b.expertise || []).includes(nome) ? [true] : [])] : [nome, a])), tools: c.template === 'soren' ? SOREN.tools : (b.tools || []),
     calc: {

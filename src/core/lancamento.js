@@ -38,10 +38,27 @@ function diceSpec(s, lv = s.level, ctx = {}) {
       crit: !!x.crit, half: !!x.half, gate: gateDe(x), missHalf: !!x.missHalf, orb: !!x.orb, acumula: x.acumula || null,
       explode: x.explode ? { v: +x.explode, max: x.maxMod ? Math.max(0, CHAR.stats.cha) : +x.max || 0 } : null };
   }).filter(g => g.n > 0 && g.f > 0);
-  const danos = grupos.filter(g => !g.aux), comAtk = danos.some(g => g.gate === 'atk');
+  const danos = grupos.filter(g => !g.aux), comAtk = danos.some(g => g.gate === 'atk'), golpe = String(s.id).startsWith('cl-') && atk?.spell === false;
+  const usados = [], somados = [];
+  let B = null;
+  if (golpe && danos.length) {
+    const fm = modScore(abil('FOR').s), dm = modScore(abil('DES').s);
+    B = bonusDeAtaque({ attr: fm >= dm || state.fx.rage ? 'FOR' : 'DES', melee: true, desarmado: true });
+    danos[0].mod += B.mod;
+    B.dados.forEach((x, j) => grupos.push({ id: `b${j}`, n: x.n, f: x.f, mod: x.mod, nBase: x.n, aux: false, label: x.nome, type: x.tipo || danos[0].type, heal: false, crit: true, half: false, gate: 'atk', missHalf: false, orb: false, acumula: null, explode: null }));
+    usados.push(...B.lista);
+    B.lista.filter(r => r.mod).forEach(r => somados.push(`${r.nome} ${sign(r.mod)}`));
+  } else if (danos.length && !golpe) {
+    for (const r of bonusDeMagia(s, g => g.type || '')) {
+      const g = danos.find(r.casa);
+      if (!g || !r.mod) continue;
+      if (r.cadaAlvo) g.mod += r.mod; else g.modUma = (g.modUma || 0) + r.mod;
+      somados.push(`${r.nome} ${sign(r.mod)}`);
+    }
+  }
   return {
     id: s.id, nome: s.name, lv, modo, alts, alt, tipo: ctx.tipo || null, grupos, inst: danos.length ? instCount(s, lv) : 1, rotulo: s.inst?.rotulo || '',
-    atk: comAtk ? { bonus: atk?.bonus ?? CHAR.stats.atk, adv: atk?.spell !== false && !!state.fx.innate } : null,
+    atk: comAtk ? { bonus: (atk?.bonus ?? CHAR.stats.atk) + (B?.atk || 0), adv: (atk?.spell !== false && !!state.fx.innate) || !!B?.adv, crit: B?.crit || 20 } : null, usados, somados,
     save: danos.some(g => g.gate === 'save'), saltos: danos.some(g => g.orb) ? Math.max(1, lv) : 0
   };
 }
@@ -56,8 +73,8 @@ function natural(L, i) {
   const [a, b] = L.d20[i] || [];
   return L.spec.atk?.adv ? Math.max(a || 0, b || 0) : a || 0;
 }
-const isCrit = (L, i) => natural(L, i) === 20;
-const isMiss = (L, i) => natural(L, i) === 1 || (natural(L, i) !== 20 && !!L.erro[i]);
+const isCrit = (L, i) => { const n = natural(L, i); return n === 20 || (!!n && n >= (L.spec.atk?.crit || 20)); };
+const isMiss = (L, i) => natural(L, i) === 1 || (!isCrit(L, i) && !!L.erro[i]);
 function dicePorGrupo(L, g, i) {
   const n = g.n + (g.acumula ? L.stack * parseDice(g.acumula).n : 0);
   return g.crit && L.spec.atk && isCrit(L, i) ? n * 2 : n;
@@ -120,14 +137,14 @@ function resolveLance(L) {
     sp.grupos.forEach(g => {
       const k = cellKey(i, g), f = faixaGrupo(L, g, i), informado = L.totais[k];
       const vals = informado != null ? partir(informado - g.mod, f.n, g.f) : [...(L.dados[k] || []).slice(0, dicePorGrupo(L, g, i)), ...(L.extras[k] || []).slice(0, extrasAbertos(L, g, i))].filter(Boolean);
-      const baseN = dicePorGrupo(L, g, i), rep = g.orb ? repetidos(vals.slice(0, baseN)) : [], valor = informado ?? vals.reduce((a, b) => a + b, 0) + g.mod;
+      const baseN = dicePorGrupo(L, g, i), rep = g.orb ? repetidos(vals.slice(0, baseN)) : [], um = i === 0 ? g.modUma || 0 : 0, valor = (informado ?? vals.reduce((a, b) => a + b, 0) + g.mod) + um;
       if (g.aux) { if (i === 0) aux.push({ label: g.label, f: g.f, mod: g.mod, vals, total: valor }); return; }
       vals.forEach((v, j) => dados.push({ v, f: g.f, tipo: g.type, extra: j >= baseN ? 'exp' : rep.includes(v) ? 'rep' : crit && g.crit && j >= baseN / 2 ? 'crit' : j >= g.nBase ? 'up' : null }));
       let parte = Math.max(0, valor);
       const antes = parte;
       if (g.gate === 'atk' && !hit) parte = g.missHalf ? Math.floor(parte / 2) : 0;
       if (g.gate === 'save' && passou) parte = g.half ? Math.floor(parte / 2) : 0;
-      soma += parte; bruto += antes; min += f.min; max += f.max;
+      soma += parte; bruto += antes; min += f.min + um; max += f.max + um;
       if (!g.heal) curaPura = false;
       tiposI.push(g.type); tipos.add(g.type);
     });

@@ -1,6 +1,22 @@
 /* =====================================================================
    ABA FICHA
    ===================================================================== */
+/** Botões do que depende da situação. O que é sempre válido entra sem botão. */
+function barraBonus() {
+  const regras = (CHAR.bonus || []).filter(r => r.modo === 'marca' || (r.modo === 'auto' && r.requer)), versatil = CHAR.attacks.some(w => w.versatil);
+  const chip = r => {
+    const usado = r.uma && state.fx.usado?.[r.id], on = r.opcoes ? typeof state.fx.on?.[r.id] === 'string' : r.modo === 'auto' ? bonusLigado(r) : bonusMarcado(r.id) || (r.conc && state.conc === r.conc);
+    const falta = (r.res && (state.res[r.res] ?? 0) < 1) || (r.pacto && !pactoLivre()) || (r.requer && !r.requer(state));
+    const txt = r.opcoes ? state.fx.on?.[r.id] || 'escolher' : usado ? 'usado' : descBonus(r);
+    return r.modo === 'auto' ? `<span class="bchip ${on ? 'on' : ''} ${usado ? 'usado' : ''}">${r.nome} <small>${txt}</small></span>`
+      : `<button class="bchip ${on ? 'on' : ''} ${usado ? 'usado' : ''}" data-action="bonus-toggle" data-id="${r.id}" aria-pressed="${!!on}" ${falta ? 'disabled' : ''}>${r.nome} <small>${txt}</small></button>`;
+  };
+  const lista = regras.map(chip);
+  if (versatil) lista.unshift(`<button class="bchip ${bonusMarcado('duasmaos') ? 'on' : ''}" data-action="bonus-toggle" data-id="duasmaos" aria-pressed="${bonusMarcado('duasmaos')}">Duas mãos <small>Versátil</small></button>`);
+  if (!lista.length) return '';
+  const turno = (CHAR.bonus || []).some(r => r.uma || r.turno);
+  return `<div class="bonus-bar">${lista.join('')}${turno ? '<button class="bchip turno" data-action="bonus-turno">Novo turno</button>' : ''}</div>`;
+}
 function renderFicha() {
   const s = CHAR.stats, pb = s.pb;
   $('#abil').innerHTML = CHAR.abilities.map(a => {
@@ -12,11 +28,15 @@ function renderFicha() {
   }).join('');
 
   $('#atk-hint').textContent = state.fx.innate ? 'Ataques de magia com Vantagem' : 'toque para rolar';
-  $('#attacks').innerHTML = CHAR.attacks.map(w => `<div class="atk-row">
+  $('#atk-bonus').innerHTML = barraBonus();
+  $('#attacks').innerHTML = CHAR.attacks.map(w => {
+    const D = danoDeArma(w), atk = w.atk + D.atk, nomes = D.lista.map(r => r.nome), crit = D.crit < 20 ? ` · crítico em ${D.crit}+` : '';
+    return `<div class="atk-row">
       <div class="atk-t"><b>${w.name}</b><span>${w.sub}</span></div>
-      ${rollBtn({ kind: 'd20', bonus: w.atk, atk: 1, src: w.id, adv: w.spell ? 'spell' : null, label: `${w.name} · ataque` }, `<small>ATQ</small><b class="num">${sign(w.atk)}</b>`, 'rb atk')}
-      ${rollBtn({ kind: 'dmg', expr: w.dmg, crit: 1, src: w.id, type: w.type, label: `${w.name} · dano` }, `<small>DANO</small><b class="num">${showDice(w.dmg)}</b>`, 'rb dmg')}
-      <div class="atk-c">Acerto: ${w.calc} · ${w.type} · média ${decimal(avgOf(w.dmg))}</div></div>`).join('');
+      ${rollBtn({ kind: 'd20', bonus: atk, atk: 1, src: w.id, adv: D.adv ? 'sim' : w.spell ? 'spell' : null, critmin: D.crit < 20 ? D.crit : null, label: `${w.name} · ataque` }, `<small>ATQ${D.adv ? ' · V' : ''}</small><b class="num">${sign(atk)}</b>`, 'rb atk')}
+      ${rollBtn({ kind: 'dmg', arma: w.id, crit: 1, src: w.id, type: w.type, label: `${w.name} · dano` }, `<small>DANO</small><b class="num">${textoDano(D)}</b>`, 'rb dmg')}
+      <div class="atk-c">Acerto: ${w.calc} · ${w.type} · média ${decimal(mediaDano(D))}${crit}${nomes.length ? ` · <b>${nomes.join(', ')}</b>` : ''}</div></div>`;
+  }).join('');
 
   const soren = activeChar().template === 'soren', inata = !!RES.innate, carga = soren ? `FOR ${abil('FOR').s} · Porte Poderoso (conta como Grande)` : `FOR ${abil('FOR').s}`;
   const rows = [

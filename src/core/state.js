@@ -12,7 +12,7 @@ function defaultState() {
     res:   Object.fromEntries(CHAR.resources.map(r => [r.id, r.max])),
     hp: CHAR.stats.hpMax, temp: 0,
     conc: null,
-    fx: { innate: false, shield: false, mirror: 0, rage: false },
+    fx: { innate: false, shield: false, mirror: 0, rage: false, on: {}, usado: {} },
     spLog: [],
     items: CHAR.items.map((it, i) => ({ id: 'it' + i, ...it })),
     ui: { tab: 'magia', filter: 'all' }
@@ -34,6 +34,7 @@ function sanitize(raw) {
   if (Array.isArray(raw.spLog)) d.spLog = raw.spLog.filter(e => e && typeof e.txt === 'string').slice(0, 8)
     .map(e => ({ t: String(e.t || '').slice(0, 5), d: int(e.d, -99, 99, 0), txt: e.txt.slice(0, 160), sp: int(e.sp, 0, RES.sp?.max ?? 0, 0) }));
   d.fx.rage = !!raw.fx?.rage; d.fx.innate = !!raw.fx?.innate; d.fx.shield = !!raw.fx?.shield; d.fx.mirror = int(raw.fx?.mirror, 0, 3, 0);
+  for (const k of ['on', 'usado']) if (raw.fx?.[k] && typeof raw.fx[k] === 'object') for (const [id, v] of Object.entries(raw.fx[k])) if (typeof v === 'boolean' || typeof v === 'string') d.fx[k][id] = v;
   // v1 tinha um inventário genérico: a partir da v2 usa-se o inventário exato da ficha.
   if ((raw.v || 1) >= 2 && Array.isArray(raw.items)) {
     const cats = ITEM_CATS.map(c => c.id);

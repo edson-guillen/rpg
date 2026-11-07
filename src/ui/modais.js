@@ -199,6 +199,7 @@ const voltaCurto = () => [...(Object.keys(CHAR.pactSlots || {}).length ? ['espaÃ
 function descansoCurto() {
   commit('Descanso Curto concluÃ­do', st => {
     for (const l of Object.keys(CHAR.pactSlots || {})) st.used[l] = 0;
+    st.fx.usado = {};
     CHAR.resources.forEach(r => { if (r.rest === 'curto') st.res[r.id] = r.max; else if (r.rest && r.rest !== 'longo') st.res[r.id] = Math.min(r.max, st.res[r.id] + 1); });
   });
   closeModal();
@@ -232,7 +233,9 @@ function longRest() {
     LEVELS.forEach(l => { st.used[l] = 0; st.extra[l] = 0; });
     CHAR.resources.forEach(r => { st.res[r.id] = r.max; });
     st.hp = CHAR.stats.hpMax; st.temp = 0; st.conc = null;
-    st.fx = { innate: false, shield: false, mirror: 0, rage: false };
+    const on = {};
+    for (const [id, v] of Object.entries(st.fx.on || {})) if (!regraBonus(id)?.dura) on[id] = v;
+    st.fx = { innate: false, shield: false, mirror: 0, rage: false, on, usado: {} };
   });
   closeModal();
 }

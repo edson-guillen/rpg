@@ -14,7 +14,7 @@ if (!url || !key) { console.error('Defina SUPABASE_URL e SUPABASE_ANON_KEY.'); p
 fs.rmSync(dist, { recursive: true, force: true });
 fs.mkdirSync(path.join(dist, 'data'), { recursive: true });
 fs.writeFileSync(path.join(dist, 'index.html'), build({ url, key }));
-for (const f of ['sw.js', 'manifest.webmanifest', 'privacidade.html', 'data/library.js', 'data/fx-art.js']) fs.copyFileSync(path.join(root, f), path.join(dist, f));
+for (const f of ['sw.js', 'manifest.webmanifest', 'privacidade.html', 'termos.html', 'legal.css', 'data/library.js', 'data/fx-art.js']) fs.copyFileSync(path.join(root, f), path.join(dist, f));
 fs.copyFileSync(path.join(root, 'node_modules/@supabase/supabase-js/dist/umd/supabase.js'), path.join(dist, 'data/supabase.js'));
 
 const origem = new URL(url).origin;

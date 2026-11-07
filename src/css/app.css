@@ -574,3 +574,15 @@ body.sem-personagem #stats,body.sem-personagem #substats{display:none}
 .pre{white-space:pre-wrap;overflow-wrap:anywhere}
 .so-nuvem-link{display:none}
 body.com-nuvem .so-nuvem-link{display:inline}
+.btn-google{display:inline-flex;flex:1 1 200px;align-items:center;justify-content:center;gap:12px;min-height:50px;padding:0 18px;border:1px solid #dadce0;border-radius:12px;background:#fff;color:#1f1f1f;font:600 18px/1 var(--sans,inherit);cursor:pointer}
+.btn-google:hover{background:#f2f4f7}
+.btn-google:disabled{opacity:.6;cursor:default}
+.g-logo{width:22px;height:22px}
+.legal-aviso{margin-top:12px}
+.legal-aviso a,.cfg a{color:var(--frost)}
+.cfg{padding:14px 0;border-bottom:1px solid var(--line)}
+.cfg:last-child{border-bottom:0}
+.cfg h3{margin:0 0 10px;font-size:15px;letter-spacing:.08em;text-transform:uppercase;color:var(--gold-l)}
+.cfg .m-actions{margin-top:10px}
+.cfg .field{margin-bottom:0}
+body.sem-personagem #char-sub,body.sem-personagem #char-eyebrow{display:none}

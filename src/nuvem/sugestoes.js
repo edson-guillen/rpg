@@ -4,7 +4,7 @@
    banco vê todas e pode responder.
    ===================================================================== */
 const sug = { lista: null, filtro: 'nova' };
-const TIPO_SUG = { ideia: 'Ideia', erro: 'Erro', regra: 'Regra errada' };
+const TIPO_SUG = { ideia: 'Ideia', erro: 'Erro', regra: 'Regra errada', privacidade: 'Privacidade' };
 const SIT_SUG = { nova: 'Nova', lida: 'Lida', feita: 'Feita', recusada: 'Recusada' };
 const dataCurta = t => new Date(t).toLocaleDateString('pt-BR');
 

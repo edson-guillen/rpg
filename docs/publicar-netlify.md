@@ -38,6 +38,10 @@ npm run test:nuvem
 npx supabase stop
 ```
 
+## Privacidade
+
+`privacidade.html` e `termos.html` são publicados com o site. Em Configurações há correção do nome, cópia dos dados e exclusão da conta.
+
 ## O que o servidor guarda
 
 Nome da conta do Google, e-mail (só na autenticação), fichas, anotações, campanhas e sugestões. A chave anon é pública por natureza: quem protege os dados são as regras de acesso (RLS) em `supabase/migrations`, testadas em `tests/nuvem-regras.mjs`. A biblioteca pessoal nunca sobe: as magias dela vão na ficha só com nome e mecânica, sem o texto.

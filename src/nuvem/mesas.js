@@ -71,14 +71,15 @@ function vistaLogin() {
     ${mesas.erro ? `<p class="note">${esc(mesas.erro)}</p>` : ''}
     <p>Entre com o Google para guardar suas fichas na conta, criar campanhas e jogar com seus amigos.</p>
     <p class="note">Sem entrar, o app continua funcionando e salva apenas neste navegador.</p>
-    <div class="m-actions"><button class="btn gold" data-action="nuvem-login" ${nuvem.sb ? '' : 'disabled'}>Entrar com Google</button></div>
+    <div class="m-actions"><button class="btn-google" data-action="nuvem-login" ${nuvem.sb ? '' : 'disabled'}><svg class="g-logo" viewBox="0 0 48 48" aria-hidden="true"><path fill="#ea4335" d="M24 9.5c3.5 0 6.6 1.2 9.1 3.6l6.8-6.8C35.800 2.400 30.300 0 24 0 14.600 0 6.500 5.400 2.600 13.200l7.900 6.100C12.400 13.600 17.700 9.500 24 9.500z"/><path fill="#4285f4" d="M46.500 24.500c0-1.600-.1-3.100-.4-4.500H24v9h12.700c-.5 2.900-2.200 5.400-4.700 7.100l7.300 5.700c4.300-4 7.200-9.900 7.200-17.300z"/><path fill="#fbbc05" d="M10.500 28.700c-.5-1.400-.8-3-.8-4.700s.3-3.200.8-4.700l-7.900-6.100C.9 16.500 0 20.100 0 24s.9 7.500 2.600 10.800z"/><path fill="#34a853" d="M24 48c6.500 0 11.900-2.100 15.900-5.800l-7.300-5.700c-2.200 1.500-5.100 2.400-8.600 2.400-6.300 0-11.600-4.100-13.500-9.800l-7.900 6.100C6.500 42.600 14.600 48 24 48z"/></svg>Entrar com Google</button></div>
+    <p class="note legal-aviso">Ao entrar, você concorda com os <a href="termos.html">Termos de Uso</a> e com a <a href="privacidade.html">Política de Privacidade</a>.</p>
   </div>`;
 }
 
 function contaHtml() {
   return `<div class="panel mesa-conta">
     <div><b>${esc(nuvem.perfil?.nome || 'Sua conta')}</b><small id="nuvem-status">${nuvem.estado === 'enviando' ? 'Salvando…' : 'Fichas salvas na sua conta'}</small></div>
-    <button class="btn sm" data-action="nuvem-conta">Conta</button>
+    <button class="btn sm" data-action="nuvem-conta">Configurações</button>
   </div>`;
 }
 
@@ -237,12 +238,41 @@ function confirmaModal(titulo, texto, acao, rotulo, extra = '') {
 }
 
 function contaModal() {
-  openModal(() => `${mHead('Conta', esc(nuvem.perfil?.nome || 'Sua conta'))}
-    <form id="conta-form" style="margin-top:14px" autocomplete="off">
-      <div class="field"><label for="ct-nome">Nome mostrado nas campanhas</label><input id="ct-nome" required maxlength="60" value="${esc(nuvem.perfil?.nome || '')}"></div>
-      <div class="m-actions"><button class="btn gold">Salvar nome</button></div>
-    </form>
-    <div class="m-actions"><button class="btn" data-action="nuvem-sair">Sair da conta</button><button class="btn danger" data-action="nuvem-excluir">Excluir conta</button></div>`);
+  const NIVEIS = [['full', 'Completas'], ['reduced', 'Reduzidas'], ['off', 'Desligadas']];
+  openModal(() => `${mHead('Grimório', 'Configurações')}
+    ${nuvem.user ? `<section class="cfg"><h3>Conta</h3>
+      <form id="conta-form" autocomplete="off">
+        <div class="field"><label for="ct-nome">Nome mostrado nas campanhas</label><input id="ct-nome" required maxlength="60" value="${esc(nuvem.perfil?.nome || '')}"></div>
+        <div class="m-actions"><button class="btn gold">Salvar nome</button><button type="button" class="btn" data-action="nuvem-sair">Sair da conta</button></div>
+      </form></section>` : ''}
+    <section class="cfg"><h3>Animações</h3>
+      <div class="nscope" role="group" aria-label="Nível de animação">${NIVEIS.map(([k, v]) => `<button class="filter" data-action="nuvem-anim" data-v="${k}" aria-pressed="${(store.settings.anim || 'full') === k}">${v}</button>`).join('')}</div>
+    </section>
+    <section class="cfg"><h3>Seus dados</h3>
+      <p class="note">${nuvem.user ? 'Fichas ficam neste aparelho e na sua conta.' : 'Sem conta, tudo fica apenas neste navegador.'}</p>
+      <div class="m-actions"><button class="btn" data-action="export">Exportar fichas</button>${nuvem.user ? '<button class="btn" data-action="nuvem-dados">Baixar meus dados</button><button class="btn danger" data-action="nuvem-excluir">Excluir conta</button>' : ''}</div>
+    </section>
+    <section class="cfg"><h3>Privacidade</h3>
+      <p class="note">Não usamos anúncios nem rastreamento. Leia a <a href="privacidade.html">Política de Privacidade</a> e os <a href="termos.html">Termos de Uso</a>.</p>
+    </section>`);
+}
+
+/** Cópia de tudo que a conta guarda no servidor (LGPD, art. 18). */
+async function baixarMeusDados() {
+  const eu = nuvem.user.id, sb = nuvem.sb;
+  const [perfil, conta, fichas, part, elenco, notas, ideias] = await Promise.all([
+    sb.from('perfis').select('nome,criado_em').eq('id', eu).maybeSingle(),
+    sb.from('contas').select('dados,atualizado_em').eq('user_id', eu).maybeSingle(),
+    sb.from('personagens').select('id,nome,dados,versao,atualizado_em').eq('dono', eu),
+    sb.from('participantes').select('papel,entrou_em,campanhas(nome,descricao)').eq('user_id', eu),
+    sb.from('elenco').select('nome,situacao,causa,entrou_em,encerrado_em').eq('jogador', eu),
+    sb.from('anotacoes').select('titulo,texto,compartilhada,atualizado_em').eq('autor', eu),
+    sb.from('sugestoes').select('tipo,texto,situacao,resposta,criada_em').eq('autor', eu)
+  ]);
+  const falhou = [perfil, conta, fichas, part, elenco, notas, ideias].find(r => r.error);
+  if (falhou) { toast('Não foi possível reunir seus dados. Tente de novo', false); return; }
+  downloadJSON(`grimorio-meus-dados-${today()}.json`, { app: 'grimorio', tipo: 'dados-da-conta', gerado: new Date().toISOString(), email: nuvem.user.email, perfil: perfil.data, preferencias: conta.data, personagens: fichas.data, campanhas: part.data, elenco: elenco.data, anotacoes: notas.data, sugestoes: ideias.data });
+  toast('Seus dados foram baixados', false);
 }
 
 async function copiar(txt, msg) {
@@ -306,10 +336,13 @@ document.addEventListener('input', e => {
 document.addEventListener('click', async e => {
   const b = e.target.closest('[data-action]');
   if (!b || !b.dataset.action.match(/^(mesa|nuvem)-/)) return;
+  if (!nuvem.sb && !['nuvem-conta', 'nuvem-anim'].includes(b.dataset.action)) return;
   const id = b.dataset.id, d = mesas.det;
   switch (b.dataset.action) {
     case 'nuvem-login': nuvemLogin(); break;
-    case 'nuvem-conta': contaModal(); break;
+    case 'nuvem-conta': toggleMenu(false); contaModal(); break;
+    case 'nuvem-dados': baixarMeusDados(); break;
+    case 'nuvem-anim': store.settings.anim = b.dataset.v; persistStore(); renderHero(); modalRefresh?.(); break;
     case 'nuvem-sair': closeModal(); nuvemSair(); break;
     case 'nuvem-excluir': confirmaModal('Excluir conta', 'Suas fichas salvas na conta, anotações, sugestões e as campanhas em que você é mestre serão apagadas para sempre. Exporte antes o que quiser guardar.', 'nuvem-excluir-ok', 'Excluir para sempre'); break;
     case 'nuvem-excluir-ok':

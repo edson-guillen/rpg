@@ -235,6 +235,18 @@ await sincroniza(pa);
 const contados = await admin.from('personagens').select('id', { count: 'exact', head: true }).eq('nome', 'Borin').eq('dono', await pa.evaluate(() => nuvem.user.id));
 ok(contados.count === 2, 'personagem importado sobe para a conta');
 
+// Configurações e direitos do titular.
+await pa.evaluate(() => { setTab('mesas'); contaModal(); });
+await pa.waitForSelector('[data-action="nuvem-dados"]');
+const [baixado] = await Promise.all([pa.waitForEvent('download'), pa.click('[data-action="nuvem-dados"]')]);
+const meus = JSON.parse(fs.readFileSync(await baixado.path(), 'utf8'));
+ok(meus.tipo === 'dados-da-conta' && meus.personagens.length >= 3 && meus.campanhas[0].campanhas.nome.includes('Costa') && meus.perfil.nome === 'Ana', 'baixar meus dados traz fichas, campanhas e perfil');
+await pa.click('[data-action="nuvem-anim"][data-v="off"]');
+ok(await pa.evaluate(() => store.settings.anim) === 'off', 'configuração de animação muda');
+await foto(pa, '8-configuracoes');
+await pa.click('.m-close');
+for (const f of ['privacidade.html', 'termos.html', 'legal.css']) ok((await fetch(SITE + f)).ok, `${f} publicado`);
+
 // Sugestões.
 await pa.evaluate(() => setTab('sugestoes'));
 await pa.waitForSelector('#sug-form');

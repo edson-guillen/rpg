@@ -155,6 +155,7 @@ let lyra, borin;
   ok(data.length === 1 && data[0].situacao === 'nova' && data[0].autor_nome === 'Mestre' && !data[0].resposta, 'autor não forja situação, resposta nem nome');
   ok((await ana.sb.from('sugestoes').select('*')).data.length === 0, 'jogador não vê sugestão de outro');
   ok((await mestre.sb.from('sugestoes').update({ situacao: 'feita' }).eq('id', data[0].id).select()).data.length === 0, 'autor não muda a própria situação');
+  ok(!(await ana.sb.from('sugestoes').insert({ autor: ana.id, tipo: 'privacidade', texto: 'Pedido de dados', autor_nome: '-' })).error, 'aceita pedido de privacidade');
   ok(!(await rpc(ana, 'sou_dev', {})).data, 'conta comum não é desenvolvedora');
   const ins = await admin.from('desenvolvedores').insert({ email: ana.email });
   ok(!ins.error, `registra desenvolvedora ${ins.error?.message || ''}`);

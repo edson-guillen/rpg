@@ -796,6 +796,18 @@ body.sem-personagem #stats,body.sem-personagem #substats{display:none}
 .pre{white-space:pre-wrap;overflow-wrap:anywhere}
 .so-nuvem-link{display:none}
 body.com-nuvem .so-nuvem-link{display:inline}
+.btn-google{display:inline-flex;flex:1 1 200px;align-items:center;justify-content:center;gap:12px;min-height:50px;padding:0 18px;border:1px solid #dadce0;border-radius:12px;background:#fff;color:#1f1f1f;font:600 18px/1 var(--sans,inherit);cursor:pointer}
+.btn-google:hover{background:#f2f4f7}
+.btn-google:disabled{opacity:.6;cursor:default}
+.g-logo{width:22px;height:22px}
+.legal-aviso{margin-top:12px}
+.legal-aviso a,.cfg a{color:var(--frost)}
+.cfg{padding:14px 0;border-bottom:1px solid var(--line)}
+.cfg:last-child{border-bottom:0}
+.cfg h3{margin:0 0 10px;font-size:15px;letter-spacing:.08em;text-transform:uppercase;color:var(--gold-l)}
+.cfg .m-actions{margin-top:10px}
+.cfg .field{margin-bottom:0}
+body.sem-personagem #char-sub,body.sem-personagem #char-eyebrow{display:none}
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <style id="fx-css">
@@ -932,6 +944,7 @@ body::after{content:"";position:fixed;inset:0;z-index:300;pointer-events:none;op
   <symbol id="i-quill" viewBox="0 0 24 24"><path d="M20 3C12 4 7 9 5.5 18.5"/><path d="M5.5 18.5 4 21"/><path d="M8.5 13.5c4.5.2 8.5-2.8 10-8"/><path d="M7 16.5c2.5 0 4.5-.6 6-1.8"/></symbol>
   <symbol id="i-pin" viewBox="0 0 24 24"><path d="M9 3h6l-1 6 4 4H6l4-4z"/><path d="M12 13v8"/></symbol>
   <symbol id="i-list" viewBox="0 0 24 24"><path d="M9 6h11M9 12h11M9 18h11"/><circle cx="4.5" cy="6" r="1.2"/><circle cx="4.5" cy="12" r="1.2"/><circle cx="4.5" cy="18" r="1.2"/></symbol>
+  <symbol id="i-gear" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19 12a7 7 0 0 0-.1-1.2l2-1.5-2-3.400-2.300 1a7 7 0 0 0-2.100-1.200L14 3h-4l-.5 2.700a7 7 0 0 0-2.100 1.200l-2.300-1-2 3.400 2 1.500a7 7 0 0 0 0 2.400l-2 1.500 2 3.400 2.300-1a7 7 0 0 0 2.100 1.200L10 21h4l.5-2.700a7 7 0 0 0 2.100-1.200l2.300 1 2-3.400-2-1.500c.1-.4.1-.8.1-1.200z"/></symbol>
   <symbol id="i-scroll" viewBox="0 0 24 24"><path d="M6 3h11a2 2 0 0 1 2 2v12M6 3a2 2 0 0 0-2 2v2h4M6 3a2 2 0 0 1 2 2v14a2 2 0 0 0 2 2h9a2 2 0 0 0 2-2v-2H10"/></symbol>
 </svg>
 
@@ -956,6 +969,7 @@ body::after{content:"";position:fixed;inset:0;z-index:300;pointer-events:none;op
     <div class="menu" id="menu" hidden role="menu">
       <button role="menuitem" data-action="export"><svg class="ic"><use href="#i-down"/></svg>Exportar tudo (.json)</button>
       <button role="menuitem" data-action="import"><svg class="ic"><use href="#i-up"/></svg>Importar backup</button>
+      <button role="menuitem" class="so-nuvem" data-action="nuvem-conta"><svg class="ic"><use href="#i-gear"/></svg>Configurações</button>
       <button role="menuitem" data-action="anim-cycle"><svg class="ic"><use href="#i-spark"/></svg><span id="anim-label">Animações: completas</span></button>
       <hr>
       <button role="menuitem" class="danger" data-action="reset"><svg class="ic"><use href="#i-trash"/></svg>Restaurar ficha original</button>
@@ -1086,7 +1100,7 @@ body::after{content:"";position:fixed;inset:0;z-index:300;pointer-events:none;op
     </section>
   </main>
 
-  <footer class="foot" id="foot">Progresso salvo automaticamente neste navegador. <a class="so-nuvem-link" href="privacidade.html">Privacidade</a><br>Silhuetas das animações: <a href="https://game-icons.net" rel="noopener">Game-icons.net</a> (CC BY 3.0).<br>Contém material do <a href="https://dndbeyond.com/srd" rel="noopener">System Reference Document 5.2</a>, da Wizards of the Coast, traduzido e adaptado, sob licença <a href="https://creativecommons.org/licenses/by/4.0/legalcode" rel="noopener">CC BY 4.0</a>.</footer>
+  <footer class="foot" id="foot">Progresso salvo automaticamente neste navegador. <span class="so-nuvem-link"><a href="privacidade.html">Privacidade</a> · <a href="termos.html">Termos</a></span><br>Silhuetas das animações: <a href="https://game-icons.net" rel="noopener">Game-icons.net</a> (CC BY 3.0).<br>Contém material do <a href="https://dndbeyond.com/srd" rel="noopener">System Reference Document 5.2</a>, da Wizards of the Coast, traduzido e adaptado, sob licença <a href="https://creativecommons.org/licenses/by/4.0/legalcode" rel="noopener">CC BY 4.0</a>.</footer>
 </div>
 
 <div class="modal" id="modal" hidden>
@@ -6742,14 +6756,15 @@ function vistaLogin() {
     ${mesas.erro ? `<p class="note">${esc(mesas.erro)}</p>` : ''}
     <p>Entre com o Google para guardar suas fichas na conta, criar campanhas e jogar com seus amigos.</p>
     <p class="note">Sem entrar, o app continua funcionando e salva apenas neste navegador.</p>
-    <div class="m-actions"><button class="btn gold" data-action="nuvem-login" ${nuvem.sb ? '' : 'disabled'}>Entrar com Google</button></div>
+    <div class="m-actions"><button class="btn-google" data-action="nuvem-login" ${nuvem.sb ? '' : 'disabled'}><svg class="g-logo" viewBox="0 0 48 48" aria-hidden="true"><path fill="#ea4335" d="M24 9.5c3.5 0 6.6 1.2 9.1 3.6l6.8-6.8C35.800 2.400 30.300 0 24 0 14.600 0 6.500 5.400 2.600 13.200l7.900 6.100C12.400 13.600 17.700 9.500 24 9.500z"/><path fill="#4285f4" d="M46.500 24.500c0-1.600-.1-3.100-.4-4.500H24v9h12.700c-.5 2.900-2.200 5.400-4.700 7.100l7.300 5.700c4.300-4 7.200-9.900 7.200-17.300z"/><path fill="#fbbc05" d="M10.500 28.700c-.5-1.400-.8-3-.8-4.700s.3-3.200.8-4.700l-7.900-6.100C.9 16.500 0 20.100 0 24s.9 7.500 2.600 10.800z"/><path fill="#34a853" d="M24 48c6.500 0 11.900-2.100 15.900-5.800l-7.300-5.700c-2.200 1.500-5.100 2.400-8.600 2.400-6.300 0-11.600-4.100-13.500-9.800l-7.900 6.100C6.500 42.600 14.600 48 24 48z"/></svg>Entrar com Google</button></div>
+    <p class="note legal-aviso">Ao entrar, você concorda com os <a href="termos.html">Termos de Uso</a> e com a <a href="privacidade.html">Política de Privacidade</a>.</p>
   </div>`;
 }
 
 function contaHtml() {
   return `<div class="panel mesa-conta">
     <div><b>${esc(nuvem.perfil?.nome || 'Sua conta')}</b><small id="nuvem-status">${nuvem.estado === 'enviando' ? 'Salvando…' : 'Fichas salvas na sua conta'}</small></div>
-    <button class="btn sm" data-action="nuvem-conta">Conta</button>
+    <button class="btn sm" data-action="nuvem-conta">Configurações</button>
   </div>`;
 }
 
@@ -6908,12 +6923,41 @@ function confirmaModal(titulo, texto, acao, rotulo, extra = '') {
 }
 
 function contaModal() {
-  openModal(() => `${mHead('Conta', esc(nuvem.perfil?.nome || 'Sua conta'))}
-    <form id="conta-form" style="margin-top:14px" autocomplete="off">
-      <div class="field"><label for="ct-nome">Nome mostrado nas campanhas</label><input id="ct-nome" required maxlength="60" value="${esc(nuvem.perfil?.nome || '')}"></div>
-      <div class="m-actions"><button class="btn gold">Salvar nome</button></div>
-    </form>
-    <div class="m-actions"><button class="btn" data-action="nuvem-sair">Sair da conta</button><button class="btn danger" data-action="nuvem-excluir">Excluir conta</button></div>`);
+  const NIVEIS = [['full', 'Completas'], ['reduced', 'Reduzidas'], ['off', 'Desligadas']];
+  openModal(() => `${mHead('Grimório', 'Configurações')}
+    ${nuvem.user ? `<section class="cfg"><h3>Conta</h3>
+      <form id="conta-form" autocomplete="off">
+        <div class="field"><label for="ct-nome">Nome mostrado nas campanhas</label><input id="ct-nome" required maxlength="60" value="${esc(nuvem.perfil?.nome || '')}"></div>
+        <div class="m-actions"><button class="btn gold">Salvar nome</button><button type="button" class="btn" data-action="nuvem-sair">Sair da conta</button></div>
+      </form></section>` : ''}
+    <section class="cfg"><h3>Animações</h3>
+      <div class="nscope" role="group" aria-label="Nível de animação">${NIVEIS.map(([k, v]) => `<button class="filter" data-action="nuvem-anim" data-v="${k}" aria-pressed="${(store.settings.anim || 'full') === k}">${v}</button>`).join('')}</div>
+    </section>
+    <section class="cfg"><h3>Seus dados</h3>
+      <p class="note">${nuvem.user ? 'Fichas ficam neste aparelho e na sua conta.' : 'Sem conta, tudo fica apenas neste navegador.'}</p>
+      <div class="m-actions"><button class="btn" data-action="export">Exportar fichas</button>${nuvem.user ? '<button class="btn" data-action="nuvem-dados">Baixar meus dados</button><button class="btn danger" data-action="nuvem-excluir">Excluir conta</button>' : ''}</div>
+    </section>
+    <section class="cfg"><h3>Privacidade</h3>
+      <p class="note">Não usamos anúncios nem rastreamento. Leia a <a href="privacidade.html">Política de Privacidade</a> e os <a href="termos.html">Termos de Uso</a>.</p>
+    </section>`);
+}
+
+/** Cópia de tudo que a conta guarda no servidor (LGPD, art. 18). */
+async function baixarMeusDados() {
+  const eu = nuvem.user.id, sb = nuvem.sb;
+  const [perfil, conta, fichas, part, elenco, notas, ideias] = await Promise.all([
+    sb.from('perfis').select('nome,criado_em').eq('id', eu).maybeSingle(),
+    sb.from('contas').select('dados,atualizado_em').eq('user_id', eu).maybeSingle(),
+    sb.from('personagens').select('id,nome,dados,versao,atualizado_em').eq('dono', eu),
+    sb.from('participantes').select('papel,entrou_em,campanhas(nome,descricao)').eq('user_id', eu),
+    sb.from('elenco').select('nome,situacao,causa,entrou_em,encerrado_em').eq('jogador', eu),
+    sb.from('anotacoes').select('titulo,texto,compartilhada,atualizado_em').eq('autor', eu),
+    sb.from('sugestoes').select('tipo,texto,situacao,resposta,criada_em').eq('autor', eu)
+  ]);
+  const falhou = [perfil, conta, fichas, part, elenco, notas, ideias].find(r => r.error);
+  if (falhou) { toast('Não foi possível reunir seus dados. Tente de novo', false); return; }
+  downloadJSON(`grimorio-meus-dados-${today()}.json`, { app: 'grimorio', tipo: 'dados-da-conta', gerado: new Date().toISOString(), email: nuvem.user.email, perfil: perfil.data, preferencias: conta.data, personagens: fichas.data, campanhas: part.data, elenco: elenco.data, anotacoes: notas.data, sugestoes: ideias.data });
+  toast('Seus dados foram baixados', false);
 }
 
 async function copiar(txt, msg) {
@@ -6977,10 +7021,13 @@ document.addEventListener('input', e => {
 document.addEventListener('click', async e => {
   const b = e.target.closest('[data-action]');
   if (!b || !b.dataset.action.match(/^(mesa|nuvem)-/)) return;
+  if (!nuvem.sb && !['nuvem-conta', 'nuvem-anim'].includes(b.dataset.action)) return;
   const id = b.dataset.id, d = mesas.det;
   switch (b.dataset.action) {
     case 'nuvem-login': nuvemLogin(); break;
-    case 'nuvem-conta': contaModal(); break;
+    case 'nuvem-conta': toggleMenu(false); contaModal(); break;
+    case 'nuvem-dados': baixarMeusDados(); break;
+    case 'nuvem-anim': store.settings.anim = b.dataset.v; persistStore(); renderHero(); modalRefresh?.(); break;
     case 'nuvem-sair': closeModal(); nuvemSair(); break;
     case 'nuvem-excluir': confirmaModal('Excluir conta', 'Suas fichas salvas na conta, anotações, sugestões e as campanhas em que você é mestre serão apagadas para sempre. Exporte antes o que quiser guardar.', 'nuvem-excluir-ok', 'Excluir para sempre'); break;
     case 'nuvem-excluir-ok':
@@ -7078,7 +7125,7 @@ setInterval(() => {
    banco vê todas e pode responder.
    ===================================================================== */
 const sug = { lista: null, filtro: 'nova' };
-const TIPO_SUG = { ideia: 'Ideia', erro: 'Erro', regra: 'Regra errada' };
+const TIPO_SUG = { ideia: 'Ideia', erro: 'Erro', regra: 'Regra errada', privacidade: 'Privacidade' };
 const SIT_SUG = { nova: 'Nova', lida: 'Lida', feita: 'Feita', recusada: 'Recusada' };
 const dataCurta = t => new Date(t).toLocaleDateString('pt-BR');
 

@@ -62,6 +62,7 @@
   <symbol id="i-quill" viewBox="0 0 24 24"><path d="M20 3C12 4 7 9 5.5 18.5"/><path d="M5.5 18.5 4 21"/><path d="M8.5 13.5c4.5.2 8.5-2.8 10-8"/><path d="M7 16.5c2.5 0 4.5-.6 6-1.8"/></symbol>
   <symbol id="i-pin" viewBox="0 0 24 24"><path d="M9 3h6l-1 6 4 4H6l4-4z"/><path d="M12 13v8"/></symbol>
   <symbol id="i-list" viewBox="0 0 24 24"><path d="M9 6h11M9 12h11M9 18h11"/><circle cx="4.5" cy="6" r="1.2"/><circle cx="4.5" cy="12" r="1.2"/><circle cx="4.5" cy="18" r="1.2"/></symbol>
+  <symbol id="i-gear" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19 12a7 7 0 0 0-.1-1.2l2-1.5-2-3.400-2.300 1a7 7 0 0 0-2.100-1.200L14 3h-4l-.5 2.700a7 7 0 0 0-2.100 1.200l-2.300-1-2 3.400 2 1.500a7 7 0 0 0 0 2.400l-2 1.500 2 3.400 2.300-1a7 7 0 0 0 2.100 1.200L10 21h4l.5-2.700a7 7 0 0 0 2.100-1.200l2.300 1 2-3.400-2-1.500c.1-.4.1-.8.1-1.200z"/></symbol>
   <symbol id="i-scroll" viewBox="0 0 24 24"><path d="M6 3h11a2 2 0 0 1 2 2v12M6 3a2 2 0 0 0-2 2v2h4M6 3a2 2 0 0 1 2 2v14a2 2 0 0 0 2 2h9a2 2 0 0 0 2-2v-2H10"/></symbol>
 </svg>
 
@@ -86,6 +87,7 @@
     <div class="menu" id="menu" hidden role="menu">
       <button role="menuitem" data-action="export"><svg class="ic"><use href="#i-down"/></svg>Exportar tudo (.json)</button>
       <button role="menuitem" data-action="import"><svg class="ic"><use href="#i-up"/></svg>Importar backup</button>
+      <button role="menuitem" class="so-nuvem" data-action="nuvem-conta"><svg class="ic"><use href="#i-gear"/></svg>Configurações</button>
       <button role="menuitem" data-action="anim-cycle"><svg class="ic"><use href="#i-spark"/></svg><span id="anim-label">Animações: completas</span></button>
       <hr>
       <button role="menuitem" class="danger" data-action="reset"><svg class="ic"><use href="#i-trash"/></svg>Restaurar ficha original</button>
@@ -216,7 +218,7 @@
     </section>
   </main>
 
-  <footer class="foot" id="foot">Progresso salvo automaticamente neste navegador. <a class="so-nuvem-link" href="privacidade.html">Privacidade</a><br>Silhuetas das animações: <a href="https://game-icons.net" rel="noopener">Game-icons.net</a> (CC BY 3.0).<br>Contém material do <a href="https://dndbeyond.com/srd" rel="noopener">System Reference Document 5.2</a>, da Wizards of the Coast, traduzido e adaptado, sob licença <a href="https://creativecommons.org/licenses/by/4.0/legalcode" rel="noopener">CC BY 4.0</a>.</footer>
+  <footer class="foot" id="foot">Progresso salvo automaticamente neste navegador. <span class="so-nuvem-link"><a href="privacidade.html">Privacidade</a> · <a href="termos.html">Termos</a></span><br>Silhuetas das animações: <a href="https://game-icons.net" rel="noopener">Game-icons.net</a> (CC BY 3.0).<br>Contém material do <a href="https://dndbeyond.com/srd" rel="noopener">System Reference Document 5.2</a>, da Wizards of the Coast, traduzido e adaptado, sob licença <a href="https://creativecommons.org/licenses/by/4.0/legalcode" rel="noopener">CC BY 4.0</a>.</footer>
 </div>
 
 <div class="modal" id="modal" hidden>

@@ -572,3 +572,5 @@ body.sem-personagem #stats,body.sem-personagem #substats{display:none}
 .mesa-part{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:6px 0}
 .mesa-part small{color:var(--muted)}
 .pre{white-space:pre-wrap;overflow-wrap:anywhere}
+.so-nuvem-link{display:none}
+body.com-nuvem .so-nuvem-link{display:inline}
